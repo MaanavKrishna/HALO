@@ -177,7 +177,7 @@ def _fake_client(monkeypatch, outcomes, seen):
     class Fake:
         def __init__(self, **kw):
             assert kw["max_retries"] == 0
-            self.beta = type("B", (), {"messages": Msgs()})()
+            self.messages = Msgs()
 
     monkeypatch.setattr(anthropic, "Anthropic", Fake)
 
@@ -205,6 +205,7 @@ def test_transient_errors_retry_twice_and_count_every_attempt(monkeypatch):
     assert budget.used == 3 and sleeps == list(si_build.BACKOFF_S)
     kw = seen[0]
     assert kw["model"] == "claude-sonnet-5-5" and kw["output_config"]["format"]["schema"] == si_build.SCHEMA
+    assert "betas" not in kw and "fallbacks" not in kw
 
 
 def test_third_transient_error_gives_up(monkeypatch):
@@ -232,3 +233,33 @@ def test_missing_key_exits_2_without_traceback(monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(si_build, "read_api_key", lambda *a, **k: None)
     assert si_build.si_main(tmp_path) == 2
     assert "ANTHROPIC_API_KEY is not set" in capsys.readouterr().err
+
+
+def test_written_file_is_world_readable(tmp_path):
+    import stat
+    out = tmp_path / "s.json"
+    write_summaries(out, {})
+    assert stat.S_IMODE(out.stat().st_mode) == 0o644
+
+
+def test_check_on_corrupt_file_is_a_friendly_error(tmp_path, capsys):
+    (tmp_path / "summaries.json").write_text("{not json")
+    assert si_build.si_main(tmp_path, do_check=True) == 1
+    assert "not valid JSON" in capsys.readouterr().err
+
+
+def test_max_calls_zero_means_zero(monkeypatch):
+    from halo_pipeline import cli
+    seen = {}
+    monkeypatch.setattr(si_build, "si_main", lambda out, **kw: seen.update(kw) or 0)
+    cli.main(["si", "--max-calls", "0"])
+    assert seen["max_calls"] == 0
+    cli.main(["si", "--max-calls", "500"])
+    assert seen["max_calls"] == 60
+    cli.main(["si"])
+    assert seen["max_calls"] == 60
+
+
+def test_system_prompt_says_source_is_data():
+    system, _ = build_prompt("PSI-1", DET["PSI-1"])
+    assert "never instructions" in system

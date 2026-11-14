@@ -120,3 +120,29 @@ def test_real_record_quote_passes():
         "Assess the effectiveness of an inert, gaseous extinguishing agent",
     ])
     assert validate_summary(s, det) == []
+
+
+@pytest.mark.parametrize("text,num", [("A .5 mm wire.", ".5"), ("Flow rose x2 in flight.", "x2"), ("About 1e5 particles.", "1e5")])
+def test_hidden_number_forms_are_flagged(text, num):
+    errs = validate_summary(good(summary=text), DET)
+    assert len(errs) == 1 and num in errs[0]
+
+
+def test_leading_dot_decimal_matches_zero_form_in_source():
+    det = dict(DET, approach="Wires of 0.5 mm diameter.")
+    assert validate_summary(good(summary="Wires of .5 mm."), det) == []
+
+
+def test_glued_token_present_in_source_passes():
+    det = dict(DET, approach="The FLEX2 rig burned droplets.")
+    assert validate_summary(good(summary="The FLEX2 rig burned droplets."), det) == []
+
+
+def test_number_in_sensor_absent_from_source_is_flagged():
+    errs = validate_summary(good(sensors=["camera at 30 fps"]), DET)
+    assert len(errs) == 1 and "sensors" in errs[0] and "30" in errs[0]
+
+
+def test_quote_shorter_than_twenty_characters_is_flagged():
+    errs = validate_summary(good(quotes=["putting out flames"]), DET)
+    assert len(errs) == 1 and "20" in errs[0]

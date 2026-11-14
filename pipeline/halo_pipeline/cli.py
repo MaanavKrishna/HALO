@@ -25,7 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "si":
         from .si_build import MAX_CALLS, si_main
         return si_main(args.out, dry=args.dry_run, force=args.force, only=args.only, do_check=args.check,
-                       max_calls=min(args.max_calls or MAX_CALLS, MAX_CALLS))
+                       max_calls=max(0, min(MAX_CALLS if args.max_calls is None else args.max_calls, MAX_CALLS)))
 
     from .export import export_all
     from .ingest import QA_NOTES

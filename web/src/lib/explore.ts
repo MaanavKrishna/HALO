@@ -102,3 +102,44 @@ export const variableLabel = (k: string) => VARIABLES[k] ?? k;
 export function doiUrl(doi: string): string | null {
   return /^10\.\d{4,9}\/\S+$/.test(doi) ? `https://doi.org/${encodeURI(doi)}` : null;
 }
+
+/** Multi-select hazard filter (any selected hazard matches) plus one fuel class. Empty hazards = all. */
+export function filterByHazards(list: Investigation[], hazards: Hazard[], fuel: FuelClass | 'all'): Investigation[] {
+  return list.filter(
+    (i) => (hazards.length === 0 || hazards.some((h) => i.hazards.includes(h))) && (fuel === 'all' || i.fuelClasses.includes(fuel)),
+  );
+}
+
+export type HardwareFamily = 'rack' | 'glovebox' | 'vehicle' | 'smoke' | 'lab' | 'none';
+
+export const HARDWARE_LABEL: Record<HardwareFamily, string> = {
+  rack: 'Combustion Integrated Rack',
+  glovebox: 'Science Glovebox',
+  vehicle: 'Cygnus cargo vehicle',
+  smoke: 'Smoke diagnostics',
+  lab: 'Investigator laboratory',
+  none: 'Hardware not tabulated',
+};
+
+/** Groups the free-text hardware field into a few families, for the glyph and label. */
+export function hardwareFamily(hardware: string): HardwareFamily {
+  const h = hardware.toLowerCase();
+  if (!h.trim()) return 'none';
+  if (/saffire|cygnus/.test(h)) return 'vehicle';
+  if (/glovebox|\bmsg\b/.test(h)) return 'glovebox';
+  if (/combustion integrated rack|\bcir\b|acme|mdca/.test(h)) return 'rack';
+  if (/soot|p-trak/.test(h)) return 'smoke';
+  if (/laboratory/.test(h)) return 'lab';
+  return 'none';
+}
+
+/** Neighbours in PSI-id order, for prev/next navigation. */
+export function neighbours(list: Investigation[], psiId: string): { prev: Investigation | null; next: Investigation | null } {
+  const sorted = [...list].sort((a, b) => psiNumber(a.psiId) - psiNumber(b.psiId));
+  const i = sorted.findIndex((x) => x.psiId === psiId);
+  if (i < 0) return { prev: null, next: null };
+  return { prev: sorted[i - 1] ?? null, next: sorted[i + 1] ?? null };
+}
+
+/** The O2 track the coverage bars draw on (percent of atmosphere). */
+export const O2_TRACK: [number, number] = [0, 40];

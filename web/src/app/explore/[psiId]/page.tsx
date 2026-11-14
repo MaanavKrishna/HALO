@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { ButtonLink, Chip, Icon, PageHero, Panel, SiChip, Stat, StatGroup, buttonClass, cx } from "@/components/ui";
+import { ButtonLink, Chip, Icon, PageHero, Panel, ProvenanceBadge, SiChip, Stat, StatGroup, buttonClass, cx } from "@/components/ui";
 import { AtmospherePlot } from "@/components/explore/AtmospherePlot";
 import { FuelMark, HardwareGlyph, MissionPatch } from "@/components/explore/Glyphs";
 import { HALO_DATA } from "@/lib/data/load";
 import type { Investigation } from "@/lib/engine/types";
 import {
-  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, doiUrl, hardwareFamily, neighbours, plotPoints, variableLabel,
+  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, doiUrl, fromDesignMatrix, hardwareFamily, neighbours, plotPoints, variableLabel,
 } from "@/lib/explore";
 
 const PSI_URL = "https://psi.nasa.gov/physci/repo/";
@@ -208,7 +208,14 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
                   <RangeStat label="Pressure range" range={inv.pRangePsia} unit="psia" />
                   <RangeStat label="Flow range" range={inv.flowRangeCmS} unit="cm/s" />
                 </StatGroup>
-              ) : (
+              ) : null}
+              {fromDesignMatrix(inv) && (
+                <p className="-mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-3">
+                  <ProvenanceBadge provenance="inferred" />
+                  <span>Ranges from the PSI design matrix; no per-test rows are published.</span>
+                </p>
+              )}
+              {!(inv.o2Range || inv.pRangePsia || inv.flowRangeCmS) && (
                 <p className="rounded-[var(--radius-md)] border border-dashed border-line-strong px-4 py-3.5 text-sm text-fg-2">
                   No oxygen, pressure or flow ranges are tabulated in the PSI record.
                 </p>
@@ -330,7 +337,7 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
             )}
           </Section>
 
-          <Section id="plot" title="Tested atmospheres" aside={`${eligible} eligible tests · ${points.length} conditions`}>
+          <Section id="plot" title="Tested atmospheres" aside={`${eligible} eligible tests · ${points.length} distinct conditions (rounded to 0.1)`}>
             <div className="rounded-[var(--radius-lg)] border border-line bg-surface-1 p-4 shadow-[var(--inner-highlight),var(--elev-1)] sm:p-6">
               <AtmospherePlot points={points} label={`${inv.acronym} tested atmospheres`} />
             </div>

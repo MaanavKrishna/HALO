@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { StatusLight, cx } from "@/components/ui";
 import type { CompareDelta } from "@/lib/compare";
 import { MATERIALS } from "@/lib/engine/materials";
-import type { Habitat } from "@/lib/engine/types";
+import type { Grade, Habitat } from "@/lib/engine/types";
 import { SEVERITY } from "./MissionCard";
 
 const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : "±0");
@@ -46,7 +46,21 @@ function Change({ label, from, to, unit, deltaUnit = unit, delta }: { label: str
  * The centre rail: everything that changes from A to B, computed from the two
  * briefs (atmosphere, grade, flags gained or lost, detection share).
  */
-export function DeltaRail({ a, b, delta }: { a: Habitat; b: Habitat; delta: CompareDelta }) {
+/** Same tone rules as GradeBadge: A/B flame blue, C neutral, D/F warning (extrapolation). */
+const gradeTone = (g: Grade) => (g === "A" || g === "B" ? "text-accent" : g === "C" ? "text-fg" : "text-warn");
+
+export function DeltaRail({
+  a,
+  b,
+  delta,
+  sameAmbient,
+}: {
+  a: Habitat;
+  b: Habitat;
+  delta: CompareDelta;
+  /** The single atmosphere the smoke-detector runs were recorded at. */
+  sameAmbient: { o2Pct: number; pressurePsia: number };
+}) {
   const g = delta.grade;
   const gradeText =
     g.direction === "same"
@@ -54,7 +68,8 @@ export function DeltaRail({ a, b, delta }: { a: Habitat; b: Habitat; delta: Comp
       : g.direction === "thinner"
         ? `Evidence thins: the nearest NASA tests are further from ${b.name}.`
         : `Evidence firms: NASA tests sit closer to ${b.name}.`;
-  const detChanged = delta.detection.filter((d) => d.diff !== null && d.diff !== 0);
+  // Any difference counts, including a value on one side and none on the other.
+  const detChanged = delta.detection.filter((d) => d.from !== d.to);
   return (
     <section
       aria-labelledby="changes"
@@ -70,9 +85,9 @@ export function DeltaRail({ a, b, delta }: { a: Habitat; b: Habitat; delta: Comp
       <Block title="Evidence grade">
         <p className="flex items-center gap-3 font-mono text-[2rem] leading-none tracking-[-0.04em] text-fg">
           <span aria-hidden="true" className="flex items-center gap-3">
-            <span>{g.from}</span>
+            <span className={gradeTone(g.from)}>{g.from}</span>
             <Arrow />
-            <span className={cx(g.direction === "thinner" && (g.to === "D" || g.to === "F") && "text-warn")}>{g.to}</span>
+            <span className={gradeTone(g.to)}>{g.to}</span>
           </span>
           <span className="sr-only">{`Evidence grade: ${g.from === g.to ? `unchanged at ${g.from}` : `${g.from} to ${g.to}`}.`}</span>
         </p>
@@ -125,8 +140,9 @@ export function DeltaRail({ a, b, delta }: { a: Habitat; b: Habitat; delta: Comp
           <p className="text-sm text-fg-3">No materials selected.</p>
         ) : detChanged.length === 0 ? (
           <p className="text-sm leading-snug text-fg-2">
-            Unchanged for {delta.detection.length === 1 ? "the material" : `all ${delta.detection.length} materials`}: the smoke
-            evidence comes from runs at a single cabin atmosphere, so it does not move with O₂ or pressure.
+            Unchanged for {delta.detection.length === 1 ? "the material" : `all ${delta.detection.length} materials`}: every
+            smoke-detector run was recorded at {sameAmbient.o2Pct}% O₂ and {sameAmbient.pressurePsia} psia, so the share does
+            not move with the habitat atmosphere.
           </p>
         ) : (
           <ul className="flex flex-col gap-2 text-sm">

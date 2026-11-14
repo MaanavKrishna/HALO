@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterByHazards, hardwareFamily, neighbours } from '@/lib/explore';
+import { filterByHazards, fromDesignMatrix, hardwareFamily, neighbours, plotPoints } from '@/lib/explore';
 import { compareDelta, presetKey } from '@/lib/compare';
 import { HALO_DATA } from '@/lib/data/load';
 import { buildBrief } from '@/lib/engine/brief';
@@ -22,6 +22,15 @@ describe('explore redesign helpers', () => {
     expect(hardwareFamily('Comparitive Soot Diagnostic Hardware')).toBe('smoke');
     expect(hardwareFamily('Principal Investigator Laboratory Hardware')).toBe('lab');
     expect(hardwareFamily('')).toBe('none');
+  });
+  it('merges near-duplicate plot points after rounding to 0.1', () => {
+    const t = (id: string, o2: number, p: number) => ({
+      id, psiId: 'PSI-1', acronym: 'A', fuelClass: 'solid' as const, fuel: 'x', o2Pct: o2, pressurePsia: p, o2Src: 'measured' as const, pSrc: 'measured' as const,
+    });
+    expect(plotPoints([t('a', 21, 14.696), t('b', 21.01, 14.7)], 'PSI-1')).toEqual([{ o2Pct: 21, pressurePsia: 14.7, count: 2, measured: true }]);
+  });
+  it('flags ranges that come from the design matrix', () => {
+    expect(inv.filter(fromDesignMatrix).map((i) => i.psiId)).toEqual(['PSI-68']);
   });
   it('finds neighbours in PSI-number order', () => {
     expect(neighbours(inv, 'PSI-69').prev?.psiId).toBe('PSI-68');

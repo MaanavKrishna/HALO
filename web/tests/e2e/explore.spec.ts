@@ -91,7 +91,9 @@ test("/compare shows two grade badges and the heading", async ({ page }) => {
   await expect(page.getByRole("img", { name: /Evidence grade/ })).toHaveCount(2);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What changes when you move from ISS to Artemis Base");
   await expect(page.getByRole("heading", { name: "Summary of the change" })).toBeVisible();
-  await page.getByRole("group", { name: "To" }).getByText("Moon", { exact: true }).click();
+  const to = page.getByRole("group", { name: "To" });
+  await expect(to.getByRole("link", { name: "Artemis" })).toHaveAttribute("aria-current", "page");
+  await to.getByRole("link", { name: "Moon", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("to Moon Envelope");
   await expect(page).toHaveURL(/b=/);
   expect(problems).toEqual([]);
@@ -110,5 +112,37 @@ test("/compare surfaces out-of-range value notices", async ({ page }) => {
   await page.goto("/compare?a=" + encodeURIComponent("o2=250&p=14.7&n=Test"));
   await expect(page.getByRole("note", { name: "Notices" })).toContainText("outside");
   // A custom habitat gets its own picker option.
-  await expect(page.getByRole("group", { name: "From" }).getByRole("radio", { name: "Custom" })).toBeChecked();
+  await expect(page.getByRole("group", { name: "From" }).getByRole("link", { name: "Custom" })).toHaveAttribute("aria-current", "page");
+});
+
+test("/compare pickers are plain links: real hrefs in the HTML, no navigation on arrow keys", async ({ page, request }) => {
+  // No-JS: the server HTML carries ordinary <a href> links for every preset (no client handler needed).
+  const html = await (await request.get("/compare")).text();
+  expect(html).toMatch(/<a[^>]+href="\/compare\?a=[^"]+"[^>]*>Rover<\/a>/);
+  expect(html).toMatch(/aria-current="page"/);
+  // With JS: arrow keys move focus only; they never change the comparison (WCAG 3.2.2).
+  await page.goto("/compare");
+  const from = page.getByRole("group", { name: "From" });
+  await from.getByRole("link", { name: "ISS", exact: true }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page).toHaveURL(/\/compare$/);
+  await from.getByRole("link", { name: "Rover", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("What changes when you move from Pressurized Rover to Artemis Base");
+});
+
+test("FLEX-2 marks its design-matrix ranges as inferred", async ({ page }) => {
+  await page.goto("/explore/PSI-68");
+  await expect(page.getByRole("complementary", { name: "Spec sheet" })).toContainText("design matrix");
+  await expect(page.getByRole("complementary", { name: "Spec sheet" })).toContainText("Inferred");
+});
+
+test("/compare works without JavaScript: clicking a picker navigates", async ({ browser }) => {
+  const ctx = await browser.newContext({ javaScriptEnabled: false });
+  const page = await ctx.newPage();
+  await page.goto("/compare");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("What changes when you move from ISS to Artemis Base");
+  await page.getByRole("group", { name: "From" }).getByRole("link", { name: "Rover", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("What changes when you move from Pressurized Rover to Artemis Base");
+  await expect(page.getByRole("img", { name: /Evidence grade/ })).toHaveCount(2);
+  await ctx.close();
 });

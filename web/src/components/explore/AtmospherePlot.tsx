@@ -4,7 +4,7 @@ import { useId } from "react";
 import { TBody, TableFrame, Td, Th, Tr } from "@/components/ui";
 import { useWidth } from "@/components/brief/charts/useWidth";
 import { PRESETS } from "@/lib/engine/presets";
-import type { PlotPoint } from "@/lib/explore";
+import { O2_TRACK, type PlotPoint } from "@/lib/explore";
 
 function niceStep(span: number): number {
   const raw = span / 4;
@@ -52,8 +52,16 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
   const H = Math.round(narrow ? width * 0.86 : width * 0.56);
   const M = { l: narrow ? 40 : 48, r: 12, t: 12, b: 42 };
   const fs = narrow ? 10.5 : 11.5;
-  const xs = axis(Math.min(...points.map((p) => p.o2Pct)), Math.max(...points.map((p) => p.o2Pct)));
-  const ys = axis(Math.min(...points.map((p) => p.pressurePsia)), Math.max(...points.map((p) => p.pressurePsia)));
+  // Axes always reach the Moon envelope (O2 up to the coverage track's end, pressure down past the envelope's
+  // ceiling), so the box reads as a region rather than a clipped sliver.
+  const maxO2 = Math.max(...points.map((p) => p.o2Pct));
+  const xs = axis(Math.min(...points.map((p) => p.o2Pct)), Math.max(O2_TRACK[1], maxO2));
+  // End the O2 axis at the track's end when every point fits, instead of padding past it.
+  if (maxO2 <= O2_TRACK[1] && xs.ticks.includes(O2_TRACK[1])) {
+    xs.hi = O2_TRACK[1];
+    xs.ticks = xs.ticks.filter((t) => t <= O2_TRACK[1]);
+  }
+  const ys = axis(Math.min(ENV.p / 2, ...points.map((p) => p.pressurePsia)), Math.max(ENV.p * 1.5, ...points.map((p) => p.pressurePsia)));
   const x = (v: number) => M.l + ((v - xs.lo) / (xs.hi - xs.lo)) * (width - M.l - M.r);
   const y = (v: number) => H - M.b - ((v - ys.lo) / (ys.hi - ys.lo)) * (H - M.t - M.b);
   const nTests = points.reduce((s, p) => s + p.count, 0);
@@ -74,7 +82,7 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
           viewBox={`0 0 ${width} ${H}`}
           width="100%"
           role="img"
-          aria-label={`${label}: ${nTests} eligible tests at ${points.length} distinct oxygen and pressure combinations. A data table follows.`}
+          aria-label={`${label}: ${nTests} eligible tests at ${points.length} distinct conditions (oxygen and pressure rounded to 0.1). A data table follows.`}
           className="block h-auto w-full overflow-visible"
           style={{ fontFamily: "var(--font-sans)" }}
         >
@@ -124,23 +132,22 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
                   strokeWidth={1}
                   strokeDasharray="5 4"
                 />
-                <text x={env.x1 - 6} y={env.y1 - 7} textAnchor="end" fontSize={fs - 0.5} fill="var(--text-2)">
+                <text
+                  x={env.x1 - 7}
+                  y={env.y1 - 7}
+                  textAnchor="end"
+                  fontSize={fs - 0.5}
+                  fontWeight={500}
+                  fill="var(--text-2)"
+                  stroke="var(--surface-1)"
+                  strokeWidth={3}
+                  paintOrder="stroke"
+                  strokeLinejoin="round"
+                >
                   Moon envelope
                 </text>
               </>
             )}
-            {REFS.filter((r) => inside(r.o2Pct, r.pressurePsia)).map((r) => {
-              const cx = x(r.o2Pct);
-              const cy = y(r.pressurePsia);
-              return (
-                <g key={r.name}>
-                  <path d={`M${cx - 6} ${cy}H${cx + 6}M${cx} ${cy - 6}V${cy + 6}`} stroke="var(--text-2)" strokeWidth={1.25} strokeLinecap="round" />
-                  <text x={cx + 8} y={cy - 7} fontSize={fs - 1} fill="var(--text-2)" textAnchor={cx > width - 110 ? "end" : "start"} dx={cx > width - 110 ? -16 : 0}>
-                    {r.name}
-                  </text>
-                </g>
-              );
-            })}
             {points.map((p) => {
               const r = 3.5 + Math.min(4.5, Math.log2(p.count) * 1.2);
               const cx = x(p.o2Pct);
@@ -159,6 +166,29 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
                 />
               ) : (
                 <circle key={`${p.o2Pct}|${p.pressurePsia}`} cx={cx} cy={cy} r={r} fill="var(--surface-1)" stroke="var(--accent)" strokeWidth={1.6} />
+              );
+            })}
+            {REFS.filter((r) => inside(r.o2Pct, r.pressurePsia)).map((r) => {
+              const cx = x(r.o2Pct);
+              const cy = y(r.pressurePsia);
+              return (
+                <g key={r.name}>
+                  <path d={`M${cx - 6} ${cy}H${cx + 6}M${cx} ${cy - 6}V${cy + 6}`} stroke="var(--text-2)" strokeWidth={1.25} strokeLinecap="round" />
+                  <text
+                    x={cx > width - 110 ? cx - 9 : cx + 9}
+                    y={cy + fs + 4}
+                    fontSize={fs - 1}
+                    fontWeight={500}
+                    fill="var(--text-2)"
+                    stroke="var(--surface-1)"
+                    strokeWidth={3}
+                    paintOrder="stroke"
+                    strokeLinejoin="round"
+                    textAnchor={cx > width - 110 ? "end" : "start"}
+                  >
+                    {r.name}
+                  </text>
+                </g>
               );
             })}
           </g>
@@ -190,9 +220,9 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
           <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" className="transition-transform duration-[var(--dur-fast)] group-open:rotate-90">
             <path d="M4.5 2.5L8 6l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Data table ({points.length} points)
+          Data table ({points.length} distinct conditions, rounded to 0.1)
         </summary>
-        <TableFrame caption="Oxygen and pressure of each distinct test condition" maxHeight="18rem" className="mt-3">
+        <TableFrame caption="Oxygen and pressure of each distinct test condition, rounded to 0.1" maxHeight="18rem" className="mt-3">
           <thead className="glass-chrome sticky top-0 z-[1]">
             <tr>
               <Th numeric>O₂ (%)</Th>

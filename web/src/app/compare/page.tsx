@@ -36,9 +36,21 @@ function pickerOptions(side: "a" | "b", a: Habitat, b: Habitat): { options: Pick
   return { options, value: key ?? "custom" };
 }
 
+// Without JS, React never swaps the streamed comparison in (it waits in a hidden div at the end of <body>).
+// This no-JS-only stylesheet shows it in place of the fallback, above the footer, so the plain-link
+// pickers give a complete page without scripts.
+const NO_JS_CSS =
+  "[data-compare-fallback]{display:none}" +
+  // In the base layer: Tailwind's preflight hides [hidden] with a layered !important, which an unlayered rule cannot beat.
+  "@layer base{body>div[hidden][id^='S:']{display:flex!important;flex-direction:column;order:1}}" +
+  "body>footer{order:2}";
+
 function HeroFallback() {
   return (
-    <section data-theme="dark" aria-busy="true" className="relative border-b border-line bg-canvas-deep">
+    <section data-compare-fallback="" data-theme="dark" aria-busy="true" className="relative border-b border-line bg-canvas-deep">
+      <noscript>
+        <style>{NO_JS_CSS}</style>
+      </noscript>
       <div className="container-wide min-h-[22rem] pb-16 pt-20 sm:pt-28">
         <p className="type-body-l text-fg-2">Loading comparison…</p>
       </div>
@@ -111,7 +123,7 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/compare"
 
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem_minmax(0,1fr)]">
           <div className="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)] lg:col-start-2 lg:row-start-1">
-            <DeltaRail a={a} b={b} delta={delta} />
+            <DeltaRail a={a} b={b} delta={delta} sameAmbient={amb} />
           </div>
           <div className="min-w-0 lg:col-start-1 lg:row-start-1">
             <MissionCard brief={briefA} side="From" headingId="col-a" uniqueFlagIds={onlyA} detectorNote={detectorNote} />

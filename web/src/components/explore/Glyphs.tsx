@@ -106,15 +106,19 @@ export function CoverageBar({ range, className }: { range: [number, number] | nu
   const ticks = [0, 10, 20, 30, 40];
   return (
     <span aria-hidden="true" className={cx("relative block h-3.5 w-full min-w-24", className)}>
-      {/* track */}
-      <span className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-surface-2 shadow-[inset_0_0_0_1px_var(--border)]" />
-      {/* Moon envelope band */}
-      <span
+      {/* track (dashed and empty when no range is tabulated) */}
+      {range ? (
+        <span className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-surface-2 shadow-[inset_0_0_0_1px_var(--border)]" />
+      ) : (
+        <span className="absolute inset-x-0 top-1/2 h-0 -translate-y-1/2 border-t border-dashed border-line" />
+      )}
+      {/* Moon envelope band (only next to a real range) */}
+      {range && <span
         className="absolute inset-y-0 border-x border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,var(--accent-soft)_0_3px,transparent_3px_6px)]"
         style={{ left: `${pos(MOON) * 100}%`, right: 0 }}
-      />
+      />}
       {/* ticks */}
-      {ticks.map((t) => (
+      {range && ticks.map((t) => (
         <span key={t} className="absolute bottom-0 h-1 w-px bg-line" style={{ left: `calc(${pos(t) * 100}% - ${t === T1 ? 1 : 0}px)` }} />
       ))}
       {range ? (

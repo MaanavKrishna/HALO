@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Button, Card, Chip, Icon, Segmented, TBody, TableFrame, Td, Th, ToggleChip, Tr, cx } from "@/components/ui";
+import { Button, Card, Chip, Icon, ProvenanceBadge, Segmented, TBody, Td, Th, ToggleChip, Tr, cx } from "@/components/ui";
 import { PRESETS } from "@/lib/engine/presets";
 import type { FuelClass, Hazard, Investigation } from "@/lib/engine/types";
 import {
-  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, HAZARD_ORDER, filterByHazards, formatRange, hardwareFamily,
+  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, HAZARD_ORDER, O2_TRACK, filterByHazards, formatRange, fromDesignMatrix, hardwareFamily,
   sortInvestigations, type SortDir, type SortKey,
 } from "@/lib/explore";
 import { CoverageBar, FuelMark, HardwareGlyph, MissionPatch } from "./Glyphs";
@@ -15,10 +15,11 @@ type View = "list" | "patches";
 type Fuel = FuelClass | "all";
 
 const COLUMNS: Array<{ key: SortKey | null; label: string; numeric?: boolean; className?: string }> = [
-  { key: "acronym", label: "Investigation", className: "w-[22%]" },
+  { key: "acronym", label: "Investigation", className: "w-[17%]" },
+  { key: null, label: "Fuel", className: "w-[11%]" },
   { key: "hardware", label: "Hardware", className: "w-[19%]" },
-  { key: null, label: "Hazards", className: "w-[17%]" },
-  { key: "o2", label: "O₂ coverage", className: "w-[22%]" },
+  { key: null, label: "Hazards", className: "w-[15%]" },
+  { key: "o2", label: "O₂ coverage", className: "w-[19%]" },
   { key: "pressure", label: "Pressure", numeric: true },
   { key: "rows", label: "Rows", numeric: true },
   { key: "pubs", label: "Pubs", numeric: true },
@@ -73,13 +74,45 @@ function HazardChips({ inv, max = 6 }: { inv: Investigation; max?: number }) {
   );
 }
 
+/** Ranges from the PSI design matrix (no per-test rows) are inferred, and say so. */
+export function DesignMatrixNote({ className }: { className?: string }) {
+  return (
+    <span className={cx("inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-fg-3", className)}>
+      <ProvenanceBadge provenance="inferred" />
+      <span>design matrix, no per-test rows</span>
+    </span>
+  );
+}
+
 function O2Cell({ inv }: { inv: Investigation }) {
   return (
     <div className="flex flex-col gap-1.5">
       <CoverageBar range={inv.o2Range} />
-      <span className={cx("font-mono text-[0.8125rem]", inv.o2Range ? "text-fg" : "text-fg-3")}>{formatRange(inv.o2Range, "%")}</span>
+      <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className={cx("font-mono text-[0.8125rem]", inv.o2Range ? "text-fg" : "text-fg-3")}>{formatRange(inv.o2Range, "%")}</span>
+        {fromDesignMatrix(inv) && <DesignMatrixNote />}
+      </span>
     </div>
   );
+}
+
+function FuelInline({ inv }: { inv: Investigation }) {
+  if (inv.fuelClasses.length === 0) return <span className="text-xs text-fg-3">not tabulated</span>;
+  return (
+    <ul className="flex flex-col gap-1" aria-label="Fuel classes">
+      {inv.fuelClasses.map((f) => (
+        <li key={f} className="flex items-center gap-1.5 whitespace-nowrap text-[0.8125rem] text-fg-2">
+          <FuelMark fuel={f} className="text-accent" />
+          {FUEL_LABEL[f]}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function HazardInline({ inv }: { inv: Investigation }) {
+  if (inv.hazards.length === 0) return <span className="text-xs text-fg-3">none listed</span>;
+  return <span className="text-[0.8125rem] leading-snug text-fg-2">{inv.hazards.map((h) => HAZARD_LABEL[h]).join(" · ")}</span>;
 }
 
 export function ExploreBrowser({ investigations }: { investigations: Investigation[] }) {
@@ -130,11 +163,11 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
             />
           </div>
           {/* Sort for card and patch layouts (the table sorts from its headers). */}
-          <div className={cx("flex items-end gap-2", view === "list" && "lg:hidden")}>
+          <div className={cx("flex items-end gap-2 [&_select]:h-8", view === "list" && "lg:hidden")}>
             <label className="flex flex-col gap-2.5">
               <span className="type-label text-fg-3">Sort by</span>
               <select
-                className="field-input h-8! w-auto! py-0! text-sm"
+                className="field-input h-8! min-h-0! w-auto! rounded-[var(--radius-pill)]! py-0! pl-3.5! text-[0.8125rem]!"
                 value={sort.key}
                 onChange={(e) => {
                   const key = e.target.value as SortKey;
@@ -150,10 +183,9 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
               variant="secondary"
               size="sm"
               onClick={() => setSort((s) => ({ ...s, dir: s.dir === "asc" ? "desc" : "asc" }))}
-              aria-label={`Sort ${sort.dir === "asc" ? "ascending" : "descending"}. Activate to reverse.`}
               icon={<SortArrow dir={sort.dir} />}
             >
-              {sort.dir === "asc" ? "Asc" : "Desc"}
+              {sort.dir === "asc" ? "Ascending" : "Descending"}
             </Button>
           </div>
           <div className="flex min-h-8 items-center gap-3 sm:ml-auto">
@@ -187,7 +219,10 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
         <>
           {/* Desktop: instrument table */}
           <div className="hidden lg:block">
-            <TableFrame caption="NASA PSI combustion investigations covered by HALO" className="lg:overflow-clip">
+            {/* Not a scroll container (only shown from lg, where it fits), so it is not a tab stop and the header can stick to the viewport. */}
+            <div className="overflow-clip rounded-[var(--radius-lg)] border border-line bg-surface-1">
+              <table className="w-full border-collapse text-left text-sm tabular-nums">
+              <caption className="sr-only">NASA PSI combustion investigations covered by HALO</caption>
               <thead className="glass-chrome sticky top-[var(--nav-h)] z-[2]">
                 <tr>
                   {COLUMNS.map((c) => (
@@ -200,7 +235,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                   const fam = hardwareFamily(i.hardware);
                   return (
                     <Tr key={i.psiId} className="group">
-                      <th scope="row" className="px-4 py-4 text-left align-top font-normal">
+                      <th scope="row" className="px-4 py-3.5 text-left align-top font-normal">
                         <Link
                           href={href(i)}
                           prefetch={false}
@@ -210,37 +245,38 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                           <Icon name="arrowRight" size={14} className="text-fg-3 opacity-0 transition-[opacity,translate] duration-[var(--dur-fast)] group-hover:translate-x-0.5 group-hover:opacity-100" />
                         </Link>
                         <div className="mt-0.5 font-mono text-xs text-fg-3">{i.psiId}</div>
-                        <div className="mt-2.5">
-                          <FuelChips inv={i} />
-                        </div>
                       </th>
-                      <Td>
+                      <Td className="py-3.5">
+                        <FuelInline inv={i} />
+                      </Td>
+                      <Td className="py-3.5">
                         <div className="flex items-start gap-2.5">
                           <HardwareGlyph family={fam} size={20} className="mt-px text-fg-2" />
                           <div className="min-w-0">
                             <div className="text-[0.8125rem] font-medium text-fg">{HARDWARE_LABEL[fam]}</div>
                             {i.hardware && (
-                              <div className="mt-0.5 line-clamp-2 text-xs text-fg-3" title={i.hardware}>{i.hardware}</div>
+                              <div className="mt-0.5 line-clamp-1 text-xs text-fg-3" title={i.hardware}>{i.hardware}</div>
                             )}
                           </div>
                         </div>
                       </Td>
-                      <Td>
-                        <HazardChips inv={i} />
+                      <Td className="py-3.5">
+                        <HazardInline inv={i} />
                       </Td>
-                      <Td>
+                      <Td className="py-3.5">
                         <O2Cell inv={i} />
                       </Td>
-                      <Td numeric className={cx("whitespace-nowrap text-[0.8125rem]", !i.pRangePsia && "text-fg-3")}>
+                      <Td numeric className={cx("whitespace-nowrap py-3.5 text-[0.8125rem]", !i.pRangePsia && "text-fg-3")}>
                         {formatRange(i.pRangePsia, "psia")}
                       </Td>
-                      <Td numeric className="text-[0.8125rem]">{i.nRows}</Td>
-                      <Td numeric className="text-[0.8125rem]">{i.publications.length}</Td>
+                      <Td numeric className="py-3.5 text-[0.8125rem]">{i.nRows}</Td>
+                      <Td numeric className="py-3.5 text-[0.8125rem]">{i.publications.length}</Td>
                     </Tr>
                   );
                 })}
               </TBody>
-            </TableFrame>
+              </table>
+            </div>
             <CoverageKey className="mt-4" />
           </div>
 
@@ -252,7 +288,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                 <Card as="li" key={i.psiId} interactive padding="none" className="flex flex-col">
                   <div className="flex items-start justify-between gap-3 px-5 pt-5">
                     <div className="min-w-0">
-                      <Link href={href(i)} prefetch={false} className="type-title text-fg">
+                      <Link href={href(i)} prefetch={false} className="type-title text-fg after:z-[1]">
                         {i.acronym}
                       </Link>
                       <p className="mt-1 flex items-center gap-2 text-[0.8125rem] text-fg-2">
@@ -272,6 +308,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                       <span className={cx("font-mono text-[0.8125rem]", i.o2Range ? "text-fg" : "text-fg-3")}>{formatRange(i.o2Range, "%")}</span>
                     </div>
                     <CoverageBar range={i.o2Range} className="mt-2" />
+                    {fromDesignMatrix(i) && <DesignMatrixNote className="mt-2" />}
                     <dl className="mt-4 grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)] gap-3 border-t border-line pt-4">
                       {[
                         ["Pressure", formatRange(i.pRangePsia, "psia")],
@@ -302,7 +339,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                 <Card as="li" key={i.psiId} interactive padding="sm" className="flex flex-col items-center gap-3 text-center">
                   <MissionPatch family={fam} o2Range={i.o2Range} code={i.psiId} size={104} className="mt-1" />
                   <div className="flex min-w-0 flex-col items-center gap-1">
-                    <Link href={href(i)} prefetch={false} className="text-[0.9375rem] font-semibold leading-tight text-fg">
+                    <Link href={href(i)} prefetch={false} className="text-[0.9375rem] font-semibold leading-tight text-fg after:z-[1]">
                       {i.acronym}
                     </Link>
                     <span className="text-xs text-fg-3">{HARDWARE_LABEL[fam]}</span>
@@ -313,7 +350,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
             })}
           </ul>
           <p className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-fg-3">
-            <span>Each patch: the hardware family at the core; the ring is the 0–40% O₂ track with the tested range lit and the Moon envelope band dotted.</span>
+            <span>Each patch: the hardware family at the core; the ring is the {O2_TRACK[0]}–{O2_TRACK[1]}% O₂ track with the tested range lit and the Moon envelope band dotted.</span>
           </p>
         </>
       )}
@@ -369,13 +406,13 @@ function CoverageKey({ className }: { className?: string }) {
     <p className={cx("flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-fg-3", className)}>
       <span className="inline-flex items-center gap-2">
         <span aria-hidden="true" className="inline-block h-1.5 w-6 rounded-full bg-accent shadow-[0_0_8px_var(--accent-glow)]" />
-        Tested O₂ range on a 0–40% track
+        Tested O₂ range on a {O2_TRACK[0]}–{O2_TRACK[1]}% track
       </span>
       <span className="inline-flex items-center gap-2">
         <span aria-hidden="true" className="inline-block h-3 w-6 border-x border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,var(--accent-soft)_0_3px,transparent_3px_6px)]" />
         Moon envelope O₂ band (≥ {PRESETS.moon.o2Pct}%)
       </span>
-      <span>Ranges come from the tabulated PSI rows; “not tabulated” means the data lists none.</span>
+      <span>Ranges come from the PSI test rows; where an investigation publishes no per-test rows they come from its design matrix and are marked Inferred. “Not tabulated” means the record lists none.</span>
     </p>
   );
 }

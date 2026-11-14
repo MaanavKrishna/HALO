@@ -135,7 +135,7 @@ Then open http://localhost:3000.
 | Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` |
 | End-to-end (Playwright, production build on port 3100) | `cd web && pnpm exec playwright test` |
 
-**Environment.** Copy [`.env.example`](.env.example) to `.env` (gitignored). It holds the server-only LLM API key, `SI_LIVE` (set to `false` to serve precomputed text only) and `SI_DAILY_CAP`. The data pipeline and the engine need no keys.
+**Environment.** Copy [`.env.example`](.env.example) to `.env` (gitignored). It holds the server-only LLM API key and `SI_LIVE` (set to `false` to serve precomputed text only). The data pipeline and the engine need no keys.
 
 ## Repository layout
 
@@ -172,7 +172,7 @@ Then open http://localhost:3000.
 - **Headers.** CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options` on every route, set in [`web/next.config.ts`](web/next.config.ts). HTML is never rendered from data or SI output. The e2e test asserts the headers on a production build.
 - **Server-only key.** The LLM API key lives only in server environment variables, never in client code. `.env` is gitignored.
 - **Pre-commit secret hook.** [`.githooks/pre-commit`](.githooks/pre-commit) rejects staged `.env` files and key-like strings. Enable it with `git config core.hooksPath .githooks`.
-- **Rate and spend limits.** A monthly spend limit at the LLM provider, a Vercel Firewall rate limit on the explanation endpoint, a daily cap (`SI_DAILY_CAP`) and a kill switch (`SI_LIVE=false`).
+- **Rate and spend limits.** A monthly spend limit at the LLM provider, a Vercel Firewall rate limit on the explanation endpoint, a best-effort in-memory per-IP limit in the route and a kill switch (`SI_LIVE=false`).
 
 Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

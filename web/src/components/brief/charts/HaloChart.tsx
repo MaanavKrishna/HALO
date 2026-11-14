@@ -101,6 +101,13 @@ export function HaloChart({ points, habitat, nearestSolid, classCounts, descript
   const clipBreak = `halo-break-${uid}`;
   const ringClip = broken ? clipBreak : clipMain;
 
+  // When the nearest solid sits under the habitat mark, the habitat label carries it instead.
+  const solidAtHabitat =
+    !!nearestSolid && Math.hypot(sx(nearestSolid.o2) - hx, sy(nearestSolid.p) - hy) < 18;
+  const habitatLabel = broken
+    ? "Habitat"
+    : `${habitat.name.length > 22 ? "Habitat" : habitat.name}${solidAtHabitat ? ` · ${nearestSolid!.acronym} ${nearestSolid!.label}` : ""}`;
+
   const ordered = [3, 2, 1, 0]; // draw gas first, solids last (on top)
 
   return (
@@ -256,7 +263,7 @@ export function HaloChart({ points, habitat, nearestSolid, classCounts, descript
           </g>
 
           {/* nearest solid and its gap */}
-          {nearestSolid && !hidden.has("solid") && (
+          {nearestSolid && !hidden.has("solid") && !solidAtHabitat && (
             <g aria-hidden="true">
               <line
                 x1={hx}
@@ -313,7 +320,7 @@ export function HaloChart({ points, habitat, nearestSolid, classCounts, descript
               fill="var(--ink)"
               className="halo-label"
             >
-              {broken ? "Habitat" : habitat.name.length > 22 ? "Habitat" : habitat.name}
+              {habitatLabel}
             </text>
           </g>
         </svg>

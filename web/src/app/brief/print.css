@@ -21,6 +21,10 @@
   .no-print {
     display: none !important;
   }
+  /* Disclosures (chart table, fact table) are screen-only; Download data carries them. */
+  details {
+    display: none !important;
+  }
   .print-only {
     display: block !important;
   }
@@ -33,13 +37,20 @@
     padding-bottom: 6mm;
   }
   /* Single column: the section label sits above its content. */
+  /* Sections may span pages (the global print block keeps them whole); their cards stay whole. */
   .brief-section {
+    break-inside: auto;
     display: block;
     padding-top: 6mm;
     padding-bottom: 6mm;
   }
   .brief-section > header {
     margin-bottom: 3mm;
+    break-after: avoid;
+    break-inside: avoid;
+  }
+  .brief-section > header > span[aria-hidden="true"] {
+    display: none;
   }
   .brief-section > header p {
     display: none;

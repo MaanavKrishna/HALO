@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { InvestigationTable } from "@/components/explore/InvestigationTable";
+import { PageHero } from "@/components/ui";
+import { ExploreBrowser } from "@/components/explore/ExploreBrowser";
 import { HALO_DATA } from "@/lib/data/load";
 import { psiNumber } from "@/lib/explore";
 
@@ -13,17 +14,35 @@ const fmt = new Intl.NumberFormat("en-US");
 export default function ExplorePage() {
   const { investigations, manifest } = HALO_DATA;
   const sorted = [...investigations].sort((a, b) => psiNumber(a.psiId) - psiNumber(b.psiId));
+  const pubs = investigations.reduce((s, i) => s + i.publications.length, 0);
+  const readouts: Array<[string, string]> = [
+    ["Investigations", fmt.format(investigations.length)],
+    ["Test rows read", fmt.format(manifest.totalRows)],
+    ["With a known atmosphere", fmt.format(manifest.eligibleRows)],
+    ["Publications", fmt.format(pubs)],
+  ];
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pb-16 pt-10 sm:px-8 sm:pt-14">
-      <h1 className="wide text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold leading-tight">Explore the investigations</h1>
-      <p className="mt-3 max-w-[44rem] text-[17px] leading-snug text-muted">
-        HALO covers all {investigations.length} NASA PSI combustion investigations. {fmt.format(manifest.totalRows)} test
-        rows were read; the rows with a known atmosphere feed the habitat comparison. Entries with no tabulated oxygen or
-        pressure are listed as not tabulated. Open one to see its objective, tested atmospheres and publications.
-      </p>
-      <div className="mt-8 border-t-2 border-ink pt-5">
-        <InvestigationTable investigations={sorted} />
-      </div>
+    <main>
+      <PageHero
+        titleId="explore-title"
+        visual="rings"
+        eyebrow="NASA Physical Sciences Informatics · Combustion"
+        title={<>{investigations.length} investigations. Every one cited.</>}
+        lede="Every microgravity combustion investigation HALO reads, with the atmospheres it tested, the hardware it flew on and the papers it produced. Open one for its full dossier."
+        meta={
+          <dl className="flex flex-wrap gap-x-10 gap-y-4">
+            {readouts.map(([k, v]) => (
+              <div key={k} className="flex flex-col gap-1.5">
+                <dt className="type-label text-fg-3">{k}</dt>
+                <dd className="font-mono text-xl tracking-[-0.02em] text-fg">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        }
+      />
+      <section aria-label="Investigation list" className="container-wide pb-24 pt-10 sm:pt-14">
+        <ExploreBrowser investigations={sorted} />
+      </section>
     </main>
   );
 }

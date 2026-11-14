@@ -1,0 +1,177 @@
+[
+  {
+    "psiId": "PSI-25",
+    "acronym": "BASS-II",
+    "title": "Burning and Suppression of Solids II",
+    "hardware": "Microgravity Science Glovebox",
+    "fuelClasses": [
+      "solid"
+    ],
+    "hazards": [
+      "ignition",
+      "spread",
+      "extinction"
+    ],
+    "objective": "Study flame spread over solid fuels in low-speed flows and measure material flammability limits in microgravity.",
+    "researchImpacts": "Results show that the standard normal-gravity flammability screening test is not conservative for microgravity.",
+    "nRows": 129,
+    "o2Range": [
+      17,
+      24
+    ],
+    "pRangePsia": [
+      10.2,
+      14.7
+    ],
+    "flowRangeCmS": [
+      0,
+      40
+    ],
+    "varied": [
+      "o2Pct",
+      "flowCmS",
+      "thickness"
+    ],
+    "publications": [
+      {
+        "title": "Burning and Suppression of Solids II: Researcher Guide",
+        "doi": "10.0000/example-bass-ii-guide",
+        "year": 2015
+      }
+    ],
+    "datasetDoi": "10.26023/example-psi-25",
+    "license": "CC0-1.0",
+    "startDate": "2012-06-01",
+    "endDate": "2013-11-30",
+    "dateNote": null
+  },
+  {
+    "psiId": "PSI-69",
+    "acronym": "FLEX",
+    "title": "Flame Extinguishment Experiment",
+    "hardware": "Combustion Integrated Rack",
+    "fuelClasses": [
+      "droplet"
+    ],
+    "hazards": [
+      "ignition",
+      "extinction",
+      "suppression"
+    ],
+    "objective": "Measure how diluent gases and pressure affect extinction of burning fuel droplets in microgravity.",
+    "researchImpacts": "Revealed a cool-flame regime that persists after visible flame-out and informs fire suppression design.",
+    "nRows": 274,
+    "o2Range": [
+      15,
+      40
+    ],
+    "pRangePsia": [
+      4,
+      14.7
+    ],
+    "flowRangeCmS": null,
+    "varied": [
+      "o2Pct",
+      "pressurePsia",
+      "diluent",
+      "dropletDiameter"
+    ],
+    "publications": [
+      {
+        "title": "Flame Extinguishment Experiment: droplet burning results",
+        "doi": "10.1016/j.combustflame.2012.07.012",
+        "year": 2012
+      },
+      {
+        "title": "Cool flames in droplet combustion",
+        "doi": null,
+        "year": null
+      }
+    ],
+    "datasetDoi": "10.26023/example-psi-69",
+    "license": "CC0-1.0",
+    "startDate": "2009-08-01",
+    "endDate": "2012-02-01",
+    "dateNote": null
+  },
+  {
+    "psiId": "PSI-159",
+    "acronym": "CFI-G",
+    "title": "Coflow and Inverse Flames (CIFM / gas jets)",
+    "hardware": "Combustion Integrated Rack",
+    "fuelClasses": [
+      "gas"
+    ],
+    "hazards": [
+      "spread",
+      "extinction",
+      "toxicity"
+    ],
+    "objective": "Characterize gas-jet diffusion flames, including soot and extinction behavior, in microgravity.",
+    "researchImpacts": "Provides flame shape and extinction data used to validate combustion models.",
+    "nRows": 87,
+    "o2Range": [
+      21,
+      50
+    ],
+    "pRangePsia": [
+      4.5,
+      14.7
+    ],
+    "flowRangeCmS": [
+      0,
+      15
+    ],
+    "varied": [
+      "o2Pct",
+      "pressurePsia",
+      "fuelFlow"
+    ],
+    "publications": [],
+    "datasetDoi": "10.26023/example-psi-159",
+    "license": "CC0-1.0",
+    "startDate": null,
+    "endDate": null,
+    "dateNote": "Run dates not tabulated in the dataset record."
+  },
+  {
+    "psiId": "PSI-101",
+    "acronym": "SAME-R",
+    "title": "Smoke Aerosol Measurement Experiment Reflight",
+    "hardware": "Microgravity Science Glovebox",
+    "fuelClasses": [
+      "solid"
+    ],
+    "hazards": [
+      "smoke_detection"
+    ],
+    "objective": "Measure smoke particle size and detector response for overheated spacecraft materials.",
+    "researchImpacts": "Showed that ISS-style photoelectric smoke detectors can miss smoke from some overheated materials.",
+    "nRows": 109,
+    "o2Range": [
+      21,
+      21
+    ],
+    "pRangePsia": [
+      14.7,
+      14.7
+    ],
+    "flowRangeCmS": null,
+    "varied": [
+      "material",
+      "heaterPower"
+    ],
+    "publications": [
+      {
+        "title": "Smoke Aerosol Measurement Experiment: detector response",
+        "doi": "10.2514/example-same",
+        "year": 2018
+      }
+    ],
+    "datasetDoi": "10.26023/example-psi-101",
+    "license": "CC0-1.0",
+    "startDate": "2016-03-01",
+    "endDate": "2017-01-01",
+    "dateNote": null
+  }
+]

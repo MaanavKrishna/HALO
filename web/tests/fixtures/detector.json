@@ -1,0 +1,74 @@
+{
+  "ambient": {
+    "o2Pct": 21,
+    "pressurePsia": 14.7
+  },
+  "thresholds": {
+    "scatterV": 2,
+    "ionizationDV": 0.248
+  },
+  "calibration": "Scatter alarms at 2.0 V (ISS-style photoelectric). Ionization threshold is the 10th percentile (lower) of Lampwick runs.",
+  "obscurationNote": "Obscuration channel omitted: Lampwick reads 0 V in 20 of 26 runs, so no meaningful threshold exists.",
+  "runs": [
+    {
+      "material": "Kapton",
+      "scatterV": 2.4,
+      "ionizationDV": 0.31,
+      "cmdUm": 0.3
+    },
+    {
+      "material": "Kapton",
+      "scatterV": 0.8,
+      "ionizationDV": 0.12,
+      "cmdUm": 0.2
+    },
+    {
+      "material": "Kapton",
+      "scatterV": null,
+      "ionizationDV": null,
+      "cmdUm": null
+    },
+    {
+      "material": "Teflon",
+      "scatterV": 1.2,
+      "ionizationDV": 0.05,
+      "cmdUm": 0.15
+    },
+    {
+      "material": "Teflon",
+      "scatterV": 3.1,
+      "ionizationDV": 0.5,
+      "cmdUm": 0.4
+    },
+    {
+      "material": "Silicone",
+      "scatterV": 2.2,
+      "ionizationDV": 0.22,
+      "cmdUm": 0.25
+    },
+    {
+      "material": "Lampwick",
+      "scatterV": 0,
+      "ionizationDV": 0.3,
+      "cmdUm": 0.31
+    },
+    {
+      "material": "Lampwick",
+      "scatterV": 0,
+      "ionizationDV": 0.26,
+      "cmdUm": 0.12
+    },
+    {
+      "material": "Lampwick",
+      "scatterV": 0,
+      "ionizationDV": 0.19,
+      "cmdUm": null
+    },
+    {
+      "material": "Pyrell",
+      "scatterV": 2.8,
+      "ionizationDV": 0.6,
+      "cmdUm": 0.5
+    }
+  ]
+}

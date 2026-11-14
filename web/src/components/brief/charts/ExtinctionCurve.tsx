@@ -21,7 +21,7 @@ export function ExtinctionCurve({ curve, habitatO2, here, fitO2Range, descriptio
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const narrow = width < 480;
   const height = Math.round(narrow ? width * 0.78 : Math.max(240, width * 0.42));
-  const m = { l: narrow ? 38 : 46, r: 12, t: 14, b: 40 };
+  const m = { l: narrow ? 40 : 48, r: 12, t: 14, b: 44 };
   const x0 = curve[0]?.o2 ?? 10;
   const x1 = curve[curve.length - 1]?.o2 ?? 45;
   const sx = (o2: number) => m.l + ((o2 - x0) / (x1 - x0)) * (width - m.l - m.r);
@@ -40,57 +40,77 @@ export function ExtinctionCurve({ curve, habitatO2, here, fitO2Range, descriptio
   for (let v = Math.ceil(x0 / 5) * 5; v <= x1; v += narrow ? 10 : 5) xTicks.push(v);
   const yTicks = [0, 0.25, 0.5, 0.75, 1];
 
+  const mono = "var(--font-mono)";
+  const xMinor: number[] = [];
+  for (let v = Math.ceil(x0); v <= x1; v += 1) xMinor.push(v);
+
   return (
-    <div ref={wrap} className="w-full">
-      <svg viewBox={`0 0 ${width} ${height}`} width="100%" role="img" aria-labelledby={`${uid}-t ${uid}-d`} className="block h-auto w-full">
+    <div ref={wrap} className="extinction-curve w-full">
+      <svg viewBox={`0 0 ${width} ${height}`} width="100%" role="img" aria-labelledby={`${uid}-t ${uid}-d`} className="block h-auto w-full overflow-visible">
         <title id={`${uid}-t`}>Chance a droplet flame goes out on its own, by oxygen level</title>
         <desc id={`${uid}-d`}>{description}</desc>
+        <defs>
+          <radialGradient id={`${uid}-glow`}>
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={`${uid}-band`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.1" />
+          </linearGradient>
+        </defs>
         <g aria-hidden="true">
           <rect
             x={sx(Math.max(x0, fitO2Range[0]))}
             y={m.t}
             width={Math.max(0, sx(Math.min(x1, fitO2Range[1])) - sx(Math.max(x0, fitO2Range[0])))}
             height={height - m.t - m.b}
-            fill="var(--flame-soft)"
-            opacity={0.55}
+            fill="var(--accent-soft)"
+            opacity={0.6}
           />
           {yTicks.map((v) => (
             <g key={v}>
-              <line x1={m.l} x2={width - m.r} y1={sy(v)} y2={sy(v)} stroke="var(--rule)" strokeWidth={v === 0 ? 1 : 0.6} />
-              <text x={m.l - 7} y={sy(v)} dy="0.32em" textAnchor="end" fontSize={fs} fill="var(--muted)" className="num">
+              <line x1={m.l} x2={width - m.r} y1={sy(v)} y2={sy(v)} stroke={v === 0 ? "var(--border-strong)" : "var(--border)"} strokeOpacity={v === 0 ? 0.6 : 1} strokeWidth={1} shapeRendering="crispEdges" />
+              <text x={m.l - 9} y={sy(v)} dy="0.32em" textAnchor="end" fontSize={fs - 0.5} fontFamily={mono} fill="var(--text-3)" className="num">
                 {`${v * 100}%`}
               </text>
             </g>
           ))}
+          <g stroke="var(--border-strong)" shapeRendering="crispEdges">
+            {xMinor.map((v) => (
+              <line key={v} x1={sx(v)} x2={sx(v)} y1={height - m.b} y2={height - m.b + (v % 5 === 0 ? 6 : 3)} strokeOpacity={v % 5 === 0 ? 0.9 : 0.5} />
+            ))}
+          </g>
           {xTicks.map((v) => (
-            <text key={v} x={sx(v)} y={height - m.b + 16} textAnchor="middle" fontSize={fs} fill="var(--muted)" className="num">
+            <text key={v} x={sx(v)} y={height - m.b + 19} textAnchor="middle" fontSize={fs - 0.5} fontFamily={mono} fill="var(--text-3)" className="num">
               {v}
             </text>
           ))}
-          <text x={(m.l + width - m.r) / 2} y={height - 6} textAnchor="middle" fontSize={fs} fill="var(--muted)">
-            Oxygen, O₂ (%)
+          <text x={(m.l + width - m.r) / 2} y={height - 4} textAnchor="middle" fontSize={10} fontFamily={mono} letterSpacing="0.12em" fill="var(--text-3)">
+            OXYGEN O₂ · %
           </text>
-          <text x={sx(Math.max(x0, fitO2Range[0])) + 5} y={m.t + 13} fontSize={fs - 1} fill="var(--flame)" fontWeight={600}>
-            tested O₂ range
+          <text x={sx(Math.max(x0, fitO2Range[0])) + 6} y={m.t + 14} fontSize={9.5} fontFamily={mono} letterSpacing="0.1em" fill="var(--accent)">
+            TESTED O₂ RANGE
           </text>
 
-          <path d={band} fill="var(--flame)" fillOpacity={0.14} />
-          <path d={line} fill="none" stroke="var(--flame)" strokeWidth={2} strokeLinejoin="round" />
+          <path d={band} fill={`url(#${uid}-band)`} />
+          <path d={line} fill="none" stroke="var(--accent)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
 
-          <line x1={hx} x2={hx} y1={m.t} y2={height - m.b} stroke="var(--ink)" strokeWidth={1} strokeDasharray="3 3" />
+          <line x1={hx} x2={hx} y1={m.t} y2={height - m.b} stroke="var(--text-1)" strokeOpacity={0.6} strokeWidth={1} strokeDasharray="2 4" />
           {inRange && (
             <>
-              <line x1={hx} x2={hx} y1={sy(here.lo / 100)} y2={sy(here.hi / 100)} stroke="var(--ink)" strokeWidth={2.5} strokeLinecap="round" />
-              <circle cx={hx} cy={hy} r={4.5} fill="var(--surface)" stroke="var(--ink)" strokeWidth={2} />
+              <circle className="chart-glow" cx={hx} cy={hy} r={18} fill={`url(#${uid}-glow)`} />
+              <line x1={hx} x2={hx} y1={sy(here.lo / 100)} y2={sy(here.hi / 100)} stroke="var(--text-1)" strokeWidth={2.5} strokeLinecap="round" />
+              <circle cx={hx} cy={hy} r={4.5} fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth={2} />
             </>
           )}
           <text
-            x={hx + (hx > width - 120 ? -8 : 8)}
-            y={m.t + 13}
-            textAnchor={hx > width - 120 ? "end" : "start"}
+            x={hx + (hx > width - 130 ? -9 : 9)}
+            y={narrow ? m.t + 30 : m.t + 14}
+            textAnchor={hx > width - 130 ? "end" : "start"}
             fontSize={fs}
-            fontWeight={700}
-            fill="var(--ink)"
+            fontWeight={650}
+            fill="var(--text-1)"
             className="halo-label"
           >
             {inRange ? "Your habitat" : "Your habitat (off chart)"}

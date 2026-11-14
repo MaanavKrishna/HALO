@@ -7,7 +7,7 @@ import { CoolFlameNote } from "@/components/brief/CoolFlameNote";
 import { DetectionCard } from "@/components/brief/DetectionCard";
 import { EarthCard } from "@/components/brief/EarthCard";
 import { EvidenceSection } from "@/components/brief/EvidenceSection";
-import { ExplainPanel } from "@/components/brief/ExplainStub";
+import { ExplainPanel } from "@/components/brief/ExplainPanel";
 import { ExtinctionCard } from "@/components/brief/ExtinctionCard";
 import { FlagList } from "@/components/brief/FlagList";
 import { NextTestCard } from "@/components/brief/NextTestCard";
@@ -20,15 +20,16 @@ import "./brief.css";
 import "./print.css";
 
 export const metadata: Metadata = {
-  title: "Fire Brief · HALO",
+  title: "Fire Brief",
   description: "A cited fire-safety evidence brief for a habitat atmosphere, from NASA microgravity combustion data.",
+  alternates: { canonical: "/brief" },
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export default function BriefPage({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <main className="brief mx-auto w-full max-w-6xl px-5 sm:px-8">
+    <main className="brief w-full">
       <Suspense fallback={<BriefSkeleton />}>
         <BriefBody searchParams={searchParams} />
       </Suspense>
@@ -55,6 +56,7 @@ async function BriefBody({ searchParams }: { searchParams: SearchParams }) {
       <Part title="Brief header">
         <BriefHeader brief={brief} />
       </Part>
+      <div className="container-page">
       <Part title="What to know first">
         <FlagList brief={brief} />
       </Part>
@@ -91,13 +93,14 @@ async function BriefBody({ searchParams }: { searchParams: SearchParams }) {
         <CitationList brief={brief} />
       </Part>
 
-      <footer className="brief-disclaimer border-t-2 border-ink py-8">
-        <p className="font-semibold">HALO summarizes published NASA test evidence. It is not a safety certification.</p>
-        <p className="mt-1.5 text-sm text-muted">
+      <footer className="brief-disclaimer flex flex-col gap-2 border-t border-line-strong py-12 sm:py-16">
+        <p className="type-title text-fg">HALO summarizes published NASA test evidence. It is not a safety certification.</p>
+        <p className="type-body-s max-w-[70ch] text-fg-2">
           Grades describe how close tested conditions are to this habitat, not whether the habitat is acceptable. Data
           built {HALO_DATA.manifest.builtAt.slice(0, 10)} from NASA Physical Sciences Informatics.
         </p>
       </footer>
+      </div>
     </article>
   );
 }
@@ -116,15 +119,24 @@ function Part({ title, children }: { title: string; children: React.ReactNode })
 
 function BriefSkeleton() {
   return (
-    <div aria-busy="true" aria-label="Loading the fire brief" className="animate-pulse pb-16 pt-12">
-      <div className="h-3 w-24 rounded bg-rule" />
-      <div className="mt-6 h-14 w-2/3 max-w-xl rounded bg-rule" />
-      <div className="mt-6 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-12 rounded bg-rule/70" />
-        ))}
+    <div aria-busy="true" aria-label="Loading the fire brief">
+      <div data-theme="dark" className="border-b border-line bg-canvas-deep">
+        <div className="container-page grid animate-pulse gap-10 pb-16 pt-14 motion-reduce:animate-none lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="flex flex-col gap-6">
+            <div className="h-3 w-28 rounded-full bg-surface-2" />
+            <div className="h-16 w-2/3 max-w-xl rounded-[var(--radius-md)] bg-surface-2" />
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-line sm:grid-cols-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-24 bg-surface-1" />
+              ))}
+            </div>
+          </div>
+          <div className="mx-auto aspect-square w-full max-w-[17rem] rounded-full border border-line" />
+        </div>
       </div>
-      <div className="mt-14 h-72 rounded-lg bg-rule/50" />
+      <div className="container-page py-16">
+        <div className="h-72 animate-pulse rounded-[var(--radius-lg)] bg-surface-2 motion-reduce:animate-none" />
+      </div>
     </div>
   );
 }

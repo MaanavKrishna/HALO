@@ -1,3 +1,4 @@
+import { Callout } from "@/components/ui/Callout";
 import { briefContext } from "@/lib/brief/context";
 import type { Brief } from "@/lib/engine/types";
 import { CiteMark } from "./parts";
@@ -8,21 +9,17 @@ export function CoolFlameNote({ brief }: { brief: Brief }) {
   if (!f) return null;
   const ctx = briefContext(brief);
   return (
-    <aside aria-labelledby="cool-flame-title" className="brief-section border-t border-rule py-8">
-      <div className="lg:ml-[calc(15rem+3rem)]">
-        <div className="rounded-lg border border-dashed border-flame bg-flame-soft/60 p-5">
-          <h2 id="cool-flame-title" className="text-sm font-semibold">
-            Cool flames after visible flame-out
-          </h2>
-          <p className="mt-1.5 max-w-prose text-[15px] leading-relaxed">
-            {String(f.value)}.
-            <CiteMark n={ctx.cite(f.id)} />
-          </p>
-          <p className="mt-2 text-sm text-muted">
-            This is droplet-fuel evidence from FLEX; HALO has no cool-flame data for cabin solids.
-          </p>
-        </div>
-      </div>
+    <aside aria-labelledby="cool-flame-title" className="brief-section border-t border-line py-10 lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14">
+      <h2 id="cool-flame-title" className="type-title mb-4 text-fg lg:mb-0">
+        Cool flames after visible flame-out
+      </h2>
+      <Callout tone="info">
+        <p className="text-fg">
+          {String(f.value)}.
+          <CiteMark n={ctx.cite(f.id)} />
+        </p>
+        <p className="mt-2">This is droplet-fuel evidence from FLEX; HALO has no cool-flame data for cabin solids.</p>
+      </Callout>
     </aside>
   );
 }

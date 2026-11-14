@@ -3,6 +3,8 @@ import { whatIfId } from "@/lib/brief/pageFacts";
 import { MATERIALS } from "@/lib/engine/materials";
 import type { Brief, DetectorId } from "@/lib/engine/types";
 import { DetectorBars, type ComboKey, type DetectorRow } from "./charts/DetectorBars";
+import { Callout } from "@/components/ui/Callout";
+import { Panel } from "@/components/ui/Panel";
 import { CiteMark, Num, Section } from "./parts";
 
 const COMBOS: Record<ComboKey, DetectorId[]> = { scatter: ["scatter"], "scatter-ionization": ["scatter", "ionization"] };
@@ -28,46 +30,43 @@ export function DetectionCard({ brief }: { brief: Brief }) {
   return (
     <Section
       id="detection"
-      index={4}
       title="Would your smoke detector notice?"
       kicker="From SAME, which burned real spacecraft materials on the ISS and read smoke detectors at each run."
     >
-      <div className="rounded-lg border border-rule bg-surface p-4 sm:p-6">
+      <Panel label="Detector meters" meta={COMBOS_META}>
         {rows.length > 0 ? (
           <DetectorBars rows={rows} initial={initial} />
         ) : (
-          <p className="text-sm text-muted">No cabin materials are listed, so there is no smoke evidence to show.</p>
+          <p className="text-sm text-fg-2">No cabin materials are listed, so there is no smoke evidence to show.</p>
         )}
+      </Panel>
 
-        <p className="mt-5 flex gap-2.5 rounded-md bg-amber-soft px-3.5 py-2.5 text-sm leading-relaxed" data-iss-air>
-          <svg viewBox="0 0 16 16" className="mt-0.5 size-4 shrink-0 text-amber" aria-hidden="true">
-            <path d="M8 2.2l6.2 11.2H1.8z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-            <path d="M8 6.3v3.2M8 11.2v.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          <span>
-            <span>
-              SAME ran at ISS air (<Num brief={brief} id="det-ambient-oxygen" cite={false} /> O2, <Num brief={brief} id="det-ambient-pressure" cite={false} />); smoke
-              behavior at habitat atmosphere is untested
-            </span>
-            .<CiteMark n={ctx.cite("det-ambient-oxygen")} />
+      <div data-iss-air className="mt-4">
+        <Callout tone="warn">
+          <span className="text-fg">
+            SAME ran at ISS air (<Num brief={brief} id="det-ambient-oxygen" cite={false} /> O2, <Num brief={brief} id="det-ambient-pressure" cite={false} />); smoke
+            behavior at habitat atmosphere is untested
           </span>
-        </p>
-
-        <dl className="mt-4 grid gap-x-8 gap-y-1 text-xs text-muted sm:grid-cols-2">
-          <div className="flex gap-1.5">
-            <dt>Scatter alarm level:</dt>
-            <dd>
-              <Num brief={brief} id="det-scatter-threshold" />
-            </dd>
-          </div>
-          <div className="flex gap-1.5">
-            <dt>Ionization alarm level (inferred):</dt>
-            <dd>
-              ΔV <Num brief={brief} id="det-ionization-threshold" />
-            </dd>
-          </div>
-        </dl>
+          .<CiteMark n={ctx.cite("det-ambient-oxygen")} />
+        </Callout>
       </div>
+
+      <dl className="mt-4 grid gap-px overflow-hidden rounded-[var(--radius-md)] border border-line bg-line sm:grid-cols-2">
+        <div className="flex items-baseline justify-between gap-3 bg-surface-1 px-4 py-3">
+          <dt className="type-label text-fg-3">Scatter alarm level</dt>
+          <dd className="font-mono text-sm text-fg">
+            <Num brief={brief} id="det-scatter-threshold" />
+          </dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-3 bg-surface-1 px-4 py-3">
+          <dt className="type-label text-fg-3">Ionization alarm (inferred)</dt>
+          <dd className="font-mono text-sm text-fg">
+            ΔV <Num brief={brief} id="det-ionization-threshold" />
+          </dd>
+        </div>
+      </dl>
     </Section>
   );
 }
+
+const COMBOS_META = "SAME runs";

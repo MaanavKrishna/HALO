@@ -6,10 +6,12 @@ import "./globals.css";
  * Last-resort boundary for errors in the root layout. It replaces the whole
  * document, so it brings its own <html>/<body> and the global styles, and
  * uses only plain elements (the layout's nav, fonts and theme script are gone).
+ * With no theme script it cannot read the stored choice, so it follows the OS
+ * (color-scheme: light dark resolves every light-dark() token).
  */
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en">
       <body className="flex min-h-dvh flex-col bg-canvas-deep text-fg">
         <title>Something went wrong · HALO</title>
         <main className="container-wide flex flex-1 flex-col justify-center gap-6 py-24">

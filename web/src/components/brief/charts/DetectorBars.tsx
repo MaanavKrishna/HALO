@@ -143,19 +143,19 @@ function ComboSwitch({ value, onChange }: { value: ComboKey; onChange: (v: Combo
     <fieldset className="inline-flex max-w-full">
       <legend className="sr-only">Sensor what-if</legend>
       <div
-        className="relative grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)]"
+        className="relative grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)] max-[23rem]:grid-flow-row max-[23rem]:rounded-[var(--radius-lg)]"
         style={{ ["--n" as string]: OPTIONS.length, ["--i" as string]: index }}
       >
+        {/* Side by side; stacked on the narrowest phones, where three labels cannot fit one row. */}
         <span
           aria-hidden="true"
-          className="absolute bottom-[3px] left-[3px] top-[3px] rounded-[var(--radius-pill)] bg-surface-1 shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)] transition-transform duration-[var(--spring-dur-snappy)] ease-[var(--spring)]"
-          style={{ width: "calc((100% - 6px) / var(--n))", transform: "translateX(calc(var(--i) * 100%))" }}
+          className="absolute left-[3px] top-[3px] h-[calc(100%-6px)] w-[calc((100%-6px)/var(--n))] translate-x-[calc(var(--i)*100%)] rounded-[var(--radius-pill)] bg-surface-1 shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)] transition-[translate] duration-[var(--spring-dur-snappy)] ease-[var(--spring)] max-[23rem]:h-[calc((100%-6px)/var(--n))] max-[23rem]:w-[calc(100%-6px)] max-[23rem]:translate-x-0 max-[23rem]:translate-y-[calc(var(--i)*100%)] max-[23rem]:rounded-[var(--radius-md)]"
         />
         {OPTIONS.map((o) => (
           <label
             key={o.value}
             className={cx(
-              "relative z-[1] flex h-8 items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] px-3 text-[0.8125rem] font-medium transition-colors duration-[var(--dur-fast)] sm:px-4",
+              "relative z-[1] flex h-8 items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] px-3 text-[0.8125rem] font-medium transition-colors duration-[var(--dur-fast)] pointer-coarse:h-10 sm:px-4",
               "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-[var(--focus)]",
               o.value === value ? "text-fg" : "text-fg-2 hover:text-fg",
             )}

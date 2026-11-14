@@ -163,7 +163,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
             />
           </div>
           {/* Sort for card and patch layouts (the table sorts from its headers). */}
-          <div className={cx("flex items-end gap-2 [&_select]:h-8", view === "list" && "lg:hidden")}>
+          <div className={cx("flex flex-wrap items-end gap-2 [&_select]:h-8", view === "list" && "lg:hidden")}>
             <label className="flex flex-col gap-2.5">
               <span className="type-label text-fg-3">Sort by</span>
               <select
@@ -296,7 +296,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                         {HARDWARE_LABEL[fam]}
                       </p>
                     </div>
-                    <span className="font-mono text-xs text-fg-3">{i.psiId}</span>
+                    <span className="whitespace-nowrap font-mono text-xs text-fg-3">{i.psiId}</span>
                   </div>
                   <div className="flex flex-col gap-2 px-5 pt-4">
                     <FuelChips inv={i} />

@@ -24,7 +24,8 @@ export function PresetPicker({ label, options, value }: { label: string; options
         <div
           role="group"
           aria-labelledby={id}
-          className="inline-grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)]"
+          // One capsule row; on phones a 3- (or, below 360px, 2-) column tray.
+          className="inline-grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)] max-sm:grid max-sm:grid-flow-row max-sm:grid-cols-3 max-sm:rounded-[var(--radius-lg)] max-[22.5rem]:grid-cols-2"
         >
           {options.map((o) => {
             const on = o.value === value;
@@ -36,7 +37,7 @@ export function PresetPicker({ label, options, value }: { label: string; options
                 scroll={false}
                 aria-current={on ? "page" : undefined}
                 className={cx(
-                  "relative flex h-7 items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] px-3 text-[0.8125rem] font-medium transition-[color,background-color,box-shadow] duration-[var(--dur-fast)] active:scale-[0.97]",
+                  "relative flex h-7 items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] px-3 pointer-coarse:h-10 max-sm:h-10 max-sm:rounded-[var(--radius-md)] text-[0.8125rem] font-medium transition-[color,background-color,box-shadow] duration-[var(--dur-fast)] active:scale-[0.97]",
                   on
                     ? "bg-surface-1 text-fg shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)]"
                     : "text-fg-2 hover:text-fg",

@@ -111,7 +111,7 @@ export default function DataPage() {
           <Stat label="Investigations" value={investigations.length} />
           <Stat label="Rows read" value={fmt.format(manifest.totalRows)} />
           <Stat label="Eligible rows" value={fmt.format(manifest.eligibleRows)} />
-          <Stat label="Data built" value={<span className="whitespace-nowrap text-[1.5rem] tracking-[-0.02em]">{manifest.builtAt.slice(0, 10)}</span>} />
+          <Stat label="Data built" value={<span className="whitespace-nowrap text-[clamp(1rem,15cqi,1.5rem)] tracking-[-0.02em]">{manifest.builtAt.slice(0, 10)}</span>} />
         </StatGroup>
         <p>
           A short list of Saffire results comes from NASA technical reports, because PSI does not carry the later Saffire flights.

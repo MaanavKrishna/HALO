@@ -76,6 +76,10 @@
 
 @layer base {
   html {
+    /* Ultrawide: the whole rem system (type, space, containers) grows gently
+       from ~1920px to 2560px (16px -> 18.75px), so big screens are not a small
+       column in a sea of gutter. Relative to the user's own default size. */
+    font-size: clamp(100%, 0.5rem + 0.42vw, 118.75%);
     background: var(--bg);
     color: var(--text-1);
     -webkit-text-size-adjust: 100%;
@@ -295,6 +299,15 @@
   background-size: 64px 64px;
   background-position: center;
 }
+/* Theater well: the hero/orb panel ground. Follows the theme: deep space in dark
+   (flat --bg-deep, as before); instrument bone in light, lit by a soft paper glow
+   from the orb side and a faint flame-blue tint. */
+@utility theater-well {
+  background:
+    radial-gradient(ellipse 60% 70% at var(--well-x, 72%) var(--well-y, 45%), var(--well-glow), transparent 70%),
+    radial-gradient(ellipse 40% 50% at var(--well-x, 72%) var(--well-y, 45%), var(--well-tint), transparent 70%),
+    var(--bg-deep);
+}
 /* Pressable: instant press feedback on pointer-down. */
 @utility pressable {
   transition: transform var(--dur-instant) var(--ease-out);
@@ -345,8 +358,7 @@
   inset: -60%;
   border-radius: 50%;
   background: radial-gradient(circle, var(--halo-bloom) 0%, transparent 60%);
-  mix-blend-mode: screen;
-  mix-blend-mode: plus-lighter;
+  mix-blend-mode: var(--halo-blend, plus-lighter);
   z-index: -1;
 }
 /* Shell: a spherical flame sheet is limb-brightened: dim centre, glowing rim. */
@@ -366,7 +378,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, transparent 62.5%, var(--halo-hot) 65%, transparent 67.5%);
   filter: blur(calc(var(--orb-size, 200px) * 0.004));
-  mix-blend-mode: plus-lighter;
+  mix-blend-mode: var(--halo-blend, plus-lighter);
   opacity: 0.75;
 }
 /* Turbulence: an uneven conic veil on the shell, so the rim is never a perfect ring. */
@@ -666,6 +678,9 @@
   min-height: 2.25rem;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-pill);
+  @media (pointer: coarse) {
+    min-height: 2.5rem; /* 40px touch target */
+  }
   padding: 0.375rem 0.875rem 0.375rem 0.625rem;
   background: var(--surface-1);
   cursor: pointer;

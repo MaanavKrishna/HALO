@@ -71,7 +71,7 @@ function Readout({ brief, id, label }: { brief: Brief; id: string; label: React.
 }
 
 /**
- * The brief's opener: a dark theater well with the habitat, its atmosphere
+ * The brief's opener: a theater well with the habitat, its atmosphere
  * readouts and the evidence grade at the centre of the halo dial. A glass
  * sub-bar takes over the name, grade and actions once this scrolls away.
  */
@@ -86,8 +86,7 @@ export function BriefHeader({ brief }: { brief: Brief }) {
     <BriefActionsProvider download={downloadData(brief)} filename={fileName(h.name)}>
       <header
         id="brief-hero"
-        data-theme="dark"
-        className="brief-header brief-hero relative isolate overflow-hidden border-b border-line bg-canvas-deep text-fg"
+        className="brief-header brief-hero theater-well relative isolate overflow-hidden border-b border-line text-fg"
       >
         <GridLines corners />
         <div className="container-page relative flex flex-col gap-6 pb-12 pt-10 sm:pb-16 sm:pt-14 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14 lg:pb-20 lg:pt-16">
@@ -122,7 +121,7 @@ export function BriefHeader({ brief }: { brief: Brief }) {
               </div>
             )}
 
-            <StatGroup className="order-5 lg:order-none sm:grid-cols-4 [&>div]:p-4 sm:[&>div]:p-5">
+            <StatGroup className="order-5 lg:order-none lg:grid-cols-2 xl:grid-cols-4 [&>div]:p-4 sm:[&>div]:p-5">
               <Readout brief={brief} id="habitat-oxygen" label={<>Oxygen O<sub>2</sub></>} />
               <Readout brief={brief} id="habitat-pressure" label="Pressure" />
               <Readout brief={brief} id="habitat-oxygen-partial-pressure" label={<>ppO<sub>2</sub></>} />

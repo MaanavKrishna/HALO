@@ -34,7 +34,7 @@ export function FindingCard({ finding: f }: { finding: Finding }) {
           </h2>
 
           <div className="grid gap-6 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:gap-8">
-            <StatGroup className="content-list self-start sm:grid-cols-1 md:grid-cols-1">
+            <StatGroup className="content-list self-start max-[25rem]:grid-cols-1 sm:grid-cols-1 md:grid-cols-1">
               <Stat size="lg" value={f.stat.value} unit={f.stat.unit} label={f.stat.label} detail={f.stat.detail} />
               {f.second && <Stat value={f.second.value} unit={f.second.unit} label={f.second.label} />}
             </StatGroup>

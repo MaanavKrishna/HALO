@@ -20,7 +20,7 @@ const VARIANT: Record<ButtonVariant, string> = {
 };
 
 const SIZE: Record<ButtonSize, string> = {
-  sm: "h-8 rounded-[var(--radius-pill)] px-3.5 text-[0.8125rem]",
+  sm: "h-8 rounded-[var(--radius-pill)] px-3.5 text-[0.8125rem] pointer-coarse:h-10",
   md: "h-10 rounded-[var(--radius-pill)] px-5 text-[0.9375rem]",
   lg: "h-12 rounded-[var(--radius-pill)] px-7 text-base",
 };

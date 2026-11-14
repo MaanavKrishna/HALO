@@ -70,7 +70,7 @@ export function MissionCard({
       <div className="flex flex-1 flex-col gap-7 px-5 py-6 sm:px-6">
         <p className="text-sm leading-relaxed text-fg-2">{brief.grade.reason}</p>
 
-        <StatGroup className="[&>div]:p-4! [&>div:last-child:nth-child(odd)]:col-span-2">
+        <StatGroup className="grid-cols-2! [&>div]:p-4! [&>div:last-child:nth-child(odd)]:col-span-2">
           <Stat label="Oxygen" value={h.o2Pct} unit="%" />
           <Stat label="Pressure" value={h.pressurePsia} unit="psia" />
           <Stat label="Flow" value={h.flowCmS} unit="cm/s" />

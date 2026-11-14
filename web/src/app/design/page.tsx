@@ -260,14 +260,14 @@ export default function DesignPage() {
 
       {/* ---------- Space & radii ---------- */}
       <Section id="space" title="Space, grid and radii" lede="A 4-point scale. A 12-column grid from 1024px, 8 on tablets, 4 on a 390px phone. Nested radii step down one size.">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           <Specimen name="Spacing (--space-n = n × 4px)">
             <ul className="flex flex-col gap-2">
               {SPACE.map((n) => (
-                <li key={n} className="grid grid-cols-[4.5rem_1fr] items-center gap-3">
+                <li key={n} className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-3">
                   <code className="font-mono text-[0.8125rem] text-fg-2">space-{n}</code>
                   <span className="flex items-center gap-3">
-                    <span className="h-2.5 rounded-[2px] bg-accent/70" style={{ width: `calc(var(--space-${n}) * 1.5)` }} />
+                    <span className="h-2.5 max-w-[calc(100%-3rem)] shrink-0 rounded-[2px] bg-accent/70" style={{ width: `calc(var(--space-${n}) * 1.5)` }} />
                     <span className="font-mono text-[0.75rem] text-fg-3">{n * 4}px</span>
                   </span>
                 </li>
@@ -321,7 +321,7 @@ export default function DesignPage() {
             </div>
           ))}
         </div>
-        <div data-theme="dark" className="relative isolate grid min-h-[22rem] place-items-center overflow-hidden rounded-[var(--radius-xl)] border border-line bg-canvas-deep p-6 text-fg">
+        <div className="theater-well relative isolate grid min-h-[22rem] place-items-center overflow-hidden rounded-[var(--radius-xl)] border border-line p-6 text-fg [--well-x:50%] [--well-y:50%]">
           <GridLines axes />
           <HaloOrb size={320} className="absolute" />
           <div className="relative grid w-full max-w-3xl gap-4 sm:grid-cols-2">
@@ -340,7 +340,7 @@ export default function DesignPage() {
       {/* ---------- Motion ---------- */}
       <Section id="motion" label={`${MOTION.length} motion tokens`} layout="split" title="Motion" lede="Purposeful and interruptible. UI motion stays under 300ms; springs are critically damped unless a gesture carried momentum. Everything stops under prefers-reduced-motion.">
         <div className="flex flex-col gap-12">
-          <TableFrame caption="Motion tokens" className="self-start">
+          <TableFrame caption="Motion tokens" className="max-w-full self-start">
             <THead>
               <tr>
                 <Th>Token</Th>
@@ -484,7 +484,7 @@ export default function DesignPage() {
       </Section>
 
       <Section id="data" layout="split" title="Data and provenance" lede="Numbers are mono and tabular, right-aligned in tables, and always carry where they came from.">
-        <div className="grid gap-12 xl:grid-cols-[1.5fr_1fr]">
+        <div className="grid grid-cols-1 gap-12 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <TableFrame caption="Reference atmospheres" maxHeight="22rem" className="self-start">
             <THead>
               <tr>
@@ -545,7 +545,7 @@ export default function DesignPage() {
 
       <Section id="signature" title="The halo" lede="A flame in microgravity has no plume: it settles into a dim blue sphere, brightest at its rim. The orb is that flame; concentric rings are its graphic echo and the shape of the evidence chart.">
         <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-          <div data-theme="dark" className="relative isolate grid min-h-[26rem] place-items-center overflow-hidden rounded-[var(--radius-xl)] border border-line bg-canvas-deep">
+          <div className="theater-well relative isolate grid min-h-[26rem] place-items-center overflow-hidden rounded-[var(--radius-xl)] border border-line [--well-x:50%] [--well-y:50%]">
             <GridLines axes corners />
             <div className="grid w-[min(28rem,90%)] place-items-center">
               <RingsGraphic rings={6} active={3} labels={["0.5", "1", "2", "4", "8", "16"]} className="col-start-1 row-start-1" title="Concentric evidence rings, the fourth highlighted" />

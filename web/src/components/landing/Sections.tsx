@@ -310,8 +310,7 @@ export function PillarsSection() {
       {/* Hero proof: the detector blind spot */}
       <Reveal className="mt-12 sm:mt-16">
         <div
-          data-theme="dark"
-          className="relative isolate overflow-hidden rounded-[var(--radius-xl)] border border-line bg-canvas-deep p-6 text-fg sm:p-10 lg:p-12"
+          className="theater-well relative isolate overflow-hidden rounded-[var(--radius-xl)] border border-line p-6 text-fg [--well-x:80%] [--well-y:50%] sm:p-10 lg:p-12"
         >
           <GridLines corners />
           <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
@@ -470,7 +469,7 @@ export function PresetsSection() {
           <p className="type-body max-w-[40ch] text-fg-2">From ISS air to a pure-oxygen suit. Each opens its full brief.</p>
         </Reveal>
       </div>
-      <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {presets.map((p, i) => (
           <Reveal as="li" key={p.key} delay={i * 60} className="flex">
             <Card interactive padding="none" className="flex w-full flex-col">
@@ -509,9 +508,8 @@ export function CloseSection() {
   return (
     <section
       id="close"
-      data-theme="dark"
       aria-labelledby="close-title"
-      className="relative isolate overflow-hidden border-t border-line bg-canvas-deep text-fg"
+      className="theater-well relative isolate overflow-hidden border-t border-line text-fg [--well-x:50%] [--well-y:50%]"
     >
       <GridLines />
       <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 -z-[1] w-[min(56rem,140vw)] -translate-x-1/2 -translate-y-1/2 opacity-50">

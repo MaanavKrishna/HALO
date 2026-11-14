@@ -11,7 +11,7 @@ export default function RouteError({ error, retry }: { error: Error & { digest?:
   }, [error]);
   return (
     <main className="flex flex-1 flex-col">
-      <section data-theme="dark" aria-labelledby="error-title" className="relative isolate flex flex-1 overflow-hidden border-b border-line bg-canvas-deep text-fg">
+      <section aria-labelledby="error-title" className="theater-well relative isolate flex flex-1 overflow-hidden border-b border-line text-fg">
         <GridLines corners />
         <div className="container-wide relative flex flex-col gap-6 pb-20 pt-20 sm:pt-28">
           <p className="type-label flex items-center gap-2 text-accent">

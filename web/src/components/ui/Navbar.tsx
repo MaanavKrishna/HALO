@@ -96,7 +96,7 @@ export function Navbar() {
             </ul>
           </nav>
           <div className="flex items-center gap-2">
-            <ButtonLink href={BUILD_HREF} prefetch={false} size="sm" className="hidden sm:inline-flex" aria-current={isCurrent(pathname, BUILD_HREF) ? "page" : undefined}>
+            <ButtonLink href={BUILD_HREF} prefetch={false} size="sm" aria-current={isCurrent(pathname, BUILD_HREF) ? "page" : undefined}>
               Build a brief
             </ButtonLink>
             <button

@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
-        { source: `/explore/:psiId((?!(?:${knownIds})$)[^/]+)`, destination: "/explore-not-found" },
+        { source: `/explore/:psiId((?!(?:${knownIds})$)[^/]+)`, destination: "/explore-missing" },
       ],
       afterFiles: [],
       fallback: [],

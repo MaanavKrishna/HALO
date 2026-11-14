@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Page not found",
 };
 
-/** Styled 404. Unknown routes (and unknown /explore ids, via the config rewrite) answer with a real 404 status. */
+/** Styled 404. Unknown routes answer with a real 404 status (unknown /explore ids rewrite to /explore-missing). */
 export default function NotFound() {
   return (
     <main className="flex flex-1 flex-col">

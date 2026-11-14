@@ -1,0 +1,242 @@
+/*
+ * HALO design tokens. Source of truth for colour, type, space, depth and motion.
+ * Documented in docs/DESIGN.md. Pages use the semantic names only, never raw hex.
+ *
+ * Theme model: every colour is written once as light-dark(light, dark).
+ * `color-scheme` picks the branch: system by default, forced by
+ * [data-theme="light" | "dark"] (on <html> globally, or on any element to
+ * scope a theme), and forced light for print.
+ *
+ * The block is declared on :root AND on every [data-theme] element: the build
+ * polyfills light-dark() with custom properties, which resolve where they are
+ * declared, so scoped themes must re-declare the tokens.
+ */
+
+:root {
+  color-scheme: light dark;
+}
+
+:root,
+[data-theme] {
+  /* ---------- Colour: canvas and surfaces ---------- */
+  /* Dark: deep space ink, never pure black; each surface step is clearly lighter.
+     Light: "archival paper", a warm neutral rather than stock cool grey. */
+  --bg: light-dark(#f4f3ef, #05080f);
+  --bg-deep: light-dark(#ebe9e3, #020409); /* footer, wells (heroes are always dark) */
+  --surface-1: light-dark(#fcfbf8, #0c1320); /* cards, inputs */
+  --surface-2: light-dark(#ebe9e3, #141d2d); /* raised / hover / tracks */
+  --surface-3: light-dark(#e0ddd5, #1e293c); /* pressed, switch off */
+
+  /* Glass: translucent chrome. Bigger surfaces use --glass-bg-strong. */
+  --glass-bg: light-dark(rgb(252 251 248 / 0.7), rgb(16 24 38 / 0.6));
+  --glass-bg-strong: light-dark(rgb(248 247 243 / 0.84), rgb(10 15 26 / 0.78));
+  --glass-border: light-dark(rgb(28 26 20 / 0.1), rgb(180 205 250 / 0.14));
+  --glass-highlight: light-dark(rgb(255 255 255 / 0.95), rgb(220 232 255 / 0.12));
+  --glass-blur: 20px;
+
+  /* ---------- Colour: lines ---------- */
+  --border: light-dark(rgb(28 26 20 / 0.12), rgb(170 195 240 / 0.15)); /* hairlines, dividers */
+  --border-strong: light-dark(#757983, #62738f); /* control edges, >=3:1 on every surface */
+  --grid-line: light-dark(rgb(28 26 20 / 0.04), rgb(150 180 240 / 0.035)); /* instrument grid */
+
+  /* ---------- Colour: text ---------- */
+  --text-1: light-dark(#14161c, #eef2f8); /* primary */
+  --text-2: light-dark(#4a4e58, #a3afc2); /* secondary, >=6:1 */
+  --text-3: light-dark(#585c66, #8794aa); /* tertiary, labels, >=4.5:1 on every surface */
+
+  /* ---------- Colour: accent (flame blue, the only brand colour) ---------- */
+  --accent: light-dark(#1f4fd6, #7ea6ff); /* text, links, selection marks */
+  --accent-hover: light-dark(#1a43b8, #9bbaff);
+  --accent-fill: light-dark(#2f5ff0, #3a66ff); /* primary button fill: saturated, luminous */
+  --accent-fill-hover: light-dark(#2a57e6, #3360f8);
+  --accent-ink: #ffffff; /* text on an accent fill (>=4.6:1 both themes) */
+  --accent-soft: light-dark(#e2e8f8, rgb(126 166 255 / 0.14)); /* selected backgrounds */
+  --accent-line: light-dark(rgb(31 79 214 / 0.38), rgb(126 166 255 / 0.42));
+  --accent-glow: light-dark(rgb(47 95 240 / 0.24), rgb(70 120 255 / 0.5)); /* light, never fill */
+  --fill-highlight: rgb(255 255 255 / 0.22); /* top edge of solid fills */
+  --thumb: light-dark(#ffffff, #f4f6fa); /* switch and slider thumbs */
+
+  /* Halo orb: the microgravity flame. Decorative only, never data. */
+  --halo-core: light-dark(rgb(40 90 230 / 0.05), rgb(50 95 230 / 0.16));
+  --halo-shell: light-dark(rgb(36 92 235 / 0.6), rgb(110 160 255 / 0.9));
+  --halo-hot: light-dark(rgb(235 242 255 / 0.9), rgb(232 240 255 / 0.95)); /* thin white-hot rim */
+  --halo-rim: light-dark(rgb(30 80 220 / 0.22), rgb(90 140 255 / 0.42));
+  --halo-bloom: light-dark(rgb(40 100 240 / 0.14), rgb(60 110 255 / 0.3));
+
+  /* ---------- Colour: semantics (risk colours only for risk) ---------- */
+  --warn: light-dark(#8a5000, #f3b54d);
+  --warn-soft: light-dark(#f8ecd6, rgb(243 181 77 / 0.12));
+  --warn-line: light-dark(rgb(138 80 0 / 0.38), rgb(243 181 77 / 0.38));
+  --crit: light-dark(#b0321a, #ff7a5c);
+  --crit-soft: light-dark(#f8e2dc, rgb(255 122 92 / 0.12));
+  --crit-line: light-dark(rgb(176 50 26 / 0.38), rgb(255 122 92 / 0.4));
+  --ok: light-dark(#0a7350, #4fd4a4); /* covered / measured */
+  --ok-soft: light-dark(#dcefe5, rgb(79 212 164 / 0.12));
+  --ok-line: light-dark(rgb(10 115 80 / 0.38), rgb(79 212 164 / 0.38));
+  --idle: light-dark(#757983, #62738f);
+  /* Form validation only: rose, distinct from the risk colours. Text >=4.6:1, border >=3:1. */
+  --invalid: light-dark(#b4235f, #ff8fb8);
+  --invalid-soft: light-dark(#f8e1ea, rgb(255 143 184 / 0.1));
+
+  --focus: light-dark(#1f4fd6, #a9c4ff);
+  --selection: light-dark(rgb(31 79 214 / 0.18), rgb(126 166 255 / 0.3));
+  --scrim: light-dark(rgb(20 18 12 / 0.3), rgb(0 2 6 / 0.62));
+
+  /* Height of a sticky bottom action bar; pages that have one set html[data-sticky-action]. */
+  --sticky-action-h: 5rem;
+
+  /* ---------- Type ---------- */
+  /* Families (--font-display, --font-sans, --font-mono) and radii/easings live in the
+     @theme block of app/globals.css so Tailwind and CSS share one definition. */
+
+  /* Fluid scale (390px -> 1440px). Line-height and tracking tighten as size grows. */
+  --fs-display-xl: clamp(3.25rem, 1.4rem + 7.6vw, 8.25rem);
+  --fs-display-l: clamp(2.5rem, 1.45rem + 4.3vw, 5.25rem);
+  --fs-display-m: clamp(2rem, 1.4rem + 2.5vw, 3.5rem);
+  --fs-headline: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --fs-title: clamp(1.1875rem, 1.1rem + 0.35vw, 1.4375rem);
+  --fs-body-l: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-body-s: 0.875rem;
+  --fs-caption: 0.8125rem;
+  --fs-label: 0.6875rem;
+  --fs-data: 0.875rem;
+  --fs-data-l: clamp(2.25rem, 1.7rem + 2.2vw, 3.75rem);
+
+  /* ---------- Space (4-pt base) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  --section-y: clamp(4rem, 2.5rem + 6vw, 9rem); /* vertical rhythm between page sections */
+  --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem); /* page side padding */
+
+  /* ---------- Fidelity ---------- */
+  --hairline: 1px; /* 0.5px on 2x+ screens (below): crisp single-device-pixel rules */
+
+  /* ---------- Layout ---------- */
+  --container-prose: 42rem;
+  --container-narrow: 56rem;
+  --container-default: 76rem;
+  --container-wide: 90rem;
+  --nav-h: 3.5rem;
+
+  --radius-pill: 999px;
+
+  /* ---------- Elevation (offset + soft blur) and glow ---------- */
+  --elev-1: 0 1px 2px light-dark(rgb(10 18 32 / 0.06), rgb(0 0 0 / 0.4));
+  --elev-2: 0 1px 2px light-dark(rgb(10 18 32 / 0.05), rgb(0 0 0 / 0.35)),
+    0 6px 16px -4px light-dark(rgb(10 18 32 / 0.08), rgb(0 0 0 / 0.45));
+  --elev-3: 0 2px 4px light-dark(rgb(10 18 32 / 0.05), rgb(0 0 0 / 0.35)),
+    0 18px 40px -12px light-dark(rgb(10 18 32 / 0.16), rgb(0 0 0 / 0.6));
+  --elev-4: 0 4px 8px light-dark(rgb(10 18 32 / 0.06), rgb(0 0 0 / 0.4)),
+    0 40px 80px -24px light-dark(rgb(10 18 32 / 0.24), rgb(0 0 0 / 0.75));
+  --glow-1: 0 0 0 1px var(--accent-line), 0 4px 18px -6px var(--accent-glow);
+  --glow-2: 0 0 0 1px var(--accent-line), 0 8px 40px -8px var(--accent-glow);
+  --glow-3: 0 0 120px 10px var(--accent-glow);
+  --inner-highlight: inset 0 1px 0 var(--glass-highlight);
+
+  /* ---------- Motion ---------- */
+  --dur-instant: 100ms; /* press feedback */
+  --dur-fast: 160ms; /* hover, colour, small toggles */
+  --dur-base: 240ms; /* menus, tooltips, tabs */
+  --dur-slow: 420ms; /* sheets, panels */
+  --dur-reveal: 900ms; /* scroll reveals, hero entrance */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Critically damped spring (damping 1.0), sampled. Pair with --spring-dur-*. */
+  --spring: linear(0, 0.0376, 0.1238, 0.2307, 0.3416, 0.4471, 0.5424, 0.6256, 0.6966, 0.7561, 0.8052, 0.8453, 0.8777, 0.9038, 0.9246, 0.9411, 0.9541, 0.9643, 0.9724, 0.9786, 0.9835, 0.9873, 0.9902, 0.9925, 0.9942, 0.9956, 0.9966, 0.9974, 1);
+  --spring-dur-snappy: 400ms; /* response 0.3 */
+  --spring-dur-smooth: 600ms; /* response 0.45 */
+  /* Under-damped (damping 0.8, response 0.4): only after a momentum gesture. */
+  --spring-bounce: linear(0, 0.0128, 0.0467, 0.096, 0.1559, 0.2224, 0.2923, 0.3631, 0.4329, 0.5002, 0.5639, 0.6233, 0.678, 0.7278, 0.7725, 0.8123, 0.8474, 0.8779, 0.9043, 0.9268, 0.9458, 0.9617, 0.9748, 0.9855, 0.994, 1.0006, 1.0057, 1.0094, 1.0121, 1.0138, 1.0148, 1.0151, 1.0151, 1.0146, 1.014, 1.0131, 1.0121, 1.0111, 1.01, 1.0089, 1.0079, 1.0069, 1.006, 1.0051, 1.0044, 1.0037, 1.003, 1.0025, 1);
+  --spring-dur-bounce: 520ms;
+
+  /* ---------- Z layers ---------- */
+  --z-raised: 10;
+  --z-sticky: 40;
+  --z-nav: 50;
+  --z-overlay: 60;
+  --z-tooltip: 70;
+
+  /* ---------- Legacy aliases (pre-redesign names; existing pages use these) ---------- */
+  --paper: var(--bg);
+  --surface: var(--surface-1);
+  --ink: var(--text-1);
+  --muted: var(--text-2);
+  --rule: var(--border);
+  --rule-strong: var(--border-strong);
+  --flame: var(--accent);
+  --flame-ink: var(--accent-ink);
+  --flame-soft: var(--accent-soft);
+  --amber: var(--warn);
+  --amber-soft: var(--warn-soft);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+@media (min-resolution: 2dppx) {
+  :root,
+  [data-theme] {
+    --hairline: 0.5px;
+  }
+}
+
+/* Users who ask for less transparency get solid chrome. */
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  [data-theme] {
+    --glass-bg: var(--surface-1);
+    --glass-bg-strong: var(--surface-1);
+    --glass-blur: 0px;
+  }
+}
+
+/* Users who ask for more contrast get firmer lines and text. */
+@media (prefers-contrast: more) {
+  :root,
+  [data-theme] {
+    --border: var(--border-strong);
+    --text-3: var(--text-2);
+    --glass-bg: var(--surface-1);
+    --glass-bg-strong: var(--surface-1);
+  }
+}
+
+/* Print is always the light "paper" theme on white. */
+@media print {
+  :root,
+  [data-theme] {
+    color-scheme: light !important;
+    --bg: #ffffff;
+    --surface-1: #ffffff;
+    --text-1: #000000;
+    --text-2: #333d4c;
+    --text-3: #4a5466;
+    --accent: #1a45bd;
+    --bg-deep: #ffffff;
+    --surface-2: #ffffff;
+    --surface-3: #ffffff;
+    --accent-glow: transparent;
+    --elev-1: none;
+    --elev-2: none;
+    --elev-3: none;
+    --elev-4: none;
+    --glow-1: none;
+    --glow-2: none;
+    --glow-3: none;
+  }
+}

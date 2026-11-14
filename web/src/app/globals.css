@@ -1,26 +1,275 @@
 @import "tailwindcss";
 
+/*
+ * HALO design tokens. One cool accent (flame blue, the colour of a
+ * microgravity flame) and one warm signal (amber) reserved for warnings.
+ * Light tokens are the print tokens: the Fire Brief prints on white.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #f4f6f8;
+  --surface: #ffffff;
+  --ink: #0d1b2a;
+  --muted: #4a5868;
+  --rule: #d3dbe3;
+  --rule-strong: #7d8a97;
+  --flame: #2453d0;
+  --flame-ink: #ffffff;
+  --flame-soft: #e5ecfb;
+  --flame-glow: 36 83 208;
+  --amber: #8f5300;
+  --amber-soft: #fbefdc;
+  --focus: #2453d0;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #070f19;
+    --surface: #0e1a28;
+    --ink: #e4eaf1;
+    --muted: #97a6b6;
+    --rule: #22334a;
+    --rule-strong: #5a7192;
+    --flame: #86a8ff;
+    --flame-ink: #07101d;
+    --flame-soft: #14264a;
+    --flame-glow: 120 160 255;
+    --amber: #f0b052;
+    --amber-soft: #2e2110;
+    --focus: #9db9ff;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-flame: var(--flame);
+  --color-flame-ink: var(--flame-ink);
+  --color-flame-soft: var(--flame-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+/* Data numerals line up in columns everywhere. */
+.num,
+input[type="number"],
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--flame-soft);
+}
+
+/* Expanded width, used for the wordmark and section titles. */
+.wide {
+  font-variation-settings: "wdth" 125;
+}
+.narrow {
+  font-variation-settings: "wdth" 88;
+}
+
+/* ---------- Wordmark: the O carries a soft blue halo ---------- */
+.wordmark {
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+}
+.wordmark-o {
+  position: relative;
+  display: inline-block;
+}
+.wordmark-o::before,
+.wordmark-o::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  border-radius: 50%;
+  pointer-events: none;
+  translate: -50% -50%;
+}
+.wordmark-o::before {
+  width: 1.32em;
+  height: 1.32em;
+  background: radial-gradient(
+    circle,
+    rgb(var(--flame-glow) / 0) 38%,
+    rgb(var(--flame-glow) / 0.22) 52%,
+    rgb(var(--flame-glow) / 0.08) 62%,
+    rgb(var(--flame-glow) / 0) 71%
+  );
+  z-index: -1;
+}
+.wordmark-o::after {
+  width: 1.5em;
+  height: 1.5em;
+  border: 1px solid rgb(var(--flame-glow) / 0.28);
+  box-shadow: 0 0 0 0.12em rgb(var(--flame-glow) / 0.05);
+  z-index: -1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wordmark-o::before,
+  .wordmark-o::after {
+    animation: halo-in 1400ms var(--ease-out) both;
+  }
+  .wordmark-o::after {
+    animation-delay: 160ms;
+  }
+}
+@keyframes halo-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* ---------- Form controls ---------- */
+input[type="range"] {
+  accent-color: var(--flame);
+}
+input[type="checkbox"] {
+  accent-color: var(--flame);
+}
+
+.field-input {
+  width: 100%;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.625rem;
+  font-size: 1rem;
+}
+.field-input:hover {
+  border-color: var(--muted);
+}
+.field-input[aria-invalid="true"] {
+  border-color: var(--amber);
+  box-shadow: inset 0 0 0 1px var(--amber);
+}
+
+/* Chip = a real checkbox + label; the box is visually hidden but focusable. */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  padding: 0.375rem 0.875rem 0.375rem 0.625rem;
+  background: var(--surface);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+.chip input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.chip-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule-strong);
+  transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+.chip:hover {
+  border-color: var(--muted);
+}
+.chip:has(input:checked) {
+  background: var(--flame-soft);
+  border-color: var(--flame);
+}
+.chip:has(input:checked) .chip-dot {
+  background: var(--flame);
+  border-color: var(--flame);
+}
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+/* ---------- Print: the brief prints on white with light tokens ---------- */
+@media print {
+  :root {
+    --paper: #ffffff;
+    --surface: #ffffff;
+    --ink: #000000;
+    --muted: #333d47;
+    --rule: #b9c2cb;
+    --rule-strong: #7d8a97;
+    --flame: #1d45b0;
+    --flame-soft: #eef2fc;
+    --amber: #7a4600;
+    --amber-soft: #fbf3e6;
+    color-scheme: light;
+  }
+  html,
+  body {
+    background: #ffffff;
+    font-size: 10.5pt;
+  }
+  .no-print {
+    display: none !important;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  section,
+  figure,
+  table {
+    break-inside: avoid;
+  }
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
 }

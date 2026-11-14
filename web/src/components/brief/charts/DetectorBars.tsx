@@ -66,11 +66,12 @@ export function DetectorBars({ rows, initial }: { rows: DetectorRow[]; initial: 
                   <span className="num font-mono text-fg-2">{c.runs}</span>
                   <span className="sr-only"> runs caught</span>
                   {c.cite && (
-                    <sup className="ml-0.5">
-                      <a href={`#cite-${c.cite}`} aria-label={`source ${c.cite}`} className="num font-mono text-[0.7rem] text-accent">
-                        {c.cite}
+                    <>
+                      {"\u2009"}
+                      <a href={`#cite-${c.cite}`} aria-label={`source ${c.cite}`} className="num font-mono text-[0.75rem] text-accent hover:underline">
+                        [{c.cite}]
                       </a>
-                    </sup>
+                    </>
                   )}
                 </span>
               </div>
@@ -100,8 +101,8 @@ export function DetectorBars({ rows, initial }: { rows: DetectorRow[]; initial: 
                   <span className="num">{c.caught}</span> of <span className="num">{c.runs}</span> runs caught
                 </span>
                 {miss ? (
-                  <span className="inline-flex items-center gap-1.5 font-semibold text-warn">
-                    <StatusLight status="warn" label="Caution" hideLabel />
+                  <span className="inline-flex items-center gap-1.5 font-semibold text-crit">
+                    <StatusLight status="crit" label="Critical" hideLabel />
                     would likely miss
                   </span>
                 ) : (

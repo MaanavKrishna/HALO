@@ -44,6 +44,7 @@ const P_PER_D = 3;
 // The box is drawn up to 40% O2 and down to 5 psia (plotting extent, not a limit from the challenge).
 const ENVELOPE = { o2: [PRESETS.moon.o2Pct, 40], p: [5, PRESETS.moon.pressurePsia] } as const;
 const MONO = "var(--font-mono)";
+const ordered = [3, 2, 1, 0]; // draw gas first, solids last (on top)
 
 function Marker({ cls, x, y, size = 1 }: { cls: ChartClass; x: number; y: number; size?: number }) {
   switch (cls) {
@@ -160,7 +161,6 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
     ? "Habitat"
     : `${habitat.name.length > 22 ? "Habitat" : habitat.name}${solidAtHabitat ? ` · ${nearestSolid!.acronym} ${nearestSolid!.label}` : ""}`;
 
-  const ordered = [3, 2, 1, 0]; // draw gas first, solids last (on top)
 
   // Pointer: the nearest visible mark within reach of the cursor.
   const onMove = (e: PointerEvent<SVGSVGElement>) => {
@@ -217,6 +217,20 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
     ? `${tipInfo.acronym}, ${CLASS_NAME[tipInfo.cls].toLowerCase()}: ${tipInfo.fuel}. ${tipInfo.o2}% O2, ${tipInfo.p} psia` +
       `${tipInfo.n > 1 ? `, ${tipInfo.n} tests at this point` : ""}. Evidence distance ${tipInfo.d.toFixed(2)} from your habitat.`
     : "";
+
+  // The ~600 marks only change with the data, the size or the class toggles, not on hover or keyboard steps.
+  const markers = useMemo(
+    () =>
+      ordered.map((ci) =>
+        hidden.has(CLASSES[ci]) ? null : (
+          <g key={ci} data-class={CLASSES[ci]}>
+            {points.map((pt, i) => (pt[2] === ci ? <Marker key={i} cls={CLASSES[ci]} x={sx(pt[0])} y={sy(pt[1])} /> : null))}
+          </g>
+        ),
+      ),
+    // sx/sy are derived from width, height and the habitat's O2 (axis start and break column).
+    [points, hidden, width, height, habitat.o2],
+  );
 
   // Ring geometry, shared by the ellipses, ticks and labels.
   const rings = RINGS.map((r) => ({ ...r, rx: r.d * O2_PER_D * kx, ry: r.d * P_PER_D * ky }));
@@ -389,13 +403,7 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
 
           {/* tests */}
           <g aria-hidden="true" clipPath={`url(#${clipMain})`}>
-            {ordered.map((ci) =>
-              hidden.has(CLASSES[ci]) ? null : (
-                <g key={ci} data-class={CLASSES[ci]}>
-                  {points.map((pt, i) => (pt[2] === ci ? <Marker key={i} cls={CLASSES[ci]} x={sx(pt[0])} y={sy(pt[1])} /> : null))}
-                </g>
-              ),
-            )}
+            {markers}
           </g>
 
           {/* Ring labels on the 45° radial, as on the dial, drawn above the points. */}

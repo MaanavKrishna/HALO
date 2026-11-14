@@ -81,10 +81,10 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
         ) : (
           <Narrative text={text} live={live} facts={facts} root={root} />
         )}
-        <p role="status" aria-live="polite" className="sr-only">
-          {loading ? "Generating SI narration…" : live ? "SI narration ready." : ""}
-        </p>
       </div>
+      <p role="status" aria-live="polite" className="sr-only">
+        {loading ? "Generating SI narration…" : live ? "SI narration ready." : ""}
+      </p>
 
       {state.mode !== "live" && state.notice && (
         <div className="px-4 pb-5 sm:px-6" data-fallback-notice>
@@ -158,27 +158,52 @@ function Narrative({
   facts: Record<string, FactRef>;
   root: React.RefObject<HTMLDivElement | null>;
 }) {
-  const known = (id: string) => id in facts;
+  const known = (id: string) => Object.hasOwn(facts, id);
   return (
     <div className="flex max-w-[68ch] flex-col gap-3.5 text-[1.0625rem] leading-[1.65] text-fg">
+      {/* One spoken disclosure for the whole SI narration; the per-sentence chips are visual. */}
+      {live && <p className="sr-only">The following narration is SI-generated from the cited facts; numbers come only from those facts.</p>}
       {paragraphs(text).map((sentences, pi) => (
         <p key={pi} className={cx("text-pretty", pi > 0 && "text-fg-2")}>
-          {sentences.map((s, si) => (
-            <span key={si}>
-              {live && <SiChip className="mr-1" />}
-              {splitCitations(s, known).map((part, k) =>
-                part.type === "text" ? (
-                  <span key={k}>{part.value}</span>
-                ) : (
-                  <FactButton key={k} id={part.id} fact={facts[part.id]} root={root} />
-                ),
-              )}{" "}
-            </span>
-          ))}
+          {sentences.map((s, si) => {
+            const parts = splitCitations(s, known);
+            const prose = parts.map((p) => (p.type === "text" ? p.value : "")).join("");
+            return (
+              <span key={si}>
+                {live && (
+                  <span aria-hidden="true" data-si-chip>
+                    <SiChip className="mr-1" />
+                  </span>
+                )}
+                {parts.map((part, k) =>
+                  part.type === "text" ? (
+                    <span key={k}>{part.value}</span>
+                  ) : (
+                    <FactButton
+                      key={k}
+                      id={part.id}
+                      fact={facts[part.id]}
+                      root={root}
+                      // The value is already in the sentence: the chip shows only its source number.
+                      compact={facts[part.id].value !== null && valueInText(prose, facts[part.id].value as string)}
+                    />
+                  ),
+                )}{" "}
+              </span>
+            );
+          })}
         </p>
       ))}
     </div>
   );
+}
+
+/** Whether a fact's value (number, with or without its unit) already appears in the sentence. */
+function valueInText(text: string, value: string): boolean {
+  const num = value.match(/^-?[\d.]+/)?.[0];
+  if (!num) return false;
+  const re = new RegExp(`(^|[^\\d.])${num.replace(/\./g, "\\.")}(?![\\d])`);
+  return re.test(text);
 }
 
 /** Find the first visible element showing this fact outside the panel, or its source entry. */
@@ -191,7 +216,17 @@ function targetFor(id: string, n: number | null, root: HTMLElement | null): HTML
   return n ? document.getElementById(`cite-${n}`) : null;
 }
 
-function FactButton({ id, fact, root }: { id: string; fact: FactRef; root: React.RefObject<HTMLDivElement | null> }) {
+function FactButton({
+  id,
+  fact,
+  root,
+  compact = false,
+}: {
+  id: string;
+  fact: FactRef;
+  root: React.RefObject<HTMLDivElement | null>;
+  compact?: boolean;
+}) {
   function go() {
     const el = targetFor(id, fact.n, root.current);
     if (!el) return;
@@ -213,15 +248,17 @@ function FactButton({ id, fact, root }: { id: string; fact: FactRef; root: React
       className="mx-0.5 inline-flex h-6 max-w-[16rem] translate-y-[-0.1em] items-center gap-1 whitespace-nowrap rounded-[var(--radius-pill)] border border-accent-line bg-accent-soft px-2 align-middle font-mono text-[0.75rem] text-fg transition-[background-color,border-color,scale] duration-[var(--dur-fast)] hover:border-accent active:scale-[0.97]"
     >
       <span className="sr-only">Show fact: {fact.label}, </span>
-      <span aria-hidden="true" className="truncate">
-        {fact.value ?? fact.label}
-      </span>
+      {!compact && (
+        <span aria-hidden="true" className="fact-chip-value truncate">
+          {fact.value ?? fact.label}
+        </span>
+      )}
       {fact.n && (
-        <span aria-hidden="true" className="text-fg-3">
+        <span aria-hidden="true" className={compact ? "text-accent" : "text-fg-3"}>
           [{fact.n}]
         </span>
       )}
-      <BriefIcon name="jump" size={11} className="shrink-0 text-accent" />
+      <BriefIcon name="jump" size={11} className="chip-jump shrink-0 text-accent" />
     </button>
   );
 }

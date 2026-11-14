@@ -35,15 +35,9 @@ export function NextTestCard({ brief }: { brief: Brief }) {
       kicker="Computed by searching candidate conditions for the single new test that shrinks the evidence distance most across the reference habitats."
     >
       <Panel label="Run next · computed" meta={<ProvenanceBadge provenance="model" />} data-next-test data-print-keep="" bodyClassName="p-5 sm:p-7">
-        <p className="type-headline text-balance text-fg">
-          {CLASS_LABEL[best.fuelClass]} at{" "}
-          <span className="font-mono tracking-[-0.03em]">
-            <Num brief={brief} id={nextId(0, "oxygen")} cite={false} />
-          </span>{" "}
-          O<sub>2</sub>,{" "}
-          <span className="font-mono tracking-[-0.03em]">
-            <Num brief={brief} id={nextId(0, "pressure")} />
-          </span>
+        <p className="type-headline text-balance tabular-nums text-fg">
+          {CLASS_LABEL[best.fuelClass]} at <Num brief={brief} id={nextId(0, "oxygen")} cite={false} /> O<sub>2</sub>,{" "}
+          <Num brief={brief} id={nextId(0, "pressure")} />
         </p>
 
         <h3 className="type-label mt-8 text-fg-3">Evidence distance for each reference habitat</h3>

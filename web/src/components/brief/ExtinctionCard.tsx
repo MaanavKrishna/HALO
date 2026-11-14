@@ -100,7 +100,7 @@ export function ExtinctionCard({ brief }: { brief: Brief }) {
         <CurveTable brief={brief} />
       </details>
       <div className="print-only hidden">
-        <CurveTable brief={brief} />
+        <CurveTable brief={brief} compact />
       </div>
     </Section>
   );
@@ -109,8 +109,10 @@ export function ExtinctionCard({ brief }: { brief: Brief }) {
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 
 /** Text alternative to the curve: the model at every 5 O2-points, plus the habitat. */
-function CurveTable({ brief }: { brief: Brief }) {
-  const rows = brief.extinction.curve.filter((c) => Number.isInteger(c.o2) && c.o2 % 5 === 0);
+function CurveTable({ brief, compact = false }: { brief: Brief; compact?: boolean }) {
+  // Print keeps the habitat row and every 10 O2-points; the screen table every 5.
+  const step = compact ? 10 : 5;
+  const rows = brief.extinction.curve.filter((c) => Number.isInteger(c.o2) && c.o2 % step === 0);
   return (
     <TableFrame caption="Chance a droplet flame goes out on its own, by O2 (model)" className="mt-3">
       <THead>

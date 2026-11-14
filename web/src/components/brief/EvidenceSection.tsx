@@ -36,7 +36,7 @@ function chartProps(brief: Brief): HaloChartProps {
   }
 
   const classCounts = Object.fromEntries(
-    CLASS_ORDER.map((c) => [c, HALO_DATA.tests.filter((t) => t.fuelClass === c).length]),
+    CLASS_ORDER.map((c) => [c, plotted.filter((t) => t.fuelClass === c).length]),
   ) as Record<FuelClass, number>;
 
   const s = brief.byClass.solid;

@@ -44,7 +44,6 @@ export function RankedList({ brief }: { brief: Brief }) {
   return (
     <Section
       id="ranked"
-      
       title="Most relevant investigations"
       kicker="Ranked for this habitat by a transparent weighted score: closeness to your atmosphere, fuel match, hazards covered and size of the evidence base."
     >

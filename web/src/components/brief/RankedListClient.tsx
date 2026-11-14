@@ -116,8 +116,11 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
                   {it.acronym}
                   {it.title !== it.acronym && <span className="mt-0.5 block text-[0.9375rem] font-normal text-fg-2">{it.title}</span>}
                 </h3>
-                <div className="md:pt-1.5" aria-hidden="true">
-                  <div className="relevance-meter flex h-2 w-full gap-px overflow-hidden rounded-full bg-surface-2">
+                <div className="md:pt-1.5">
+                  <p className="sr-only">
+                    Score parts: {KEYS.map(({ k, label }) => `${label.toLowerCase()} ${(w[k] * it.parts[k]).toFixed(2)}`).join(", ")}.
+                  </p>
+                  <div aria-hidden="true" className="relevance-meter flex h-2 w-full gap-px overflow-hidden rounded-full bg-surface-2">
                     {KEYS.map(({ k }, j) => {
                       const part = (w[k] * it.parts[k]) / max;
                       return part > 0 ? (

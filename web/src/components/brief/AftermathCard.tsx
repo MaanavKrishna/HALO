@@ -47,7 +47,7 @@ export function AftermathCard({ brief }: { brief: Brief }) {
               <Stat
                 size="lg"
                 label="Toxic gases over crew limits"
-                value={<span className="num" data-fact={tox.id}>{String(tox.value)}</span>}
+                value={<span className="num" data-fact={tox.id}>~{String(tox.value)}</span>}
                 unit={
                   <>
                     {tox.unit}

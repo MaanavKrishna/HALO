@@ -16,7 +16,7 @@
   /* Chrome: nav, actions, sticky bar, interactive controls. */
   header.no-print,
   nav,
-  button:not(.legend-toggle),
+  button:not(.legend-toggle):not([data-fact-chip]),
   [data-actions],
   [data-brief-bar],
   details.weights,
@@ -48,7 +48,7 @@
   }
   /* Hero prints as a compact paper header: no well, no grid, no dial. */
   .brief-hero {
-    background: #ffffff !important;
+    background: var(--surface-1) !important;
     border-bottom: 1.5pt solid var(--text-1) !important;
   }
   .brief-hero > .container-page {
@@ -107,14 +107,14 @@
   .brief-section-head p {
     display: none;
   }
-  /* Keep cards, rows and figures whole. */
+  /* Keep cards, rows and figures whole (list items in general may break). */
   .flag-card,
   [data-nearest],
   .ranked-item,
   .grade-panel,
   [data-print-keep],
   figure,
-  li,
+  .detector-bars li,
   tr {
     break-inside: avoid;
   }
@@ -133,7 +133,10 @@
     filter: none !important;
   }
   .halo-chart svg {
-    max-height: 120mm;
+    max-height: 95mm;
+  }
+  .extinction-curve svg {
+    max-height: 70mm;
   }
   .halo-chart .halo-ring,
   .halo-chart .halo-dial {
@@ -144,9 +147,38 @@
   .halo-chart [data-draw] .halo-ring {
     stroke-dasharray: none !important;
   }
-  /* Ask HALO prints its narrative only. */
-  [data-ask] form {
+  /* Ask HALO prints only a live SI narration (the precomputed one repeats the flags). */
+  #explain:not(:has([data-ask][data-state="live"])) {
     display: none !important;
+  }
+  [data-ask] form,
+  [data-ask] [data-fallback-notice] {
+    display: none !important;
+  }
+  /* Fact chips print as plain "value [n]". */
+  [data-fact-chip] {
+    border: 0 !important;
+    background: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    font-size: inherit !important;
+  }
+  [data-fact-chip] .chip-jump {
+    display: none !important;
+  }
+  /* Sources: smaller, in two columns. */
+  .citations {
+    display: block !important;
+    columns: 2;
+    column-gap: 6mm;
+    font-size: 8pt;
+    border: 0 !important;
+  }
+  .citations > li {
+    break-inside: avoid;
+    padding: 1.2mm 0 !important;
+    grid-template-columns: 7mm minmax(0, 1fr) !important;
+    border-top: 0 !important;
   }
   /* The sources list prints each link's full URL after it. */
   .citations a.cite-link[href^="http"]::after {

@@ -20,8 +20,9 @@ import "./brief.css";
 import "./print.css";
 
 export const metadata: Metadata = {
-  title: "Fire Brief · HALO",
+  title: "Fire Brief",
   description: "A cited fire-safety evidence brief for a habitat atmosphere, from NASA microgravity combustion data.",
+  alternates: { canonical: "/brief" },
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

@@ -3,19 +3,24 @@ import { cx } from "@/components/ui/cx";
 import { briefContext } from "@/lib/brief/context";
 import type { Brief, Fact } from "@/lib/engine/types";
 
-/** Superscript link to a numbered source in the citation list. */
+/**
+ * Link to a numbered source in the citation list, as a mono "[n]" on the
+ * baseline (a thin space before it), so it never reads as an exponent after a
+ * number or unit.
+ */
 export function CiteMark({ n }: { n: number | undefined }) {
   if (!n) return null;
   return (
-    <sup className="cite-ref ml-[0.15em]">
+    <span className="cite-ref whitespace-nowrap">
+      {"\u2009"}
       <a
         href={`#cite-${n}`}
         aria-label={`source ${n}`}
-        className="num rounded-[2px] font-mono text-[0.68em] font-medium text-accent no-underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus)]"
+        className="num rounded-[2px] font-mono text-[0.72em] font-normal tracking-normal text-accent no-underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus)]"
       >
-        {n}
+        [{n}]
       </a>
-    </sup>
+    </span>
   );
 }
 

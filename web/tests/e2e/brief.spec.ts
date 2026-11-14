@@ -88,14 +88,36 @@ test("Ask HALO keeps the precomputed narrative when the request fails", async ({
   await expect(panel).toContainText("Evidence grade D.");
 });
 
-test("print media hides the nav, the sticky bar and the Ask HALO form", async ({ page }) => {
+test("print media hides the nav, the sticky bar and the precomputed Ask HALO panel", async ({ page }) => {
   await page.goto(briefUrl("artemis"));
   await page.emulateMedia({ media: "print" });
   await expect(page.getByRole("navigation", { name: "Main" })).toBeHidden();
   await expect(page.locator("[data-brief-bar]")).toBeHidden();
-  await expect(page.locator("[data-ask] form")).toBeHidden();
-  await expect(page.locator("[data-ask] [data-narrative]")).toBeVisible();
+  // The precomputed narrative repeats the flags, so it is left off paper.
+  await expect(page.locator("#explain")).toBeHidden();
   await expect(page.getByRole("heading", { level: 1, name: "Artemis Base" })).toBeVisible();
+});
+
+test("print keeps a live SI narration with its fact chips as plain citations", async ({ page }) => {
+  await page.route("**/api/explain", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(LIVE) }),
+  );
+  await page.goto(briefUrl("artemis"));
+  await page.locator("[data-ask]").getByRole("button", { name: "Generate SI narration" }).click();
+  await expect(page.locator("[data-ask]")).toHaveAttribute("data-state", "live");
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator("[data-ask] [data-narrative]")).toBeVisible();
+  await expect(page.locator("[data-ask] form")).toBeHidden();
+  const chip = page.locator('[data-fact-chip="cov-solid-distance"]');
+  await expect(chip).toBeVisible();
+  await expect(chip.locator(".chip-jump")).toBeHidden();
+});
+
+test("citation marks read as [n], never as superscripts", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const marks = page.locator('#detection a[aria-label^="source "]');
+  await expect(marks.first()).toHaveText(/^\[\d+\]$/);
+  expect(await page.locator("#main sup").count()).toBe(0);
 });
 
 test("the sticky brief bar appears once the hero scrolls away", async ({ page }) => {
@@ -108,6 +130,17 @@ test("the sticky brief bar appears once the hero scrolls away", async ({ page })
   await expect(bar.getByRole("button", { name: "Print" })).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect(bar).toHaveAttribute("data-visible", "false");
+});
+
+test("focus inside the sticky bar moves to the hero action when the bar hides", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const bar = page.locator("[data-brief-bar]");
+  await page.locator("#evidence").scrollIntoViewIfNeeded();
+  await expect(bar).toHaveAttribute("data-visible", "true");
+  await bar.getByRole("button", { name: "Print" }).focus();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(bar).toHaveAttribute("data-visible", "false");
+  await expect(page.getByRole("button", { name: "Print / Save PDF" })).toBeFocused();
 });
 
 test("EVA suit brief renders with its off-axis habitat column", async ({ page }) => {

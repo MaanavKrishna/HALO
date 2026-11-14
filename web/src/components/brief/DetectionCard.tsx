@@ -33,7 +33,7 @@ export function DetectionCard({ brief }: { brief: Brief }) {
       title="Would your smoke detector notice?"
       kicker="From SAME, which burned real spacecraft materials on the ISS and read smoke detectors at each run."
     >
-      <Panel label="Detector meters" meta={COMBOS_META} data-print-keep="">
+      <Panel label="Detector meters" meta={COMBOS_META}>
         {rows.length > 0 ? (
           <DetectorBars rows={rows} initial={initial} />
         ) : (

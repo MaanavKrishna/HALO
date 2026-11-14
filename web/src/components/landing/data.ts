@@ -5,6 +5,7 @@ import { buildBrief } from "@/lib/engine/brief";
 import { sensorWhatIf } from "@/lib/engine/detection";
 import { detectorSource } from "@/lib/engine/flags";
 import { GRADE_RINGS } from "@/lib/engine/grade";
+import { literatureInWindow, literatureWindowSentence } from "@/lib/engine/literatureWindow";
 import { PRESETS } from "@/lib/engine/presets";
 import type { FuelClass, Source } from "@/lib/engine/types";
 import { habitatToQuery } from "@/lib/engine/url";
@@ -27,6 +28,7 @@ const solids = D.tests.filter((t) => t.fuelClass === "solid");
 const richest = solids.reduce((a, b) => (b.o2Pct > a.o2Pct ? b : a));
 const moon = PRESETS.moon;
 const inMoon = D.tests.filter((t) => t.o2Pct >= moon.o2Pct && t.pressurePsia <= moon.pressurePsia);
+const litWindow = literatureInWindow(D, moon.o2Pct, moon.pressurePsia);
 const solidPressures = [...new Set(solids.map((t) => r1(t.pressurePsia)))];
 
 export const problem = {
@@ -44,6 +46,8 @@ export const problem = {
   /** Every real-solid test ran at this single pressure, when there is only one. */
   solidPressure: solidPressures.length === 1 ? solidPressures[0] : null,
   moonWindow: { o2: moon.o2Pct, p: moon.pressurePsia, tests: inMoon.length, solids: inMoon.filter((t) => t.fuelClass === "solid").length },
+  /** Real solids burned in the Moon envelope outside PSI (NASA reports); stated, never graded on. */
+  literature: litWindow ? { sentence: literatureWindowSentence(litWindow), url: litWindow.sourceUrls[0], runs: litWindow.rows.length, missions: litWindow.missions.join(", ") } : null,
   /** O2 of every real-solid test (rounded to 0.5 points), with counts, for the strip plot. */
   strip: Object.entries(
     solids.reduce<Record<string, number>>((acc, t) => {

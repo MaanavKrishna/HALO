@@ -6,6 +6,7 @@ import { scaledDistance } from "@/lib/engine/distance";
 import { extinctionAt } from "@/lib/engine/extinction";
 import { detectorSource } from "@/lib/engine/flags";
 import { GRADE_RINGS, classGrade } from "@/lib/engine/grade";
+import { literatureInWindow, literatureWindowSentence } from "@/lib/engine/literatureWindow";
 import { MATERIALS } from "@/lib/engine/materials";
 import { nextTests } from "@/lib/engine/nextTest";
 import { PRESETS } from "@/lib/engine/presets";
@@ -123,7 +124,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       title: `No real cabin solid in the PSI test rows was burned above ${fmt1(top.o2Pct)}% oxygen.`,
       stat: { value: fmt1(top.o2Pct), unit: "%", label: "Highest O2 any real solid burned at", detail: `${top.acronym}, ${top.fuel}` },
       second: { value: fmt1(artemis.o2Pct), unit: "%", label: `${artemis.name} atmosphere` },
-      provenance: uniq([top.o2Src, ...solids.map((t) => t.pSrc)]),
+      provenance: uniq<Provenance>([top.o2Src, ...solids.map((t) => t.pSrc), ...(litTop ? (["literature"] as const) : [])]),
       body: `Across ${solids.length} eligible solid-fuel test rows, oxygen spans ${fmt1(minSolid)} to ${fmt1(top.o2Pct)}%, ${seaLevel ? `all at ${solids.every((t) => t.pSrc === "assumed") ? "an assumed " : ""}sea-level cabin pressure` : `at ${fmt1(minSolidP)} psia and up`}. ${artemis.name} (${artemis.o2Pct}% O2, ${artemis.pressurePsia} psia) sits at evidence distance ${solidNear.d === null ? "n/a" : fmt2(solidNear.d)} from the nearest one${solidNear.d !== null && solidNear.d > GRADE_RINGS[GRADE_RINGS.length - 1] ? ", past the outermost grade ring" : ""}.${litTop ? ` Outside PSI, NASA reports describe Saffire burns up to ${fmt1(litTop.o2Pct as number)}% O2 (literature).` : ""}`,
       viz: {
         kind: "o2-range",
@@ -131,7 +132,10 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
         markers: [iss, moon, artemis].map((h) => ({ label: h.name, o2: h.o2Pct })),
         domain: [Math.min(15, Math.floor(minSolid / 5) * 5), 40],
       },
-      sources: uniq(solids.map((t) => t.psiId)).map((id) => datasetSource(data, id)),
+      sources: [
+        ...uniq(solids.map((t) => t.psiId)).map((id) => datasetSource(data, id)),
+        ...(litTop ? [{ label: `${litTop.mission} ${litTop.sampleId} (NASA report, literature)`, href: litTop.sourceUrl, detail: "Not a PSI test row; HALO does not grade on it" }] : []),
+      ],
       brief: briefLink(artemis, data),
     });
   }
@@ -146,20 +150,24 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     return { c, label: cap(rows.length ? `${CLASS_PLURAL[c]} (${acr.join(", ")})` : CLASS_PLURAL[c]), count: rows.length, provenance: (inferred ? "inferred" : "measured") as Provenance };
   });
   const realSolids = byClass("solid").length;
+  const lit = literatureInWindow(data, moon.o2Pct, moon.pressurePsia);
   const shown = parts.filter((p) => p.count > 0 || p.c === "solid");
   out.push({
     id: "moon-window",
     topic: "The Moon window",
-    title: `Inside the Moon window, ${realSolids === 0 ? "not one" : realSolids} of the ${win.length} eligible test rows ${realSolids === 0 || realSolids === 1 ? "is" : "are"} a real cabin solid.`,
-    stat: { value: String(realSolids), label: "Real cabin solids in the window" },
+    title: `Inside the Moon window, ${realSolids === 0 ? "not one" : realSolids} of the ${win.length} eligible PSI test rows ${realSolids === 0 || realSolids === 1 ? "is" : "are"} a real cabin solid.`,
+    stat: { value: String(realSolids), label: "PSI real-solid tests in the window" },
     second: { value: String(win.length), unit: "rows", label: `O2 ≥ ${moon.o2Pct}%, ≤ ${moon.pressurePsia} psia` },
-    provenance: uniq(shown.filter((p) => p.count > 0).map((p) => p.provenance)),
-    body: `The challenge's Moon envelope (at least ${moon.o2Pct}% O2 at no more than ${moon.pressurePsia} psia) holds ${shown
+    provenance: uniq<Provenance>([...shown.filter((p) => p.count > 0).map((p) => p.provenance), ...(lit ? (["literature"] as const) : [])]),
+    body: `In the PSI test rows, the challenge's Moon envelope (at least ${moon.o2Pct}% O2 at no more than ${moon.pressurePsia} psia) holds ${shown
       .filter((p) => p.count > 0)
       .map((p) => `${p.count} ${p.label.charAt(0).toLowerCase()}${p.label.slice(1)}`)
-      .join(" and ")}. Surrogate pressures are inferred from the test objective, not logged.`,
+      .join(" and ")}. Surrogate pressures are inferred from the test objective, not logged.${lit ? ` ${literatureWindowSentence(lit)}` : ""}`,
     viz: { kind: "breakdown", total: win.length, parts: shown.map(({ label, count, provenance }) => ({ label, count, provenance })) },
-    sources: uniq(win.map((t) => t.psiId)).map((id) => datasetSource(data, id)),
+    sources: [
+      ...uniq(win.map((t) => t.psiId)).map((id) => datasetSource(data, id)),
+      ...(lit ? lit.sourceUrls.map((url) => ({ label: `${lit.missions.join(", ")} (NASA report, literature)`, href: url, detail: `Samples ${lit.rows.map((r) => r.sampleId).join(", ")}; not PSI test rows` })) : []),
+    ],
     brief: briefLink(moon, data),
   });
 
@@ -185,7 +193,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       stat: { value: `${first.scatterLow}/${first.scatterRuns}`, label: `${MATERIALS[first.material as MaterialId].label} runs below the ${volts} V proxy` },
       second: blind[1] ? { value: `${blind[1].scatterLow}/${blind[1].scatterRuns}`, label: `${MATERIALS[blind[1].material as MaterialId].label} runs below the ${volts} V proxy` } : undefined,
       provenance: ["measured"],
-      body: `The ISS detector is certified in obscuration, not volts, so HALO treats a ${volts} V forward-scatter reading as the alarm point. ${finest} Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${(data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1)} atm); smoke behavior at habitat atmosphere is untested.`,
+      body: `The ISS detector is certified in obscuration, not volts, so HALO treats a ${volts} V forward-scatter reading as the alarm point. ${finest} Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${Number((data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1))} atm); smoke behavior at habitat atmosphere is untested.`,
       viz: { kind: "runs", rows: blind.map((d) => ({ label: MATERIALS[d.material as MaterialId].label, low: d.scatterLow, runs: d.scatterRuns })), threshold: data.detector.thresholds.scatterV.toFixed(1) },
       sources: [det.doi ? { label: `${det.note ?? "SAME"}: smoke aerosol measurement experiment`, href: doiHref(det.doi), detail: `NASA PSI ${det.psiId} dataset, doi:${det.doi}` } : { label: "SAME smoke detector runs", href: null }],
       brief: briefLink(iss, data),
@@ -276,6 +284,10 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   const [pick] = nextTests(data.tests);
   if (pick) {
     const helped = pick.gains.filter((g) => g.after < g.before).sort((a, b) => b.before - b.after - (a.before - a.after));
+    const litW = literatureInWindow(data, moon.o2Pct, moon.pressurePsia);
+    const litNear = litW
+      ? { ...litW, d: Math.min(...litW.rows.map((r) => scaledDistance(pick.o2Pct, pick.pressurePsia, r.o2Pct as number, r.pressurePsia as number))) }
+      : null;
     const pname = (k: string) => (PRESETS as Record<string, Habitat>)[k]?.name ?? k;
     const seen = new Set<string>();
     const pts = data.tests
@@ -288,15 +300,18 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     out.push({
       id: "next-test",
       topic: "Next test to fly",
-      title: `The single test that would close the most evidence gap: a real solid at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia.`,
+      title: `The single test that would close the most evidence gap: a PSI-archived real-solid test at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia${litNear ? ", near the Saffire VI conditions" : ""}.`,
       stat: { value: `${pick.o2Pct}`, unit: `% · ${pick.pressurePsia} psia`, label: "Suggested solid-fuel test" },
       second: helped[0] ? { value: fmt2(helped[0].after), unit: `from ${fmt2(helped[0].before)}`, label: `${pname(helped[0].preset)} evidence distance after` } : undefined,
-      provenance: ["model"],
+      provenance: litNear ? ["model", "literature"] : ["model"],
       body: `HALO scores every solid, droplet and gas test on a grid of atmospheres by how far it would pull the presets' nearest evidence in, weighted toward the lunar habitats and toward real solids. ${helped
         .map((g) => `${pname(g.preset)} ${fmt2(g.before)} → ${fmt2(g.after)}`)
-        .join("; ")}.`,
+        .join("; ")}.${litNear ? ` ${litNear.missions.join(", ")} burned ${litNear.materials.join(" and ")} at evidence distance ${fmt2(litNear.d)} from this point (literature), but those runs are not in PSI, so HALO cannot grade on them; a comparable test archived in PSI would.` : ""}`,
       viz: { kind: "next", tests: pts, pick: { o2: pick.o2Pct, p: pick.pressurePsia }, presets: [iss, moon, artemis].map((h) => ({ label: h.name, o2: h.o2Pct, p: h.pressurePsia })) },
-      sources: [{ label: "HALO next-test search (method)", href: "/method#next-test", detail: "Scores candidates over the eligible PSI test rows" }],
+      sources: [
+        { label: "HALO next-test search (method)", href: "/method#next-test", detail: "Scores candidates over the eligible PSI test rows" },
+        ...(litNear ? litNear.sourceUrls.map((url) => ({ label: `${litNear.missions.join(", ")} (NASA report, literature)`, href: url, detail: "Not PSI test rows; distance only, never graded" })) : []),
+      ],
       brief: briefLink(moon, data),
     });
   }

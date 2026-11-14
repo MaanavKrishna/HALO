@@ -23,7 +23,7 @@ describe('buildBrief (fixtures)', () => {
   it('builds Artemis with both criticals and at least 4 flags', () => {
     expect(b.flags.length).toBeGreaterThanOrEqual(4);
     const crit = b.flags.filter((f) => f.severity === 'critical').map((f) => f.title);
-    expect(crit).toContain('No real cabin material tested at this atmosphere');
+    expect(crit).toContain('No real cabin material in the PSI data tested at this atmosphere');
     expect(crit.some((t) => /^Your detector would likely miss .+ smoke$/.test(t))).toBe(true);
     expect(b.flags.map((f) => f.title)).toContain('Smoke data only exists at ISS air');
     expect(b.flags.map((f) => f.title)).toContain('No partial-gravity data in PSI');
@@ -54,7 +54,9 @@ describe('buildBrief (fixtures)', () => {
     const all = [...b.facts, ...b.aftermath, ...b.earth];
     for (const f of all) {
       expect(f.id).toMatch(/^[a-z-]+$/);
-      expect(f.source.psiId || f.source.doi || f.source.url, f.id).toBeTruthy();
+      // Habitat inputs are the user's own values: they cite the habitat definition note.
+      if (f.id.startsWith('habitat-')) expect(f.source.note, f.id).toMatch(/habitat definition/i);
+      else expect(f.source.psiId || f.source.doi || f.source.url, f.id).toBeTruthy();
     }
     expect(new Set(b.facts.map((f) => f.id)).size).toBe(b.facts.length);
   });
@@ -137,7 +139,7 @@ describe('buildBrief (fixtures)', () => {
   it('ISS has no solid critical and no ISS-air warning', () => {
     const i = buildBrief(PRESETS.iss, data);
     const titles = i.flags.map((f) => f.title);
-    expect(titles).not.toContain('No real cabin material tested at this atmosphere');
+    expect(titles).not.toContain('No real cabin material in the PSI data tested at this atmosphere');
     expect(titles).not.toContain('Smoke data only exists at ISS air');
     expect(titles).toContain('No partial-gravity data in PSI');
   });

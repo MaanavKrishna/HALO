@@ -16,7 +16,7 @@ export function ExtinctionCard({ brief }: { brief: Brief }) {
   const liquids = brief.habitat.liquids;
   const description =
     `Median chance that a ${v("ext-droplet-size")} mm droplet flame goes out on its own, from 0 to 100%, plotted against oxygen percent, ` +
-    `with a shaded 95% band from bootstrap fits. At your ${v("hab-oxygen")}% O2 the median is ${v("ext-probability")}% ` +
+    `with a shaded 95% band from bootstrap fits. At your ${v("habitat-oxygen")}% O2 the median is ${v("ext-probability")}% ` +
     `(range ${v("ext-probability-lo")} to ${v("ext-probability-hi")}%).`;
 
   return (
@@ -37,7 +37,7 @@ export function ExtinctionCard({ brief }: { brief: Brief }) {
             unit="%"
             detail={
               <>
-                at <Num brief={brief} id="hab-oxygen" cite={false} /> O<sub>2</sub>
+                at <Num brief={brief} id="habitat-oxygen" cite={false} /> O<sub>2</sub>
               </>
             }
           />
@@ -126,7 +126,7 @@ function CurveTable({ brief, compact = false }: { brief: Brief; compact?: boolea
       <TBody>
         <Tr className="bg-accent-soft">
           <Th scope="row" className="type-body-s normal-case tracking-normal text-fg shadow-none">
-            Your habitat (<Num brief={brief} id="hab-oxygen" cite={false} />)
+            Your habitat (<Num brief={brief} id="habitat-oxygen" cite={false} />)
           </Th>
           <Td numeric><Num brief={brief} id="ext-probability" cite={false} /></Td>
           <Td numeric><Num brief={brief} id="ext-probability-lo" cite={false} /></Td>

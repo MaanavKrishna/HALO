@@ -6,7 +6,18 @@ import { buildFlags, detectionFacts } from './flags';
 import { overallGrade } from './grade';
 import { nextTests } from './nextTest';
 import { rankInvestigations } from './rank';
-import type { Brief, Fact, Habitat, HaloData } from './types';
+import type { Brief, Fact, Habitat, HaloData, Source } from './types';
+
+export const HABITAT_SOURCE: Source = { note: 'Habitat definition from the brief URL' };
+
+/** The habitat's own inputs as Facts, so text describing the habitat cites habitat-* ids. */
+export function habitatFacts(h: Habitat): Fact[] {
+  return [
+    { id: 'habitat-oxygen', label: 'Habitat O2', value: h.o2Pct, unit: '%', provenance: 'assumed', source: HABITAT_SOURCE },
+    { id: 'habitat-pressure', label: 'Habitat total pressure', value: h.pressurePsia, unit: 'psia', provenance: 'assumed', source: HABITAT_SOURCE },
+    { id: 'habitat-flow', label: 'Habitat cabin air flow', value: h.flowCmS, unit: 'cm/s', provenance: 'assumed', source: HABITAT_SOURCE },
+  ];
+}
 
 export type { Brief };
 
@@ -33,6 +44,7 @@ export function buildBrief(h: Habitat, data: HaloData, notices: string[] = []): 
   const earth = EARTH_FACTS;
 
   const facts = uniqueFacts([
+    ...habitatFacts(h),
     ...detFacts,
     ...flagFacts,
     ...aftermath,

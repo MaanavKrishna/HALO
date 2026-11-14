@@ -17,8 +17,23 @@ describe.skipIf(!isReal)('real data: Artemis fire brief', () => {
   it('has at least 4 flags including both criticals', () => {
     expect(b.flags.length).toBeGreaterThanOrEqual(4);
     const crit = b.flags.filter((f) => f.severity === 'critical').map((f) => f.title);
-    expect(crit).toContain('No real cabin material tested at this atmosphere');
+    expect(crit).toContain('No real cabin material in the PSI data tested at this atmosphere');
     expect(crit.some((t) => /^Your detector would likely miss .+ smoke$/.test(t))).toBe(true);
+  });
+
+  it('scopes the no-solid flag to PSI and states the Saffire VI literature runs in the Moon envelope from data', () => {
+    const f = b.flags.find((x) => x.id === 'no-solid-evidence')!;
+    const rows = HALO_DATA.literature.filter(
+      (r) => r.o2Pct !== null && r.pressurePsia !== null && r.o2Pct >= PRESETS.moon.o2Pct && r.pressurePsia <= PRESETS.moon.pressurePsia,
+    );
+    expect(rows.length).toBeGreaterThan(0);
+    expect(f.detail).toMatch(/Saffire VI \(NASA reports, literature\) burned SIBAL and PMMA/);
+    expect(f.detail).toContain('not in PSI, so HALO does not grade on them');
+    const low = b.facts.find((x) => x.id === 'lit-window-oxygen-low')!;
+    expect(low.provenance).toBe('literature');
+    expect(low.source.url).toMatch(/^https:\/\/ntrs\.nasa\.gov\//);
+    expect(low.value).toBe(Math.min(...rows.map((r) => r.o2Pct as number)));
+    expect(f.factIds).toEqual(expect.arrayContaining(['lit-window-oxygen-low', 'lit-window-oxygen-high', 'lit-window-pressure']));
   });
   it('every flag factId resolves', () => {
     const ids = new Set(b.facts.map((f) => f.id));

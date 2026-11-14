@@ -123,10 +123,10 @@ export function BriefHeader({ brief }: { brief: Brief }) {
             )}
 
             <StatGroup className="order-5 lg:order-none sm:grid-cols-4 [&>div]:p-4 sm:[&>div]:p-5">
-              <Readout brief={brief} id="hab-oxygen" label={<>Oxygen O<sub>2</sub></>} />
-              <Readout brief={brief} id="hab-pressure" label="Pressure" />
-              <Readout brief={brief} id="hab-oxygen-partial-pressure" label={<>ppO<sub>2</sub></>} />
-              <Readout brief={brief} id="hab-flow" label="Air flow" />
+              <Readout brief={brief} id="habitat-oxygen" label={<>Oxygen O<sub>2</sub></>} />
+              <Readout brief={brief} id="habitat-pressure" label="Pressure" />
+              <Readout brief={brief} id="habitat-oxygen-partial-pressure" label={<>ppO<sub>2</sub></>} />
+              <Readout brief={brief} id="habitat-flow" label="Air flow" />
             </StatGroup>
 
             <dl className="order-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm lg:order-none">

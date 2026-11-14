@@ -1,3 +1,4 @@
+import { literatureInWindow, literatureWindowSentence } from './literatureWindow';
 import { MATERIALS } from './materials';
 import type { DetectionResult, ExtinctionResult, Fact, Flag, FuelClass, Habitat, HaloData, Nearest, Source } from './types';
 
@@ -31,6 +32,14 @@ export function detectorSource(data: HaloData): Source {
     data.investigations.find((i) => i.acronym.trim().toUpperCase() === 'SAME') ??
     data.investigations.find((i) => i.hazards.includes('smoke_detection'));
   return inv ? { psiId: inv.psiId, doi: inv.datasetDoi, note: inv.acronym } : { note: 'SAME smoke detector runs' };
+}
+
+/** The 2.0 V scatter level is an assumed alarm proxy for an ISS-style photoelectric detector, not a logged alarm. */
+export function scatterThresholdFact(data: HaloData): Fact {
+  return {
+    id: 'det-scatter-threshold', label: 'Scatter alarm proxy (photoelectric, assumed)', value: data.detector.thresholds.scatterV,
+    unit: 'V', provenance: 'assumed', source: detectorSource(data),
+  };
 }
 
 const comboKey = (detectors: string[]) => [...detectors].sort().join('-');
@@ -71,9 +80,14 @@ export function buildFlags(
   const flags: Flag[] = [];
   const facts: Fact[] = [];
 
-  // critical: no real cabin material tested at this atmosphere
+  // critical: no real cabin material in the PSI data tested at this atmosphere
   const solid = byClass.solid;
   if (solid.d === null || solid.d > SOLID_C_LIMIT) {
+    // Real solids burned near here outside PSI (Saffire VI, NASA reports): stated, never graded on.
+    const lit = literatureInWindow(data);
+    const litText = lit ? ` ${literatureWindowSentence(lit)}` : '';
+    const litIds = lit ? lit.facts.map((f) => f.id) : [];
+    if (lit) facts.push(...lit.facts);
     const count: Fact = {
       id: 'cov-solid-count', label: 'Eligible solid-fuel tests', provenance: 'measured',
       value: data.tests.filter((t) => t.fuelClass === 'solid').length,
@@ -90,17 +104,17 @@ export function buildFlags(
       facts.push(...near);
       flags.push({
         id: 'no-solid-evidence', severity: 'critical',
-        title: 'No real cabin material tested at this atmosphere',
-        detail: `The nearest real-material test (${t.acronym}) ran at ${near[1].value}% O2 and ${near[2].value} psia, an evidence distance of ${near[0].value} from your habitat. Material behavior at your atmosphere is untested, so any estimate here is an extrapolation.`,
-        factIds: near.map((f) => f.id),
+        title: 'No real cabin material in the PSI data tested at this atmosphere',
+        detail: `The nearest real-material test in PSI (${t.acronym}) ran at ${near[1].value}% O2 and ${near[2].value} psia, an evidence distance of ${near[0].value} from your habitat. Material behavior at your atmosphere is untested in PSI, so any estimate here is an extrapolation.${litText}`,
+        factIds: [...near.map((f) => f.id), ...litIds],
       });
     } else {
       facts.push(count);
       flags.push({
         id: 'no-solid-evidence', severity: 'critical',
-        title: 'No real cabin material tested at this atmosphere',
-        detail: 'No eligible solid-fuel test exists in the PSI data, so solid-material behavior here is untested.',
-        factIds: [count.id],
+        title: 'No real cabin material in the PSI data tested at this atmosphere',
+        detail: `No eligible solid-fuel test exists in the PSI data, so solid-material behavior here is untested in PSI.${litText}`,
+        factIds: [count.id, ...litIds],
       });
     }
   }
@@ -114,11 +128,14 @@ export function buildFlags(
     const low = detFacts.find((f) => f.id === `det-${d.material}-${key}-low`);
     const runs = detFacts.find((f) => f.id === `det-${d.material}-${key}-runs`);
     if (!low || !runs) continue;
+    if (h.detectors.includes('scatter')) facts.push(scatterThresholdFact(data));
+    const thr = scatterThresholdFact(data);
+    const usesScatter = h.detectors.includes('scatter');
     flags.push({
       id: `detector-miss-${d.material}`, severity: 'critical',
       title: `Your detector would likely miss ${label} smoke`,
-      detail: `In SAME, ${h.detectors.length > 1 ? `both channels (${comboLabel(h.detectors)}) stayed below their alarm levels` : `the ${comboLabel(h.detectors)} channel stayed below its alarm level`} in ${low.value} of ${runs.value} ${label} runs.`,
-      factIds: [low.id, runs.id],
+      detail: `In SAME, ${h.detectors.length > 1 ? `both channels (${comboLabel(h.detectors)}) stayed below their alarm thresholds` : `the ${comboLabel(h.detectors)} channel stayed below its alarm threshold`}${usesScatter ? ` (scatter is a ${thr.value} V proxy)` : ''} in ${low.value} of ${runs.value} ${label} runs.`,
+      factIds: usesScatter ? [low.id, runs.id, thr.id] : [low.id, runs.id],
     });
   }
 

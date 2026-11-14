@@ -48,6 +48,8 @@ HALO ranks the NASA investigations by how useful they are for a given habitat. T
 
 `score = 0.4 * proximity + 0.3 * fuel + 0.2 * hazard + 0.1 * richness`
 
+On screen (/method and the brief) the four parts are named Closeness (proximity), Fuel match (fuel), Hazards (hazard) and Evidence size (richness).
+
 The weights are defaults and can be overridden; the interface shows each part so the ordering can be audited.
 
 | Part | Definition |

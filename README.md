@@ -116,11 +116,12 @@ Then open http://localhost:3000.
 
 **Tests:**
 
-| Suite | Command |
-|---|---|
-| Engine unit tests (Vitest) | `cd web && pnpm test` |
-| Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` |
-| End-to-end (Playwright, production build on port 3100) | `cd web && pnpm exec playwright test` |
+| Suite | Command | Count |
+|---|---|---|
+| Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 227 tests in 23 files |
+| Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` | 76 tests |
+| End-to-end (Playwright, production build on port 3100) | `cd web && pnpm test:e2e` | 53 tests in 6 specs |
+| Type check | `cd web && pnpm exec next typegen && pnpm exec tsc --noEmit` | |
 
 **Environment.** Copy [`.env.example`](.env.example) to `.env` (gitignored). It holds the server-only LLM API key and `SI_LIVE` (set to `false` to serve precomputed text only). The data pipeline and the engine need no keys.
 

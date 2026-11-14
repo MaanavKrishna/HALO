@@ -1,108 +1,425 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 /*
- * HALO design tokens. One cool accent (flame blue, the colour of a
- * microgravity flame) and one warm signal (amber) reserved for warnings.
- * Light tokens are the print tokens: the Fire Brief prints on white.
+ * HALO design system: Tailwind bridge, base styles, type scale and shared
+ * recipes. Tokens live in src/styles/tokens.css; rules in docs/DESIGN.md.
  */
-:root {
-  --paper: #f4f6f8;
-  --surface: #ffffff;
-  --ink: #0d1b2a;
-  --muted: #4a5868;
-  --rule: #d3dbe3;
-  --rule-strong: #7d8a97;
-  --flame: #2453d0;
-  --flame-ink: #ffffff;
-  --flame-soft: #e5ecfb;
-  --flame-glow: 36 83 208;
-  --amber: #8f5300;
-  --amber-soft: #fbefdc;
-  --focus: #2453d0;
-  --radius-sm: 3px;
-  --radius-md: 6px;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  color-scheme: light dark;
+
+@theme inline {
+  /* Semantic colours */
+  --color-canvas: var(--bg);
+  --color-canvas-deep: var(--bg-deep);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-glass: var(--glass-bg);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--text-1);
+  --color-fg-2: var(--text-2);
+  --color-fg-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-crit: var(--crit);
+  --color-crit-soft: var(--crit-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+
+  /* Legacy colour names, mapped to the semantic tokens */
+  --color-paper: var(--bg);
+  --color-surface: var(--surface-1);
+  --color-ink: var(--text-1);
+  --color-muted: var(--text-2);
+  --color-rule: var(--border);
+  --color-rule-strong: var(--border-strong);
+  --color-flame: var(--accent);
+  --color-flame-ink: var(--accent-ink);
+  --color-flame-soft: var(--accent-soft);
+  --color-amber: var(--warn);
+  --color-amber-soft: var(--warn-soft);
+
+  --shadow-elev-1: var(--elev-1);
+  --shadow-elev-2: var(--elev-2);
+  --shadow-elev-3: var(--elev-3);
+  --shadow-elev-4: var(--elev-4);
+
+  --ease-spring: var(--spring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #070f19;
-    --surface: #0e1a28;
-    --ink: #e4eaf1;
-    --muted: #97a6b6;
-    --rule: #22334a;
-    --rule-strong: #5a7192;
-    --flame: #86a8ff;
-    --flame-ink: #07101d;
-    --flame-soft: #14264a;
-    --flame-glow: 120 160 255;
-    --amber: #f0b052;
-    --amber-soft: #2e2110;
-    --focus: #9db9ff;
+/* Families, radii and easings: emitted as CSS variables and as utilities. */
+@theme static {
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif; /* headlines */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif; /* UI and body */
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace; /* data, telemetry */
+
+  /* Radii: nested radii step down one size. */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* enter, respond */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* move on screen */
+}
+
+/* ---------- Breakpoints: Tailwind defaults (sm 40rem, md 48rem, lg 64rem, xl 80rem). Phone (390px) is the base. ---------- */
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--text-1);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--nav-h) + 1.5rem);
+    transition: background-color var(--dur-slow) var(--ease-out);
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  /* Numerals in data line up in columns everywhere. */
+  .num,
+  input[type="number"],
+  table,
+  output {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--selection);
+  }
+  input,
+  textarea {
+    caret-color: var(--accent);
+  }
+  input[type="range"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--accent);
+  }
+  * {
+    scrollbar-color: var(--border-strong) transparent;
+    scrollbar-width: thin;
+  }
+  sub,
+  sup {
+    font-size: 0.7em;
+    line-height: 0;
   }
 }
 
-@theme inline {
-  --color-paper: var(--paper);
-  --color-surface: var(--surface);
-  --color-ink: var(--ink);
-  --color-muted: var(--muted);
-  --color-rule: var(--rule);
-  --color-rule-strong: var(--rule-strong);
-  --color-flame: var(--flame);
-  --color-flame-ink: var(--flame-ink);
-  --color-flame-soft: var(--flame-soft);
-  --color-amber: var(--amber);
-  --color-amber-soft: var(--amber-soft);
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+/* ---------- Type scale ---------- */
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-xl);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  font-variation-settings: "opsz" 96, "wdth" 88;
 }
-
-html {
-  background: var(--paper);
-  color: var(--ink);
-  -webkit-text-size-adjust: 100%;
+@utility type-display-l {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-l);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  font-variation-settings: "opsz" 96, "wdth" 90;
 }
-
-body {
+@utility type-display-m {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-m);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  font-variation-settings: "opsz" 72, "wdth" 92;
+}
+@utility type-headline {
+  font-family: var(--font-display);
+  font-size: var(--fs-headline);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 48, "wdth" 96;
+}
+@utility type-title {
   font-family: var(--font-sans);
-  font-variation-settings: "wdth" 100;
+  font-size: var(--fs-title);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+}
+@utility type-body-l {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body-l);
+  line-height: 1.55;
+  letter-spacing: -0.006em;
+}
+@utility type-body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+}
+@utility type-body-s {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body-s);
   line-height: 1.5;
-  text-rendering: optimizeLegibility;
 }
-
-/* Data numerals line up in columns everywhere. */
-.num,
-input[type="number"],
-table {
-  font-variant-numeric: tabular-nums;
+@utility type-caption {
+  font-family: var(--font-sans);
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+  letter-spacing: 0.004em;
 }
-
-:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-  border-radius: 2px;
+/* Telemetry label: small caps-style uppercase, tracked out, mono. */
+@utility type-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
-
-::selection {
-  background: var(--flame-soft);
-}
-
-/* Expanded width, used for the wordmark and section titles. */
-.wide {
-  font-variation-settings: "wdth" 125;
-}
-.narrow {
-  font-variation-settings: "wdth" 88;
-}
-
-/* ---------- Wordmark: the O carries a soft blue halo ---------- */
-.wordmark {
-  font-variation-settings: "wdth" 125;
-  font-weight: 800;
+@utility type-data {
+  font-family: var(--font-mono);
+  font-size: var(--fs-data);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums slashed-zero;
   letter-spacing: -0.01em;
-  line-height: 0.9;
+}
+@utility type-data-l {
+  font-family: var(--font-mono);
+  font-size: var(--fs-data-l);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* ---------- Layout ---------- */
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container-default) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility container-wide {
+  width: 100%;
+  max-width: calc(var(--container-wide) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility container-narrow {
+  width: 100%;
+  max-width: calc(var(--container-narrow) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+/* 12-column grid: 4 columns on phone, 8 on tablet, 12 from lg. */
+@utility grid-12 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--space-4);
+  @media (width >= 48rem) {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--space-6);
+  }
+  @media (width >= 64rem) {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+@utility section-y {
+  padding-block: var(--section-y);
+}
+
+/* ---------- Materials ---------- */
+/* Glass: blur + saturate + hairline border + inner highlight. For chrome that floats over content. */
+@utility glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--inner-highlight), var(--elev-2);
+}
+@utility glass-strong {
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.6)) saturate(180%);
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.6)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--inner-highlight), var(--elev-4);
+}
+/* Instrument grid paper, used behind heroes and charts. */
+@utility bg-grid {
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: -1px -1px;
+}
+/* Pressable: instant press feedback on pointer-down. */
+@utility pressable {
+  transition: transform var(--dur-instant) var(--ease-out);
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: scale(0.97);
+  }
+}
+
+/* ---------- Scroll reveal (see components/ui/Reveal.tsx) ---------- */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    translate: 0 24px;
+    filter: blur(8px);
+  }
+}
+[data-reveal] {
+  transition:
+    opacity var(--dur-reveal) var(--ease-out),
+    translate var(--dur-reveal) var(--ease-out),
+    filter var(--dur-reveal) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* ---------- Halo orb (see components/ui/HaloOrb.tsx) ---------- */
+.halo-orb {
+  position: relative;
+  display: inline-block;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  isolation: isolate;
+}
+/* Bloom: the faint light the flame throws on its surroundings. */
+.halo-orb::before {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--halo-bloom) 0%, transparent 62%);
+  z-index: -1;
+}
+/* Shell: a spherical flame is limb-brightened, so the rim glows and the centre stays dim. */
+.halo-orb__shell {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--halo-core) 0%, var(--halo-core) 40%, var(--halo-bloom) 58%, transparent 70%),
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 46%,
+      var(--halo-rim) 58%,
+      var(--halo-shell) 67%,
+      var(--halo-rim) 71%,
+      transparent 78%
+    );
+  filter: blur(calc(var(--orb-size, 200px) * 0.02));
+}
+/* A brighter lower crescent, where the flame front meets the fuel. */
+.halo-orb__front {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 62%,
+    var(--halo-shell) 68.5%,
+    transparent 73%
+  );
+  mask-image: linear-gradient(to bottom, transparent 30%, #000 85%);
+  opacity: 0.7;
+  filter: blur(calc(var(--orb-size, 200px) * 0.006));
+}
+.halo-orb__fuel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--text-3);
+  opacity: 0.6;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .halo-orb[data-animate="true"] .halo-orb__shell,
+  .halo-orb[data-animate="true"] .halo-orb__front {
+    animation: halo-breathe 4.6s var(--ease-in-out) infinite alternate;
+  }
+  .halo-orb[data-animate="true"] .halo-orb__front {
+    animation-delay: -2.3s;
+  }
+  .halo-orb[data-animate="true"] {
+    animation: halo-ignite 1600ms var(--ease-out) both;
+  }
+}
+@keyframes halo-breathe {
+  from {
+    opacity: 0.82;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes halo-ignite {
+  from {
+    opacity: 0;
+    scale: 0.86;
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+}
+
+/* Rings: slow rotation of the outer tick ring only. */
+@media (prefers-reduced-motion: no-preference) {
+  .rings-spin {
+    animation: rings-spin 120s linear infinite;
+    transform-origin: 50% 50%;
+    transform-box: view-box;
+  }
+}
+@keyframes rings-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ---------- Wordmark: the O carries the halo ---------- */
+.wordmark {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 96, "wdth" 84;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
 }
 .wordmark-o {
   position: relative;
@@ -117,27 +434,18 @@ table {
   border-radius: 50%;
   pointer-events: none;
   translate: -50% -50%;
+  z-index: -1;
 }
 .wordmark-o::before {
-  width: 1.32em;
-  height: 1.32em;
-  background: radial-gradient(
-    circle,
-    rgb(var(--flame-glow) / 0) 38%,
-    rgb(var(--flame-glow) / 0.22) 52%,
-    rgb(var(--flame-glow) / 0.08) 62%,
-    rgb(var(--flame-glow) / 0) 71%
-  );
-  z-index: -1;
+  width: 1.3em;
+  height: 1.3em;
+  background: radial-gradient(circle, transparent 36%, var(--halo-rim) 52%, var(--halo-bloom) 62%, transparent 71%);
 }
 .wordmark-o::after {
-  width: 1.5em;
-  height: 1.5em;
-  border: 1px solid rgb(var(--flame-glow) / 0.28);
-  box-shadow: 0 0 0 0.12em rgb(var(--flame-glow) / 0.05);
-  z-index: -1;
+  width: 1.48em;
+  height: 1.48em;
+  border: 1px solid var(--accent-line);
 }
-
 @media (prefers-reduced-motion: no-preference) {
   .wordmark-o::before,
   .wordmark-o::after {
@@ -157,30 +465,118 @@ table {
     scale: 1;
   }
 }
+/* Legacy width helpers used by existing pages. */
+.wide {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 32, "wdth" 96;
+  letter-spacing: -0.01em;
+}
+.narrow {
+  font-variation-settings: "wdth" 80;
+}
 
 /* ---------- Form controls ---------- */
-input[type="range"] {
-  accent-color: var(--flame);
-}
-input[type="checkbox"] {
-  accent-color: var(--flame);
-}
-
 .field-input {
   width: 100%;
-  background: var(--surface);
-  color: var(--ink);
-  border: 1px solid var(--rule-strong);
+  min-height: 2.75rem;
+  background: var(--surface-1);
+  color: var(--text-1);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  padding: 0.5rem 0.625rem;
+  padding: 0.5rem 0.75rem;
   font-size: 1rem;
+  box-shadow: var(--elev-1);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+.field-input::placeholder {
+  color: var(--text-3);
 }
 .field-input:hover {
-  border-color: var(--muted);
+  border-color: var(--text-3);
+}
+.field-input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 1px var(--accent);
 }
 .field-input[aria-invalid="true"] {
-  border-color: var(--amber);
-  box-shadow: inset 0 0 0 1px var(--amber);
+  border-color: var(--warn);
+  box-shadow: inset 0 0 0 1px var(--warn);
+}
+.field-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+/* Hide native number spinners: the unit sits where they were. */
+.field-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.field-input[type="number"]::-webkit-inner-spin-button,
+.field-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Range: a thin track, accent fill up to the value, a solid thumb. */
+.range {
+  --pct: 50%;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.75rem;
+  background: transparent;
+  cursor: pointer;
+}
+.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) var(--pct), var(--surface-3) var(--pct));
+}
+.range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--surface-3);
+}
+.range::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgb(0 0 0 / 0.08);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 3px 10px rgb(0 0 0 / 0.18), 0 0 0 4px var(--accent-soft);
+  transition: scale var(--dur-fast) var(--ease-out);
+}
+.range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgb(0 0 0 / 0.08);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 3px 10px rgb(0 0 0 / 0.18), 0 0 0 4px var(--accent-soft);
+}
+.range:active::-webkit-slider-thumb {
+  scale: 1.08;
+}
+.range:focus-visible {
+  outline: none;
+}
+.range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.range:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 /* Chip = a real checkbox + label; the box is visually hidden but focusable. */
@@ -189,13 +585,20 @@ input[type="checkbox"] {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid var(--rule-strong);
-  border-radius: 999px;
+  min-height: 2.25rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
   padding: 0.375rem 0.875rem 0.375rem 0.625rem;
-  background: var(--surface);
+  background: var(--surface-1);
   cursor: pointer;
   user-select: none;
-  transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
+}
+.chip:active {
+  transform: scale(0.97);
 }
 .chip input {
   position: absolute;
@@ -208,49 +611,153 @@ input[type="checkbox"] {
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 50%;
-  border: 1.5px solid var(--rule-strong);
-  transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  border: 1.5px solid var(--border-strong);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
-.chip:hover {
-  border-color: var(--muted);
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    border-color: var(--text-3);
+  }
 }
 .chip:has(input:checked) {
-  background: var(--flame-soft);
-  border-color: var(--flame);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 .chip:has(input:checked) .chip-dot {
-  background: var(--flame);
-  border-color: var(--flame);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 .chip:has(input:focus-visible) {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
+.chip:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
+/* Status light pulse (ok/warn/crit only, never idle). */
+@media (prefers-reduced-motion: no-preference) {
+  .status-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
+    animation: status-pulse 2.4s var(--ease-out) infinite;
+  }
+}
+@keyframes status-pulse {
+  from {
+    opacity: 0.55;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 2.8;
+  }
+}
+
+/* Spinner for loading buttons. */
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ---------- Long-form prose (see components/ui/Article.tsx) ---------- */
+.prose-halo {
+  max-width: var(--container-prose);
+  font-size: var(--fs-body-l);
+  line-height: 1.7;
+  color: var(--text-2);
+}
+.prose-halo > * + * {
+  margin-top: 1.1em;
+}
+.prose-halo h2 {
+  margin-top: 2.6em;
+  font-family: var(--font-display);
+  font-size: var(--fs-headline);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 48, "wdth" 96;
+  color: var(--text-1);
+  scroll-margin-top: calc(var(--nav-h) + 2rem);
+}
+.prose-halo h3 {
+  margin-top: 2em;
+  font-size: var(--fs-title);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-1);
+  scroll-margin-top: calc(var(--nav-h) + 2rem);
+}
+.prose-halo h2 + *,
+.prose-halo h3 + * {
+  margin-top: 0.6em;
+}
+.prose-halo strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
+.prose-halo a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-line);
+}
+.prose-halo a:hover {
+  text-decoration-color: currentColor;
+}
+.prose-halo ul,
+.prose-halo ol {
+  padding-left: 1.25em;
+}
+.prose-halo ul {
+  list-style: disc;
+}
+.prose-halo ol {
+  list-style: decimal;
+}
+.prose-halo li + li {
+  margin-top: 0.4em;
+}
+.prose-halo li::marker {
+  color: var(--text-3);
+}
+.prose-halo code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+.prose-halo blockquote {
+  padding-left: 1.25em;
+  border-left: 1px solid var(--accent-line);
+  color: var(--text-1);
+}
+
+/* ---------- Reduced motion: no movement, keep comprehension ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    transition-duration: 0ms !important;
     animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 /* ---------- Print: the brief prints on white with light tokens ---------- */
 @media print {
-  :root {
-    --paper: #ffffff;
-    --surface: #ffffff;
-    --ink: #000000;
-    --muted: #333d47;
-    --rule: #b9c2cb;
-    --rule-strong: #7d8a97;
-    --flame: #1d45b0;
-    --flame-soft: #eef2fc;
-    --amber: #7a4600;
-    --amber-soft: #fbf3e6;
-    color-scheme: light;
-  }
   html,
   body {
     background: #ffffff;
@@ -258,6 +765,20 @@ input[type="checkbox"] {
   }
   .no-print {
     display: none !important;
+  }
+  .glass,
+  .glass-strong {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  .halo-orb::before {
+    display: none;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    translate: none !important;
+    filter: none !important;
   }
   a {
     color: inherit;

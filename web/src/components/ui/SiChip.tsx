@@ -1,15 +1,20 @@
+import { cx } from "./cx";
+
 const SI_HELP = "SI-generated from the cited facts; numbers come only from those facts";
 
 /**
  * Marks a sentence written by the SI layer. Every SI sentence shows one.
  * The explanation is part of the accessible name, so screen readers get it
- * without relying on the hover-only title.
+ * without relying on the hover-only title. Dashed edge = generated, not measured.
  */
 export function SiChip({ className = "" }: { className?: string }) {
   return (
     <span
       title={SI_HELP}
-      className={`inline-flex items-center rounded-sm border border-dashed border-flame px-1 align-[0.1em] font-mono text-[0.68em] font-medium leading-[1.35] text-flame ${className}`}
+      className={cx(
+        "inline-flex items-center rounded-[var(--radius-xs)] border border-dashed border-accent-line bg-accent-soft px-[0.35em] align-[0.12em] font-mono text-[0.66em] font-medium uppercase leading-[1.4] tracking-[0.08em] text-accent",
+        className,
+      )}
     >
       <span aria-hidden="true">SI</span>
       <span className="sr-only">{SI_HELP}</span>

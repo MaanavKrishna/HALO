@@ -1,20 +1,32 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
-import { NavLinks } from "@/components/ui/NavLinks";
+import type { Metadata, Viewport } from "next";
+import { Bricolage_Grotesque, Geist_Mono, Inter } from "next/font/google";
+import { Footer } from "@/components/ui/Footer";
+import { Navbar } from "@/components/ui/Navbar";
+import { THEME_INIT_SCRIPT } from "@/components/ui/theme";
 import "./globals.css";
 
 // Self-hosted at build time by next/font: no external font requests at runtime.
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Display: Bricolage Grotesque (optical size + width axes) for headlines.
+const display = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  axes: ["wdth"],
+  axes: ["opsz", "wdth"],
+  display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+// UI and body: Inter with optical sizing.
+const ui = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  axes: ["opsz"],
+  display: "swap",
+});
+
+// Data and telemetry: Geist Mono (tabular by construction).
+const mono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -23,36 +35,32 @@ export const metadata: Metadata = {
     "Habitat Assessment from Low-gravity Observations: a cited fire brief from NASA microgravity combustion data.",
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#05080f" },
+    { media: "(prefers-color-scheme: light)", color: "#f3f5f8" },
+  ],
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${archivo.variable} ${plexMono.variable} antialiased`}>
-      <body className="flex min-h-dvh flex-col bg-paper text-ink">
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${mono.variable}`}>
+      <head>
+        {/* Applies a stored theme before first paint (static string, allowed by the CSP's 'unsafe-inline'). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      <body className="flex min-h-dvh flex-col bg-canvas text-fg">
         <a
           href="#main"
-          className="no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2"
+          className="no-print sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[var(--z-overlay)] focus:rounded-[var(--radius-sm)] focus:bg-surface-1 focus:px-3 focus:py-2 focus:shadow-[var(--elev-3)]"
         >
           Skip to content
         </a>
-        <header className="no-print border-b border-rule">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
-            <Link href="/" className="wide flex items-center gap-2.5 text-[15px] font-bold tracking-wide">
-              <span aria-hidden="true" className="relative inline-block size-4">
-                <span className="absolute inset-0 rounded-full border border-flame/40" />
-                <span className="absolute inset-[4px] rounded-full bg-flame/80" />
-              </span>
-              HALO
-            </Link>
-            <NavLinks />
-          </div>
-        </header>
+        <Navbar />
         <div id="main" className="flex flex-1 flex-col">
           {children}
         </div>
-        <footer className="border-t border-rule">
-          <div className="mx-auto max-w-6xl px-5 py-6 text-sm text-muted sm:px-8">
-            Not affiliated with or endorsed by NASA. Data: NASA Physical Sciences Informatics (CC0).
-          </div>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

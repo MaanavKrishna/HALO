@@ -1,0 +1,215 @@
+/*
+ * HALO design tokens. Source of truth for colour, type, space, depth and motion.
+ * Documented in docs/DESIGN.md. Pages use the semantic names only, never raw hex.
+ *
+ * Theme model: every colour is written once as light-dark(light, dark).
+ * `color-scheme` picks the branch: system by default, forced by
+ * [data-theme="light" | "dark"] (on <html> globally, or on any element to
+ * scope a theme), and forced light for print.
+ *
+ * The block is declared on :root AND on every [data-theme] element: the build
+ * polyfills light-dark() with custom properties, which resolve where they are
+ * declared, so scoped themes must re-declare the tokens.
+ */
+
+:root {
+  color-scheme: light dark;
+}
+
+:root,
+[data-theme] {
+  /* ---------- Colour: canvas and surfaces ---------- */
+  --bg: light-dark(#f3f5f8, #05080f); /* deep space ink / cool paper */
+  --bg-deep: light-dark(#e9edf2, #020409); /* hero wells, behind the orb */
+  --surface-1: light-dark(#ffffff, #0a101b); /* cards, inputs */
+  --surface-2: light-dark(#eaeef3, #101826); /* raised / hover */
+  --surface-3: light-dark(#dfe4eb, #172133); /* pressed, tracks */
+
+  /* Glass: translucent chrome. Bigger surfaces use --glass-bg-strong. */
+  --glass-bg: light-dark(rgb(255 255 255 / 0.66), rgb(14 21 34 / 0.58));
+  --glass-bg-strong: light-dark(rgb(250 251 253 / 0.82), rgb(9 14 24 / 0.76));
+  --glass-border: light-dark(rgb(10 18 32 / 0.09), rgb(170 195 240 / 0.12));
+  --glass-highlight: light-dark(rgb(255 255 255 / 0.9), rgb(210 225 255 / 0.09));
+  --glass-blur: 20px;
+
+  /* ---------- Colour: lines ---------- */
+  --border: light-dark(rgb(10 18 32 / 0.1), rgb(160 185 230 / 0.12)); /* hairlines, dividers */
+  --border-strong: light-dark(#7a879b, #5b6c89); /* control edges, >=3:1 */
+  --grid-line: light-dark(rgb(10 18 32 / 0.05), rgb(150 180 240 / 0.055)); /* instrument grid */
+
+  /* ---------- Colour: text ---------- */
+  --text-1: light-dark(#0a1220, #eef2f8); /* primary */
+  --text-2: light-dark(#465269, #a3afc2); /* secondary, >=7:1 */
+  --text-3: light-dark(#5b6780, #7c89a0); /* tertiary, labels, >=4.5:1 */
+
+  /* ---------- Colour: accent (flame blue, the only brand colour) ---------- */
+  --accent: light-dark(#1f4fd6, #7ea6ff); /* links, selection, primary fill */
+  --accent-hover: light-dark(#1a43b8, #9bbaff);
+  --accent-ink: light-dark(#ffffff, #04101f); /* text on an accent fill */
+  --accent-soft: light-dark(#e3eafc, rgb(126 166 255 / 0.13)); /* selected backgrounds */
+  --accent-line: light-dark(rgb(31 79 214 / 0.35), rgb(126 166 255 / 0.4));
+  --accent-glow: light-dark(rgb(31 79 214 / 0.22), rgb(90 140 255 / 0.45)); /* light, never fill */
+
+  /* Halo orb: the microgravity flame. Decorative only, never data. */
+  --halo-core: light-dark(rgb(40 90 230 / 0.04), rgb(50 95 230 / 0.16));
+  --halo-shell: light-dark(rgb(36 92 235 / 0.5), rgb(130 175 255 / 0.85));
+  --halo-rim: light-dark(rgb(30 80 220 / 0.2), rgb(110 160 255 / 0.4));
+  --halo-bloom: light-dark(rgb(40 100 240 / 0.12), rgb(60 110 255 / 0.22));
+
+  /* ---------- Colour: semantics (risk colours only for risk) ---------- */
+  --warn: light-dark(#8a5000, #f3b54d);
+  --warn-soft: light-dark(#fbefdc, rgb(243 181 77 / 0.12));
+  --warn-line: light-dark(rgb(138 80 0 / 0.35), rgb(243 181 77 / 0.35));
+  --crit: light-dark(#b0321a, #ff7a5c);
+  --crit-soft: light-dark(#fbe6e1, rgb(255 122 92 / 0.12));
+  --crit-line: light-dark(rgb(176 50 26 / 0.35), rgb(255 122 92 / 0.38));
+  --ok: light-dark(#0a7350, #4fd4a4); /* covered / measured */
+  --ok-soft: light-dark(#dff3ea, rgb(79 212 164 / 0.12));
+  --ok-line: light-dark(rgb(10 115 80 / 0.35), rgb(79 212 164 / 0.35));
+  --idle: light-dark(#7a879b, #5b6c89);
+
+  --focus: light-dark(#1f4fd6, #a9c4ff);
+  --selection: light-dark(rgb(31 79 214 / 0.18), rgb(126 166 255 / 0.3));
+  --scrim: light-dark(rgb(10 18 32 / 0.28), rgb(0 2 6 / 0.6));
+
+  /* ---------- Type ---------- */
+  /* Families (--font-display, --font-sans, --font-mono) and radii/easings live in the
+     @theme block of app/globals.css so Tailwind and CSS share one definition. */
+
+  /* Fluid scale (390px -> 1440px). Line-height and tracking tighten as size grows. */
+  --fs-display-xl: clamp(3.25rem, 1.4rem + 7.6vw, 8.25rem);
+  --fs-display-l: clamp(2.5rem, 1.45rem + 4.3vw, 5.25rem);
+  --fs-display-m: clamp(2rem, 1.4rem + 2.5vw, 3.5rem);
+  --fs-headline: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --fs-title: clamp(1.1875rem, 1.1rem + 0.35vw, 1.4375rem);
+  --fs-body-l: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-body-s: 0.875rem;
+  --fs-caption: 0.8125rem;
+  --fs-label: 0.6875rem;
+  --fs-data: 0.875rem;
+  --fs-data-l: clamp(2.25rem, 1.7rem + 2.2vw, 3.75rem);
+
+  /* ---------- Space (4-pt base) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  --section-y: clamp(4rem, 2.5rem + 6vw, 9rem); /* vertical rhythm between page sections */
+  --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem); /* page side padding */
+
+  /* ---------- Layout ---------- */
+  --container-prose: 42rem;
+  --container-narrow: 56rem;
+  --container-default: 76rem;
+  --container-wide: 90rem;
+  --nav-h: 3.5rem;
+
+  --radius-pill: 999px;
+
+  /* ---------- Elevation (offset + soft blur) and glow ---------- */
+  --elev-1: 0 1px 2px light-dark(rgb(10 18 32 / 0.06), rgb(0 0 0 / 0.4));
+  --elev-2: 0 1px 2px light-dark(rgb(10 18 32 / 0.05), rgb(0 0 0 / 0.35)),
+    0 6px 16px -4px light-dark(rgb(10 18 32 / 0.08), rgb(0 0 0 / 0.45));
+  --elev-3: 0 2px 4px light-dark(rgb(10 18 32 / 0.05), rgb(0 0 0 / 0.35)),
+    0 18px 40px -12px light-dark(rgb(10 18 32 / 0.16), rgb(0 0 0 / 0.6));
+  --elev-4: 0 4px 8px light-dark(rgb(10 18 32 / 0.06), rgb(0 0 0 / 0.4)),
+    0 40px 80px -24px light-dark(rgb(10 18 32 / 0.24), rgb(0 0 0 / 0.75));
+  --glow-1: 0 0 0 1px var(--accent-line), 0 4px 18px -6px var(--accent-glow);
+  --glow-2: 0 0 0 1px var(--accent-line), 0 8px 40px -8px var(--accent-glow);
+  --glow-3: 0 0 120px 10px var(--accent-glow);
+  --inner-highlight: inset 0 1px 0 var(--glass-highlight);
+
+  /* ---------- Motion ---------- */
+  --dur-instant: 100ms; /* press feedback */
+  --dur-fast: 160ms; /* hover, colour, small toggles */
+  --dur-base: 240ms; /* menus, tooltips, tabs */
+  --dur-slow: 420ms; /* sheets, panels */
+  --dur-reveal: 900ms; /* scroll reveals, hero entrance */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Critically damped spring (damping 1.0), sampled. Pair with --spring-dur-*. */
+  --spring: linear(0, 0.0376, 0.1238, 0.2307, 0.3416, 0.4471, 0.5424, 0.6256, 0.6966, 0.7561, 0.8052, 0.8453, 0.8777, 0.9038, 0.9246, 0.9411, 0.9541, 0.9643, 0.9724, 0.9786, 0.9835, 0.9873, 0.9902, 0.9925, 0.9942, 0.9956, 0.9966, 0.9974, 1);
+  --spring-dur-snappy: 400ms; /* response 0.3 */
+  --spring-dur-smooth: 600ms; /* response 0.45 */
+  /* Under-damped (damping 0.8, response 0.4): only after a momentum gesture. */
+  --spring-bounce: linear(0, 0.0128, 0.0467, 0.096, 0.1559, 0.2224, 0.2923, 0.3631, 0.4329, 0.5002, 0.5639, 0.6233, 0.678, 0.7278, 0.7725, 0.8123, 0.8474, 0.8779, 0.9043, 0.9268, 0.9458, 0.9617, 0.9748, 0.9855, 0.994, 1.0006, 1.0057, 1.0094, 1.0121, 1.0138, 1.0148, 1.0151, 1.0151, 1.0146, 1.014, 1.0131, 1.0121, 1.0111, 1.01, 1.0089, 1.0079, 1.0069, 1.006, 1.0051, 1.0044, 1.0037, 1.003, 1.0025, 1);
+  --spring-dur-bounce: 520ms;
+
+  /* ---------- Z layers ---------- */
+  --z-raised: 10;
+  --z-sticky: 40;
+  --z-nav: 50;
+  --z-overlay: 60;
+  --z-tooltip: 70;
+
+  /* ---------- Legacy aliases (pre-redesign names; existing pages use these) ---------- */
+  --paper: var(--bg);
+  --surface: var(--surface-1);
+  --ink: var(--text-1);
+  --muted: var(--text-2);
+  --rule: var(--border);
+  --rule-strong: var(--border-strong);
+  --flame: var(--accent);
+  --flame-ink: var(--accent-ink);
+  --flame-soft: var(--accent-soft);
+  --amber: var(--warn);
+  --amber-soft: var(--warn-soft);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Users who ask for less transparency get solid chrome. */
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  [data-theme] {
+    --glass-bg: var(--surface-1);
+    --glass-bg-strong: var(--surface-1);
+    --glass-blur: 0px;
+  }
+}
+
+/* Users who ask for more contrast get firmer lines and text. */
+@media (prefers-contrast: more) {
+  :root,
+  [data-theme] {
+    --border: var(--border-strong);
+    --text-3: var(--text-2);
+    --glass-bg: var(--surface-1);
+    --glass-bg-strong: var(--surface-1);
+  }
+}
+
+/* Print is always the light "paper" theme on white. */
+@media print {
+  :root,
+  [data-theme] {
+    color-scheme: light !important;
+    --bg: #ffffff;
+    --surface-1: #ffffff;
+    --text-1: #000000;
+    --text-2: #333d4c;
+    --text-3: #4a5466;
+    --accent: #1a45bd;
+    --elev-1: none;
+    --elev-2: none;
+    --elev-3: none;
+    --elev-4: none;
+    --glow-1: none;
+    --glow-2: none;
+    --glow-3: none;
+  }
+}

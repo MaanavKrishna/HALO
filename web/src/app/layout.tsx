@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import { Footer } from "@/components/ui/Footer";
 import { Navbar } from "@/components/ui/Navbar";
 import { THEME_INIT_SCRIPT } from "@/components/ui/theme";
+import { SITE_DESCRIPTION, SITE_EXPANSION, SITE_NAME, SITE_URL, TAGLINE, THEME_DARK, THEME_LIGHT } from "@/lib/site";
 import "./globals.css";
 
 // Self-hosted at build time by next/font: no external font requests at runtime.
@@ -23,15 +24,26 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HALO",
-  description:
-    "Habitat Assessment from Low-gravity Observations: a cited fire brief from NASA microgravity combustion data.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${SITE_NAME}: ${SITE_EXPANSION}`, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: "Maanav Krishna" }],
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: `${SITE_NAME}: ${SITE_EXPANSION}`,
+    description: TAGLINE,
+  },
+  twitter: { card: "summary_large_image", title: `${SITE_NAME}: ${SITE_EXPANSION}`, description: TAGLINE },
+  appleWebApp: { title: SITE_NAME, statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#05080f" },
-    { media: "(prefers-color-scheme: light)", color: "#f4f3ef" },
+    { media: "(prefers-color-scheme: dark)", color: THEME_DARK },
+    { media: "(prefers-color-scheme: light)", color: THEME_LIGHT },
   ],
 };
 

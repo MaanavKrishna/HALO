@@ -5,7 +5,8 @@ import { HALO_DATA } from "@/lib/data/load";
 import { psiNumber } from "@/lib/explore";
 
 export const metadata: Metadata = {
-  title: "Explore the investigations | HALO",
+  title: "Explore the investigations",
+  alternates: { canonical: "/explore" },
   description: "All NASA Physical Sciences Informatics combustion investigations HALO draws on, with the atmospheres each one tested.",
 };
 

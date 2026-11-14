@@ -155,6 +155,19 @@ Then open http://localhost:3000.
 └── NOTICE        Attribution notices
 ```
 
+## Pages
+
+| Route | What it is |
+|---|---|
+| `/` | Home and habitat builder |
+| `/brief` | The Fire Brief for a habitat (shareable URL) |
+| `/findings` | The headline evidence gaps, each cited |
+| `/explore` | All 24 investigations; `/explore/PSI-69` etc. for one |
+| `/compare` | Two habitats side by side |
+| `/method` | Every formula, threshold and model |
+| `/data` | Sources, provenance, fixes, downloads and every DOI |
+| `/about` | The challenge, use of SI, licence |
+
 ## Documentation
 
 | Document | Contents |

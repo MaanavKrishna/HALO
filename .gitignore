@@ -16,3 +16,6 @@ coverage/
 playwright-report/
 test-results/
 web/AGENTS.md
+
+# stray screenshots at the repo root
+/*.png

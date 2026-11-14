@@ -38,7 +38,8 @@ import { FormDemo, LoadingDemo, MotionLab, NavigationDemo, Swatches } from "./In
 import { COLOR_GROUPS, MOTION, RADII, SPACE, TYPE_SCALE } from "./tokens-data";
 
 export const metadata: Metadata = {
-  title: "Design system · HALO",
+  title: "Design system",
+  alternates: { canonical: "/design" },
   description: "Tokens, type, motion and components of the HALO interface.",
 };
 

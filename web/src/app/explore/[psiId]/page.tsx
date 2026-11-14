@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: PageProps<"/explore/[psiId]">
   const { psiId } = await params;
   const inv = find(psiId);
   return {
-    title: inv ? `${inv.acronym} (${inv.psiId}) | HALO` : "Not found | HALO",
+    title: inv ? `${inv.acronym} (${inv.psiId})` : "Not found",
+    alternates: inv ? { canonical: `/explore/${inv.psiId}` } : undefined,
     description: inv ? `${inv.title}. Tested atmospheres, hardware and publications from NASA PSI.` : undefined,
   };
 }

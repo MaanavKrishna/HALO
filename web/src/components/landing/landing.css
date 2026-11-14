@@ -1,0 +1,71 @@
+/*
+ * Landing page motion, scoped to components/landing. Each piece plays once,
+ * when its Reveal wrapper enters the viewport ([data-revealed]); nothing here
+ * runs under reduced motion, and before reveal the parent Reveal hides the
+ * block anyway, so `backwards` fill never shows a half-drawn state.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Mini brief: evidence rings draw outward from the habitat, flags settle in order. */
+  [data-revealed] .landing-mini [data-ring] {
+    stroke-dasharray: 1;
+    animation: landing-draw 1200ms var(--ease-out) backwards;
+    animation-delay: calc(450ms + var(--i, 0) * 160ms);
+  }
+  [data-revealed] .landing-mini [data-link] {
+    animation: landing-fade 600ms var(--ease-out) backwards;
+    animation-delay: 1100ms;
+  }
+  [data-revealed] .landing-mini [data-flag] {
+    animation: landing-rise 700ms var(--ease-out) backwards;
+    animation-delay: calc(300ms + var(--i, 0) * 70ms);
+  }
+
+  /* O2 strip: bars grow from the axis, then the untested gap opens. */
+  [data-revealed] .landing-bar {
+    transform-origin: bottom;
+    animation: landing-grow 900ms var(--ease-out) backwards;
+    animation-delay: 200ms;
+  }
+  [data-revealed] .landing-gap {
+    transform-origin: left;
+    animation: landing-open 1000ms var(--ease-in-out) backwards;
+    animation-delay: 700ms;
+  }
+
+  /* Detector runs light up one by one. */
+  [data-revealed] .landing-runs > li {
+    animation: landing-fade 400ms var(--ease-out) backwards;
+    animation-delay: calc(250ms + var(--i, 0) * 22ms);
+  }
+}
+
+@keyframes landing-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes landing-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+@keyframes landing-grow {
+  from {
+    scale: 1 0;
+  }
+}
+@keyframes landing-open {
+  from {
+    scale: 0 1;
+    opacity: 0;
+  }
+}

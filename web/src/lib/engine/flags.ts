@@ -1,10 +1,11 @@
 import { literatureInWindow, literatureWindowSentence } from './literatureWindow';
 import { MATERIALS } from './materials';
+import { factText } from './types';
 import type { DetectionResult, ExtinctionResult, Fact, Flag, FuelClass, Habitat, HaloData, Nearest, Source } from './types';
 
 /**
  * Flag rules. Every number a flag renders is read from a Fact it lists in
- * factIds, rendered with String(fact.value), so a validator can match them.
+ * factIds, rendered with factText(fact), so a validator can match them.
  */
 
 const PSI_PER_ATM = 14.696;
@@ -38,7 +39,7 @@ export function detectorSource(data: HaloData): Source {
 export function scatterThresholdFact(data: HaloData): Fact {
   return {
     id: 'det-scatter-threshold', label: 'Scatter alarm proxy (photoelectric, assumed)', value: data.detector.thresholds.scatterV,
-    unit: 'V', provenance: 'assumed', source: detectorSource(data),
+    unit: 'V', decimals: 1, provenance: 'assumed', source: detectorSource(data),
   };
 }
 
@@ -134,7 +135,7 @@ export function buildFlags(
     flags.push({
       id: `detector-miss-${d.material}`, severity: 'critical',
       title: `Your detector would likely miss ${label} smoke`,
-      detail: `In SAME, ${h.detectors.length > 1 ? `both channels (${comboLabel(h.detectors)}) stayed below their alarm thresholds` : `the ${comboLabel(h.detectors)} channel stayed below its alarm threshold`}${usesScatter ? ` (scatter is a ${thr.value} V proxy)` : ''} in ${low.value} of ${runs.value} ${label} runs.`,
+      detail: `In SAME, ${h.detectors.length > 1 ? `both channels (${comboLabel(h.detectors)}) stayed below their alarm thresholds` : `the ${comboLabel(h.detectors)} channel stayed below its alarm threshold`}${usesScatter ? ` (scatter is a ${factText(thr)} V proxy)` : ''} in ${low.value} of ${runs.value} ${label} runs.`,
       factIds: usesScatter ? [low.id, runs.id, thr.id] : [low.id, runs.id],
     });
   }

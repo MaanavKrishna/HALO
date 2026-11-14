@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cx } from "@/components/ui/cx";
 import { briefContext } from "@/lib/brief/context";
-import type { Brief, Fact } from "@/lib/engine/types";
+import { factText, type Brief, type Fact } from "@/lib/engine/types";
 
 /**
  * Link to a numbered source in the citation list, as a mono "[n]" on the
@@ -52,7 +52,7 @@ export function Num({
   return (
     <span className="whitespace-nowrap">
       <span className={`num ${className}`} data-fact={f.id}>
-        {String(f.value)}
+        {factText(f)}
         {unit ? unitText(f) : ""}
       </span>
       {cite && <CiteMark n={ctx.cite(id)} />}
@@ -69,7 +69,7 @@ export function FactChip({ brief, id }: { brief: Brief; id: string }) {
   const f = ctx.fact(id);
   if (!f) return null;
   const n = ctx.cite(id);
-  const value = `${String(f.value)}${unitText(f)}`;
+  const value = `${factText(f)}${unitText(f)}`;
   const body = (
     <>
       <span className="sr-only">{f.label}: </span>

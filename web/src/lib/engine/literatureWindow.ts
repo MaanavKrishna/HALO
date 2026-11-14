@@ -1,5 +1,5 @@
 import { PRESETS } from './presets';
-import type { Fact, HaloData, LiteratureRow } from './types';
+import { factText, type Fact, type HaloData, type LiteratureRow } from './types';
 
 /**
  * Real solids burned in the Moon window outside PSI. The challenge's Moon
@@ -53,18 +53,18 @@ export function literatureInWindow(
   const note = `${missions.join(', ')} samples ${rows.map((r) => `${r.sampleId} (${r.material}, ${r.o2Pct}% O2, ${r.pressurePsia} psia)`).join('; ')}. NASA reports, not PSI test rows; HALO does not grade on them.`;
   const source = { url: sourceUrls[0], note };
   const facts: Fact[] = [
-    { id: 'lit-window-oxygen-low', label: `Lowest O2 of the ${missions.join(', ')} solids burned in the Moon envelope`, value: o2Low, unit: '%', provenance: 'literature', source },
-    { id: 'lit-window-oxygen-high', label: `Highest O2 of the ${missions.join(', ')} solids burned in the Moon envelope`, value: o2High, unit: '%', provenance: 'literature', source },
-    { id: 'lit-window-pressure', label: `Mean pressure of the ${missions.join(', ')} solids burned in the Moon envelope`, value: pressure, unit: 'psia', provenance: 'literature', source },
+    { id: 'lit-window-oxygen-low', label: `Lowest O2 of the ${missions.join(', ')} solids burned in the Moon envelope`, value: o2Low, unit: '%', decimals: 1, provenance: 'literature', source },
+    { id: 'lit-window-oxygen-high', label: `Highest O2 of the ${missions.join(', ')} solids burned in the Moon envelope`, value: o2High, unit: '%', decimals: 1, provenance: 'literature', source },
+    { id: 'lit-window-pressure', label: `Mean pressure of the ${missions.join(', ')} solids burned in the Moon envelope`, value: pressure, unit: 'psia', decimals: 1, provenance: 'literature', source },
   ];
   return { rows, missions, materials, o2Low, o2High, pressure, sourceUrls, facts };
 }
 
 const list = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
-/** O2 range text, "30.3–31" or a single value; numbers are String(fact.value). */
+/** O2 range text, "30.3–31.0" or a single value; one decimal, as the facts display. */
 export function windowO2Text(w: LiteratureWindow): string {
-  return w.o2Low === w.o2High ? String(w.o2Low) : `${w.o2Low}–${w.o2High}`;
+  return w.o2Low === w.o2High ? w.o2Low.toFixed(1) : `${w.o2Low.toFixed(1)}–${w.o2High.toFixed(1)}`;
 }
 
 /**
@@ -72,5 +72,5 @@ export function windowO2Text(w: LiteratureWindow): string {
  * and about 7.9 psia; these runs are not in PSI, so HALO does not grade on them."
  */
 export function literatureWindowSentence(w: LiteratureWindow): string {
-  return `${list(w.missions)} (NASA reports, literature) burned ${list(w.materials)} at ${windowO2Text(w)}% O2 and about ${w.pressure} psia; these runs are not in PSI, so HALO does not grade on them.`;
+  return `${list(w.missions)} (NASA reports, literature) burned ${list(w.materials)} at ${windowO2Text(w)}% O2 and about ${factText(w.facts[2])} psia; these runs are not in PSI, so HALO does not grade on them.`;
 }

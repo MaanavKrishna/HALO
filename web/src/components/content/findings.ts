@@ -300,13 +300,13 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     out.push({
       id: "next-test",
       topic: "Next test to fly",
-      title: `The single test that would close the most evidence gap: a PSI-archived real-solid test at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia${litNear ? ", near the Saffire VI conditions" : ""}.`,
+      title: `The single test that would close the most evidence gap: a new real-solid test at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia, archived in PSI${litNear ? ", near the Saffire VI conditions" : ""}.`,
       stat: { value: `${pick.o2Pct}`, unit: `% · ${pick.pressurePsia} psia`, label: "Suggested solid-fuel test" },
       second: helped[0] ? { value: fmt2(helped[0].after), unit: `from ${fmt2(helped[0].before)}`, label: `${pname(helped[0].preset)} evidence distance after` } : undefined,
       provenance: litNear ? ["model", "literature"] : ["model"],
       body: `HALO scores every solid, droplet and gas test on a grid of atmospheres by how far it would pull the presets' nearest evidence in, weighted toward the lunar habitats and toward real solids. ${helped
         .map((g) => `${pname(g.preset)} ${fmt2(g.before)} → ${fmt2(g.after)}`)
-        .join("; ")}.${litNear ? ` ${litNear.missions.join(", ")} burned ${litNear.materials.join(" and ")} at evidence distance ${fmt2(litNear.d)} from this point (literature), but those runs are not in PSI, so HALO cannot grade on them; a comparable test archived in PSI would.` : ""}`,
+        .join("; ")}.${litNear ? ` ${litNear.missions.join(", ")} burned ${litNear.materials.join(" and ")} at evidence distance ${fmt2(litNear.d)} from this point (literature), but those runs are not in PSI, so HALO cannot grade on them; a new test with its data archived in PSI would close that gap.` : ""}`,
       viz: { kind: "next", tests: pts, pick: { o2: pick.o2Pct, p: pick.pressurePsia }, presets: [iss, moon, artemis].map((h) => ({ label: h.name, o2: h.o2Pct, p: h.pressurePsia })) },
       sources: [
         { label: "HALO next-test search (method)", href: "/method#next-test", detail: "Scores candidates over the eligible PSI test rows" },

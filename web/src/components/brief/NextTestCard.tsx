@@ -41,7 +41,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
         </p>
 
         <p className="mt-3 max-w-[60ch] text-sm text-pretty text-fg-2">
-          A real-solid test archived in PSI at this point.
+          A new real-solid test at this point, with its data archived in PSI.
           {ctx.fact(NEXT_LITERATURE_DISTANCE) && (
             <>
               {" "}

@@ -1,3 +1,4 @@
+import { factText } from '@/lib/engine/types';
 import { describe, it, expect } from 'vitest';
 import { loadFixtureData } from '@/lib/data/fixtures';
 import { PRESETS } from '@/lib/engine/presets';
@@ -14,7 +15,7 @@ function numbersIn(text: string): string[] {
 
 function factValueStrings(b: Brief, ids: string[]): Set<string> {
   const byId = new Map(b.facts.map((f) => [f.id, f]));
-  return new Set(ids.map((id) => String(byId.get(id)?.value)));
+  return new Set(ids.map((id) => { const f = byId.get(id); return f ? factText(f) : 'undefined'; }));
 }
 
 describe('buildBrief (fixtures)', () => {

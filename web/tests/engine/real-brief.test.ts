@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { HALO_DATA } from '@/lib/data/load';
 import { PRESETS } from '@/lib/engine/presets';
 import { buildBrief } from '@/lib/engine/brief';
+import { factText } from '@/lib/engine/types';
 
 // Real-data expectations. Skipped while src/data holds the fixture placeholders.
 const isReal = HALO_DATA.manifest.totalRows === 1967;
@@ -27,7 +28,9 @@ describe.skipIf(!isReal)('real data: Artemis fire brief', () => {
       (r) => r.o2Pct !== null && r.pressurePsia !== null && r.o2Pct >= PRESETS.moon.o2Pct && r.pressurePsia <= PRESETS.moon.pressurePsia,
     );
     expect(rows.length).toBeGreaterThan(0);
-    expect(f.detail).toMatch(/Saffire VI \(NASA reports, literature\) burned SIBAL and PMMA/);
+    expect(f.detail).toMatch(/Saffire VI \(NASA reports, literature\) burned SIBAL and PMMA at 30\.3–31\.0% O2 and about 7\.9 psia/);
+    const kapton = b.flags.find((x) => x.id === 'detector-miss-kapton')!;
+    expect(kapton.detail).toContain('(scatter is a 2.0 V proxy)');
     expect(f.detail).toContain('not in PSI, so HALO does not grade on them');
     const low = b.facts.find((x) => x.id === 'lit-window-oxygen-low')!;
     expect(low.provenance).toBe('literature');
@@ -40,7 +43,7 @@ describe.skipIf(!isReal)('real data: Artemis fire brief', () => {
     for (const f of b.flags) for (const id of f.factIds) expect(ids.has(id), id).toBe(true);
   });
   it('numbers in flags are Fact values', () => {
-    const byId = new Map(b.facts.map((f) => [f.id, String(f.value)]));
+    const byId = new Map(b.facts.map((f) => [f.id, factText(f)]));
     for (const f of b.flags) {
       const allowed = new Set(f.factIds.map((id) => byId.get(id)));
       for (const n of numbersIn(`${f.title} ${f.detail}`)) expect(allowed.has(n), `${f.id}: ${n}`).toBe(true);

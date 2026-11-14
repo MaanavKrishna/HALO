@@ -26,8 +26,15 @@ export interface Fact {
   label: string;
   value: number | string;
   unit?: string;
+  /** Fixed display precision for a numeric value (for example 1 renders 2 as "2.0"). */
+  decimals?: number;
   provenance: Provenance;
   source: Source;
+}
+
+/** The value as every page and flag shows it: fixed decimals when the fact sets them, else String(value). */
+export function factText(f: Pick<Fact, 'value' | 'decimals'>): string {
+  return typeof f.value === 'number' && f.decimals !== undefined ? f.value.toFixed(f.decimals) : String(f.value);
 }
 
 export interface Flag {

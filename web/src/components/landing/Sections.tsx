@@ -203,7 +203,7 @@ export function ProblemSection() {
                 ≥{problem.moonWindow.o2}% O₂, ≤{problem.moonWindow.p} psia
                 {problem.literature && (
                   <>
-                    . {problem.literature.missions} burned {problem.literature.runs} there, outside PSI (literature)
+                    . {problem.literature.missions} burned {problem.literature.runs} real solids there, outside PSI (literature)
                   </>
                 )}
               </>

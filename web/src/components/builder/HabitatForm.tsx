@@ -365,7 +365,11 @@ function Channel({
   const { min, max, step, slider, unit } = LIMITS[k];
   const value = draft[k];
   const numeric = asNumber(value);
-  const rangeValue = numeric !== null ? Math.min(max, Math.max(min, numeric)) : min;
+  // An empty or non-numeric entry leaves the slider where it was, dimmed and disabled, instead of snapping to the minimum.
+  const valid = numeric !== null && numeric >= min && numeric <= max;
+  const last = useRef<number>(numeric !== null ? Math.min(max, Math.max(min, numeric)) : min);
+  if (valid) last.current = numeric;
+  const rangeValue = last.current;
   const pct = ((rangeValue - min) / (max - min)) * 100;
   const hint = `${min}–${max} ${unit}`;
   return (
@@ -375,13 +379,14 @@ function Channel({
           <input
             type="range"
             aria-label={sliderLabel}
-            aria-valuetext={`${rangeValue} ${unit}`}
+            aria-valuetext={valid ? `${rangeValue} ${unit}` : "Enter a valid value in the number field"}
+            disabled={!valid}
             min={min}
             max={max}
             step={slider}
             value={rangeValue}
             onChange={(e) => onChange(e.target.value)}
-            className="range"
+            className="range transition-opacity duration-[var(--dur-fast)] disabled:cursor-not-allowed disabled:opacity-40"
             style={{ ["--pct" as string]: `${pct}%` }}
           />
         </div>

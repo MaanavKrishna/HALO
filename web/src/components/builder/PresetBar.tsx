@@ -15,7 +15,7 @@ function O2Ring({ o2, on }: { o2: number; on: boolean }) {
   const frac = Math.min(1, Math.max(0, o2 / 100));
   return (
     <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" className="shrink-0 -rotate-90 overflow-visible">
-      <circle cx="12" cy="12" r={r} fill="none" stroke="var(--border-strong)" strokeOpacity="0.45" strokeWidth="1.5" />
+      <circle cx="12" cy="12" r={r} fill="none" stroke="var(--border-strong)" strokeWidth="1.5" />
       <circle
         cx="12"
         cy="12"

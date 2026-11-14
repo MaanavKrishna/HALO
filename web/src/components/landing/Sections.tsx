@@ -80,10 +80,10 @@ function O2Strip() {
           <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-16 sm:h-20">
             {/* Untested gap: from the richest real-solid test to Artemis */}
             <div
-              className="landing-gap absolute inset-y-0 border-x border-[var(--warn-line)] bg-warn-soft"
+              className="landing-gap absolute inset-y-0 border-x border-[var(--crit-line)] bg-crit-soft"
               style={{ left: at(r.o2), width: `calc(${at(a.o2Pct)} - ${at(r.o2)})` }}
             >
-              <span className="absolute left-1/2 top-2 -translate-x-1/2 whitespace-nowrap font-mono text-[0.75rem] text-warn tabular-nums">
+              <span className="absolute left-1/2 top-2 -translate-x-1/2 whitespace-nowrap font-mono text-[0.75rem] text-crit tabular-nums">
                 +{problem.gap} pts
               </span>
             </div>
@@ -191,7 +191,7 @@ export function ProblemSection() {
             label="Real solids in the Moon envelope"
             value={problem.moonWindow.solids}
             unit={`of ${problem.moonWindow.tests} tests`}
-            provenance={<ProvenanceBadge provenance="measured" />}
+            provenance={<ProvenanceBadge provenance="model" />}
             detail={
               <>
                 ≥{problem.moonWindow.o2}% O₂, ≤{problem.moonWindow.p} psia
@@ -278,11 +278,11 @@ export function PillarsSection() {
     },
     {
       title: "Point next-generation equipment",
-      body: "Smoke detector runs from SAME show which materials an ISS-style detector would miss, and what a second channel adds.",
+      body: "Smoke detector runs from SAME show which materials stayed below an ISS-style detector's alarm proxy, and what a second channel adds.",
       proof: (
         <>
           With an ionization channel added, <span className="font-mono text-fg">{k.ionCaught} of {k.ionRuns}</span> Kapton
-          runs reach an alarm level.
+          runs reach the Lampwick-calibrated ionization threshold (SAME, ISS air: {k.ambientO2}% O₂, {k.ambientAtm} atm).
         </>
       ),
       href: "/findings",
@@ -311,7 +311,7 @@ export function PillarsSection() {
                 <span className="font-mono text-xl text-fg-2">of {k.runs}</span>
               </p>
               <p className="type-title max-w-[28ch] text-fg">
-                Kapton smoke runs stayed below the ISS-style photoelectric alarm level.
+                <>Kapton smoke runs stayed below HALO&apos;s {k.scatterV} V scatter alarm proxy for an ISS-style photoelectric detector.</>
               </p>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-fg-2">
                 <ProvenanceBadge provenance="measured" />
@@ -331,7 +331,7 @@ export function PillarsSection() {
             </div>
             <div className="w-full max-w-[26rem] lg:justify-self-end">
               <ol
-                aria-label={`${k.runs} Kapton runs: ${k.missed} below the alarm level, ${k.runs - k.missed} at or above it`}
+                aria-label={`${k.runs} Kapton runs: ${k.missed} below the ${k.scatterV} V scatter proxy, ${k.runs - k.missed} at or above it`}
                 className="landing-runs grid grid-cols-7 gap-1.5"
               >
                 {Array.from({ length: k.runs }, (_, i) => {
@@ -353,10 +353,10 @@ export function PillarsSection() {
               </ol>
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[0.75rem] text-fg-2">
                 <span className="inline-flex items-center gap-2">
-                  <span aria-hidden="true" className="size-2.5 rounded-[2px] bg-crit" /> Below alarm level
+                  <span aria-hidden="true" className="size-2.5 rounded-[2px] bg-crit" /> Below {k.scatterV} V proxy
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <span aria-hidden="true" className="size-2.5 rounded-[2px] border border-line-strong bg-surface-2" /> Alarm reached
+                  <span aria-hidden="true" className="size-2.5 rounded-[2px] border border-line-strong bg-surface-2" /> At or above proxy
                 </span>
               </div>
             </div>
@@ -487,7 +487,7 @@ export function PresetsSection() {
           </Reveal>
         ))}
       </ul>
-      <p className="type-caption mt-4 font-mono text-fg-3">Pressure in psia, flow in cm/s. Grade: how close the nearest real-solid evidence sits.</p>
+      <p className="type-caption mt-4 font-mono text-fg-3">Pressure in psia, flow in cm/s. Grade: how close the nearest NASA evidence sits.</p>
     </Section>
   );
 }

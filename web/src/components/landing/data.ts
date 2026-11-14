@@ -124,6 +124,7 @@ export const pillars = {
     missed: scatterOnly.runs - scatterOnly.caught,
     ionCaught: withIon.caught,
     ionRuns: withIon.runs,
+    scatterV: D.detector.thresholds.scatterV.toFixed(1),
     ambientO2: D.detector.ambient.o2Pct,
     ambientAtm: r1(D.detector.ambient.pressurePsia / 14.696),
     source: detectorSource(D),

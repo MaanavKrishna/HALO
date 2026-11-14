@@ -10,7 +10,7 @@ const SEVERITY = {
 /** Thumbnail of the brief's evidence halo: every eligible test by O2 and pressure, rings around the habitat. */
 function MiniHalo() {
   const c = mini.chart;
-  const pad = { l: 26, r: 10, t: 10, b: 24 };
+  const pad = { l: 30, r: 10, t: 12, b: 28 };
   const vw = c.w + pad.l + pad.r;
   const vh = c.h + pad.t + pad.b;
   return (
@@ -30,7 +30,7 @@ function MiniHalo() {
           <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <g transform={`translate(${pad.l} ${pad.t})`} fontFamily="var(--font-mono)" fontSize="9">
+      <g transform={`translate(${pad.l} ${pad.t})`} fontFamily="var(--font-mono)" fontSize="11.5">
         <rect width={c.w} height={c.h} fill="var(--surface-2)" rx="4" />
         {c.yTicks.map((t) => (
           <g key={`y${t.v}`}>
@@ -43,7 +43,7 @@ function MiniHalo() {
         {c.xTicks.map((t) => (
           <g key={`x${t.v}`}>
             <line x1={t.x} x2={t.x} y1="0" y2={c.h} stroke="var(--border)" />
-            <text x={t.x} y={c.h + 14} textAnchor="middle" fill="var(--text-3)">
+            <text x={t.x} y={c.h + 17} textAnchor="middle" fill="var(--text-3)">
               {t.v}%
             </text>
           </g>
@@ -172,8 +172,8 @@ export function MiniBrief() {
       </div>
 
       <footer className="flex items-center justify-between gap-4 border-t border-line px-5 py-3 sm:px-6">
-        <span className="type-caption text-fg-3">Computed by the HALO engine</span>
-        <Link href={mini.href} className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline">
+        <span className="type-caption min-w-0 text-fg-3">HALO engine output</span>
+        <Link href={mini.href} className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-medium text-accent hover:underline">
           Open the full brief
           <Icon name="arrowRight" size={16} />
         </Link>

@@ -29,7 +29,7 @@ Other headers: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origi
 
 ## Secrets and cost control
 
-`ANTHROPIC_API_KEY` is server-only. Primary abuse controls are the Anthropic console spend limit and a Vercel Firewall rate limit on `/api/explain`; any in-app limiter is best-effort only.
+`ANTHROPIC_API_KEY` is server-only. Primary abuse controls are the LLM provider console spend limit and a Vercel Firewall rate limit on `/api/explain`; any in-app limiter is best-effort only.
 
 ## Design system
 

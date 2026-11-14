@@ -18,5 +18,4 @@
 Notes
 - Acronyms differ between `tests.json` and `investigations.json`; always join on `psiId`.
 - Unknown `/explore/<id>` returns a real 404. With Cache Components a `notFound()` inside the page would stream under a 200, so `next.config.ts` rewrites ids absent from the data to a missing route before rendering. `notFound()` stays as a fallback (for example a lower-case id, which still matches the route and shows the not-found page with a noindex tag).
-- Landing links to routes built in parallel (`/findings`, `/method`, `/data`) use `prefetch={false}` so a missing route never logs a 404 from a viewport prefetch; switch it back once those pages exist.
 - Text from data is rendered as plain text; external links use `rel="noopener noreferrer"`.

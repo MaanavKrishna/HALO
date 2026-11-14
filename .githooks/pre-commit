@@ -1,5 +1,5 @@
 #!/bin/sh
-# Block commits that stage secrets: .env files or Anthropic-style API keys.
+# Block commits that stage secrets: .env files or API keys (sk-ant- prefix).
 staged=$(git diff --cached --name-only --diff-filter=ACM)
 [ -z "$staged" ] && exit 0
 

@@ -1,0 +1,10 @@
+[project]
+name = "halo-pipeline"
+version = "0.1.0"
+description = "Builds HALO's static JSON data contract from NASA PSI combustion tables"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

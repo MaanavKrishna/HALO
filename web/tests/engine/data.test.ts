@@ -29,7 +29,24 @@ describe('fixtures', () => {
     expect(() => ExtinctionZ.parse({ ...f.extinction, coefs: [[1, 2, 3]] })).toThrow();
     expect(() => LiteratureZ.parse({})).toThrow();
     expect(() => ManifestZ.parse({ ...f.manifest, totalRows: -1 })).toThrow();
-    expect(() => SummaryZ.parse({ text: 5 })).toThrow();
+    expect(() => SummaryZ.parse({ summary: 5 })).toThrow();
+  });
+
+  it('SummaryZ parses a full entry', () => {
+    const entry = {
+      summary: 'Flame spread over cotton-fiberglass fabric at reduced pressure.',
+      habitatRelevance: 'Closest tested solid fuel to the chosen atmosphere.',
+      hazards: ['spread', 'extinction'],
+      sensors: ['thermocouple'],
+      quotes: ['Not conservative for microgravity.'],
+      model: 'claude-sonnet-5-5',
+      generatedAt: '2026-11-14T00:00:00Z',
+      needsReview: true,
+    };
+    expect(SummaryZ.parse(entry)).toEqual(entry);
+    const { needsReview: _n, ...noFlag } = entry;
+    expect(SummaryZ.parse(noFlag)).toEqual(noFlag);
+    expect(() => SummaryZ.parse({ ...entry, hazards: ['fun'] })).toThrow();
   });
 
   it('detector has no obscuration fields', () => {

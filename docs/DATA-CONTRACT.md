@@ -9,7 +9,7 @@ The pipeline writes JSON files to `web/src/data/`. The web app imports them stat
 | `detector.json` | `DetectorZ` | `{ambient, thresholds:{scatterV, ionizationDV}, calibration, obscurationNote, runs:[{material, scatterV, ionizationDV, cmdUm}]}`. Channel values are null when not recorded. There is no obscuration field; `obscurationNote` explains why. |
 | `extinction.json` | `ExtinctionZ` | Bootstrap logistic model for FLEX droplets (N2 diluent): `coefs` is 200 rows of `[intercept, o2Pct, lnD0, lnP]`, plus fit ranges (`o2RangePct`, `pRangeAtm`), `n`, `nExt`, `cvAuc`, `o2At50` and `source`. |
 | `literature.json` | `LiteratureZ` (array) | Published Saffire results: mission, sample, material, conditions (nullable), outcome, `sourceUrl`, `confidence`. |
-| `summaries.json` | `SummariesFileZ` (record of `SummaryZ`) | Keyed by `psiId`: `{text, model, factIds}`. Written only by the summary build step (`make si`); `make data` never touches it. Initially `{}`. |
+| `summaries.json` | `SummariesFileZ` (record of `SummaryZ`) | Keyed by `psiId`: `{summary, habitatRelevance, hazards, sensors, quotes, model, generatedAt, needsReview?}` (`hazards` uses the same vocabulary as investigations). Written only by the summary build step (`make si`); `make data` never touches it. Initially `{}`. |
 | `manifest.json` | `ManifestZ` | `{builtAt, totalRows, eligibleRows, files:{name: sha256}, psiDatasetDois:{psiId: doi}}`. The full dataset has `totalRows` 1967 and `eligibleRows` 1225. |
 
 ## Provenance vocabulary

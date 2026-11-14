@@ -120,7 +120,16 @@ export interface LiteratureRow {
 }
 
 /** One SI-written summary for an investigation, keyed by psiId in Summaries. */
-export interface Summary { text: string; model: string; factIds: string[] }
+export interface Summary {
+  summary: string;
+  habitatRelevance: string;
+  hazards: Hazard[];
+  sensors: string[];
+  quotes: string[];
+  model: string;
+  generatedAt: string;
+  needsReview?: boolean;
+}
 export type Summaries = Record<string, Summary>;
 
 export interface Manifest {

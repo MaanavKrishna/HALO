@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { HaloData } from '@/lib/engine/types';
 
 const finite = z.number().finite();
 const range = z.tuple([finite, finite]);
@@ -86,9 +87,14 @@ export const LiteratureZ = z.object({
 });
 
 export const SummaryZ = z.object({
-  text: z.string(),
+  summary: z.string(),
+  habitatRelevance: z.string(),
+  hazards: z.array(HazardZ),
+  sensors: z.array(z.string()),
+  quotes: z.array(z.string()),
   model: z.string(),
-  factIds: z.array(z.string()),
+  generatedAt: z.string(),
+  needsReview: z.boolean().optional(),
 });
 
 export const ManifestZ = z.object({
@@ -104,7 +110,17 @@ export const InvestigationsFileZ = z.array(InvestigationZ);
 export const LiteratureFileZ = z.array(LiteratureZ);
 export const SummariesFileZ = z.record(z.string(), SummaryZ);
 
-import type { HaloData } from '@/lib/engine/types';
+type Assert<T extends true> = T;
+type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
+export type _SchemaMatchesTypes = [
+  Assert<Same<z.infer<typeof TestPointZ>, import('@/lib/engine/types').TestPoint>>,
+  Assert<Same<z.infer<typeof InvestigationZ>, import('@/lib/engine/types').Investigation>>,
+  Assert<Same<z.infer<typeof DetectorZ>, import('@/lib/engine/types').DetectorData>>,
+  Assert<Same<z.infer<typeof ExtinctionZ>, import('@/lib/engine/types').ExtinctionData>>,
+  Assert<Same<z.infer<typeof LiteratureZ>, import('@/lib/engine/types').LiteratureRow>>,
+  Assert<Same<z.infer<typeof SummaryZ>, import('@/lib/engine/types').Summary>>,
+  Assert<Same<z.infer<typeof ManifestZ>, import('@/lib/engine/types').Manifest>>,
+];
 
 export function parseHaloData(raw: {
   tests: unknown; investigations: unknown; detector: unknown; extinction: unknown;
@@ -118,5 +134,5 @@ export function parseHaloData(raw: {
     literature: LiteratureFileZ.parse(raw.literature),
     summaries: SummariesFileZ.parse(raw.summaries),
     manifest: ManifestZ.parse(raw.manifest),
-  } as HaloData;
+  };
 }

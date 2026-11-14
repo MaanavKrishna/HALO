@@ -1,6 +1,8 @@
 "use client";
 
 import { useId, useState } from "react";
+import { StatusLight } from "@/components/ui/StatusLight";
+import { cx } from "@/components/ui/cx";
 
 export type ComboKey = "scatter" | "scatter-ionization";
 
@@ -14,105 +16,161 @@ const COMBO_LABEL: Record<ComboKey, string> = {
   scatter: "Scatter only (ISS-style)",
   "scatter-ionization": "Scatter + ionization",
 };
+const OPTIONS = (Object.keys(COMBO_LABEL) as ComboKey[]).map((k) => ({ value: k, label: COMBO_LABEL[k] }));
+const SCALE = Array.from({ length: 11 }, (_, i) => i / 10);
 
 /**
- * Share of SAME smoke runs the detector set would have caught, per material.
- * The toggle is a what-if: add an ionization channel to the ISS-style scatter
- * detector. Counts read "x of y runs"; a material without SAME runs says so.
+ * Share of SAME smoke runs the detector set would have caught, per material,
+ * drawn as instrument meters. The toggle is a what-if: add an ionization
+ * channel to the ISS-style scatter detector. Counts read "x of y runs"; a
+ * material without SAME runs says so.
  */
 export function DetectorBars({ rows, initial }: { rows: DetectorRow[]; initial: ComboKey }) {
   const [combo, setCombo] = useState<ComboKey>(initial);
-  const uid = useId();
 
   return (
     <div className="detector-bars">
-      <fieldset className="no-print mb-4">
-        <legend className="mb-2 text-sm font-medium">Sensor what-if</legend>
-        <div className="inline-flex rounded-md border border-rule-strong bg-surface p-0.5" role="radiogroup">
-          {(Object.keys(COMBO_LABEL) as ComboKey[]).map((k) => (
-            <label
-              key={k}
-              className={`relative cursor-pointer rounded-[5px] px-3 py-1.5 text-sm transition-colors duration-150 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--focus)] ${
-                combo === k ? "bg-flame font-semibold text-flame-ink" : "text-muted hover:text-ink"
-              }`}
-            >
-              <input
-                type="radio"
-                name={`${uid}-combo`}
-                value={k}
-                checked={combo === k}
-                onChange={() => setCombo(k)}
-                className="absolute inset-0 cursor-pointer opacity-0"
-              />
-              {COMBO_LABEL[k]}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <p className="print-only mb-3 hidden text-sm text-muted">Showing: {COMBO_LABEL[combo]}</p>
+      <div className="no-print mb-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span className="type-label text-fg-3" aria-hidden="true">
+          Sensor what-if
+        </span>
+        <ComboSwitch value={combo} onChange={setCombo} />
+      </div>
+      <p className="print-only mb-3 hidden text-sm text-fg-2">Showing: {COMBO_LABEL[combo]}</p>
 
-      <ul className="flex flex-col gap-4" aria-live="polite" data-detector={combo}>
+      <ul className="flex flex-col gap-6" aria-live="polite" data-detector={combo}>
         {rows.map((r) => {
           const c = r.combos[combo];
           if (!c) {
             return (
-              <li key={r.material} className="grid gap-1.5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-center sm:gap-4">
-                <span className="text-sm font-medium">{r.material}</span>
-                <span className="text-sm text-muted">No SAME data: SAME burned no analog of this material.</span>
+              <li key={r.material} className="flex flex-col gap-2">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <span className="font-semibold text-fg">{r.material}</span>
+                  <StatusLight status="idle" label="No SAME data" />
+                </div>
+                <div className="hatch-idle h-2.5 rounded-full opacity-50" aria-hidden="true" />
+                <p className="text-sm text-fg-2">No SAME data: SAME burned no analog of this material.</p>
               </li>
             );
           }
           const share = c.caught / c.runs;
           const miss = share < 0.5;
           return (
-            <li key={r.material} className="grid gap-1.5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-center sm:gap-4">
-              <span className="text-sm font-medium">{r.material}</span>
-              <div className="min-w-0">
-                <div className="relative h-3.5 overflow-hidden rounded-sm bg-amber-soft" aria-hidden="true">
+            <li key={r.material} className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <span className="font-semibold text-fg">{r.material}</span>
+                <span className="text-sm text-fg-2">
+                  <span className="num font-mono text-[1.375rem] leading-none tracking-[-0.03em] text-fg">{c.caught}</span>
+                  <span className="num font-mono text-fg-3"> / </span>
+                  <span className="sr-only"> of </span>
+                  <span className="num font-mono text-fg-2">{c.runs}</span>
+                  <span className="sr-only"> runs caught</span>
+                  {c.cite && (
+                    <sup className="ml-0.5">
+                      <a href={`#cite-${c.cite}`} aria-label={`source ${c.cite}`} className="num font-mono text-[0.7rem] text-accent">
+                        {c.cite}
+                      </a>
+                    </sup>
+                  )}
+                </span>
+              </div>
+              <div className="relative pb-3" aria-hidden="true">
+                <div className={cx("relative h-2.5 overflow-hidden rounded-full", miss ? "bg-warn-soft" : "bg-surface-2")}>
                   <div
-                    className="absolute inset-y-0 left-0 bg-flame transition-[width] duration-300 ease-out"
+                    className="absolute inset-y-0 left-0 rounded-full bg-accent shadow-[inset_0_1px_0_var(--fill-highlight)] transition-[width] duration-[var(--dur-slow)] ease-[var(--ease-out)]"
                     style={{ width: `${share * 100}%` }}
                   />
                   <div
-                    className="absolute inset-y-0 right-0 bg-[repeating-linear-gradient(135deg,var(--amber)_0_1.5px,transparent_1.5px_5px)] opacity-60"
+                    className={cx("absolute inset-y-0 right-0 transition-[width] duration-[var(--dur-slow)] ease-[var(--ease-out)]", miss ? "hatch-warn opacity-70" : "hatch-idle opacity-60")}
                     style={{ width: `${(1 - share) * 100}%` }}
                   />
-                  <div className="absolute inset-y-[-2px] left-1/2 w-px bg-ink" />
                 </div>
-                <p className="mt-1.5 flex flex-wrap items-baseline justify-between gap-x-3 text-sm">
-                  <span>
-                    <span className="num font-semibold">{c.caught}</span> of <span className="num">{c.runs}</span> runs caught
-                    {c.cite && (
-                      <sup className="ml-px">
-                        <a href={`#cite-${c.cite}`} aria-label={`source ${c.cite}`} className="num font-mono text-[0.68em] text-flame">
-                          {c.cite}
-                        </a>
-                      </sup>
-                    )}
-                  </span>
-                  {miss ? (
-                    <span className="font-semibold text-amber">would likely miss</span>
-                  ) : (
-                    <span className="text-muted">caught in most runs</span>
-                  )}
-                </p>
+                {/* scale ticks every tenth, the half mark taller */}
+                {SCALE.map((t) => (
+                  <span
+                    key={t}
+                    className={cx("absolute top-3 w-px bg-line-strong", t === 0.5 ? "h-2.5 opacity-100" : "h-1 opacity-50")}
+                    style={{ left: `calc(${t * 100}% - ${t === 1 ? 1 : 0}px)` }}
+                  />
+                ))}
+                <span className="absolute -top-1 left-1/2 h-4.5 w-px bg-fg" />
               </div>
+              <p className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
+                <span className="text-fg-2">
+                  <span className="num">{c.caught}</span> of <span className="num">{c.runs}</span> runs caught
+                </span>
+                {miss ? (
+                  <span className="inline-flex items-center gap-1.5 font-semibold text-warn">
+                    <StatusLight status="warn" label="Caution" hideLabel />
+                    would likely miss
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-fg-2">
+                    <StatusLight status="ok" label="Covered" hideLabel />
+                    caught in most runs
+                  </span>
+                )}
+              </p>
             </li>
           );
         })}
       </ul>
-      <p className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted" aria-hidden="true">
+      <p className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[0.8125rem] text-fg-2" aria-hidden="true">
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-4 rounded-[2px] bg-flame" /> caught
+          <span className="inline-block h-2 w-4 rounded-full bg-accent" /> caught
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-4 rounded-[2px] bg-amber-soft bg-[repeating-linear-gradient(135deg,var(--amber)_0_1.5px,transparent_1.5px_5px)]" />{" "}
-          missed (below alarm level)
+          <span className="hatch-warn inline-block h-2 w-4 rounded-full bg-warn-soft" /> missed (below alarm level)
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-3 w-px bg-ink" /> half of runs
+          <span className="inline-block h-3 w-px bg-fg" /> half of runs
         </span>
       </p>
     </div>
+  );
+}
+
+/**
+ * The kit's segmented capsule (same tokens, sliding thumb, native radios),
+ * with each radio covering its whole label so it is hit directly by pointer
+ * and by test drivers (the kit version visually hides the input).
+ */
+function ComboSwitch({ value, onChange }: { value: ComboKey; onChange: (v: ComboKey) => void }) {
+  const name = useId();
+  const index = Math.max(0, OPTIONS.findIndex((o) => o.value === value));
+  return (
+    <fieldset className="inline-flex max-w-full">
+      <legend className="sr-only">Sensor what-if</legend>
+      <div
+        className="relative grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)]"
+        style={{ ["--n" as string]: OPTIONS.length, ["--i" as string]: index }}
+      >
+        <span
+          aria-hidden="true"
+          className="absolute bottom-[3px] left-[3px] top-[3px] rounded-[var(--radius-pill)] bg-surface-1 shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)] transition-transform duration-[var(--spring-dur-snappy)] ease-[var(--spring)]"
+          style={{ width: "calc((100% - 6px) / var(--n))", transform: "translateX(calc(var(--i) * 100%))" }}
+        />
+        {OPTIONS.map((o) => (
+          <label
+            key={o.value}
+            className={cx(
+              "relative z-[1] flex h-8 items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] px-3 text-[0.8125rem] font-medium transition-colors duration-[var(--dur-fast)] sm:px-4",
+              "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-[var(--focus)]",
+              o.value === value ? "text-fg" : "text-fg-2 hover:text-fg",
+            )}
+          >
+            <input
+              type="radio"
+              name={name}
+              value={o.value}
+              checked={o.value === value}
+              onChange={() => onChange(o.value)}
+              className="absolute inset-0 m-0 cursor-pointer appearance-none rounded-[inherit] opacity-0"
+            />
+            {o.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }

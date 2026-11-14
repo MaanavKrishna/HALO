@@ -16,9 +16,6 @@ const ORDER: Grade[] = ['F', 'D', 'C', 'B', 'A'];
 /** Below this, a distance prints as "at these exact conditions" rather than "0.00". */
 const EXACT = 0.005;
 
-/** "a" or "an" for the word that follows (acronyms read by their first letter's sound). */
-const article = (next: string) => (/^[AEFHILMNORSX]/.test(next) ? 'an' : 'a');
-
 const where = (d: number) => (d < EXACT ? 'at these exact conditions' : `at evidence distance ${d.toFixed(2)}`);
 
 /** Solid-class grade, raised one step (never above C) when a surrogate fuel is within the B-ring. */
@@ -29,17 +26,18 @@ export function overallGrade(byClass: Record<FuelClass, Nearest>): { grade: Grad
   const idx = ORDER.indexOf(base);
   if (surrogateNear && idx < ORDER.indexOf('C')) {
     const grade = ORDER[idx + 1];
-    const acronym = sur.test ? `${sur.test.acronym} ` : '';
+    // The test is named plainly ("the nearest surrogate-fuel test, BRE,"), so no article has to guess how an acronym is read.
+    const named = sur.test ? `, ${sur.test.acronym},` : '';
     return {
       grade,
-      reason: `Real cabin solids grade ${base}; ${article(acronym || 's')} ${acronym}surrogate-fuel test ${where(sur.d!)} raises it one step to ${grade} (raised grades are capped at C).`,
+      reason: `Real cabin solids grade ${base}; the nearest surrogate-fuel test${named} sits ${where(sur.d!)} and raises it one step to ${grade} (raised grades are capped at C).`,
     };
   }
   const solid = byClass.solid;
   if (solid.d === null) return { grade: base, reason: 'No real cabin solid has been tested in the eligible data, so the grade is F.' };
-  const acronym = solid.test ? `${solid.test.acronym} ` : '';
+  const named = solid.test ? ` (${solid.test.acronym})` : '';
   return {
     grade: base,
-    reason: `Set by the nearest real cabin solid, ${article(acronym || 't')} ${acronym}test ${where(solid.d)}.`,
+    reason: `Set by the nearest real cabin solid test${named}, ${where(solid.d)}.`,
   };
 }

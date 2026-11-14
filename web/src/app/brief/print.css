@@ -1,6 +1,7 @@
 /*
- * Fire Brief print layout (A4, 12 mm margins). The global print block already
- * forces light tokens on white and hides .no-print (site nav, skip link).
+ * Fire Brief print layout (A4, 12 mm margins): archival paper, vector charts,
+ * no glows. The global print block already forces light tokens on white and
+ * hides .no-print (site nav, skip link).
  */
 @media print {
   @page {
@@ -12,11 +13,12 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  /* Chrome: nav, actions, interactive controls. */
+  /* Chrome: nav, actions, sticky bar, interactive controls. */
   header.no-print,
   nav,
   button:not(.legend-toggle),
   [data-actions],
+  [data-brief-bar],
   details.weights,
   .no-print {
     display: none !important;
@@ -40,39 +42,71 @@
     line-clamp: 2;
     overflow: hidden;
   }
-  .brief {
+  .brief .container-page {
     max-width: none;
-    padding: 0;
+    padding-inline: 0;
   }
-  .brief-header {
+  /* Hero prints as a compact paper header: no well, no grid, no dial. */
+  .brief-hero {
+    background: #ffffff !important;
+    border-bottom: 1.5pt solid var(--text-1) !important;
+  }
+  .brief-hero > .container-page {
     padding-top: 0;
-    padding-bottom: 6mm;
+    padding-bottom: 5mm;
+    gap: 6mm;
+    grid-template-columns: minmax(0, 1fr) 52mm;
   }
-  /* Single column: the section label sits above its content. */
-  /* Sections may span pages (the global print block keeps them whole); their cards stay whole. */
+  .brief-hero .bg-grid,
+  .brief-hero [aria-hidden="true"].pointer-events-none {
+    display: none !important;
+  }
+  .brief-hero h1 {
+    font-size: 26pt;
+  }
+  .brief-hero .rings-dial,
+  .brief-hero .grade-panel svg[viewBox="0 0 400 400"] {
+    display: none !important;
+  }
+  .brief-hero .grade-panel {
+    gap: 2mm;
+    border: 0.75pt solid var(--border-strong);
+    border-radius: 3mm;
+    padding: 4mm;
+    align-self: start;
+  }
+  .brief-hero .grade-panel > div:first-child {
+    max-width: none;
+    width: auto;
+  }
+  .brief-grade-glow {
+    filter: none !important;
+    zoom: 1 !important;
+  }
+  /* Single column: the section heading sits above its content. */
   .brief-section {
     break-inside: auto;
     display: block;
     padding-top: 6mm;
     padding-bottom: 6mm;
   }
-  .brief-section > header {
+  .brief-section-head {
+    position: static !important;
     margin-bottom: 3mm;
     break-after: avoid;
     break-inside: avoid;
   }
-  .brief-section > header > span[aria-hidden="true"] {
-    display: none;
+  .brief-section-head h2 {
+    font-size: 15pt;
   }
-  .brief-section > header p {
+  .brief-section-head p {
     display: none;
   }
   /* Keep cards, rows and figures whole. */
-  .brief-section .rounded-lg,
-  .brief-section .rounded-md,
   .flag-card,
   .ranked-item,
   .grade-panel,
+  [data-print-keep],
   figure,
   li,
   tr {
@@ -83,13 +117,35 @@
   h3 {
     break-after: avoid;
   }
+  /* Vector charts on paper: no glows, no drop shadows, nothing animated. */
+  .chart-glow,
+  .habitat-glow {
+    display: none !important;
+  }
+  .halo-ring-active,
+  [style*="drop-shadow"] {
+    filter: none !important;
+  }
   .halo-chart svg {
     max-height: 120mm;
+  }
+  .halo-chart .halo-ring,
+  .halo-chart .halo-dial {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+  .halo-chart [data-draw] .halo-ring {
+    stroke-dasharray: none !important;
+  }
+  /* Ask HALO prints its narrative only. */
+  [data-ask] form {
+    display: none !important;
   }
   /* The sources list prints each link's full URL after it. */
   .citations a.cite-link[href^="http"]::after {
     content: " " attr(href);
-    color: var(--muted);
+    color: var(--text-2);
     word-break: break-all;
   }
   .brief-disclaimer {

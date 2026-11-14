@@ -1,7 +1,9 @@
+import { Panel } from "@/components/ui/Panel";
 import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
+import { Stat, StatGroup } from "@/components/ui/Stat";
 import { briefContext } from "@/lib/brief/context";
 import type { Brief } from "@/lib/engine/types";
-import { CiteMark, Section, unitText } from "./parts";
+import { CiteMark, Section } from "./parts";
 
 /** Saffire VI: how big a large spacecraft fire got, and what it left in the air. */
 export function AftermathCard({ brief }: { brief: Brief }) {
@@ -14,43 +16,54 @@ export function AftermathCard({ brief }: { brief: Brief }) {
   return (
     <Section
       id="aftermath"
-      index={6}
       title="If a fire grows: the aftermath"
       kicker="Saffire VI burned large samples inside an uncrewed Cygnus cargo vehicle after it left the ISS."
     >
       {brief.aftermath.length === 0 ? (
-        <p className="text-sm text-muted">No Saffire VI results are available in this dataset.</p>
+        <p className="text-sm text-fg-2">No Saffire VI results are available in this dataset.</p>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {lo && hi && (
-            <div className="rounded-lg border border-rule bg-surface p-5">
-              <p className="text-xs text-muted">PMMA fire power</p>
-              <p className="mt-1 font-mono text-3xl font-medium tracking-tight">
-                <span className="num" data-fact={lo.id}>{String(lo.value)}</span>–<span className="num" data-fact={hi.id}>{String(hi.value)}</span>
-                <span className="text-lg text-muted">{unitText(hi)}</span>
-                <CiteMark n={ctx.cite(hi.id)} />
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                Range of peak heat release reported for the large PMMA samples.
-              </p>
-              <ProvenanceBadge provenance={hi.provenance} className="mt-3" />
-            </div>
-          )}
-          {tox && (
-            <div className="rounded-lg border border-rule bg-surface p-5">
-              <p className="text-xs text-muted">Toxic gases over crew limits</p>
-              <p className="mt-1 font-mono text-3xl font-medium tracking-tight">
-                <span className="num" data-fact={tox.id}>{String(tox.value)}</span>
-                <span className="text-lg text-muted">{unitText(tox)}</span>
-                <CiteMark n={ctx.cite(tox.id)} />
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                In the Saffire VI burn at this oxygen level, CO and CO<sub>2</sub> rose past crew exposure limits.
-              </p>
-              <ProvenanceBadge provenance={tox.provenance} className="mt-3" />
-            </div>
-          )}
-        </div>
+        <Panel label="Saffire VI · large-scale burn" bodyClassName="p-0 sm:p-0" data-print-keep="">
+          <StatGroup className="rounded-none border-0 max-sm:grid-cols-1 sm:grid-cols-2 [&>div]:p-5 sm:[&>div]:p-6">
+            {lo && hi && (
+              <Stat
+                size="lg"
+                label="PMMA fire power"
+                value={
+                  <>
+                    <span className="num" data-fact={lo.id}>{String(lo.value)}</span>–<span className="num" data-fact={hi.id}>{String(hi.value)}</span>
+                  </>
+                }
+                unit={
+                  <>
+                    {hi.unit}
+                    <CiteMark n={ctx.cite(hi.id)} />
+                  </>
+                }
+                provenance={<ProvenanceBadge provenance={hi.provenance} />}
+                detail="Range of peak heat release reported for the large PMMA samples."
+              />
+            )}
+            {tox && (
+              <Stat
+                size="lg"
+                label="Toxic gases over crew limits"
+                value={<span className="num" data-fact={tox.id}>{String(tox.value)}</span>}
+                unit={
+                  <>
+                    {tox.unit}
+                    <CiteMark n={ctx.cite(tox.id)} />
+                  </>
+                }
+                provenance={<ProvenanceBadge provenance={tox.provenance} />}
+                detail={
+                  <>
+                    In the Saffire VI burn at this oxygen level, CO and CO<sub>2</sub> rose past crew exposure limits.
+                  </>
+                }
+              />
+            )}
+          </StatGroup>
+        </Panel>
       )}
     </Section>
   );

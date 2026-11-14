@@ -1,10 +1,93 @@
-/* Brief page: screen helpers shared by the charts. */
+/* Brief page: page-scoped helpers (tokens only). */
+.brief {
+  --brief-bar-h: 3.25rem;
+}
+/* Anchors (#cite-n, #flags) land clear of the nav and the sticky brief bar. */
+html:has(main.brief) {
+  scroll-padding-top: calc(var(--nav-h) + var(--brief-bar-h, 3.25rem) + 1.25rem);
+}
+/* SVG text that must stay legible over marks: a halo of the plot surface. */
 .halo-label {
   paint-order: stroke;
-  stroke: var(--surface);
+  stroke: var(--surface-1);
   stroke-width: 3.5px;
   stroke-linejoin: round;
 }
 .brief .cite-ref a {
   text-decoration: none;
+}
+/* Good evidence (A/B) lights the grade at the centre of the hero dial; D/F stay unlit. */
+.brief-grade-glow:has([aria-label^="Evidence grade A"]),
+.brief-grade-glow:has([aria-label^="Evidence grade B"]) {
+  filter: drop-shadow(0 0 22px var(--accent-glow));
+}
+/* A fact a reader jumped to from Ask HALO flashes once. */
+@keyframes brief-fact-flash {
+  0%,
+  35% {
+    background-color: var(--accent-soft);
+    box-shadow: 0 0 0 3px var(--accent-line);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+.fact-flash {
+  border-radius: var(--radius-xs);
+  animation: brief-fact-flash 1600ms var(--ease-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fact-flash {
+    animation: none;
+    background-color: var(--accent-soft);
+    box-shadow: 0 0 0 2px var(--accent-line);
+  }
+}
+/* Chart glow layers are screen-only. */
+.chart-glow {
+  pointer-events: none;
+}
+/* Ranked score bar: four parts, one accent family. */
+.score-seg-0 { background: var(--accent); }
+.score-seg-1 { background: color-mix(in oklab, var(--accent) 68%, transparent); }
+.score-seg-2 { background: color-mix(in oklab, var(--accent) 44%, transparent); }
+.score-seg-3 { background: color-mix(in oklab, var(--accent) 24%, transparent); }
+/* Missed-share hatch in meters (risk: warn). */
+.hatch-warn {
+  background-image: repeating-linear-gradient(135deg, var(--warn) 0 1.5px, transparent 1.5px 5px);
+}
+.hatch-idle {
+  background-image: repeating-linear-gradient(135deg, var(--border-strong) 0 1.5px, transparent 1.5px 4px);
+}
+/* Halo chart: the B-ring carries the flame's light; rings draw in once when the chart scrolls into view. */
+.halo-ring-active {
+  filter: drop-shadow(0 0 4px var(--accent-glow));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .halo-chart[data-draw="pending"] .halo-ring {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .halo-chart[data-draw="pending"] .halo-dial,
+  .halo-chart[data-draw="pending"] .chart-glow {
+    opacity: 0;
+  }
+  .halo-chart[data-draw="go"] .halo-ring {
+    stroke-dasharray: 1;
+    animation: ring-draw 1300ms var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 140ms);
+  }
+  .halo-chart[data-draw="go"] .halo-dial,
+  .halo-chart[data-draw="go"] .chart-glow {
+    animation: brief-fade-in 900ms var(--ease-out) 380ms both;
+  }
+}
+@keyframes brief-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

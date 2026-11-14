@@ -46,3 +46,12 @@ describe.skipIf(!isReal)('real data: Artemis fire brief', () => {
     for (const f of b.facts) expect(f.id).toMatch(/^[a-z-]+$/);
   });
 });
+
+describe.skipIf(!isReal)('real data: detector facts cite SAME', () => {
+  it('det facts use the SAME investigation, not another smoke-detection one', () => {
+    const b = buildBrief(PRESETS.artemis, HALO_DATA);
+    const f = b.facts.find((x) => x.id === 'det-kapton-scatter-runs');
+    expect(f?.source.note).toBe('SAME');
+    expect(f?.source.psiId).toBe('PSI-102');
+  });
+});

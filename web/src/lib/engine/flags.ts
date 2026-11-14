@@ -25,8 +25,11 @@ function testSource(data: HaloData, psiId: string): Source {
 }
 
 /** SAME (smoke detection) investigation source, if the data has one. */
-function detectorSource(data: HaloData): Source {
-  const inv = data.investigations.find((i) => i.hazards.includes('smoke_detection'));
+export function detectorSource(data: HaloData): Source {
+  // The detector runs are SAME; prefer it over other smoke-detection investigations (DAFT, SAME-R).
+  const inv =
+    data.investigations.find((i) => i.acronym.trim().toUpperCase() === 'SAME') ??
+    data.investigations.find((i) => i.hazards.includes('smoke_detection'));
   return inv ? { psiId: inv.psiId, doi: inv.datasetDoi, note: inv.acronym } : { note: 'SAME smoke detector runs' };
 }
 

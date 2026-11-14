@@ -34,21 +34,21 @@ Each flag lists `factIds`. Each id resolves in `brief.facts`, and each number in
 
 ## Fact ids and provenance
 
-Fact ids use lowercase letters and hyphens only, with no digits. An "x of y" figure is two facts, so a validator can match each number on its own.
+`source.psiId` always holds a single PSI id, so the UI can link it; lists of ids go in `source.note`. Fact ids use lowercase letters and hyphens only, with no digits. An "x of y" figure is two facts, so a validator can match each number on its own.
 
 | Id pattern | Provenance | Source |
 |---|---|---|
 | `det-<material>-scatter-low`, `det-<material>-scatter-runs` | measured | SAME investigation PSI id and dataset DOI |
-| `det-<material>-<detectors>-low`, `-runs` (combos other than scatter alone) | model / measured | SAME |
+| `det-<material>-<detectors>-low`, `-runs` (combos other than scatter alone) | inferred / measured | SAME |
 | `det-ambient-oxygen`, `det-ambient-pressure` | assumed | SAME |
 | `cov-solid-distance` | model | PSI id and DOI of the nearest solid test |
 | `cov-solid-oxygen`, `cov-solid-pressure` | the test's `o2Src` / `pSrc` | same |
-| `cov-solid-count` | measured | PSI ids searched |
+| `cov-solid-count` | measured | Note listing the PSI ids searched |
 | `ext-pressure-min`, `ext-pressure-max` | measured | extinction model source (FLEX) |
 | `ext-pressure-used`, `ext-probability`, `ext-probability-lo`, `ext-probability-hi`, `ext-droplet-size` | model | FLEX |
-| `psi-investigations` | measured | PSI ids of all investigations |
+| `psi-investigations` | measured | Space Apps challenge page (states PSI has no partial-gravity combustion data); note lists the investigations counted |
 | `aftermath-pmma-power-low`, `aftermath-pmma-power-high` | literature | Saffire VI rows; values parsed from the PMMA outcome text |
-| `aftermath-toxic-oxygen` | literature | The Saffire VI row whose outcome reports CO over its limit; `o2Pct` rounded to a whole percent (copy renders it as "~{value}% O2") |
+| `aftermath-toxic-oxygen` | literature | The Saffire VI row whose outcome reports CO over its limit (negations such as "did not exceed" are ignored); `o2Pct` rounded to a whole percent (copy renders it as "~{value}% O2") |
 | `flex-cool-flame` | literature | DOI 10.1016/j.combustflame.2012.07.012 |
 | `bass-test-one` | literature | A Researcher's Guide to: Combustion Science (2015), PDF edition |
 | `earth-air-tanks`, `earth-fire-detector`, `earth-fire-attire` | literature | spinoff.nasa.gov nodes 9582, 9407, 9918 |

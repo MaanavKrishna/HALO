@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { loadFixtureData } from '@/lib/data/fixtures';
 import { PRESETS } from '@/lib/engine/presets';
 import { buildBrief } from '@/lib/engine/brief';
+import { aftermathFacts, reportsCoOverLimit } from '@/lib/engine/facts';
 import type { Brief, Habitat } from '@/lib/engine/types';
 
 const data = loadFixtureData();
@@ -73,6 +74,25 @@ describe('buildBrief (fixtures)', () => {
     expect(v('aftermath-pmma-power-low')).toBe(1.5);
     expect(v('aftermath-pmma-power-high')).toBe(3.2);
     expect(v('aftermath-toxic-oxygen')).toBe(32);
+  });
+
+  it('ignores negated toxic-gas outcomes', () => {
+    expect(reportsCoOverLimit('CO and CO2 did not exceed 24 h limits')).toBe(false);
+    expect(reportsCoOverLimit('CO +308 ppm (>24-h SMAC 100)')).toBe(true);
+    expect(reportsCoOverLimit('CO and CO2 exceeded 24 h limits')).toBe(true);
+    const lit = data.literature.map((r) => ({ ...r, outcome: r.outcome.replace('exceeded', 'did not exceed') }));
+    expect(aftermathFacts({ ...data, literature: lit }).some((f) => f.id === 'aftermath-toxic-oxygen')).toBe(false);
+  });
+
+  it('two-detector combo wording and inferred miss counts', () => {
+    const w = buildBrief({ ...PRESETS.artemis, detectors: ['scatter', 'ionization'] }, data);
+    for (const f of w.flags.filter((x) => x.id.startsWith('detector-miss-'))) expect(f.detail).toMatch(/both channels .* their alarm levels/);
+    for (const f of w.facts.filter((x) => /^det-.+-ionization-scatter-low$/.test(x.id))) expect(f.provenance).toBe('inferred');
+  });
+
+  it('list-valued sources live in note, psiId is a single id', () => {
+    for (const f of b.facts) if (f.source.psiId) expect(f.source.psiId).toMatch(/^PSI-\d+$/);
+    expect(b.facts.find((f) => f.id === 'psi-investigations')?.source.url).toBe('https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/');
   });
 
   it('has three Earth facts with Spinoff URLs and the BASS fact', () => {

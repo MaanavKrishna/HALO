@@ -52,6 +52,12 @@ describe('URL codec', () => {
     expect(r.notices).toHaveLength(2);
   });
 
+  it('rejects inherited object keys as materials', () => {
+    const r = q('m=constructor,__proto__,kapton');
+    expect(r.habitat.materials).toEqual(['kapton']);
+    expect(r.notices).toHaveLength(1);
+  });
+
   it('empty d defaults to scatter; all-unknown d also falls back to scatter', () => {
     expect(q('d=').habitat.detectors).toEqual(['scatter']);
     expect(q('d=').notices).toEqual([]);

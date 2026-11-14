@@ -12,6 +12,7 @@ const ISS_AIR_MIN_P = 13;
 const SOLID_C_LIMIT = 1.0;
 const MISS_PCT = 50;
 const SELF_EXTINGUISH_P = 0.1;
+const PARTIAL_GRAVITY_URL = 'https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/';
 
 const r2 = (x: number) => Number(x.toFixed(2));
 const pct = (x: number) => Math.round(x * 100);
@@ -48,7 +49,7 @@ export function detectionFacts(det: DetectionResult[], detectors: string[], data
     if (key !== 'scatter' && d.caughtPct !== null && d.caughtRuns > 0) {
       const caught = Math.round((d.caughtPct / 100) * d.caughtRuns);
       out.push(
-        { id: `det-${d.material}-${key}-low`, label: `${label} runs missed by ${comboLabel(detectors)}`, value: d.caughtRuns - caught, provenance: 'model', source: src },
+        { id: `det-${d.material}-${key}-low`, label: `${label} runs missed by ${comboLabel(detectors)}`, value: d.caughtRuns - caught, provenance: 'inferred', source: src },
         { id: `det-${d.material}-${key}-runs`, label: `${label} runs with every selected channel recorded`, value: d.caughtRuns, provenance: 'measured', source: src },
       );
     }
@@ -73,7 +74,7 @@ export function buildFlags(
     const count: Fact = {
       id: 'cov-solid-count', label: 'Eligible solid-fuel tests', provenance: 'measured',
       value: data.tests.filter((t) => t.fuelClass === 'solid').length,
-      source: { psiId: [...new Set(data.tests.map((t) => t.psiId))].sort().join(', '), note: 'Eligible PSI test rows searched' },
+      source: { note: `Eligible PSI test rows searched: ${[...new Set(data.tests.map((t) => t.psiId))].sort().join(', ')}` },
     };
     if (solid.test && solid.d !== null) {
       const t = solid.test;
@@ -113,7 +114,7 @@ export function buildFlags(
     flags.push({
       id: `detector-miss-${d.material}`, severity: 'critical',
       title: `Your detector would likely miss ${label} smoke`,
-      detail: `In SAME, the ${comboLabel(h.detectors)} channel stayed below its alarm level in ${low.value} of ${runs.value} ${label} runs.`,
+      detail: `In SAME, ${h.detectors.length > 1 ? `both channels (${comboLabel(h.detectors)}) stayed below their alarm levels` : `the ${comboLabel(h.detectors)} channel stayed below its alarm level`} in ${low.value} of ${runs.value} ${label} runs.`,
       factIds: [low.id, runs.id],
     });
   }
@@ -173,7 +174,11 @@ export function buildFlags(
   const ids = [...new Set(data.investigations.map((i) => i.psiId))].sort();
   const invCount: Fact = {
     id: 'psi-investigations', label: 'PSI investigations in the HALO dataset', value: ids.length,
-    provenance: 'measured', source: { psiId: ids.join(', '), note: 'Each investigation is cited by its PSI dataset DOI' },
+    provenance: 'measured',
+    source: {
+      url: PARTIAL_GRAVITY_URL,
+      note: `The challenge states PSI holds no partial-gravity combustion data. Investigations counted: ${ids.join(', ')}`,
+    },
   };
   facts.push(invCount);
   flags.push({

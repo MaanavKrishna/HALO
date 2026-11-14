@@ -36,7 +36,7 @@ export const EARTH_FACTS: Fact[] = [
   {
     id: 'earth-fire-detector',
     label: 'Fire detector',
-    value: 'A fire detector first flown on the space shuttle samples air for combustion particles and tells them apart from dust, signalling before flame or smoke appears.',
+    value: 'A fire detector related to one used in space shuttle orbiters samples air for combustion particles and tells them apart from dust, signalling before flame or smoke appears.',
     provenance: 'literature',
     source: { url: 'https://spinoff.nasa.gov/node/9407', note: 'NASA Spinoff: Fire Detector' },
   },
@@ -59,6 +59,13 @@ function powersW(text: string): number[] {
   return out;
 }
 
+/** True when an outcome reports CO over a crew limit, ignoring negations such as "did not exceed". */
+export function reportsCoOverLimit(outcome: string): boolean {
+  if (!/\bCO\b/.test(outcome)) return false;
+  if (/\b(did\s+not|does\s+not|didn['’]t|doesn['’]t|never|not|no|without)\s+(\w+\s+)?exceed/i.test(outcome)) return false;
+  return /\bexceed/i.test(outcome) || />\s*24/.test(outcome);
+}
+
 const round1 = (x: number) => Number(x.toFixed(1));
 
 /** Saffire VI aftermath: PMMA fire power range and the O2 level at which CO and CO2 exceeded crew limits. */
@@ -77,7 +84,7 @@ export function aftermathFacts(data: HaloData): Fact[] {
     );
   }
 
-  const toxic = rows.find((r) => r.o2Pct !== null && /\bCO\b/.test(r.outcome) && /(exceed|>\s*24)/i.test(r.outcome));
+  const toxic = rows.find((r) => r.o2Pct !== null && reportsCoOverLimit(r.outcome));
   if (toxic) {
     facts.push({
       id: 'aftermath-toxic-oxygen',

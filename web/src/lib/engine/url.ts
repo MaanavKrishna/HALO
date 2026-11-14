@@ -63,8 +63,10 @@ export function queryToHabitat(q: URLSearchParams): { habitat: Habitat; notices:
   const m = q.get('m');
   if (m !== null) {
     const items = csv(m);
-    const known = items.filter((x): x is MaterialId => x in MATERIALS);
-    const unknown = items.filter((x) => !(x in MATERIALS));
+    // Own-property check: `in` would accept inherited keys such as "constructor".
+    const isMaterial = (x: string): x is MaterialId => Object.hasOwn(MATERIALS, x);
+    const known = items.filter(isMaterial);
+    const unknown = items.filter((x) => !isMaterial(x));
     if (unknown.length) notices.push(`Unknown material${unknown.length > 1 ? 's' : ''} ignored: ${unknown.join(', ').slice(0, 60)}.`);
     habitat.materials = [...new Set(known)];
   }

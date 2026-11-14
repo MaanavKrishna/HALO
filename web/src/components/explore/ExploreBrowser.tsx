@@ -134,7 +134,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
             <label className="flex flex-col gap-2.5">
               <span className="type-label text-fg-3">Sort by</span>
               <select
-                className="field-input !h-8 !w-auto !py-0 text-sm"
+                className="field-input h-8! w-auto! py-0! text-sm"
                 value={sort.key}
                 onChange={(e) => {
                   const key = e.target.value as SortKey;
@@ -272,7 +272,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                       <span className={cx("font-mono text-[0.8125rem]", i.o2Range ? "text-fg" : "text-fg-3")}>{formatRange(i.o2Range, "%")}</span>
                     </div>
                     <CoverageBar range={i.o2Range} className="mt-2" />
-                    <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-line pt-4">
+                    <dl className="mt-4 grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)] gap-3 border-t border-line pt-4">
                       {[
                         ["Pressure", formatRange(i.pRangePsia, "psia")],
                         ["Rows", String(i.nRows)],

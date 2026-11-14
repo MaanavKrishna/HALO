@@ -23,8 +23,9 @@ function axis(min: number, max: number): { lo: number; hi: number; ticks: number
   return { lo, hi, ticks };
 }
 
-// Reference habitats drawn as crosshairs when they fall inside the plot.
-const REFS = [PRESETS.iss, PRESETS.moon, PRESETS.artemis];
+// Reference habitats drawn as crosshairs when they fall inside the plot
+// (the Moon preset is the envelope's corner, so the box stands for it).
+const REFS = [PRESETS.iss, PRESETS.artemis];
 // Moon envelope, as on the brief's evidence chart: O2 at least the Moon preset's, pressure at most the Moon preset's.
 const ENV = { o2: PRESETS.moon.o2Pct, p: PRESETS.moon.pressurePsia };
 

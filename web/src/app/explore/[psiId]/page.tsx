@@ -68,6 +68,37 @@ function RangeStat({ label, range, unit }: { label: string; range: [number, numb
   return <Stat label={label} value={lo === hi ? `${r1(lo)}` : `${r1(lo)}–${r1(hi)}`} unit={unit} />;
 }
 
+const PUB_FIRST = 10;
+
+function PubList({ pubs, start }: { pubs: Investigation["publications"]; start: number }) {
+  return (
+    <ol className="flex flex-col" start={start + 1}>
+      {pubs.map((p, i) => {
+        const idx = start + i;
+        const url = p.doi ? doiUrl(p.doi) : null;
+        return (
+          <li key={`${p.doi ?? p.title}-${idx}`} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 border-b border-line py-3.5">
+            <span aria-hidden="true" className="pt-0.5 font-mono text-xs text-fg-3">{String(idx + 1).padStart(2, "0")}</span>
+            <div className="min-w-0">
+              <p className="text-[0.9375rem] leading-snug text-fg">{p.title}</p>
+              <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                {p.year !== null && <span className="font-mono text-fg-2">{p.year}</span>}
+                {url && p.doi ? (
+                  <ExternalLink href={url} className="break-all font-mono">
+                    {p.doi}
+                  </ExternalLink>
+                ) : (
+                  <span className="text-fg-3">no DOI listed</span>
+                )}
+              </p>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function NeighbourLink({ inv, dir }: { inv: Investigation; dir: "prev" | "next" }) {
   return (
     <Link
@@ -171,11 +202,17 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
                 </div>
               </div>
 
-              <StatGroup className="grid-cols-1! sm:grid-cols-1! [&>div]:px-4! [&>div]:py-3.5!">
-                <RangeStat label="O₂ range" range={inv.o2Range} unit="%" />
-                <RangeStat label="Pressure range" range={inv.pRangePsia} unit="psia" />
-                <RangeStat label="Flow range" range={inv.flowRangeCmS} unit="cm/s" />
-              </StatGroup>
+              {inv.o2Range || inv.pRangePsia || inv.flowRangeCmS ? (
+                <StatGroup className="grid-cols-1! sm:grid-cols-1! [&>div]:px-4! [&>div]:py-3.5!">
+                  <RangeStat label="O₂ range" range={inv.o2Range} unit="%" />
+                  <RangeStat label="Pressure range" range={inv.pRangePsia} unit="psia" />
+                  <RangeStat label="Flow range" range={inv.flowRangeCmS} unit="cm/s" />
+                </StatGroup>
+              ) : (
+                <p className="rounded-[var(--radius-md)] border border-dashed border-line-strong px-4 py-3.5 text-sm text-fg-2">
+                  No oxygen, pressure or flow ranges are tabulated in the PSI record.
+                </p>
+              )}
 
               <dl className="grid grid-cols-3 gap-3">
                 {[
@@ -303,29 +340,18 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
             {inv.publications.length === 0 ? (
               <p className="text-fg-3">No publications are listed for this investigation.</p>
             ) : (
-              <ol className="flex flex-col">
-                {inv.publications.map((p, idx) => {
-                  const url = p.doi ? doiUrl(p.doi) : null;
-                  return (
-                    <li key={`${p.doi ?? p.title}-${idx}`} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 border-b border-line py-3.5 last:border-0">
-                      <span className="pt-0.5 font-mono text-xs text-fg-3">{String(idx + 1).padStart(2, "0")}</span>
-                      <div className="min-w-0">
-                        <p className="text-[0.9375rem] leading-snug text-fg">{p.title}</p>
-                        <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-                          {p.year !== null && <span className="font-mono text-fg-2">{p.year}</span>}
-                          {url && p.doi ? (
-                            <ExternalLink href={url} className="inline-flex items-center gap-1 break-all font-mono">
-                              {p.doi}
-                            </ExternalLink>
-                          ) : (
-                            <span className="text-fg-3">no DOI listed</span>
-                          )}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
+              <>
+                <PubList pubs={inv.publications.slice(0, PUB_FIRST)} start={0} />
+                {inv.publications.length > PUB_FIRST && (
+                  <details className="group">
+                    <summary className={buttonClass("secondary", "sm", "mt-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden")}>
+                      <span className="group-open:hidden">Show all {inv.publications.length} publications</span>
+                      <span className="hidden group-open:inline">Show fewer</span>
+                    </summary>
+                    <PubList pubs={inv.publications.slice(PUB_FIRST)} start={PUB_FIRST} />
+                  </details>
+                )}
+              </>
             )}
           </Section>
 

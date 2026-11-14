@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import investigations from "./src/data/investigations.json";
+
 
 // Static security headers for every route (no middleware, no nonce).
 // script-src keeps 'unsafe-inline' because Next injects inline bootstrap scripts;
@@ -15,6 +17,11 @@ const csp = [
   "object-src 'none'",
 ].join("; ");
 
+// With Cache Components an unknown /explore/<id> would stream a 404 page under a
+// 200 status. Rewriting ids that are not in the data to a missing route returns a
+// real 404 before rendering starts (no middleware involved).
+const knownIds = investigations.map((i) => i.psiId).join("|");
+
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
@@ -26,6 +33,15 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: `/explore/:psiId((?!(?:${knownIds})$)[^/]+)`, destination: "/explore-not-found" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async headers() {
     return [

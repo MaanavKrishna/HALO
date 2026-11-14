@@ -48,3 +48,13 @@ describe('overallGrade', () => {
     expect(overallGrade(by(3, null)).reason.length).toBeGreaterThan(0);
   });
 });
+
+describe('overallGrade wording', () => {
+  it('says "exact conditions" instead of d = 0.00', () => {
+    const r = overallGrade(by(3, 0)).reason;
+    expect(r).toContain('at these exact conditions');
+    expect(r).not.toContain('0.00');
+    expect(overallGrade(by(0.001, null)).reason).toContain('at these exact conditions');
+    expect(overallGrade(by(1.234, null)).reason).toContain('at evidence distance 1.23');
+  });
+});

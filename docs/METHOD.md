@@ -38,6 +38,8 @@ Expected overall grades on the full dataset: ISS B, Moon Envelope C, Artemis Bas
 
 **Denominators.** Every count and percentage uses only the runs where the relevant channel (or all channels in the combination) is non-null, and the interface shows "x of y runs". For example Kapton scatter is 20 of 35 runs (36 runs in total, one null). "Scatter low" means a scatter reading below 2.0 V, i.e. the photoelectric detector would not alarm. Materials with no SAME analog (PMMA, Nomex) report no detector result rather than a guess.
 
+**"Would likely miss".** The brief says the selected detectors "would likely miss" a material's smoke when they catch fewer than half of that material's SAME runs (caught / runs with every selected channel recorded < 50%). The same rule raises the critical detector flag. A material with no runs is "no SAME data", never 0%.
+
 **Caveat.** SAME ran at ISS air (21% O2, 1 atm). Smoke behavior at a habitat atmosphere is untested, so these numbers describe detector response in ISS air only.
 
 ## Investigation ranking

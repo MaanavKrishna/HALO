@@ -52,3 +52,67 @@ test("editing a loaded preset marks the name as modified", async ({ page }) => {
   expect(q.get("n")).toBe("Artemis Base (modified)");
   expect(q.get("o2")).toBe("27");
 });
+
+const briefUrl = (id: keyof typeof PRESETS) => `/brief?${habitatToQuery(PRESETS[id])}`;
+
+function watchConsole(page: import("@playwright/test").Page) {
+  const problems: string[] = [];
+  page.on("console", (m) => {
+    if (m.type() === "error" || m.type() === "warning") problems.push(m.text());
+  });
+  page.on("pageerror", (e) => problems.push(String(e)));
+  return problems;
+}
+
+test("Artemis brief shows grade D and the detector miss", async ({ page }) => {
+  const problems = watchConsole(page);
+  await page.goto(briefUrl("artemis"));
+  await expect(page.getByRole("heading", { level: 1, name: "Artemis Base" })).toBeVisible();
+  await expect(page.locator('[data-grade="D"]')).toBeVisible();
+  await expect(page.getByRole("img", { name: /^Evidence grade D/ })).toBeVisible();
+  await expect(page.getByText("would likely miss").first()).toBeVisible();
+  await expect(page.getByText("HALO summarizes published NASA test evidence. It is not a safety certification.")).toBeVisible();
+  // The halo chart is present with its accessible title.
+  await expect(page.getByRole("img", { name: /Evidence halo for Artemis Base/ })).toBeVisible();
+  await expect(page.locator("[data-hidden-above]")).toContainText(/\d+ tests above 20 psia not shown/);
+  expect(problems).toEqual([]);
+});
+
+test("ISS brief still shows the SAME ISS-air caveat on the detection card", async ({ page }) => {
+  await page.goto(briefUrl("iss"));
+  await expect(page.locator("[data-iss-air]")).toContainText(
+    "SAME ran at ISS air (21% O2, 1 atm); smoke behavior at habitat atmosphere is untested",
+  );
+});
+
+test("sensor what-if toggles to scatter + ionization", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const bars = page.locator("[data-detector]");
+  await expect(bars).toHaveAttribute("data-detector", "scatter");
+  await page.getByRole("radio", { name: "Scatter + ionization" }).check();
+  await expect(bars).toHaveAttribute("data-detector", "scatter-ionization");
+  await expect(bars).toContainText("of 35 runs caught");
+});
+
+test("print media hides the nav and the action buttons", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  await expect(page.getByRole("navigation", { name: "Main" })).toBeVisible();
+  await page.emulateMedia({ media: "print" });
+  await expect(page.getByRole("navigation", { name: "Main" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Print / Save PDF" })).toBeHidden();
+  await expect(page.getByRole("heading", { level: 1, name: "Artemis Base" })).toBeVisible();
+});
+
+test("a garbled brief URL renders notices instead of crashing", async ({ page }) => {
+  const problems = watchConsole(page);
+  const res = await page.goto("/brief?o2=abc&p=0&m=constructor");
+  expect(res?.status()).toBe(200);
+  const notices = page.locator("[data-notices]");
+  await expect(notices).toBeVisible();
+  await expect(notices).toContainText("is not a number");
+  await expect(notices).toContainText("outside");
+  await expect(notices).toContainText("Unknown material ignored: constructor");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByText("This section could not be computed")).toHaveCount(0);
+  expect(problems).toEqual([]);
+});

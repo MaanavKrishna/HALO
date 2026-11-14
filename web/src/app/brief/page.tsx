@@ -52,44 +52,44 @@ async function BriefBody({ searchParams }: { searchParams: SearchParams }) {
   // Each section has its own boundary, so one failing card leaves the rest of the brief intact.
   return (
     <article aria-label={`Fire Brief for ${habitat.name}`}>
-      <SectionBoundary title="Brief header">
+      <Part title="Brief header">
         <BriefHeader brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="What to know first">
+      </Part>
+      <Part title="What to know first">
         <FlagList brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="Where the evidence sits">
+      </Part>
+      <Part title="Where the evidence sits">
         <EvidenceSection brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="Most relevant investigations">
+      </Part>
+      <Part title="Most relevant investigations">
         <RankedList brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="Would your smoke detector notice?">
+      </Part>
+      <Part title="Would your smoke detector notice?">
         <DetectionCard brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="Will it go out on its own? (liquid droplet fuels)">
+      </Part>
+      <Part title="Will it go out on its own? (liquid droplet fuels)">
         <ExtinctionCard brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="If a fire grows: the aftermath">
+      </Part>
+      <Part title="If a fire grows: the aftermath">
         <AftermathCard brief={brief} />
-      </SectionBoundary>
+      </Part>
       {brief.habitat.liquids && (
-        <SectionBoundary title="Cool flames">
+        <Part title="Cool flames">
           <CoolFlameNote brief={brief} />
-        </SectionBoundary>
+        </Part>
       )}
-      <SectionBoundary title="The test that would help most">
+      <Part title="The test that would help most">
         <NextTestCard brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="In plain words">
+      </Part>
+      <Part title="In plain words">
         <ExplainPanel brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="Back on Earth">
+      </Part>
+      <Part title="Back on Earth">
         <EarthCard brief={brief} />
-      </SectionBoundary>
-      <SectionBoundary title="Sources">
+      </Part>
+      <Part title="Sources">
         <CitationList brief={brief} />
-      </SectionBoundary>
+      </Part>
 
       <footer className="brief-disclaimer border-t-2 border-ink py-8">
         <p className="font-semibold">HALO summarizes published NASA test evidence. It is not a safety certification.</p>
@@ -99,6 +99,18 @@ async function BriefBody({ searchParams }: { searchParams: SearchParams }) {
         </p>
       </footer>
     </article>
+  );
+}
+
+/**
+ * One brief section: an error boundary with its own Suspense boundary inside,
+ * so a server-side throw in one card is contained to that card.
+ */
+function Part({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <SectionBoundary title={title}>
+      <Suspense fallback={null}>{children}</Suspense>
+    </SectionBoundary>
   );
 }
 

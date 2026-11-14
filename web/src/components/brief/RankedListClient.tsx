@@ -19,6 +19,9 @@ export interface RankedItem {
   paperCount: number;
 }
 
+/** Rows printed on paper; the rest are named as "more in the online brief". */
+const PRINT_SHOWN = 5;
+
 const KEYS: Array<{ k: keyof RankWeights; label: string; help: string }> = [
   { k: "proximity", label: "Closeness", help: "How near its tests sit to your atmosphere" },
   { k: "fuel", label: "Fuel match", help: "Its fuels match your materials, liquids or detectors" },
@@ -88,7 +91,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
 
       <ol className="flex flex-col" data-ranked>
         {ranked.map(({ it, s }, i) => (
-          <li key={it.psiId} className="ranked-item grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-rule py-4 first:pt-0 last:border-b-0 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
+          <li key={it.psiId} className={`ranked-item ${i >= PRINT_SHOWN ? "print-hide" : ""} grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 border-b border-rule py-4 first:pt-0 last:border-b-0 sm:grid-cols-[2.5rem_minmax(0,1fr)]`}>
             <span aria-hidden="true" className="num pt-0.5 font-mono text-sm text-muted">
               {String(i + 1).padStart(2, "0")}
             </span>
@@ -109,7 +112,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 max-w-prose text-sm leading-relaxed text-muted">
+              <p className="print-clamp mt-2 max-w-prose text-sm leading-relaxed text-muted">
                 {it.textIsSi && <SiChip className="mr-1.5" />}
                 {it.text}
               </p>
@@ -128,7 +131,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
                 )}
                 {it.papers.map((p) =>
                   p.url ? (
-                    <a key={p.url} href={p.url} title={p.title} className="max-w-[16rem] truncate text-muted underline-offset-2 hover:text-ink hover:underline" rel="noreferrer">
+                    <a key={p.url} href={p.url} title={p.title} className="paper-link max-w-[16rem] truncate text-muted underline-offset-2 hover:text-ink hover:underline" rel="noreferrer">
                       {p.year ? `${p.year}: ` : ""}
                       {p.title}
                     </a>
@@ -139,6 +142,11 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
           </li>
         ))}
       </ol>
+      {ranked.length > PRINT_SHOWN && (
+        <p className="print-only mt-2 hidden text-sm text-muted">
+          <span className="num">{ranked.length - PRINT_SHOWN}</span> more in the online brief.
+        </p>
+      )}
     </div>
   );
 }

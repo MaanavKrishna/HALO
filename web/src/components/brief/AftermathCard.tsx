@@ -1,7 +1,7 @@
 import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
 import { briefContext } from "@/lib/brief/context";
 import type { Brief } from "@/lib/engine/types";
-import { CiteMark, Section } from "./parts";
+import { CiteMark, Section, unitText } from "./parts";
 
 /** Saffire VI: how big a large spacecraft fire got, and what it left in the air. */
 export function AftermathCard({ brief }: { brief: Brief }) {
@@ -27,7 +27,7 @@ export function AftermathCard({ brief }: { brief: Brief }) {
               <p className="text-xs text-muted">PMMA fire power</p>
               <p className="mt-1 font-mono text-3xl font-medium tracking-tight">
                 <span className="num" data-fact={lo.id}>{String(lo.value)}</span>–<span className="num" data-fact={hi.id}>{String(hi.value)}</span>
-                <span className="ml-1.5 text-lg text-muted">{hi.unit}</span>
+                <span className="text-lg text-muted">{unitText(hi)}</span>
                 <CiteMark n={ctx.cite(hi.id)} />
               </p>
               <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -40,10 +40,8 @@ export function AftermathCard({ brief }: { brief: Brief }) {
             <div className="rounded-lg border border-rule bg-surface p-5">
               <p className="text-xs text-muted">Toxic gases over crew limits</p>
               <p className="mt-1 font-mono text-3xl font-medium tracking-tight">
-                ~<span className="num" data-fact={tox.id}>{String(tox.value)}</span>%
-                <span className="ml-1.5 text-lg text-muted">
-                  O<sub>2</sub>
-                </span>
+                <span className="num" data-fact={tox.id}>{String(tox.value)}</span>
+                <span className="text-lg text-muted">{unitText(tox)}</span>
                 <CiteMark n={ctx.cite(tox.id)} />
               </p>
               <p className="mt-2 text-sm leading-relaxed text-muted">

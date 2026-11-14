@@ -15,11 +15,13 @@ export function NextTestCard({ brief }: { brief: Brief }) {
     );
   }
   const num = (id: string) => Number(ctx.fact(id)?.value);
-  const rows = best.gains.map((g) => ({
-    preset: g.preset,
-    before: num(gainId(0, g.preset, "before")),
-    after: num(gainId(0, g.preset, "after")),
-  }));
+  const rows = best.gains
+    .map((g) => ({
+      preset: g.preset,
+      before: num(gainId(0, g.preset, "before")),
+      after: num(gainId(0, g.preset, "after")),
+    }))
+    .filter((r) => Number.isFinite(r.before) && Number.isFinite(r.after));
   const helped = rows.filter((r) => r.after < r.before);
   const notHelped = rows.filter((r) => !(r.after < r.before));
   const scale = Math.max(1e-9, ...rows.map((r) => r.before));
@@ -44,7 +46,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
             <li key={r.preset} className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-center gap-3 text-sm sm:grid-cols-[10rem_minmax(0,1fr)_9rem]">
               <span className="font-medium">{presetName(r.preset)}</span>
               <span className="relative h-2.5 rounded-full bg-rule" aria-hidden="true">
-                <span className="absolute inset-y-0 left-0 rounded-full bg-rule-strong/45" style={{ width: `${(r.before / scale) * 100}%` }} />
+                <span className="absolute inset-y-0 left-0 rounded-full bg-[repeating-linear-gradient(135deg,var(--rule-strong)_0_1.5px,transparent_1.5px_4px)]" style={{ width: `${(r.before / scale) * 100}%` }} />
                 <span className="absolute inset-y-0 left-0 rounded-full bg-flame" style={{ width: `${(r.after / scale) * 100}%` }} />
               </span>
               <span className="col-span-2 font-mono text-xs text-muted sm:col-span-1 sm:text-right">
@@ -59,8 +61,16 @@ export function NextTestCard({ brief }: { brief: Brief }) {
             {notHelped.map((r) => presetName(r.preset)).join(", ")} (no change in evidence distance).
           </p>
         )}
-        <p className="mt-2 text-xs text-muted">
-          Lower is better; grey shows today, blue after the test.
+        <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+          <span>Lower is better.</span>
+          <span className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" className="inline-block h-2 w-4 rounded-full bg-[repeating-linear-gradient(135deg,var(--rule-strong)_0_1.5px,transparent_1.5px_4px)]" />
+            hatched: distance today
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" className="inline-block h-2 w-4 rounded-full bg-flame" />
+            solid: distance after this test
+          </span>
           <CiteMark n={ctx.cite(gainId(0, best.gains[0].preset, "before"))} />
         </p>
 

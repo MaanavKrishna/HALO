@@ -40,18 +40,27 @@ function describe(s: Source, data: HaloData): { title: string; detail: string | 
  * Number every distinct source in first-use order. A fact's citation number is
  * looked up by its source key, so facts that share a source share a number.
  */
+export type CiteEntry = { id: string | null; source: Source };
+
 export function buildCitations(
   facts: Fact[],
   data: HaloData,
   extra: Source[] = [],
 ): { list: Citation[]; byFact: Map<string, number>; bySource: (s: Source) => number | undefined } {
+  return numberSources(
+    [...facts.map((f) => ({ id: f.id, source: f.source })), ...extra.map((source) => ({ id: null, source }))],
+    data,
+  );
+}
+
+/** Number sources in the order the entries are given (a fact id may appear once). */
+export function numberSources(
+  entries: CiteEntry[],
+  data: HaloData,
+): { list: Citation[]; byFact: Map<string, number>; bySource: (s: Source) => number | undefined } {
   const list: Citation[] = [];
   const byKey = new Map<string, Citation>();
   const byFact = new Map<string, number>();
-  const entries: Array<{ id: string | null; source: Source }> = [
-    ...facts.map((f) => ({ id: f.id, source: f.source })),
-    ...extra.map((source) => ({ id: null, source })),
-  ];
   for (const f of entries) {
     const key = sourceKey(f.source);
     let c = byKey.get(key);
@@ -72,7 +81,7 @@ export function buildCitations(
       byKey.set(key, c);
       list.push(c);
     }
-    if (f.id) {
+    if (f.id && !byFact.has(f.id)) {
       c.factIds.push(f.id);
       byFact.set(f.id, c.n);
     }

@@ -69,7 +69,55 @@ export function ExtinctionCard({ brief }: { brief: Brief }) {
             {ext.extrapolatedO2 && <>Your O2 is outside the oxygen range FLEX tested.</>}
           </p>
         )}
+
+        <details className="chart-table mt-5 text-sm">
+          <summary className="cursor-pointer text-flame">Curve data as a table</summary>
+          <CurveTable brief={brief} />
+        </details>
+        <div className="print-only hidden">
+          <CurveTable brief={brief} />
+        </div>
       </div>
     </Section>
+  );
+}
+
+const pct = (x: number) => `${Math.round(x * 100)}%`;
+
+/** Text alternative to the curve: the model at every 5 O2-points, plus the habitat. */
+function CurveTable({ brief }: { brief: Brief }) {
+  const rows = brief.extinction.curve.filter((c) => Number.isInteger(c.o2) && c.o2 % 5 === 0);
+  return (
+    <div className="mt-3 overflow-x-auto">
+      <table className="w-full min-w-[24rem] border-collapse text-left">
+        <caption className="sr-only">Chance a droplet flame goes out on its own, by O2 (model)</caption>
+        <thead className="text-xs text-muted">
+          <tr className="border-b border-rule">
+            <th scope="col" className="py-2 pr-3 font-medium">O₂</th>
+            <th scope="col" className="py-2 pr-3 font-medium">Median</th>
+            <th scope="col" className="py-2 pr-3 font-medium">95% low</th>
+            <th scope="col" className="py-2 font-medium">95% high</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-b border-rule font-semibold">
+            <th scope="row" className="py-1.5 pr-3">
+              Your habitat (<Num brief={brief} id="hab-oxygen" cite={false} />)
+            </th>
+            <td className="py-1.5 pr-3"><Num brief={brief} id="ext-probability" cite={false} /></td>
+            <td className="py-1.5 pr-3"><Num brief={brief} id="ext-probability-lo" cite={false} /></td>
+            <td className="py-1.5"><Num brief={brief} id="ext-probability-hi" /></td>
+          </tr>
+          {rows.map((c) => (
+            <tr key={c.o2} className="num border-b border-rule">
+              <th scope="row" className="py-1.5 pr-3 font-normal">{c.o2}%</th>
+              <td className="py-1.5 pr-3">{pct(c.p50)}</td>
+              <td className="py-1.5 pr-3">{pct(c.lo)}</td>
+              <td className="py-1.5">{pct(c.hi)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

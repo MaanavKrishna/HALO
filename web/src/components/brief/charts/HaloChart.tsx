@@ -1,6 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
+import { GRADE_RINGS } from "@/lib/engine/grade";
+import { PRESETS } from "@/lib/engine/presets";
+import { X_MAX, X_MIN, Y_MAX } from "./haloAxes";
 import { useWidth } from "./useWidth";
 
 export type ChartClass = "solid" | "solid_surrogate" | "droplet" | "gas";
@@ -12,6 +15,8 @@ export interface HaloChartProps {
   /** Nearest real solid test, with a label built from facts. */
   nearestSolid: { o2: number; p: number; label: string; acronym: string } | null;
   classCounts: Record<ChartClass, number>;
+  /** Eligible tests above the pressure axis, left out of the plot. */
+  hiddenAbove: number;
   /** Short text alternative for the chart. */
   description: string;
 }
@@ -24,19 +29,13 @@ const CLASS_NAME: Record<ChartClass, string> = {
   gas: "Gas flame",
 };
 
-// Ring radii follow the evidence distance: 10 O2-points ≙ 3 psia, rings at d = 0.5, 1, 2.
-const RINGS = [
-  { d: 0.5, label: "B-ring" },
-  { d: 1, label: "C-ring" },
-  { d: 2, label: "D-ring" },
-];
+// Ring radii follow the evidence distance (10 O2-points ≙ 3 psia) at the grade limits.
+const RINGS = GRADE_RINGS.map((d, i) => ({ d, label: `${["B", "C", "D"][i]}-ring` }));
 const O2_PER_D = 10;
 const P_PER_D = 3;
-// The challenge's Moon habitat envelope.
-const ENVELOPE = { o2: [30, 40], p: [5, 10.2] } as const;
-const X_MIN = 10;
-const X_MAX = 45;
-const Y_MAX = 20;
+// The challenge's Moon envelope: O2 at least the Moon preset's, pressure at most the Moon preset's.
+// The box is drawn up to 40% O2 and down to 5 psia (plotting extent, not a limit from the challenge).
+const ENVELOPE = { o2: [PRESETS.moon.o2Pct, 40], p: [5, PRESETS.moon.pressurePsia] } as const;
 
 function Marker({ cls, x, y, size = 1 }: { cls: ChartClass; x: number; y: number; size?: number }) {
   switch (cls) {
@@ -65,7 +64,7 @@ function LegendSwatch({ cls }: { cls: ChartClass }) {
   );
 }
 
-export function HaloChart({ points, habitat, nearestSolid, classCounts, description }: HaloChartProps) {
+export function HaloChart({ points, habitat, nearestSolid, classCounts, hiddenAbove, description }: HaloChartProps) {
   const [wrap, width] = useWidth<HTMLDivElement>(760, 300, 900);
   const [hidden, setHidden] = useState<Set<ChartClass>>(new Set());
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -356,7 +355,7 @@ export function HaloChart({ points, habitat, nearestSolid, classCounts, descript
             <svg viewBox="0 0 22 14" className="h-3.5 w-5" aria-hidden="true">
               <ellipse cx="11" cy="7" rx="9.5" ry="5.5" fill="var(--flame)" fillOpacity="0.08" stroke="var(--flame)" strokeOpacity="0.6" />
             </svg>
-            Halo rings at evidence distance 0.5 · 1 · 2 (grades B · C · D)
+            {`Halo rings at evidence distance ${GRADE_RINGS.join(" · ")} (grades B · C · D)`}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <svg viewBox="0 0 22 14" className="h-3.5 w-5" aria-hidden="true">
@@ -364,6 +363,11 @@ export function HaloChart({ points, habitat, nearestSolid, classCounts, descript
             </svg>
             Moon envelope
           </span>
+          {hiddenAbove > 0 && (
+            <span data-hidden-above>
+              <span className="num">{hiddenAbove}</span> tests above {Y_MAX} psia not shown
+            </span>
+          )}
         </p>
       </figcaption>
     </figure>

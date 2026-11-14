@@ -66,3 +66,23 @@ describe.skipIf(!isReal)('real data: page facts', () => {
     expect(v(whatIfId('kapton', ['scatter'], 'runs'))).toBe(35);
   });
 });
+
+describe('citation order', () => {
+  it('numbers sources by first appearance on the page', async () => {
+    const { appearanceOrder } = await import('@/lib/brief/context');
+    const { numberSources } = await import('@/lib/brief/citations');
+    const b = buildBrief(PRESETS.artemis, HALO_DATA);
+    const facts = allFacts(b, HALO_DATA);
+    const byId = new Map(facts.map((f) => [f.id, f]));
+    const order = appearanceOrder(b, []).filter((x): x is string => typeof x === 'string' && byId.has(x));
+    const { byFact } = numberSources(order.map((id) => ({ id, source: byId.get(id)!.source })), HALO_DATA);
+    // The first flag's first fact gets source 1, and numbers never decrease faster than they appear.
+    expect(byFact.get(b.flags[0].factIds[0])).toBe(1);
+    let max = 0;
+    for (const id of order) {
+      const n = byFact.get(id)!;
+      expect(n).toBeLessThanOrEqual(max + 1);
+      max = Math.max(max, n);
+    }
+  });
+});

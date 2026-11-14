@@ -77,7 +77,7 @@ Example:
 
 ## Page layout
 
-`/brief` (`web/src/app/brief/page.tsx`) is a server component. It awaits `searchParams` inside a `<Suspense>` boundary (Cache Components), runs `queryToHabitat` and `buildBrief`, and renders the sections below. Each section sits in its own error boundary (`SectionBoundary`, built with `catchError`), so a failing card shows "This section could not be computed" and the rest of the brief still renders. A route-level `error.tsx` covers a failure of the brief itself.
+`/brief` (`web/src/app/brief/page.tsx`) is a server component. It awaits `searchParams` inside a `<Suspense>` boundary (Cache Components), runs `queryToHabitat` and `buildBrief`, and renders the sections below. Each section sits in its own error boundary (`SectionBoundary`, built with `catchError`) with a `<Suspense>` inside it, so a failing card shows "This section could not be computed" and the rest of the brief still renders. A route-level `error.tsx` covers a failure of the brief itself.
 
 ### Sections (in order)
 
@@ -99,18 +99,18 @@ Example:
 
 ### Numbers and citations
 
-Every number on the page is the value of a Fact. `web/src/lib/brief/pageFacts.ts` adds the display facts the engine does not attach to flags (habitat inputs and O2 partial pressure, nearest test per class, SAME ambient and alarm levels, sensor what-if counts, the extinction band, next-test point and gains); where an id also exists in the engine's facts, the formula is the same and the engine's copy wins. `web/src/lib/brief/citations.ts` numbers each distinct source; superscripts link to `#cite-n`. Only `https:` links are rendered. Download data writes the facts, citations, flags and cited rows (nearest tests, SAME runs for the listed materials, Saffire VI rows) as JSON in the browser.
+Every number on the page is the value of a Fact (model curve values in the extinction table are read directly from the brief's curve). `web/src/lib/brief/pageFacts.ts` adds the display facts the engine does not attach to flags (habitat inputs and O2 partial pressure, nearest test per class, SAME ambient and alarm levels, sensor what-if counts, the extinction band, next-test point and gains); where an id also exists in the engine's facts, the formula is the same and the engine's copy wins. Habitat-input facts (O2, pressure, flow, O2 partial pressure) cite a note ("Habitat definition from the brief URL") because they are user inputs, and next-test facts cite a note naming the HALO next-test search because they are computed; neither has a PSI id, DOI or URL. `web/src/lib/brief/citations.ts` numbers each distinct source in order of first appearance on the page (`appearanceOrder` in `context.ts`; facts shown only in the fact table and the download come last); superscripts link to `#cite-n`. Only `https:` links are rendered. Download data writes the facts, citations, flags and cited rows (nearest tests, SAME runs for the listed materials, Saffire VI rows) as JSON in the browser.
 
 ### Halo chart encoding
 
 - x: O2 percent, 10 to 45. A habitat above 45% (the EVA suit) is drawn in a separate column after an axis-break mark, labelled with its O2 value.
-- y: pressure, 0 to 20 psia.
+- y: pressure, 0 to 20 psia. Eligible tests above 20 psia are not plotted; the caption states how many (counted from the data) and the chart description says "X of Y tests plotted".
 - Tests: one mark per eligible test, shape per fuel class: real solid as a hollow square, solid surrogate as a filled diamond, droplet as a faint dot, gas as a small plus. Legend buttons toggle each class.
-- Habitat: a ✕, surrounded by three soft blue ellipses at evidence distance 0.5, 1 and 2 (radii 5, 10, 20 O2-points by 1.5, 3, 6 psia), labelled B-ring, C-ring and D-ring.
-- Moon envelope: dashed box, O2 30–40%, 5–10.2 psia.
+- Habitat: a ✕, surrounded by three soft blue ellipses at the grade limits `GRADE_RINGS` from `grade.ts` (evidence distance 0.5, 1 and 2) (radii 5, 10, 20 O2-points by 1.5, 3, 6 psia), labelled B-ring, C-ring and D-ring.
+- Moon envelope: dashed box from the Moon preset (O2 at least 30%, pressure at most 10.2 psia), drawn to 40% O2 and down to 5 psia.
 - Nearest real solid: a larger square, a dotted leader to the habitat and a label with its O2 gap and distance, read from facts.
 - Accessibility: `role="img"` with `<title>` and `<desc>`; the table in the details element below repeats the nearest-test data. The chart measures its container, so text stays readable at phone width.
 
 ### Print
 
-`web/src/app/brief/print.css` (imported by the page) adds to the global print block: A4 with 12 mm margins; the nav, action buttons, weight sliders and disclosures are hidden; sections flow across pages while cards, flags, list rows, figures and table rows avoid breaking; section headings stay with their content; the sources list prints each link's URL after it; the sensor what-if prints the selected combination as text.
+`web/src/app/brief/print.css` (imported by the page) adds to the global print block: A4 with 12 mm margins; the nav, action buttons, weight sliders and disclosures are hidden; sections flow across pages while cards, flags, list rows, figures and table rows avoid breaking; section headings stay with their content; the sources list prints each link's URL after it; the sensor what-if prints the selected combination as text; the ranked list prints its top 5 with objectives clamped to two lines, no paper links and a line saying how many more are in the online brief; the nearest-test and extinction-curve tables print from print-only copies (on screen they sit in disclosures).

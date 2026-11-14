@@ -21,12 +21,24 @@
   .no-print {
     display: none !important;
   }
-  /* Disclosures (chart table, fact table) are screen-only; Download data carries them. */
+  /* Disclosures are screen-only; the chart data tables print from their .print-only copies. */
   details {
     display: none !important;
   }
   .print-only {
     display: block !important;
+  }
+  /* Ranked list: top rows only, objectives clamped to two lines, no paper links. */
+  .print-hide,
+  .paper-link {
+    display: none !important;
+  }
+  .print-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
   }
   .brief {
     max-width: none;

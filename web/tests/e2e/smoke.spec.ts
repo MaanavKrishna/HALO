@@ -74,6 +74,7 @@ test("Artemis brief shows grade D and the detector miss", async ({ page }) => {
   await expect(page.getByText("HALO summarizes published NASA test evidence. It is not a safety certification.")).toBeVisible();
   // The halo chart is present with its accessible title.
   await expect(page.getByRole("img", { name: /Evidence halo for Artemis Base/ })).toBeVisible();
+  await expect(page.locator("[data-hidden-above]")).toContainText(/\d+ tests above 20 psia not shown/);
   expect(problems).toEqual([]);
 });
 

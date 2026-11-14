@@ -12,14 +12,14 @@ export function CoolFlameNote({ brief }: { brief: Brief }) {
       <div className="lg:ml-[calc(15rem+3rem)]">
         <div className="rounded-lg border border-dashed border-flame bg-flame-soft/60 p-5">
           <h2 id="cool-flame-title" className="text-sm font-semibold">
-            Cool flames: out is not always out
+            Cool flames after visible flame-out
           </h2>
           <p className="mt-1.5 max-w-prose text-[15px] leading-relaxed">
             {String(f.value)}.
             <CiteMark n={ctx.cite(f.id)} />
           </p>
           <p className="mt-2 text-sm text-muted">
-            Keep ventilation and detection active after a liquid-fuel flame looks extinguished.
+            This is droplet-fuel evidence from FLEX; HALO has no cool-flame data for cabin solids.
           </p>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 import investigations from "./src/data/investigations.json";
 
-
 // Static security headers for every route (no middleware, no nonce).
 // script-src keeps 'unsafe-inline' because Next injects inline bootstrap scripts;
 // XSS is prevented by never rendering HTML from data or SI output.

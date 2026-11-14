@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CompareColumn } from "@/components/compare/CompareColumn";
-import { DEFAULT_A, DEFAULT_B, changes, compareHref, habitatFromParam } from "@/lib/compare";
+import { DEFAULT_A, DEFAULT_B, changes, compareHref, habitatFromParam, samePreset } from "@/lib/compare";
 import { HALO_DATA } from "@/lib/data/load";
 import { buildBrief } from "@/lib/engine/brief";
 import { PRESETS } from "@/lib/engine/presets";
@@ -21,7 +21,7 @@ function Picker({ side, current, a, b }: { side: "a" | "b"; current: Habitat; a:
       <p id={`pick-${side}`} className="text-sm font-semibold">{side === "a" ? "From" : "To"}</p>
       <ul aria-labelledby={`pick-${side}`} className="mt-2 flex flex-wrap gap-2">
         {PRESET_LIST.map((p) => {
-          const on = p.name === current.name;
+          const on = samePreset(p, current);
           const href = side === "a" ? compareHref(p, b) : compareHref(a, p);
           return (
             <li key={p.name}>
@@ -43,8 +43,9 @@ function Picker({ side, current, a, b }: { side: "a" | "b"; current: Habitat; a:
 
 async function Comparison({ searchParams }: { searchParams: PageProps<"/compare">["searchParams"] }) {
   const sp = await searchParams;
-  const a = habitatFromParam(sp.a, DEFAULT_A);
-  const b = habitatFromParam(sp.b, DEFAULT_B);
+  const { habitat: a, notices: na } = habitatFromParam(sp.a, DEFAULT_A, "a");
+  const { habitat: b, notices: nb } = habitatFromParam(sp.b, DEFAULT_B, "b");
+  const notices = [...na, ...nb];
   const briefA = buildBrief(a, HALO_DATA);
   const briefB = buildBrief(b, HALO_DATA);
   const diff = changes(briefA, briefB);
@@ -57,6 +58,17 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/compare"
       <p className="mt-3 max-w-[44rem] text-[17px] leading-snug text-muted">
         Same materials, same evidence rules. Evidence grades describe how close the nearest NASA test is, not the habitat itself.
       </p>
+
+      {notices.length > 0 && (
+        <div role="note" aria-label="Notices" className="mt-5 max-w-[46rem] rounded-md border border-amber bg-amber-soft p-3 text-sm">
+          <p className="font-semibold">Some of the link could not be read.</p>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5">
+            {notices.map((n) => (
+              <li key={n}>{n}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <section aria-label="Choose habitats" className="mt-6 grid gap-5 sm:grid-cols-2">
         <Picker side="a" current={a} a={a} b={b} />

@@ -78,13 +78,24 @@ export function InvestigationTable({ investigations }: { investigations: Investi
           <select
             className="field-input !w-full min-w-0 font-normal sm:!w-auto sm:min-w-44"
             value={sort.key}
-            onChange={(e) => toggle(e.target.value as SortKey)}
+            onChange={(e) => {
+              const key = e.target.value as SortKey;
+              setSort({ key, dir: key === "acronym" || key === "hardware" ? "asc" : "desc" });
+            }}
           >
             {COLUMNS.map((c) => (
               <option key={c.key} value={c.key}>{c.label}</option>
             ))}
           </select>
         </label>
+        <button
+          type="button"
+          onClick={() => setSort((s) => ({ ...s, dir: s.dir === "asc" ? "desc" : "asc" }))}
+          aria-label={`Sort direction: ${sort.dir === "asc" ? "ascending" : "descending"}. Activate to reverse.`}
+          className="field-input !w-auto self-end text-left md:hidden"
+        >
+          {sort.dir === "asc" ? "▲ Ascending" : "▼ Descending"}
+        </button>
         {(filters.hazard !== "all" || filters.fuel !== "all") && (
           <button
             type="button"

@@ -61,7 +61,7 @@ The engine is complete and unit-tested. The pages that render it are being built
 | Engine: grade, distance, ranking, detection, extinction, flags, facts, next test, URL state, brief assembly (`web/src/lib/engine/`) | Implemented, unit-tested |
 | Security headers and pre-commit secret hook | Implemented |
 | Fire Brief page, presets, print stylesheet, citation list | In progress |
-| Build-time SI summaries with validation | On a separate branch, not merged yet |
+| Build-time SI summaries with validation | Pipeline implemented and tested (`make si`); summaries generated before submission |
 | Live SI explanations (`/api/explain`) | Planned |
 
 ## How it works
@@ -179,7 +179,7 @@ Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Use of SI (AI)
 
 **In the product.**
-- *Build-time summaries (planned, on a separate branch).* An LLM writes a short summary and habitat relevance note for each of the 24 investigations from its PSI record. Output is validated: hazard tags from a closed vocabulary, quotes must appear in the source text.
+- *Build-time summaries (see [docs/SI.md](docs/SI.md)).* An LLM writes a short summary and habitat relevance note for each of the 24 investigations from its PSI record. Output is validated: hazard tags from a closed vocabulary, quotes must appear in the source text.
 - *Optional live explanations (planned).* An LLM writes a short narrative over the brief's computed facts. Every number it writes must match a fact value, or the brief uses a template instead.
 - Every SI sentence carries an `si` badge. All numbers, grades, rankings and models come from deterministic code.
 

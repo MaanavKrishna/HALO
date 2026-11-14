@@ -39,7 +39,7 @@ describe('fixtures', () => {
       hazards: ['spread', 'extinction'],
       sensors: ['thermocouple'],
       quotes: ['Not conservative for microgravity.'],
-      model: 'claude-sonnet-5-5',
+      model: 'test-model',
       generatedAt: '2026-11-14T00:00:00Z',
       needsReview: true,
     };

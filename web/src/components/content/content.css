@@ -96,3 +96,11 @@
   align-items: center;
 }
 
+
+/*
+ * Phone layout of the finding figures (300-unit viewBox on a ~274px card,
+ * scale ~0.91): one floor for every label so none renders below 11px.
+ */
+.viz-compact svg text {
+  font-size: 13px;
+}

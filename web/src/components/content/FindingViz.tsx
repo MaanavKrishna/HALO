@@ -305,7 +305,7 @@ function Distance({ v, W, compact }: { v: Extract<Viz, { kind: "distance" }>; W:
   const top = 26;
   const H = top + v.rows.length * rowH + 22;
   const max = Math.ceil(Math.max(...v.rows.map((r) => r.d)));
-  const x = lin(0, max, 96, W - 30);
+  const x = lin(0, max, compact ? 88 : 96, W - (compact ? 40 : 30));
   const sorted = [...v.rows].sort((a, b) => a.d - b.d);
   return (
     <Figure
@@ -432,7 +432,7 @@ export function FindingViz({ viz }: { viz: Viz }) {
       <div className="hidden sm:block">
         <Svg viz={viz} W={WIDE} compact={false} />
       </div>
-      <div className="sm:hidden">
+      <div className="viz-compact sm:hidden">
         <Svg viz={viz} W={NARROW} compact />
       </div>
     </>

@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+.env
+.env.*
+!.env.example
+pipeline/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.shots/
+.superpowers/
+.vercel/
+.DS_Store
+coverage/
+playwright-report/
+test-results/

@@ -25,3 +25,24 @@ Grades describe evidence coverage, not safety.
 **Overall grade.** The grade of the `solid` class, raised one step (and never above C) when the `solid_surrogate` class has a test with d <= 0.5. Surrogate fuels (for example the BRE tests) burn differently from real habitat materials, so they can strengthen the case that a regime has been explored but cannot, alone, earn a B or A. The cap at C encodes that.
 
 Expected overall grades on the full dataset: ISS B, Moon Envelope C, Artemis Base D, EVA Suit F.
+
+## Investigation ranking
+
+HALO ranks the NASA investigations by how useful they are for a given habitat. The score is a transparent weighted sum of four parts, each between 0 and 1:
+
+`score = 0.4 * proximity + 0.3 * fuel + 0.2 * hazard + 0.1 * richness`
+
+The weights are defaults and can be overridden; the interface shows each part so the ordering can be audited.
+
+| Part | Definition |
+|---|---|
+| proximity | `1 / (1 + d)`, where d is the evidence distance from the habitat to the investigation's nearest eligible test. No eligible tests gives 0. |
+| fuel | 1 if any of the investigation's fuel classes matches the habitat: `solid` or `solid_surrogate` when materials are listed, `droplet` when liquids are present. `gas` counts 0.5. Otherwise 0. |
+| hazard | The number of the investigation's hazards in {spread, extinction, smoke_detection, toxicity}, divided by 4. |
+| richness | `log10(1 + rows + 5 * publications) / log10(1 + max)`, where max is the largest such value across all investigations. |
+
+**Detection-proximity rule.** Smoke-detection investigations (hazard `smoke_detection`, for example SAME and SAME-R) have no rows in the coverage set, because they are detection data. Their proximity uses the ambient atmosphere they ran in, 21% O2 and 14.7 psia, measured against the habitat with the same distance scaling. Their fuel part is 1 when the habitat lists at least one detector, otherwise 0.
+
+**Tie-break.** Equal scores are ordered by psiId ascending (string order), so the ranking is deterministic.
+
+Each ranked entry carries short, deterministic "why" strings for the parts that scored strongly (for example the tested atmosphere and whether it was measured). The ranking describes relevance of evidence, not a safety judgement.

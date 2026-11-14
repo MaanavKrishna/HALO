@@ -242,6 +242,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     topic: "Gravity",
     title: `None of the ${invs} PSI combustion investigations ran at lunar or Martian gravity.`,
     stat: { value: "0", unit: `of ${invs}`, label: "Investigations at partial gravity" },
+    second: { value: String(invs), label: "Microgravity or ground investigations" },
     provenance: ["literature"],
     body: "Every test HALO uses ran in microgravity (or on the ground). A Moon or Mars habitat has some buoyancy, so flames there will behave between the two; that regime is untested here, and the challenge statement says the same.",
     viz: { kind: "gravity", tested: 0, total: invs },

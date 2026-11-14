@@ -132,8 +132,9 @@ export default function AboutPage() {
           An LLM (<code>{buildModels.filter((m) => m !== "human-edited").join(", ")}</code>) wrote a short summary and habitat note for each of the {nSummaries}{" "}
           investigations from its PSI record only. A validator checks every answer: hazard tags from a closed vocabulary, quotes
           that must appear word for word in the source, no number that the source does not contain, and no “safe” or “unsafe”.
-          The author’s line-by-line review against PSI is ongoing: {humanEdited} of {nSummaries} are hand-edited so far, and any
-          entry flagged for review is never shown as SI.
+          Each summary passes these automatic checks; the author’s line-by-line review against PSI is in progress
+          {humanEdited > 0 ? ` (${humanEdited} of ${nSummaries} hand-edited so far)` : ""}. An entry flagged for review is never
+          shown as SI.
         </p>
         <h3>At run time</h3>
         <p>

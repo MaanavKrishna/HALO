@@ -96,12 +96,3 @@
   align-items: center;
 }
 
-/*
- * Finding figures scale with their card (420-unit viewBox). On phones the
- * card is ~280px wide, so labels are enlarged in user units to stay >= 11px.
- */
-@media (max-width: 639px) {
-  .finding-viz text {
-    font-size: 17.5px;
-  }
-}

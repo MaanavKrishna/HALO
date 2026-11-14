@@ -8,17 +8,21 @@ import type { FindingViz as Viz } from "./findings";
  * that states what it shows. Numbers come from the finding's data.
  */
 
-const W = 420;
+/** Desktop and phone viewBox widths: the phone layout keeps 12-unit labels at >= 11px on a ~280px card. */
+const WIDE = 420;
+const NARROW = 300;
 const LABEL = { fontSize: 12, fill: "var(--text-3)" } as const;
 const mono = "font-mono tabular-nums";
 
 const lin = (d0: number, d1: number, r0: number, r1: number) => (v: number) => r0 + ((v - d0) / (d1 - d0)) * (r1 - r0);
+/** First word of a preset name on phones ("Moon Envelope" -> "Moon"); the full name stays in the figure's accessible name. */
+const shortName = (label: string, compact: boolean) => (compact ? label.split(" ")[0] : label);
 const f1 = (x: number) => String(Math.round(x * 10) / 10);
 
-function Figure({ label, caption, children, height }: { label: string; caption: ReactNode; children: ReactNode; height: number }) {
+function Figure({ W, label, caption, children, height }: { W: number; label: string; caption: ReactNode; children: ReactNode; height: number }) {
   return (
     <figure className="flex flex-col gap-3">
-      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="finding-viz h-auto w-full overflow-visible">
+      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="h-auto w-full overflow-visible">
         {children}
       </svg>
       <figcaption className="type-caption text-fg-3">{caption}</figcaption>
@@ -26,7 +30,7 @@ function Figure({ label, caption, children, height }: { label: string; caption: 
   );
 }
 
-function O2Range({ v }: { v: Extract<Viz, { kind: "o2-range" }> }) {
+function O2Range({ v, W, compact }: { v: Extract<Viz, { kind: "o2-range" }>; W: number; compact: boolean }) {
   const [d0, d1] = v.domain;
   const x = lin(d0, d1, 12, W - 12);
   const ticks = [];
@@ -34,6 +38,7 @@ function O2Range({ v }: { v: Extract<Viz, { kind: "o2-range" }> }) {
   const [a, b] = v.tested;
   return (
     <Figure
+      W={W}
       height={128}
       label={`Oxygen axis from ${d0} to ${d1} percent. Real solids were tested from ${f1(a)} to ${f1(b)} percent. Habitat presets: ${v.markers.map((m) => `${m.label} ${m.o2}%`).join(", ")}.`}
       caption="Band: O2 range of every eligible real-solid test. Markers: habitat presets."
@@ -61,7 +66,7 @@ function O2Range({ v }: { v: Extract<Viz, { kind: "o2-range" }> }) {
             <line x1={x(m.o2)} x2={x(m.o2)} y1={y + 6} y2={84} stroke={tone} strokeWidth={1.25} strokeDasharray={outside ? "3 3" : undefined} />
             <circle cx={x(m.o2)} cy={84} r={3.5} fill={tone} />
             <text x={x(m.o2)} y={y} textAnchor="middle" fontSize={12} fill={tone}>
-              {m.label}
+              {shortName(m.label, compact)}
             </text>
           </g>
         );
@@ -96,8 +101,8 @@ function Breakdown({ v }: { v: Extract<Viz, { kind: "breakdown" }> }) {
   );
 }
 
-function Runs({ v }: { v: Extract<Viz, { kind: "runs" }> }) {
-  const cols = 18;
+function Runs({ v, W, compact }: { v: Extract<Viz, { kind: "runs" }>; W: number; compact: boolean }) {
+  const cols = compact ? 14 : 18;
   const gap = 22;
   let y = 0;
   const blocks = v.rows.map((r) => {
@@ -108,6 +113,7 @@ function Runs({ v }: { v: Extract<Viz, { kind: "runs" }> }) {
   });
   return (
     <Figure
+      W={W}
       height={y}
       label={v.rows.map((r) => `${r.label}: ${r.low} of ${r.runs} runs read below HALO's ${v.threshold} volt scatter alarm proxy`).join(". ")}
       caption={
@@ -146,7 +152,7 @@ function Runs({ v }: { v: Extract<Viz, { kind: "runs" }> }) {
   );
 }
 
-function Curve({ v }: { v: Extract<Viz, { kind: "curve" }> }) {
+function Curve({ v, W, compact }: { v: Extract<Viz, { kind: "curve" }>; W: number; compact: boolean }) {
   const H = 200;
   const o2s = v.points.map((p) => p.o2);
   const x0 = Math.min(...o2s);
@@ -164,6 +170,7 @@ function Curve({ v }: { v: Extract<Viz, { kind: "curve" }> }) {
   const inRange = m.o2 >= x0 && m.o2 <= x1;
   return (
     <Figure
+      W={W}
       height={H}
       label={`Chance that a droplet flame goes out on its own, falling with oxygen. Even odds at ${f1(v.at50.median)} percent O2, interval ${f1(v.at50.lo)} to ${f1(v.at50.hi)}.`}
       caption="Median of 200 bootstrap fits (line) and 95% band, 1 atm. Shaded column: interval of the 50% point."
@@ -198,7 +205,7 @@ function Curve({ v }: { v: Extract<Viz, { kind: "curve" }> }) {
   );
 }
 
-function Spread({ v }: { v: Extract<Viz, { kind: "spread" }> }) {
+function Spread({ v, W, compact }: { v: Extract<Viz, { kind: "spread" }>; W: number; compact: boolean }) {
   const H = 210;
   const o2s = v.rows.map((r) => r.o2);
   const rates = v.rows.map((r) => r.rate);
@@ -212,6 +219,7 @@ function Spread({ v }: { v: Extract<Viz, { kind: "spread" }> }) {
   for (let t = Math.ceil(x0 / 2) * 2; t <= x1; t += 2) xt.push(t);
   return (
     <Figure
+      W={W}
       height={H}
       label={`Saffire flame spread rate against oxygen: ${v.rows.map((r) => `${r.mission} ${r.id} ${r.rate} millimetres per second at ${f1(r.o2)} percent`).join("; ")}.`}
       caption="Spread rate (mm/s) against O2, one square per Saffire sample. Literature values from NASA reports."
@@ -241,7 +249,14 @@ function Spread({ v }: { v: Extract<Viz, { kind: "spread" }> }) {
             stroke={r.elevated ? "var(--accent)" : "var(--text-2)"}
             strokeWidth={1.5}
           />
-          <text x={x(r.o2) + 9} y={y(r.rate) + 4} fontSize={11} className="font-mono" fill={r.elevated ? "var(--accent)" : "var(--text-3)"}>
+          <text
+            x={x(r.o2) > W - 44 ? x(r.o2) - 9 : x(r.o2) + 9}
+            y={y(r.rate) + 4}
+            textAnchor={x(r.o2) > W - 44 ? "end" : "start"}
+            fontSize={11.5}
+            className="font-mono"
+            fill={r.elevated ? "var(--accent)" : "var(--text-3)"}
+          >
             {r.id}
           </text>
         </g>
@@ -250,25 +265,26 @@ function Spread({ v }: { v: Extract<Viz, { kind: "spread" }> }) {
   );
 }
 
-function Gravity({ v }: { v: Extract<Viz, { kind: "gravity" }> }) {
+function Gravity({ v, W, compact }: { v: Extract<Viz, { kind: "gravity" }>; W: number; compact: boolean }) {
   const stops = [
     { label: "Microgravity", at: 16, tested: true },
-    { label: "Moon", at: 150, tested: false },
-    { label: "Mars", at: 268, tested: false },
+    { label: "Moon", at: Math.round(W * (compact ? 0.44 : 0.36)), tested: false },
+    { label: "Mars", at: Math.round(W * (compact ? 0.7 : 0.64)), tested: false },
     { label: "Earth", at: W - 16, tested: true },
   ];
   return (
     <Figure
+      W={W}
       height={96}
       label={`Gravity scale from microgravity to Earth. Tested: microgravity and ground. Untested: Moon and Mars. ${v.tested} of ${v.total} investigations ran at partial gravity.`}
       caption="PSI fire data sits at the two ends of this scale. Positions are schematic."
     >
       <defs>
-        <pattern id="gravity-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <pattern id={`gravity-hatch-${W}`} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line x1="0" y1="0" x2="0" y2="6" stroke="var(--warn)" strokeOpacity="0.55" strokeWidth="1.5" />
         </pattern>
       </defs>
-      <rect x={16} y={40} width={W - 32} height={10} rx={5} fill="url(#gravity-hatch)" stroke="var(--warn-line)" />
+      <rect x={16} y={40} width={W - 32} height={10} rx={5} fill={`url(#gravity-hatch-${W})`} stroke="var(--warn-line)" />
       {stops.map((s) => (
         <g key={s.label}>
           <circle cx={s.at} cy={45} r={s.tested ? 8 : 6} fill={s.tested ? "var(--accent)" : "var(--surface-1)"} stroke={s.tested ? "var(--accent)" : "var(--warn)"} strokeWidth={1.5} />
@@ -284,7 +300,7 @@ function Gravity({ v }: { v: Extract<Viz, { kind: "gravity" }> }) {
   );
 }
 
-function Distance({ v }: { v: Extract<Viz, { kind: "distance" }> }) {
+function Distance({ v, W, compact }: { v: Extract<Viz, { kind: "distance" }>; W: number; compact: boolean }) {
   const rowH = 30;
   const top = 26;
   const H = top + v.rows.length * rowH + 22;
@@ -293,6 +309,7 @@ function Distance({ v }: { v: Extract<Viz, { kind: "distance" }> }) {
   const sorted = [...v.rows].sort((a, b) => a.d - b.d);
   return (
     <Figure
+      W={W}
       height={H}
       label={`Evidence distance from the EVA suit to the nearest test of each fuel kind: ${sorted.map((r) => `${r.label} ${r.d.toFixed(2)}`).join(", ")}. Grade rings at ${v.rings.join(", ")}.`}
       caption="Bars: evidence distance to the nearest test of each fuel kind. Lines: the A/B, C and D grade rings."
@@ -328,7 +345,7 @@ function Distance({ v }: { v: Extract<Viz, { kind: "distance" }> }) {
   );
 }
 
-function Next({ v }: { v: Extract<Viz, { kind: "next" }> }) {
+function Next({ v, W, compact }: { v: Extract<Viz, { kind: "next" }>; W: number; compact: boolean }) {
   const H = 230;
   const x = lin(0, 42, 34, W - 8);
   const y = lin(0, 16, H - 28, 10);
@@ -337,6 +354,7 @@ function Next({ v }: { v: Extract<Viz, { kind: "next" }> }) {
   const ry = y(0) - y(1.5);
   return (
     <Figure
+      W={W}
       height={H}
       label={`Map of eligible test atmospheres, oxygen against pressure, with the suggested test at ${v.pick.o2} percent and ${v.pick.p} psia among the habitat presets ${v.presets.map((p) => p.label).join(", ")}.`}
       caption="Dots: eligible PSI test atmospheres. Blue ring: the suggested test and its 0.5 evidence-distance ring."
@@ -370,10 +388,10 @@ function Next({ v }: { v: Extract<Viz, { kind: "next" }> }) {
         <g key={p.label}>
           <circle cx={x(p.o2)} cy={y(p.p)} r={4} fill="none" stroke="var(--text-1)" strokeWidth={1.5} />
           <text
-            x={near ? x(v.pick.o2) - rx - 6 : edge ? x(p.o2) + 4 : x(p.o2) + 7}
-            y={near ? y(p.p) - 2 : edge ? y(p.p) + 18 : y(p.p) - 6}
-            textAnchor={near || edge ? "end" : "start"} fontSize={11.5} fill="var(--text-1)">
-            {p.label}
+            x={near ? x(v.pick.o2) : edge ? x(p.o2) + 4 : x(p.o2) + 7}
+            y={near ? y(v.pick.p) - ry - 6 : edge ? y(p.p) + 18 : y(p.p) - 6}
+            textAnchor={near ? "middle" : edge ? "end" : "start"} fontSize={11.5} fill="var(--text-1)">
+            {shortName(p.label, compact)}
           </text>
         </g>
         );
@@ -383,23 +401,40 @@ function Next({ v }: { v: Extract<Viz, { kind: "next" }> }) {
   );
 }
 
-export function FindingViz({ viz }: { viz: Viz }) {
+type FigProps = { W: number; compact: boolean };
+
+function Svg({ viz, ...p }: { viz: Viz } & FigProps) {
   switch (viz.kind) {
     case "o2-range":
-      return <O2Range v={viz} />;
-    case "breakdown":
-      return <Breakdown v={viz} />;
+      return <O2Range v={viz} {...p} />;
     case "runs":
-      return <Runs v={viz} />;
+      return <Runs v={viz} {...p} />;
     case "curve":
-      return <Curve v={viz} />;
+      return <Curve v={viz} {...p} />;
     case "spread":
-      return <Spread v={viz} />;
+      return <Spread v={viz} {...p} />;
     case "gravity":
-      return <Gravity v={viz} />;
+      return <Gravity v={viz} {...p} />;
     case "distance":
-      return <Distance v={viz} />;
+      return <Distance v={viz} {...p} />;
     case "next":
-      return <Next v={viz} />;
+      return <Next v={viz} {...p} />;
+    default:
+      return null;
   }
+}
+
+/** Two layouts of the same figure: wide from 640px, narrow (larger relative type, short labels) on phones. The hidden one is display:none, so assistive tech reads one. */
+export function FindingViz({ viz }: { viz: Viz }) {
+  if (viz.kind === "breakdown") return <Breakdown v={viz} />;
+  return (
+    <>
+      <div className="hidden sm:block">
+        <Svg viz={viz} W={WIDE} compact={false} />
+      </div>
+      <div className="sm:hidden">
+        <Svg viz={viz} W={NARROW} compact />
+      </div>
+    </>
+  );
 }

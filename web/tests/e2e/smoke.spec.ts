@@ -39,3 +39,16 @@ test("each preset generates the matching brief URL", async ({ page }) => {
     expect(new URL(page.url()).search.slice(1)).toBe(habitatToQuery(habitat));
   }
 });
+
+test("editing a loaded preset marks the name as modified", async ({ page }) => {
+  await page.goto("/");
+  await page.locator('[data-preset="artemis"]').click();
+  const o2 = page.getByRole("spinbutton", { name: /Oxygen/ });
+  await o2.fill("27");
+  await expect(page.getByRole("textbox", { name: "Habitat name" })).toHaveValue("Artemis Base (modified)");
+  await page.getByRole("button", { name: "Generate brief" }).click();
+  await page.waitForURL((u) => u.pathname === "/brief");
+  const q = new URL(page.url()).searchParams;
+  expect(q.get("n")).toBe("Artemis Base (modified)");
+  expect(q.get("o2")).toBe("27");
+});

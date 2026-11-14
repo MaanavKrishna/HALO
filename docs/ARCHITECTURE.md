@@ -43,7 +43,7 @@ Direction: a calm scientific instrument. The motif is the microgravity flame, a 
 | `--surface` | #ffffff | #0e1a28 | inputs, cards |
 | `--ink` | #0d1b2a | #e4eaf1 | text |
 | `--muted` | #4a5868 | #97a6b6 | secondary text |
-| `--rule` / `--rule-strong` | #d3dbe3 / #9fadbb | #22334a / #3e5470 | dividers, control borders |
+| `--rule` / `--rule-strong` | #d3dbe3 / #7d8a97 | #22334a / #5a7192 | dividers / control borders (rule-strong ≥ 3:1 on paper and surface) |
 | `--flame` | #2453d0 | #86a8ff | the one accent: selection, links, primary action, good evidence |
 | `--amber` | #8f5300 | #f0b052 | reserved for warnings, critical flags, grades D and F |
 
@@ -60,7 +60,7 @@ Dark mode follows `prefers-color-scheme`. A `@media print` block forces light to
 - Verdict copy never says "safe" or "unsafe"; grades describe evidence.
 
 **Components in `web/src/components/ui/`.**
-- `ProvenanceBadge({ provenance })`: marker plus label for measured, inferred, assumed, literature, model; the marker shape (filled, half, hollow, square, dashed diamond) stays readable in greyscale print. `si` renders `SiChip`.
-- `SiChip()`: dashed "SI" chip attached to every SI-written sentence.
+- `ProvenanceBadge({ provenance })`: marker plus label for measured, inferred, assumed, literature, model; the marker shape (filled, half, hollow, square, dashed diamond) stays readable in greyscale print. `si` renders `SiChip`. The help text is part of the accessible name (sr-only), not title-only.
+- `SiChip()`: dashed "SI" chip attached to every SI-written sentence; its accessible name carries the explanation ("SI-generated from the cited facts; ...").
 - `GradeBadge({ grade, size? })`: the grade letter inside a ring whose closure shrinks from A to F; A and B use flame blue, C ink, D and F amber. Sizes `sm` (28px), `md` (44px), `lg` (76px). Its accessible name is "Evidence grade X: ...".
 - `NavLinks`: the main nav (Brief, Explore, Compare, About) with `aria-current` on the active page.

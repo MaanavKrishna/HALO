@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { MATERIALS } from "@/lib/engine/materials";
 import { PRESETS } from "@/lib/engine/presets";
@@ -28,6 +28,14 @@ interface Draft {
 
 const MATERIAL_IDS = Object.keys(MATERIALS) as MaterialId[];
 const INITIAL: PresetId = "artemis";
+const PRESET_NAMES = new Set(Object.values(PRESETS).map((p) => p.name));
+
+/** Changing any value of a loaded preset marks the name as modified. */
+function applyEdit(d: Draft, patch: Partial<Draft>): Draft {
+  const next = { ...d, ...patch };
+  if (!("name" in patch) && PRESET_NAMES.has(d.name.trim())) next.name = `${d.name.trim()} (modified)`;
+  return next;
+}
 
 function fromHabitat(h: Habitat): Draft {
   return {
@@ -67,8 +75,15 @@ export function HabitatForm() {
   if (draft.materials.length === 0) errors.materials = "Pick at least one cabin material.";
   const showErr = (k: keyof typeof errors) => (submitted ? errors[k] : undefined);
 
+  // Back/forward cache restores the page with the button still locked.
+  useEffect(() => {
+    const reset = () => setPending(false);
+    window.addEventListener("pageshow", reset);
+    return () => window.removeEventListener("pageshow", reset);
+  }, []);
+
   function edit(patch: Partial<Draft>) {
-    setDraft((d) => ({ ...d, ...patch }));
+    setDraft((d) => applyEdit(d, patch));
     setPreset(null);
   }
 
@@ -104,6 +119,8 @@ export function HabitatForm() {
       liquids: draft.liquids,
     };
     setPending(true);
+    // Unlock if navigation never completes (offline, route error).
+    window.setTimeout(() => setPending(false), 8000);
     router.push(`/brief?${habitatToQuery(habitat)}`);
   }
 
@@ -137,6 +154,7 @@ export function HabitatForm() {
           <Field label="Habitat name" htmlFor="habitat-name" hint="Printed at the top of the brief.">
             <input
               id="habitat-name"
+              aria-describedby="habitat-name-hint"
               data-field="name"
               className="field-input"
               type="text"

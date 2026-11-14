@@ -3,7 +3,8 @@ import { SiChip } from "./SiChip";
 
 /**
  * Where a number came from. The marker shape encodes provenance so it still
- * reads in greyscale print; the text label is always shown.
+ * reads in greyscale print; the text label is always shown and the help text
+ * is in the accessible name (the title is a hover-only extra).
  */
 const META: Record<Exclude<Provenance, "si">, { label: string; help: string; marker: string }> = {
   measured: { label: "Measured", help: "Recorded by the experiment", marker: "rounded-full bg-flame border-flame" },
@@ -27,6 +28,7 @@ export function ProvenanceBadge({ provenance, className = "" }: { provenance: Pr
     >
       <span aria-hidden="true" className={`inline-block size-2 border-[1.5px] ${m.marker}`} />
       {m.label}
+      <span className="sr-only"> ({m.help})</span>
     </span>
   );
 }

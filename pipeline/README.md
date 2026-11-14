@@ -34,6 +34,25 @@ This writes the following files to `../web/src/data/`. Each run overwrites them,
 
 The run prints every data-quality fix it applied (`qa:` lines) and the size of each file.
 
+## SI summaries
+
+`summaries.json` holds a short summary of each of the 24 investigations, written at build time by an LLM and checked by code. The rules, the prompt and the review step are in [`docs/SI.md`](../docs/SI.md).
+
+```bash
+cp ../.env.example .env      # then set ANTHROPIC_API_KEY in pipeline/.env (gitignored)
+make si-dry                  # prints the prompt for PSI-26 and validates two hand-made samples; no API calls
+make si                      # writes ../web/src/data/summaries.json
+make si-check                # re-validates summaries.json as it stands, for example after hand edits
+```
+
+- **Key.** `make si` reads `ANTHROPIC_API_KEY` from the environment, then from `pipeline/.env`, then from the repo-root `.env`. It never prints the key. Without a key it exits with status 2.
+- **Cost cap.** One run makes at most 60 API requests, retries included. At the cap it stops, keeps what it finished and exits with status 3. A full run needs about 24 to 48 requests.
+- **Resumable.** Each entry is saved as soon as it is done, through a temporary file and a rename, so an interrupted run never leaves broken JSON. A rerun skips entries that already pass validation, and never touches entries marked `"model": "human-edited"`. `--force` regenerates everything; `--only PSI-26` (repeatable) limits the run.
+- **Validation.** Every answer goes through `validate_summary`. An answer that fails is sent back once with the list of failed checks. If the second answer also fails, it is saved with `"needsReview": true` for the human review step.
+- **Retries.** Transient API errors (timeouts, rate limits, server errors) are retried twice, after 5 s and 20 s. Other API errors stop the run.
+
+Exit codes: 0 done, 1 an API error or an investigation with no usable answer, 2 no key, 3 cost cap reached.
+
 ## Modules (`halo_pipeline/`)
 
 | Module | What it does |
@@ -46,7 +65,8 @@ The run prints every data-quality fix it applied (`qa:` lines) and the size of e
 | `catalog.py` | `build_investigations(df)` builds the 24 catalog entries from the PSI detail records. `HAZARDS` is the hand-written hazard tag for each investigation. |
 | `literature.py` | `build_literature()` turns the Saffire literature CSV into JSON. |
 | `export.py` | `export_all(out_dir)` builds everything, writes compact JSON and writes the manifest. |
-| `cli.py` | The command-line entry point (`python -m halo_pipeline.cli all`). |
+| `cli.py` | The command-line entry point (`python -m halo_pipeline.cli all`, `... cli si`). |
+| `si_build.py` | `make si`: writes `summaries.json` with an LLM. `validate_summary(s, det)` returns every rule a summary breaks. |
 | `trim_raw.py` | `make trim-raw` rewrites `../data/raw/det/*.json` to keep only the fields HALO uses (see `docs/DATA.md`). |
 
 ## Tests
@@ -65,3 +85,5 @@ make test          # .venv/bin/pytest -q
 | `test_literature.py` | The literature row shape. |
 | `test_trim_raw.py` | The vendored detail records are trimmed, contain every required key, and total under 2 MB. |
 | `test_export.py` | The output files, the size budget, the manifest hashes, and that `summaries.json` is left untouched. |
+| `test_si_validate.py` | The summary validator: hazard vocabulary, verbatim quotes, numbers absent from the source, the 60-word limit, verdict words. |
+| `test_si_build.py` | The `si` run with a fake model: re-ask, `needsReview`, resume, cost cap, atomic writes, retries, key loading. No network. |

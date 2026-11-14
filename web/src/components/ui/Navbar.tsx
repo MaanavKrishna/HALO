@@ -39,14 +39,30 @@ export function Navbar() {
     setOpen(false);
   }
 
+  // While the sheet is open it behaves as a modal: the rest of the page is inert,
+  // Tab cycles between the close button and the sheet, Escape closes and
+  // focus returns to the button.
   useEffect(() => {
     if (!open) return;
     sheet.current?.querySelector<HTMLElement>("a")?.focus();
+    const outside = [document.getElementById("main"), document.querySelector("body > footer"), document.querySelector("a[href='#main']")].filter(
+      (el): el is HTMLElement => !!el,
+    );
+    outside.forEach((el) => (el.inert = true));
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
         button.current?.focus();
+        return;
       }
+      if (e.key !== "Tab") return;
+      const items = [button.current, ...Array.from(sheet.current?.querySelectorAll<HTMLElement>("a[href], button") ?? [])].filter(
+        (el): el is HTMLElement => !!el && el.tabIndex !== -1,
+      );
+      const i = items.indexOf(document.activeElement as HTMLElement);
+      const next = e.shiftKey ? (i <= 0 ? items.length - 1 : i - 1) : i === items.length - 1 ? 0 : i + 1;
+      e.preventDefault();
+      items[next]?.focus();
     };
     const mq = window.matchMedia("(width >= 64rem)");
     const onMq = () => mq.matches && setOpen(false);
@@ -54,6 +70,7 @@ export function Navbar() {
     mq.addEventListener("change", onMq);
     document.documentElement.style.overflow = "hidden";
     return () => {
+      outside.forEach((el) => (el.inert = false));
       window.removeEventListener("keydown", onKey);
       mq.removeEventListener("change", onMq);
       document.documentElement.style.overflow = "";
@@ -65,7 +82,7 @@ export function Navbar() {
       <div
         className={cx(
           "relative border-b transition-[border-color,background-color] duration-[var(--dur-base)]",
-          "bg-[var(--glass-bg-strong)] backdrop-blur-[20px] backdrop-saturate-[1.8]",
+          "glass-chrome",
           scrolled || open ? "border-line" : "border-transparent",
         )}
       >
@@ -125,6 +142,9 @@ export function Navbar() {
       />
       <div
         id="site-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
         ref={sheet}
         hidden={!open}
         className="glass-strong absolute right-[var(--gutter)] top-[calc(var(--nav-h)+0.5rem)] w-[min(22rem,calc(100vw-2*var(--gutter)))] origin-top-right rounded-[var(--radius-xl)] p-2 transition-[opacity,scale,filter,display] transition-discrete duration-[var(--dur-base)] ease-out starting:scale-95 starting:opacity-0 starting:blur-[4px] lg:hidden"
@@ -141,7 +161,7 @@ export function Navbar() {
                     aria-current={current ? "page" : undefined}
                     onClick={() => setOpen(false)}
                     className={cx(
-                      "flex items-center justify-between rounded-[var(--radius-lg)] px-4 py-3 font-display text-[1.375rem] font-semibold tracking-[-0.02em] transition-colors",
+                      "flex items-center justify-between rounded-[var(--radius-lg)] px-4 py-3 font-display text-[1.375rem] font-semibold tracking-[-0.012em] transition-colors",
                       current ? "bg-accent-soft text-fg" : "text-fg hover:bg-surface-2",
                     )}
                   >

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Icon } from "./Icon";
 import { cx } from "./cx";
 
 /**
@@ -34,7 +35,8 @@ export function Field({
       </div>
       {children}
       {error ? (
-        <p id={`${htmlFor}-error`} className="flex items-center gap-1.5 text-sm text-warn">
+        <p id={`${htmlFor}-error`} className="flex items-start gap-1.5 text-sm text-invalid">
+          <Icon name="invalid" size={16} className="mt-[2px] shrink-0" />
           {error}
         </p>
       ) : hint ? (

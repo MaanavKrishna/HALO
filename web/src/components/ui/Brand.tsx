@@ -23,7 +23,7 @@ export function Brand({ className }: { className?: string }) {
   return (
     <Link href="/" aria-label="HALO home" className={cx("group inline-flex items-center gap-2 rounded-[var(--radius-xs)]", className)}>
       <BrandMark size={20} className="text-fg transition-transform duration-[var(--spring-dur-smooth)] ease-[var(--spring)] group-hover:scale-110" />
-      <span className="font-display text-[1.0625rem] font-bold tracking-[0.02em] text-fg [font-variation-settings:'opsz'_24,'wdth'_100]">
+      <span className="font-display text-[1.0625rem] font-bold tracking-[0.02em] text-fg">
         HALO
       </span>
     </Link>

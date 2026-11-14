@@ -7,13 +7,13 @@ export type ButtonSize = "sm" | "md" | "lg";
 
 const BASE =
   "relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap font-medium tracking-[-0.005em] " +
-  "transition-[background-color,border-color,color,box-shadow,transform] duration-[var(--dur-fast)] ease-out " +
+  "transition-[background-color,border-color,color,box-shadow,scale] duration-[var(--dur-fast)] ease-out " +
   "active:scale-[0.97] disabled:active:scale-100 disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
 
 const VARIANT: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent text-accent-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.22),var(--elev-1)] " +
-    "hover:bg-accent-hover hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.22),var(--glow-1)]",
+    "bg-accent-fill text-accent-ink shadow-[inset_0_1px_0_var(--fill-highlight),0_4px_18px_-6px_var(--accent-glow)] " +
+    "hover:bg-[var(--accent-fill-hover)] hover:shadow-[inset_0_1px_0_var(--fill-highlight),0_8px_28px_-6px_var(--accent-glow)]",
   secondary:
     "border border-line bg-surface-1 text-fg shadow-[var(--inner-highlight),var(--elev-1)] hover:border-line-strong hover:bg-surface-2",
   ghost: "text-fg-2 hover:bg-surface-2 hover:text-fg",
@@ -111,7 +111,6 @@ export function IconButton({ label, variant = "ghost", size = "md", className, c
     <button
       type={type}
       aria-label={label}
-      title={label}
       className={cx(
         BASE,
         VARIANT[variant],

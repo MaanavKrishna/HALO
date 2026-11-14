@@ -26,12 +26,13 @@ const PAD = { none: "", sm: "p-4", md: "p-5 sm:p-6", lg: "p-6 sm:p-8" } as const
 export function Card({ variant = "solid", interactive = false, padding = "md", as: Tag = "div", className, ...rest }: CardProps) {
   return (
     <Tag
+      data-print-keep=""
       className={cx(
         "relative rounded-[var(--radius-lg)]",
         VARIANT[variant],
         PAD[padding],
         interactive &&
-          "transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-out focus-within:border-accent-line hover:-translate-y-0.5 hover:border-accent-line hover:shadow-[var(--inner-highlight),var(--glow-1)] active:translate-y-0 active:scale-[0.99] [&_a]:after:absolute [&_a]:after:inset-0 [&_a]:after:rounded-[inherit] [&_a:focus-visible]:outline-none",
+          "transition-[translate,scale,box-shadow,border-color] duration-[var(--dur-base)] ease-out has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-[var(--focus)] has-[button:focus-visible]:outline-2 has-[button:focus-visible]:outline-offset-2 has-[button:focus-visible]:outline-[var(--focus)] hover:-translate-y-0.5 hover:border-accent-line hover:shadow-[var(--inner-highlight),var(--glow-1)] active:translate-y-0 active:scale-[0.99] [&_a]:after:absolute [&_a]:after:inset-0 [&_a]:after:rounded-[inherit] [&_a:focus-visible]:outline-none",
         className,
       )}
       {...rest}

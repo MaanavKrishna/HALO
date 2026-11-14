@@ -45,7 +45,7 @@ export function GradeBadge({ grade, size = "md" }: { grade: Grade; size?: keyof 
       </svg>
       <span
         aria-hidden="true"
-        className="font-display font-bold leading-none tracking-[-0.03em] [font-variation-settings:'opsz'_48]"
+        className="font-display font-bold leading-none tracking-[-0.03em]"
         style={{ fontSize: px * 0.44, color: ring.tone }}
       >
         {grade}

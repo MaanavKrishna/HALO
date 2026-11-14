@@ -18,7 +18,9 @@ HALO is a mission theater for fire evidence. Three influences each own one layer
 
 ## Themes
 
-Dark-first "mission theater" for the app; a light "paper" theme for print/PDF and for anyone who prefers light. The toggle offers System / Light / Dark; System is the default.
+Dark-first "mission theater" for the app; a light "archival paper" theme (a warm neutral, not stock cool grey) for print/PDF and for anyone who prefers light. The toggle offers System / Light / Dark; System is the default, and the browser's `theme-color` follows a forced theme.
+
+**Heroes are always dark.** `PageHero` and the orb panels scope `data-theme="dark"`, so the halo keeps its energy in the light theme too.
 
 - Every colour token is written once as `light-dark(light, dark)` in `web/src/styles/tokens.css`. `color-scheme` picks the branch.
 - `html[data-theme="light" | "dark"]` forces a theme; no attribute follows the OS. The choice is stored in `localStorage["halo-theme"]` and applied by a tiny static inline script in `<head>` before first paint, so there is no flash.
@@ -31,28 +33,33 @@ Use the semantic names only. Raw hex in a page or component is a bug. Tailwind n
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `--bg` (`canvas`) | #f3f5f8 | #05080f | Page background. Deep space ink, never pure black. |
-| `--bg-deep` (`canvas-deep`) | #e9edf2 | #020409 | Hero wells, footer. |
-| `--surface-1` | #ffffff | #0a101b | Cards, inputs, tables. |
-| `--surface-2` | #eaeef3 | #101826 | Hover, tracks, wells. |
-| `--surface-3` | #dfe4eb | #172133 | Pressed, switch off. |
-| `--glass-bg` / `--glass-bg-strong` | white 66% / 82% | ink 58% / 76% | Floating chrome only. |
-| `--border` (`line`) | ink 10% | blue-grey 12% | Hairlines, dividers. |
-| `--border-strong` (`line-strong`) | #7a879b | #5b6c89 | Control edges (3:1 on surfaces). |
-| `--grid-line` | ink 5% | blue 5.5% | Instrument grid. |
-| `--text-1` (`fg`) | #0a1220 | #eef2f8 | Primary text. |
-| `--text-2` (`fg-2`) | #465269 | #a3afc2 | Secondary text (7:1+). |
-| `--text-3` (`fg-3`) | #5b6780 | #7c89a0 | Labels, captions (4.5:1+). |
-| `--accent` | #1f4fd6 | #7ea6ff | Flame blue: links, selection, primary action, good evidence. |
-| `--accent-hover` | #1a43b8 | #9bbaff | Primary hover. |
-| `--accent-ink` | #ffffff | #04101f | Text on accent fill (6.7:1 / 8:1). |
+| `--bg` (`canvas`) | #f4f3ef | #05080f | Page background. Deep space ink, never pure black; warm archival paper in light. |
+| `--bg-deep` (`canvas-deep`) | #ebe9e3 | #020409 | Hero wells, footer. |
+| `--surface-1` | #fcfbf8 | #0c1320 | Cards, inputs, tables. |
+| `--surface-2` | #ebe9e3 | #141d2d | Hover, tracks, wells. |
+| `--surface-3` | #e0ddd5 | #1e293c | Pressed, switch off. Each dark step is clearly lighter. |
+| `--glass-bg` / `--glass-bg-strong` | paper 70% / 84% | ink 60% / 78% | Floating chrome only. |
+| `--border` (`line`) | ink 12% | blue-grey 15% | Hairlines, dividers. |
+| `--border-strong` (`line-strong`) | #757983 | #62738f | Control edges, switch tracks, selected thumbs (>= 3:1 on every surface). |
+| `--grid-line` | ink 4% | blue 3.5% | Instrument grid (heroes and instrument panels only). |
+| `--text-1` (`fg`) | #14161c | #eef2f8 | Primary text. |
+| `--text-2` (`fg-2`) | #4a4e58 | #a3afc2 | Secondary text (>= 6:1). |
+| `--text-3` (`fg-3`) | #585c66 | #8794aa | Labels, captions (>= 4.5:1 on every surface incl. surface-3). |
+| `--accent` | #1f4fd6 | #7ea6ff | Flame blue text, links, selection marks. |
+| `--accent-fill` | #2f5ff0 | #3a66ff | Primary button fill: saturated and luminous, with a soft glow. |
+| `--accent-fill-hover` | #2a57e6 | #3360f8 | Primary hover. |
+| `--accent-ink` | #ffffff | #ffffff | Text on accent fill (5.2:1 / 4.6:1). |
 | `--accent-soft` / `--accent-line` | tint | tint | Selected backgrounds / accent hairlines. |
-| `--accent-glow` | blue 22% | blue 45% | Light from the flame. Never a fill. |
+| `--accent-glow` | blue 24% | blue 50% | Light from the flame. Never a fill. |
 | `--ok` | #0a7350 | #4fd4a4 | Covered / measured. |
 | `--warn` | #8a5000 | #f3b54d | Caution, extrapolation, grades D and F. |
 | `--crit` | #b0321a | #ff7a5c | Critical findings. |
-| `--idle` | #7a879b | #5b6c89 | No data. |
+| `--idle` | #757983 | #62738f | No data. |
+| `--invalid` | #b4235f | #ff8fb8 | Form validation only (rose). |
 | `--focus` | #1f4fd6 | #a9c4ff | Focus ring. |
+| `--thumb`, `--fill-highlight` | white | near-white | Switch/slider thumbs; top edge of solid fills. |
+
+The `/design` swatches read these values live from the CSS, so the page cannot drift from `tokens.css`.
 
 Each semantic colour also has `-soft` (background) and `-line` (border) variants. Legacy names (`--paper`, `--surface`, `--ink`, `--muted`, `--rule`, `--rule-strong`, `--flame`, `--flame-ink`, `--flame-soft`, `--amber`, `--amber-soft`) are aliases kept for pages written before this system; new code uses the semantic names.
 
@@ -61,25 +68,25 @@ Each semantic colour also has `-soft` (background) and `-line` (border) variants
 1. **Flame blue is the only brand colour.** One accent family, used for action, selection and good evidence.
 2. **Risk colours are for risk.** `--warn` and `--crit` appear only on risk findings, grades D/F and their callouts. Never on links, decoration, brand moments or "attention" UI.
 3. **Green means covered or measured,** nothing else (not "success" confetti, not "go").
-4. **Colour is never the only signal.** Status lamps have a shape per state and a label; provenance markers have a shape per source; callouts have an icon and a screen-reader prefix.
-5. **Copy never says "safe" or "unsafe".** Grades describe evidence, not habitats.
+4. **Rose (`--invalid`) means invalid input,** nothing else. Form errors never borrow the risk colours; they pair rose with an icon and text that names the fix.
+5. **Colour is never the only signal.** Status lamps have a shape per state and a label; provenance markers have a shape per source; callouts have an icon and a screen-reader prefix.
+6. **Copy never says "safe" or "unsafe".** Grades describe evidence, not habitats.
 
 ## Type
 
-Three self-hosted families via `next/font/google` (downloaded at build; the CSP needs no font origin):
+Two self-hosted families via `next/font/google` (downloaded at build; the CSP needs no font origin), two variable files in total:
 
-- **Bricolage Grotesque** (`font-display`): headlines. Variable optical size (12–96) and width (75–100). Display sizes use `opsz 96` and a slightly condensed width for a confident, technical voice.
-- **Inter** (`font-sans`): UI and reading, with optical sizing on.
+- **Inter** (`font-display`, `font-sans`): everything you read. Its optical-size axis (14–32) gives an SF-like split: display sizes use `opsz 32` (tighter, crisper), body uses the text cut automatically (`font-optical-sizing: auto`). No width squeeze.
 - **Geist Mono** (`font-mono`): every number, unit, code and telemetry label. Tabular by construction; `type-data` adds slashed zero.
 
 Fluid sizes run from a 390px phone to a 1440px desktop. Tracking tightens and leading closes as size grows.
 
 | Utility | Size | Leading | Tracking | Face |
 |---|---|---|---|---|
-| `type-display-xl` | 52 → 132px | 0.92 | −0.04em | Bricolage 600, opsz 96, wdth 88 |
-| `type-display-l` | 40 → 84px | 0.98 | −0.035em | Bricolage 600 |
-| `type-display-m` | 32 → 56px | 1.04 | −0.028em | Bricolage 600 |
-| `type-headline` | 24 → 36px | 1.12 | −0.02em | Bricolage 600 |
+| `type-display-xl` | 52 → 132px | 0.95 | −0.022em | Inter 650, opsz 32 |
+| `type-display-l` | 40 → 84px | 1.0 | −0.018em | Inter 650, opsz 32 |
+| `type-display-m` | 32 → 56px | 1.06 | −0.012em | Inter 600, opsz 32 |
+| `type-headline` | 24 → 36px | 1.12 | −0.01em | Inter 600, opsz 28 |
 | `type-title` | 19 → 23px | 1.3 | −0.012em | Inter 600 |
 | `type-body-l` | 17 → 20px | 1.55 | −0.006em | Inter |
 | `type-body` | 16px | 1.6 | 0 | Inter |
@@ -103,8 +110,9 @@ Rules: one `display-xl` per page at most (landing hero). Headings balance (`text
 
 - **Elevation:** `--elev-1` (inputs, chips) … `--elev-4` (sheets). Always an offset plus soft blur; stronger in dark mode.
 - **Glow:** `--glow-1/2` (accent ring + soft light) for the one thing that should draw the eye; `--glow-3` for the orb's ambient light. Never on every card.
-- **Glass recipe (`glass`, `glass-strong`):** translucent surface + `backdrop-filter: blur(20px) saturate(170%)` + 1px hairline border + inner top highlight + elevation. For chrome that floats over content (nav, menu sheet, tooltips, cards over the orb). Never stack glass on glass.
-- **Grid (`bg-grid`, `GridLines`):** 48px instrument grid, masked to fade at the edges. Use behind heroes, charts and the orb, i.e. measurement surfaces, not as wallpaper.
+- **Glass recipe (`glass`, `glass-strong`):** translucent surface + `backdrop-filter: blur(20px) saturate(170%)` + `--hairline` border + inner top highlight + elevation. For chrome that floats over content (nav, menu sheet, tooltips, cards over the orb). Never stack glass on glass.
+- **Grid (`bg-grid`, `GridLines`):** 64px instrument grid at very low contrast, masked to fade at the edges. Only in heroes and instrument panels (orb, charts); never as page wallpaper or behind reading text.
+- **Glass chrome (`glass-chrome`):** the bar recipe without border/shadow for nav, sticky sub-bars and table heads. All glass respects `prefers-reduced-transparency`.
 
 ## Motion
 
@@ -129,8 +137,10 @@ Rules:
 4. Animate `transform`, `opacity`, `filter`, `clip-path`. Never layout properties.
 5. Popovers grow from their trigger (`transform-origin`); the mobile menu grows from the top-right button.
 6. Hover effects only matter on fine pointers; press feedback works everywhere.
-7. `Reveal` (IntersectionObserver, once): rise 24px + un-blur, 900ms, 40–80ms stagger. Use for narrative moments, not every block.
-8. **Reduced motion:** all transitions and animations collapse to 0ms; reveals render visible; the orb stops breathing; the rings stop turning. The hidden reveal state only exists when `(scripting: enabled) and (prefers-reduced-motion: no-preference)`.
+7. `Reveal` (IntersectionObserver, once): rise 24px + un-blur, 900ms, 40–80ms stagger. Use for narrative moments, not every block. **Never wrap above-the-fold or hero content in Reveal.** A CSS failsafe shows unrevealed content after 2.5s.
+8. **Hero choreography (once):** the orb ignites (0–1.6s), the rings draw in (from 0.5s, innermost first), then eyebrow, headline, lede and actions settle (0.6–1s). Nothing else on the page auto-animates.
+9. Ambient motion: the orb flickers slowly and asymmetrically and its turbulence veil turns (48s); the ring dial turns (140s) on its own composited layer and pauses off-screen. `will-change` is set only while these run.
+10. **Reduced motion:** all transitions and animations collapse to 0ms; reveals and hero text render visible; the orb is static; the rings neither draw nor turn. The hidden reveal state only exists when `(scripting: enabled) and (prefers-reduced-motion: no-preference)`.
 
 ## Components
 
@@ -141,26 +151,26 @@ All in `web/src/components/ui/`, exported from `@/components/ui`. Typed props, n
 | `Button` (`primary`/`secondary`/`ghost`, `sm`/`md`/`lg`, `loading`, `icon`, `iconEnd`) | One primary per view; secondary for alternatives; ghost for low emphasis. `loadingLabel` names the pending state ("Generating brief…"). | Two primaries side by side; colour buttons with risk tones. |
 | `ButtonLink` | Navigation that looks like an action ("Build a brief"). | Wrapping a `Button` in a link. |
 | `IconButton` (`label` required) | Toolbar actions; 40px hit area. | Icon-only actions without a label. |
-| `Card` (`solid`/`glass`/`outline`, `interactive`) | One idea per card. `interactive` makes the first link cover the card and adds lift + glow. | Nesting cards; cards as the default page structure. |
+| `Card` (`solid`/`glass`/`outline`, `interactive`) | One idea per card. `interactive` makes the first link cover the card, adds lift + glow, and shows a `--focus` outline on the card when its link has keyboard focus. | Nesting cards; cards as the default page structure. |
 | `SectionHeading`, `Eyebrow`, `Panel` | Section opener with optional telemetry label, title, lede, actions. `Panel` is a console module with a labelled header strip. | An eyebrow that repeats the heading. |
 | `Stat`, `StatGroup` | Instrument readouts (label, mono value, unit, provenance slot). `Stat` must sit inside `StatGroup` (a `<dl>`). | Decorative "big number" heroes without a source. |
 | `StatusLight` (`ok`/`warn`/`crit`/`idle`, `pulse`) | Coverage and risk status. Shape + label per state. At most one pulsing lamp per view. | Status colour for non-status meaning. |
 | `Chip` (tones) / `ToggleChip` | Static tags / multi-select filters (real checkboxes). | Risk tones on non-risk tags. |
 | `Segmented` | 2–5 mutually exclusive views of the same thing; native radios, sliding thumb. | When each option owns a panel (use `Tabs`). |
 | `Tabs` | ARIA tabs, arrow/Home/End keys, roving tabindex. | Page navigation. |
-| `NumberField`, `SliderField`, `Switch`, `Field` | Labelled inputs with unit suffix, live `<output>`, hint/error wiring (`describedBy`). Errors use warn colour and name the fix. | Placeholder as label; error by colour alone. |
+| `NumberField`, `SliderField`, `Switch`, `Field` | Labelled inputs with unit suffix, live `<output>` and `aria-valuetext` with unit, hint/error wiring (`describedBy`). Errors use `--invalid` + icon and name the fix. | Placeholder as label; error by colour alone. |
 | `Callout` (`info`/`warn`/`crit`, `live`) | Inline context or risk finding; icon shape + SR prefix carry the tone. | Warn/crit for anything that is not risk. |
-| `Tooltip` | Supplementary help; own trigger button; hover (350ms delay), focus, tap; Escape closes; text is the trigger's description. `align="end"` near the right edge. | Required information. |
+| `Tooltip` | Supplementary help; own trigger button; hover (350ms delay), focus, click/tap opens (never toggles shut); the tip is hoverable and stays open over trigger or tip (WCAG 1.4.13); Escape or outside tap closes; text is the trigger's description. `align="end"` near the right edge. | Required information. |
 | `TableFrame`, `THead`, `TBody`, `Tr`, `Th`, `Td` | Data tables with sticky glass header, horizontal scroll on phones, `numeric` cells right-aligned mono. | Layout. |
 | `Kbd`, `Divider` (`label`, `ticks`), `GridLines` (`axes`, `corners`) | Keys; hairline separators; instrument backdrop. | Ticks/grids as wallpaper. |
 | `HaloOrb` (`sm`/`md`/`lg`/`xl` or px, `fuel`, `animate`) | The signature visual; decorative, `aria-hidden`. | More than one per view; encoding data. |
-| `RingsGraphic` (`rings`, `active`, `labels`, `spin`, `title`) | Concentric ring language; becomes an `img` with `title`. | Implying measured data without a title and source. |
+| `RingsGraphic` (`rings`, `active`, `labels`, `spin`, `drawIn`, `maskInner`, `title`) | Concentric ring language; becomes an `img` with `title`. | Implying measured data without a title and source. |
 | `Reveal` (`delay`, `as`) | Scroll reveal wrapper. | Wrapping every block. |
-| `PageHero` (`eyebrow`, `title`, `lede`, `actions`, `visual` orb/rings, `size` cinematic/page, `meta`) | Page opener. `cinematic` for the landing page only. | Stacking a second hero. |
+| `PageHero` (`eyebrow`, `title`, `lede`, `actions`, `visual` orb/rings, `ringLabels`, `size` cinematic/page, `meta`) | Page opener; always a dark theater well with the choreographed entrance. `cinematic` for the landing page and the styleguide only. | Stacking a second hero. |
 | `Article` (`toc`) / `Prose` | Long-form pages (Method, Data, About): sticky "On this page" list on desktop, disclosure on phones, `prose-halo` column. Headings inside need the `toc` ids. | Dense data tables inside prose without `TableFrame`. |
-| `Navbar` | Sticky glass bar: Findings, Explore, Compare, Method, Data, About, plus the "Build a brief" CTA (`/build`). Below 1024px a glass sheet with theme toggle. | Adding links without updating `site.ts`. |
-| `Footer` | Product / Science / Project columns, theme toggle, the required NASA disclaimer. | Removing the disclaimer. |
-| `ThemeToggle`, `setTheme` | System / Light / Dark radio group (arrow keys). | Reading `localStorage` elsewhere. |
+| `Navbar` | Sticky glass bar: Findings, Explore, Compare, Method, Data, About, plus the "Build a brief" CTA (`/build`). Below 1024px a glass sheet (modal: rest of page inert, Tab cycles inside, Escape closes, focus returns to the button) with theme toggle. | Adding links without updating `site.ts`. |
+| `Footer` | Product / Science / Project columns, theme toggle, the required NASA disclaimer. No decorative wordmark. | Removing the disclaimer. |
+| `ThemeToggle`, `setTheme` | System / Light / Dark radio group (arrow keys, 40px targets, selected thumb outlined >= 3:1). | Reading `localStorage` elsewhere. |
 | `ProvenanceBadge({ provenance })` | Measured (green filled dot), inferred (half), assumed (hollow), literature (square), model (dashed diamond), `si` renders `SiChip`. Help text in the accessible name. | Colour without the label. |
 | `SiChip()` | Dashed "SI" chip on every SI-written sentence; accessible name "SI-generated from the cited facts; …". | Omitting it from any SI sentence. |
 | `GradeBadge({ grade, size })` | Grade letter in a ring whose closure shrinks A → F; A/B flame blue with glow, C neutral, D/F warn. | Calling a grade a safety verdict. |
@@ -173,7 +183,9 @@ Navigation data (links, footer groups, external URLs, disclaimer) lives in `comp
 - Every input has a visible label; groups use `fieldset`/`legend`; hints and errors are linked with `aria-describedby`; focus moves to the first invalid field on submit.
 - Toggle chips are checkboxes, switches are `role="switch"` checkboxes, segmented controls are native radios, the theme toggle is a radiogroup with arrow keys, tabs follow the ARIA tabs pattern.
 - A 2px `--focus` outline on `:focus-visible` everywhere; inputs add a soft accent ring. Skip link precedes the nav.
-- The mobile menu closes on Escape, outside tap, route change or link click, and returns focus to its button; the page behind does not scroll while it is open.
+- The mobile menu is modal: the page behind is `inert` and does not scroll, Tab stays inside, and Escape, outside tap, route change or a link closes it and returns focus to its button.
+- Pages with a sticky bottom action bar mark it `data-sticky-action`; `scroll-padding-bottom` (from `--sticky-action-h`) keeps focused fields clear of it (WCAG 2.4.11).
+- Non-text contrast: switch tracks, segmented and theme-toggle thumbs, and control edges reach 3:1 against what surrounds them.
 - Hit areas are at least 40px for icon buttons and nav controls on touch.
 - Decorative visuals (`HaloOrb`, untitled `RingsGraphic`, `GridLines`) are `aria-hidden`.
 - Reduced motion, reduced transparency and increased contrast preferences are honoured (see Motion and Themes).
@@ -184,5 +196,17 @@ Navigation data (links, footer groups, external URLs, disclaimer) lives in `comp
 The Fire Brief prints on white with the light tokens, whatever the screen theme:
 
 - `@media print` forces `color-scheme: light` and pure white/black text tokens; removes elevation and glow; flattens glass to white; hides `.no-print` (nav, footer, TOC); renders reveals visible; hides the orb's bloom.
-- Sections, figures and tables avoid page breaks inside; A4 with 14mm margins; 10.5pt base.
+- Figures, tables and cards (`[data-print-keep]`) avoid page breaks inside; long sections may break. A4 with 14mm margins; 10.5pt base.
+- `--bg-deep`, `--surface-2/3` print as white; glows and accent light are removed.
 - Provenance markers and status lamps are shape-coded, so they read in greyscale.
+
+## Fidelity
+
+Everything ships sharp on retina and beyond.
+
+- **Vector first.** Icons (`Icon`, an authored 20px-grid SVG set), the logo mark, `HaloOrb` (CSS gradients), `RingsGraphic` and charts are SVG/CSS. No raster icons or logos.
+- **Raster only when it must exist** (photos): `next/image` with explicit `sizes`, AVIF/WebP, 2x/3x sources, never upscaled; keep each image under ~200 KB at 2x and the page's image budget under ~1 MB.
+- **Hairlines:** `--hairline` is 1px, and 0.5px on 2x+ screens, for dividers and glass edges, so rules render as one device pixel.
+- **Type:** font smoothing on, `font-optical-sizing: auto`, tabular numerals for data. No fractional translates on text at rest; animated text settles to `translate: 0`.
+- **Compositing:** `will-change` only on elements that are actually animating (ring dial, orb turbulence).
+- **Verification:** screenshots are taken at deviceScaleFactor 2 (390px and 1440px, light and dark, plus reduced motion). Tall pages are captured in viewport tiles and stitched, because Chrome cannot capture more than ~16k device pixels in one shot.

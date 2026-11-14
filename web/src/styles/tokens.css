@@ -19,58 +19,71 @@
 :root,
 [data-theme] {
   /* ---------- Colour: canvas and surfaces ---------- */
-  --bg: light-dark(#f3f5f8, #05080f); /* deep space ink / cool paper */
-  --bg-deep: light-dark(#e9edf2, #020409); /* hero wells, behind the orb */
-  --surface-1: light-dark(#ffffff, #0a101b); /* cards, inputs */
-  --surface-2: light-dark(#eaeef3, #101826); /* raised / hover */
-  --surface-3: light-dark(#dfe4eb, #172133); /* pressed, tracks */
+  /* Dark: deep space ink, never pure black; each surface step is clearly lighter.
+     Light: "archival paper", a warm neutral rather than stock cool grey. */
+  --bg: light-dark(#f4f3ef, #05080f);
+  --bg-deep: light-dark(#ebe9e3, #020409); /* footer, wells (heroes are always dark) */
+  --surface-1: light-dark(#fcfbf8, #0c1320); /* cards, inputs */
+  --surface-2: light-dark(#ebe9e3, #141d2d); /* raised / hover / tracks */
+  --surface-3: light-dark(#e0ddd5, #1e293c); /* pressed, switch off */
 
   /* Glass: translucent chrome. Bigger surfaces use --glass-bg-strong. */
-  --glass-bg: light-dark(rgb(255 255 255 / 0.66), rgb(14 21 34 / 0.58));
-  --glass-bg-strong: light-dark(rgb(250 251 253 / 0.82), rgb(9 14 24 / 0.76));
-  --glass-border: light-dark(rgb(10 18 32 / 0.09), rgb(170 195 240 / 0.12));
-  --glass-highlight: light-dark(rgb(255 255 255 / 0.9), rgb(210 225 255 / 0.09));
+  --glass-bg: light-dark(rgb(252 251 248 / 0.7), rgb(16 24 38 / 0.6));
+  --glass-bg-strong: light-dark(rgb(248 247 243 / 0.84), rgb(10 15 26 / 0.78));
+  --glass-border: light-dark(rgb(28 26 20 / 0.1), rgb(180 205 250 / 0.14));
+  --glass-highlight: light-dark(rgb(255 255 255 / 0.95), rgb(220 232 255 / 0.12));
   --glass-blur: 20px;
 
   /* ---------- Colour: lines ---------- */
-  --border: light-dark(rgb(10 18 32 / 0.1), rgb(160 185 230 / 0.12)); /* hairlines, dividers */
-  --border-strong: light-dark(#7a879b, #5b6c89); /* control edges, >=3:1 */
-  --grid-line: light-dark(rgb(10 18 32 / 0.05), rgb(150 180 240 / 0.055)); /* instrument grid */
+  --border: light-dark(rgb(28 26 20 / 0.12), rgb(170 195 240 / 0.15)); /* hairlines, dividers */
+  --border-strong: light-dark(#757983, #62738f); /* control edges, >=3:1 on every surface */
+  --grid-line: light-dark(rgb(28 26 20 / 0.04), rgb(150 180 240 / 0.035)); /* instrument grid */
 
   /* ---------- Colour: text ---------- */
-  --text-1: light-dark(#0a1220, #eef2f8); /* primary */
-  --text-2: light-dark(#465269, #a3afc2); /* secondary, >=7:1 */
-  --text-3: light-dark(#5b6780, #7c89a0); /* tertiary, labels, >=4.5:1 */
+  --text-1: light-dark(#14161c, #eef2f8); /* primary */
+  --text-2: light-dark(#4a4e58, #a3afc2); /* secondary, >=6:1 */
+  --text-3: light-dark(#585c66, #8794aa); /* tertiary, labels, >=4.5:1 on every surface */
 
   /* ---------- Colour: accent (flame blue, the only brand colour) ---------- */
-  --accent: light-dark(#1f4fd6, #7ea6ff); /* links, selection, primary fill */
+  --accent: light-dark(#1f4fd6, #7ea6ff); /* text, links, selection marks */
   --accent-hover: light-dark(#1a43b8, #9bbaff);
-  --accent-ink: light-dark(#ffffff, #04101f); /* text on an accent fill */
-  --accent-soft: light-dark(#e3eafc, rgb(126 166 255 / 0.13)); /* selected backgrounds */
-  --accent-line: light-dark(rgb(31 79 214 / 0.35), rgb(126 166 255 / 0.4));
-  --accent-glow: light-dark(rgb(31 79 214 / 0.22), rgb(90 140 255 / 0.45)); /* light, never fill */
+  --accent-fill: light-dark(#2f5ff0, #3a66ff); /* primary button fill: saturated, luminous */
+  --accent-fill-hover: light-dark(#2a57e6, #3360f8);
+  --accent-ink: #ffffff; /* text on an accent fill (>=4.6:1 both themes) */
+  --accent-soft: light-dark(#e2e8f8, rgb(126 166 255 / 0.14)); /* selected backgrounds */
+  --accent-line: light-dark(rgb(31 79 214 / 0.38), rgb(126 166 255 / 0.42));
+  --accent-glow: light-dark(rgb(47 95 240 / 0.24), rgb(70 120 255 / 0.5)); /* light, never fill */
+  --fill-highlight: rgb(255 255 255 / 0.22); /* top edge of solid fills */
+  --thumb: light-dark(#ffffff, #f4f6fa); /* switch and slider thumbs */
 
   /* Halo orb: the microgravity flame. Decorative only, never data. */
-  --halo-core: light-dark(rgb(40 90 230 / 0.04), rgb(50 95 230 / 0.16));
-  --halo-shell: light-dark(rgb(36 92 235 / 0.5), rgb(130 175 255 / 0.85));
-  --halo-rim: light-dark(rgb(30 80 220 / 0.2), rgb(110 160 255 / 0.4));
-  --halo-bloom: light-dark(rgb(40 100 240 / 0.12), rgb(60 110 255 / 0.22));
+  --halo-core: light-dark(rgb(40 90 230 / 0.05), rgb(50 95 230 / 0.16));
+  --halo-shell: light-dark(rgb(36 92 235 / 0.6), rgb(110 160 255 / 0.9));
+  --halo-hot: light-dark(rgb(235 242 255 / 0.9), rgb(232 240 255 / 0.95)); /* thin white-hot rim */
+  --halo-rim: light-dark(rgb(30 80 220 / 0.22), rgb(90 140 255 / 0.42));
+  --halo-bloom: light-dark(rgb(40 100 240 / 0.14), rgb(60 110 255 / 0.3));
 
   /* ---------- Colour: semantics (risk colours only for risk) ---------- */
   --warn: light-dark(#8a5000, #f3b54d);
-  --warn-soft: light-dark(#fbefdc, rgb(243 181 77 / 0.12));
-  --warn-line: light-dark(rgb(138 80 0 / 0.35), rgb(243 181 77 / 0.35));
+  --warn-soft: light-dark(#f8ecd6, rgb(243 181 77 / 0.12));
+  --warn-line: light-dark(rgb(138 80 0 / 0.38), rgb(243 181 77 / 0.38));
   --crit: light-dark(#b0321a, #ff7a5c);
-  --crit-soft: light-dark(#fbe6e1, rgb(255 122 92 / 0.12));
-  --crit-line: light-dark(rgb(176 50 26 / 0.35), rgb(255 122 92 / 0.38));
+  --crit-soft: light-dark(#f8e2dc, rgb(255 122 92 / 0.12));
+  --crit-line: light-dark(rgb(176 50 26 / 0.38), rgb(255 122 92 / 0.4));
   --ok: light-dark(#0a7350, #4fd4a4); /* covered / measured */
-  --ok-soft: light-dark(#dff3ea, rgb(79 212 164 / 0.12));
-  --ok-line: light-dark(rgb(10 115 80 / 0.35), rgb(79 212 164 / 0.35));
-  --idle: light-dark(#7a879b, #5b6c89);
+  --ok-soft: light-dark(#dcefe5, rgb(79 212 164 / 0.12));
+  --ok-line: light-dark(rgb(10 115 80 / 0.38), rgb(79 212 164 / 0.38));
+  --idle: light-dark(#757983, #62738f);
+  /* Form validation only: rose, distinct from the risk colours. Text >=4.6:1, border >=3:1. */
+  --invalid: light-dark(#b4235f, #ff8fb8);
+  --invalid-soft: light-dark(#f8e1ea, rgb(255 143 184 / 0.1));
 
   --focus: light-dark(#1f4fd6, #a9c4ff);
   --selection: light-dark(rgb(31 79 214 / 0.18), rgb(126 166 255 / 0.3));
-  --scrim: light-dark(rgb(10 18 32 / 0.28), rgb(0 2 6 / 0.6));
+  --scrim: light-dark(rgb(20 18 12 / 0.3), rgb(0 2 6 / 0.62));
+
+  /* Height of a sticky bottom action bar; pages that have one set html[data-sticky-action]. */
+  --sticky-action-h: 5rem;
 
   /* ---------- Type ---------- */
   /* Families (--font-display, --font-sans, --font-mono) and radii/easings live in the
@@ -106,6 +119,9 @@
   --space-32: 8rem;
   --section-y: clamp(4rem, 2.5rem + 6vw, 9rem); /* vertical rhythm between page sections */
   --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem); /* page side padding */
+
+  /* ---------- Fidelity ---------- */
+  --hairline: 1px; /* 0.5px on 2x+ screens (below): crisp single-device-pixel rules */
 
   /* ---------- Layout ---------- */
   --container-prose: 42rem;
@@ -172,6 +188,13 @@
   color-scheme: light;
 }
 
+@media (min-resolution: 2dppx) {
+  :root,
+  [data-theme] {
+    --hairline: 0.5px;
+  }
+}
+
 /* Users who ask for less transparency get solid chrome. */
 @media (prefers-reduced-transparency: reduce) {
   :root,
@@ -204,6 +227,10 @@
     --text-2: #333d4c;
     --text-3: #4a5466;
     --accent: #1a45bd;
+    --bg-deep: #ffffff;
+    --surface-2: #ffffff;
+    --surface-3: #ffffff;
+    --accent-glow: transparent;
     --elev-1: none;
     --elev-2: none;
     --elev-3: none;

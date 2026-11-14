@@ -49,6 +49,7 @@ export function SliderField({
         max={max}
         value={value}
         aria-describedby={hint ? `${inputId}-hint` : undefined}
+        aria-valuetext={unit ? `${format(value)} ${unit}` : format(value)}
         className="range"
         style={{ ["--pct" as string]: `${pct}%` }}
         {...input}

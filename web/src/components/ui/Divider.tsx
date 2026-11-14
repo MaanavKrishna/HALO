@@ -8,18 +8,18 @@ export function Divider({ label, ticks = false, className }: { label?: string; t
   if (label) {
     return (
       <div role="separator" aria-label={label} className={cx("flex items-center gap-4", className)}>
-        <span className="h-px flex-1 bg-line" />
+        <span className="h-[var(--hairline)] flex-1 bg-line" />
         <span aria-hidden="true" className="type-label text-fg-3">
           {label}
         </span>
-        <span className="h-px flex-1 bg-line" />
+        <span className="h-[var(--hairline)] flex-1 bg-line" />
       </div>
     );
   }
   return (
     <hr
       className={cx(
-        "h-px border-0 bg-line",
+        "h-[var(--hairline)] border-0 bg-line",
         ticks &&
           "h-2 bg-[linear-gradient(var(--border),var(--border))_0_0/100%_1px_no-repeat,repeating-linear-gradient(90deg,var(--border-strong)_0_1px,transparent_1px_40px)_0_0/100%_6px_no-repeat]",
         className,
@@ -36,7 +36,7 @@ export function Divider({ label, ticks = false, className }: { label?: string; t
 export function GridLines({ axes = false, corners = false, className }: { axes?: boolean; corners?: boolean; className?: string }) {
   return (
     <div aria-hidden="true" className={cx("pointer-events-none absolute inset-0 overflow-hidden", className)}>
-      <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" />
+      <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,#000_15%,transparent_70%)] opacity-80" />
       {axes && (
         <>
           <div className="absolute inset-y-0 left-1/2 w-px bg-[linear-gradient(transparent,var(--accent-line),transparent)] opacity-60" />

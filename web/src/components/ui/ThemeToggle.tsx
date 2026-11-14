@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Icon } from "./Icon";
 import { cx } from "./cx";
 import { THEME_KEY as KEY } from "./theme";
@@ -28,7 +28,26 @@ export function setTheme(pref: ThemePref) {
   } catch {
     /* storage blocked: the choice lasts for this page only */
   }
+  syncThemeColor(pref);
   listeners.forEach((l) => l());
+}
+
+/** Same values as --bg; mirrored in layout.tsx viewport.themeColor. */
+const CHROME = { light: "#f4f3ef", dark: "#05080f" } as const;
+
+/** Keeps the browser chrome colour (meta theme-color) in step with a forced theme. */
+function syncThemeColor(pref: ThemePref) {
+  document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((m) => {
+    m.dataset.media ??= m.media;
+    m.dataset.color ??= m.content;
+    if (pref === "system") {
+      m.media = m.dataset.media;
+      m.content = m.dataset.color;
+    } else {
+      m.media = "";
+      m.content = CHROME[pref];
+    }
+  });
 }
 
 const OPTIONS: { value: ThemePref; label: string; icon: "system" | "sun" | "moon" }[] = [
@@ -38,6 +57,8 @@ const OPTIONS: { value: ThemePref; label: string; icon: "system" | "sun" | "moon
 ];
 
 /** Three-way theme switch (System / Light / Dark) as a radio group. */
+let synced = false;
+
 export function ThemeToggle({ className, showLabels = false }: { className?: string; showLabels?: boolean }) {
   const pref = useSyncExternalStore(
     (cb) => {
@@ -47,6 +68,11 @@ export function ThemeToggle({ className, showLabels = false }: { className?: str
     read,
     () => "system" as ThemePref,
   );
+  useEffect(() => {
+    if (synced) return;
+    synced = true;
+    syncThemeColor(read());
+  }, []);
   return (
     <div
       role="radiogroup"
@@ -76,9 +102,9 @@ export function ThemeToggle({ className, showLabels = false }: { className?: str
             data-theme-option={o.value}
             onClick={() => setTheme(o.value)}
             className={cx(
-              "inline-flex h-7 items-center justify-center gap-1.5 rounded-[var(--radius-pill)] text-[0.8125rem] font-medium transition-[background-color,color,box-shadow] duration-[var(--dur-fast)]",
-              showLabels ? "px-3" : "w-8",
-              on ? "bg-surface-1 text-fg shadow-[var(--inner-highlight),var(--elev-1)]" : "text-fg-3 hover:text-fg",
+              "inline-flex h-10 items-center justify-center gap-1.5 rounded-[var(--radius-pill)] text-[0.8125rem] font-medium transition-[background-color,color,box-shadow] duration-[var(--dur-fast)]",
+              showLabels ? "px-3.5" : "w-10",
+              on ? "bg-surface-1 text-fg shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-1)]" : "text-fg-2 hover:text-fg",
             )}
           >
             <Icon name={o.icon} size={16} />

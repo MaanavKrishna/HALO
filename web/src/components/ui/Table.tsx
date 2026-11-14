@@ -34,7 +34,7 @@ export function TableFrame({
 }
 
 export function THead({ children }: { children: ReactNode }) {
-  return <thead className="sticky top-0 z-[1] bg-[var(--glass-bg-strong)] backdrop-blur-md">{children}</thead>;
+  return <thead className="glass-chrome sticky top-0 z-[1]">{children}</thead>;
 }
 
 export function TBody({ children }: { children: ReactNode }) {

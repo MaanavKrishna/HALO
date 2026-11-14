@@ -42,7 +42,7 @@ export function Segmented<T extends string>({
       >
         <span
           aria-hidden="true"
-          className="absolute bottom-[3px] left-[3px] top-[3px] rounded-[var(--radius-pill)] bg-surface-1 shadow-[var(--inner-highlight),var(--elev-2)] transition-transform duration-[var(--spring-dur-snappy)] ease-[var(--spring)]"
+          className="absolute bottom-[3px] left-[3px] top-[3px] rounded-[var(--radius-pill)] bg-surface-1 shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)] transition-transform duration-[var(--spring-dur-snappy)] ease-[var(--spring)]"
           style={{ width: `calc((100% - 6px) / var(--n))`, transform: `translateX(calc(var(--i) * 100%))` }}
         />
         {options.map((o) => (

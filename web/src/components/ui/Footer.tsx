@@ -53,12 +53,6 @@ export function Footer() {
         <p>{DISCLAIMER}</p>
         <p className="font-mono">NASA Space Apps 2026 · Flame in Freefall</p>
       </div>
-      <p
-        aria-hidden="true"
-        className="pointer-events-none -mb-[0.2em] select-none text-center font-display text-[clamp(6rem,26vw,22rem)] font-bold leading-[0.8] tracking-[-0.05em] text-surface-2 [mask-image:linear-gradient(to_bottom,#000_20%,transparent_95%)] [font-variation-settings:'opsz'_96,'wdth'_80]"
-      >
-        HALO
-      </p>
     </footer>
   );
 }

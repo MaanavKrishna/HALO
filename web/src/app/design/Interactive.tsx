@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Callout,
@@ -184,5 +184,59 @@ export function LoadingDemo() {
     >
       Generate brief
     </Button>
+  );
+}
+
+function toHex(rgb: string): string {
+  const m = rgb.match(/[\d.]+/g);
+  if (!m) return rgb;
+  const [r, g, b, a] = m.map(Number);
+  const hex = `#${[r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("")}`;
+  return a !== undefined && a < 1 ? `${hex} / ${Math.round(a * 100)}%` : hex;
+}
+
+/**
+ * Token swatches with values read live from the CSS in both themes (scoped
+ * data-theme probes), so this page can never drift from tokens.css.
+ */
+export function Swatches({ tokens }: { tokens: readonly { name: string; use: string }[] }) {
+  const [values, setValues] = useState<Record<string, { light: string; dark: string }>>({});
+  useEffect(() => {
+    const out: Record<string, { light: string; dark: string }> = {};
+    for (const t of tokens) {
+      const read = (theme: string) => {
+        const el = document.querySelector<HTMLElement>(`[data-swatch="${t.name}"][data-theme="${theme}"]`);
+        return el ? toHex(getComputedStyle(el).backgroundColor) : "";
+      };
+      out[t.name] = { light: read("light"), dark: read("dark") };
+    }
+    setValues(out);
+  }, [tokens]);
+  return (
+    <ul className="flex flex-col divide-y divide-line rounded-[var(--radius-lg)] border border-line bg-surface-1">
+      {tokens.map((t) => (
+        <li key={t.name} className="grid grid-cols-[3.5rem_1fr] items-center gap-4 p-3 sm:grid-cols-[4.5rem_1fr_auto]">
+          <span className="flex h-10 overflow-hidden rounded-[var(--radius-sm)] shadow-[inset_0_0_0_1px_var(--border)]" aria-hidden="true">
+            <span data-swatch={t.name} data-theme="light" className="flex-1" style={{ background: `var(${t.name})` }} />
+            <span data-swatch={t.name} data-theme="dark" className="flex-1" style={{ background: `var(${t.name})` }} />
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <code className="font-mono text-sm text-fg">{t.name}</code>
+            <span className="text-[0.8125rem] text-fg-2">{t.use}</span>
+          </span>
+          <span className="col-span-2 min-h-8 font-mono text-[0.75rem] text-fg-3 sm:col-span-1 sm:text-right">
+            {values[t.name] && (
+              <>
+                <span className="sr-only">Light </span>
+                {values[t.name].light}
+                <br />
+                <span className="sr-only">Dark </span>
+                {values[t.name].dark}
+              </>
+            )}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }

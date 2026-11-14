@@ -1,20 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist_Mono, Inter } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import { Footer } from "@/components/ui/Footer";
 import { Navbar } from "@/components/ui/Navbar";
 import { THEME_INIT_SCRIPT } from "@/components/ui/theme";
 import "./globals.css";
 
 // Self-hosted at build time by next/font: no external font requests at runtime.
-// Display: Bricolage Grotesque (optical size + width axes) for headlines.
-const display = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
-  axes: ["opsz", "wdth"],
-  display: "swap",
-});
-
-// UI and body: Inter with optical sizing.
+// Display, UI and body: one Inter variable file with its optical-size axis,
+// so headlines get the tight display cut and body text the text cut.
 const ui = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -38,13 +31,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#05080f" },
-    { media: "(prefers-color-scheme: light)", color: "#f3f5f8" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f3ef" },
   ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${mono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${ui.variable} ${mono.variable}`}>
       <head>
         {/* Applies a stored theme before first paint (static string, allowed by the CSP's 'unsafe-inline'). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

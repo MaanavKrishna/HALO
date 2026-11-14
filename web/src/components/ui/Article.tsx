@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Icon } from "./Icon";
 import { cx } from "./cx";
 
@@ -12,7 +12,9 @@ export interface TocItem {
 /** Highlights the section currently under the reading line. */
 function useActiveSection(ids: readonly string[]) {
   const [active, setActive] = useState(ids[0]);
+  const key = ids.join("|");
   useEffect(() => {
+    const ids = key.split("|");
     const els = ids.map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e);
     if (!els.length || typeof IntersectionObserver === "undefined") return;
     const io = new IntersectionObserver(
@@ -24,7 +26,7 @@ function useActiveSection(ids: readonly string[]) {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, [ids]);
+  }, [key]);
   return active;
 }
 
@@ -59,7 +61,8 @@ function TocList({ items, active }: { items: readonly TocItem[]; active?: string
  * carry the ids listed in `toc`.
  */
 export function Article({ toc, children, className }: { toc: readonly TocItem[]; children: ReactNode; className?: string }) {
-  const active = useActiveSection(toc.map((t) => t.id));
+  const ids = useMemo(() => toc.map((t) => t.id), [toc]);
+  const active = useActiveSection(ids);
   return (
     <div className={cx("container-page grid gap-10 py-16 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16 lg:py-24", className)}>
       <aside className="no-print">

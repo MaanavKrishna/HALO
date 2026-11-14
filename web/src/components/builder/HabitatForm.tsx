@@ -241,7 +241,7 @@ export function HabitatForm() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 -mx-5 flex flex-wrap items-center justify-between gap-3 border-t border-rule bg-paper/95 px-5 py-3 backdrop-blur sm:-mx-8 sm:py-4 sm:px-8">
+      <div data-sticky-action="" className="sticky bottom-0 -mx-5 flex flex-wrap items-center justify-between gap-3 border-t border-rule bg-paper/95 px-5 py-3 backdrop-blur sm:-mx-8 sm:py-4 sm:px-8">
         <p className="num hidden font-mono text-sm text-muted sm:block" aria-hidden="true">
           {draft.o2 || "–"}% O<sub>2</sub> · {draft.p || "–"} psia · {draft.f || "–"} cm/s · {draft.materials.length}{" "}
           {draft.materials.length === 1 ? "material" : "materials"}

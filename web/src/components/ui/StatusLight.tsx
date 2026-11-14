@@ -45,7 +45,7 @@ export function StatusLight({
           className={cx(
             "absolute inset-0",
             shape,
-            status === "idle" ? "border-[1.5px] border-current" : "bg-current shadow-[0_0_8px_currentColor]",
+            status === "idle" ? "border-[1.5px] border-current" : "bg-current shadow-[0_0_8px_currentColor] print:shadow-none",
           )}
         />
       </span>

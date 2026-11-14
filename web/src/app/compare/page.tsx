@@ -11,7 +11,8 @@ import { PRESETS } from "@/lib/engine/presets";
 import type { Habitat } from "@/lib/engine/types";
 
 export const metadata: Metadata = {
-  title: "Compare habitats | HALO",
+  title: "Compare habitats",
+  alternates: { canonical: "/compare" },
   description: "Two habitat atmospheres side by side: evidence grade, flags and smoke detection.",
 };
 

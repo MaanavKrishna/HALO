@@ -3,7 +3,6 @@ import { ButtonLink, Icon, PageHero } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Page not found",
-  robots: { index: false },
 };
 
 /** Styled 404. Unknown routes (and unknown /explore ids, via the config rewrite) answer with a real 404 status. */

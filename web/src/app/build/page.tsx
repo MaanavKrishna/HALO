@@ -4,7 +4,8 @@ import { PageHero } from "@/components/ui";
 import { HALO_DATA } from "@/lib/data/load";
 
 export const metadata: Metadata = {
-  title: "Build a brief · HALO",
+  title: "Build a brief",
+  alternates: { canonical: "/build" },
   description: "Describe a habitat atmosphere, its cabin materials and detectors, and generate a cited Fire Brief.",
 };
 

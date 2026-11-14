@@ -5,7 +5,7 @@ import { buildBrief } from "@/lib/engine/brief";
 import { scaledDistance } from "@/lib/engine/distance";
 import { extinctionAt } from "@/lib/engine/extinction";
 import { detectorSource } from "@/lib/engine/flags";
-import { GRADE_RINGS } from "@/lib/engine/grade";
+import { GRADE_RINGS, classGrade } from "@/lib/engine/grade";
 import { MATERIALS } from "@/lib/engine/materials";
 import { nextTests } from "@/lib/engine/nextTest";
 import { PRESETS } from "@/lib/engine/presets";
@@ -27,7 +27,7 @@ export interface FindingSource {
 export type FindingViz =
   | { kind: "o2-range"; tested: [number, number]; markers: Array<{ label: string; o2: number }>; domain: [number, number] }
   | { kind: "breakdown"; total: number; parts: Array<{ label: string; count: number; provenance: Provenance }> }
-  | { kind: "runs"; rows: Array<{ label: string; low: number; runs: number }>; threshold: number }
+  | { kind: "runs"; rows: Array<{ label: string; low: number; runs: number }>; threshold: string }
   | { kind: "curve"; points: Array<{ o2: number; p50: number; lo: number; hi: number }>; at50: { median: number; lo: number; hi: number }; marker: { label: string; o2: number } }
   | { kind: "spread"; rows: Array<{ id: string; o2: number; rate: number; mission: string; elevated: boolean }> }
   | { kind: "gravity"; tested: number; total: number }
@@ -87,11 +87,17 @@ const CLASS_PLURAL: Record<FuelClass, string> = {
   gas: "gas-flame rows",
 };
 
+const shortMaterial = (m: string) => m.replace(/\s+\d+(\.\d+)?x\d+(\.\d+)?\s*cm.*$/, "").trim();
+function pressureSpan(rows: Array<{ p: number | null }>) {
+  const ps = rows.map((r) => r.p).filter((x): x is number => x !== null);
+  return ps.length ? `${Math.min(...ps)}–${Math.max(...ps)} psia where reported` : "pressure not always reported";
+}
+
 /** SIBAL (cotton/fiberglass) fabric is the one material Saffire burned on several missions. */
 function saffireSpread(lit: LiteratureRow[]) {
   return lit
     .filter((r) => r.spreadRateMmS !== null && r.o2Pct !== null)
-    .map((r) => ({ id: r.sampleId, o2: r.o2Pct as number, rate: r.spreadRateMmS as number, mission: r.mission, material: r.material, url: r.sourceUrl }));
+    .map((r) => ({ id: r.sampleId, o2: r.o2Pct as number, p: r.pressurePsia, rate: r.spreadRateMmS as number, mission: r.mission, material: r.material, url: r.sourceUrl }));
 }
 
 export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
@@ -107,22 +113,23 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   const minSolid = Math.min(...solids.map((t) => t.o2Pct));
   const minSolidP = Math.min(...solids.map((t) => t.pressurePsia));
   const seaLevel = minSolidP >= SEA_LEVEL_MIN_PSIA;
+  const litTop = data.literature.filter((r) => r.o2Pct !== null).reduce<LiteratureRow | null>((a, b) => (a === null || (b.o2Pct as number) > (a.o2Pct as number) ? b : a), null);
   const artemisBrief = buildBrief(artemis, data);
   const solidNear = artemisBrief.byClass.solid;
   if (top) {
     out.push({
       id: "solid-ceiling",
       topic: "Cabin materials",
-      title: `No real cabin solid in the PSI data was tested above ${fmt1(top.o2Pct)}% oxygen.`,
+      title: `No real cabin solid in the PSI test rows was burned above ${fmt1(top.o2Pct)}% oxygen.`,
       stat: { value: fmt1(top.o2Pct), unit: "%", label: "Highest O2 any real solid burned at", detail: `${top.acronym}, ${top.fuel}` },
       second: { value: fmt1(artemis.o2Pct), unit: "%", label: `${artemis.name} atmosphere` },
-      provenance: uniq([top.o2Src]),
-      body: `Across ${solids.length} eligible solid-fuel test rows, oxygen spans ${fmt1(minSolid)} to ${fmt1(top.o2Pct)}%, ${seaLevel ? "all at sea-level cabin pressure" : `at ${fmt1(minSolidP)} psia and up`}. ${artemis.name} (${artemis.o2Pct}% O2, ${artemis.pressurePsia} psia) sits at evidence distance ${solidNear.d === null ? "n/a" : fmt2(solidNear.d)} from the nearest one${solidNear.d !== null && solidNear.d > GRADE_RINGS[GRADE_RINGS.length - 1] ? ", past the outermost grade ring" : ""}.`,
+      provenance: uniq([top.o2Src, ...solids.map((t) => t.pSrc)]),
+      body: `Across ${solids.length} eligible solid-fuel test rows, oxygen spans ${fmt1(minSolid)} to ${fmt1(top.o2Pct)}%, ${seaLevel ? `all at ${solids.every((t) => t.pSrc === "assumed") ? "an assumed " : ""}sea-level cabin pressure` : `at ${fmt1(minSolidP)} psia and up`}. ${artemis.name} (${artemis.o2Pct}% O2, ${artemis.pressurePsia} psia) sits at evidence distance ${solidNear.d === null ? "n/a" : fmt2(solidNear.d)} from the nearest one${solidNear.d !== null && solidNear.d > GRADE_RINGS[GRADE_RINGS.length - 1] ? ", past the outermost grade ring" : ""}.${litTop ? ` Outside PSI, NASA reports describe Saffire burns up to ${fmt1(litTop.o2Pct as number)}% O2 (literature).` : ""}`,
       viz: {
         kind: "o2-range",
         tested: [minSolid, top.o2Pct],
         markers: [iss, moon, artemis].map((h) => ({ label: h.name, o2: h.o2Pct })),
-        domain: [15, 40],
+        domain: [Math.min(15, Math.floor(minSolid / 5) * 5), 40],
       },
       sources: uniq(solids.map((t) => t.psiId)).map((id) => datasetSource(data, id)),
       brief: briefLink(artemis, data),
@@ -162,16 +169,24 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   const det = detectorSource(data);
   if (blind.length) {
     const [first] = blind;
+    const volts = data.detector.thresholds.scatterV.toFixed(1);
+    const um = (x: number | null) => (x === null ? null : x.toFixed(3));
+    const kapton = issBrief.detection.find((d) => d.material === "kapton");
+    const lamp = issBrief.detection.find((d) => d.material === "cotton");
+    const finest =
+      kapton?.cmdUm != null && lamp?.cmdUm != null && kapton.cmdUm < lamp.cmdUm
+        ? `Kapton smoke was the finest, a median particle size of ${um(kapton.cmdUm)} µm against ${um(lamp.cmdUm)} µm for Lampwick${lamp.scatterLow === 0 ? `, which reached the proxy in all ${lamp.scatterRuns} runs` : ""}.`
+        : "";
     const phr = blind.map((d) => `${d.scatterLow} of ${d.scatterRuns} ${MATERIALS[d.material as MaterialId].label}`).join(" and ");
     out.push({
       id: "detector-blind-spot",
       topic: "Smoke detection",
-      title: `An ISS-style scatter detector stayed below its alarm level in ${phr} smoke runs.`,
-      stat: { value: `${first.scatterLow}/${first.scatterRuns}`, label: `${MATERIALS[first.material as MaterialId].label} runs below the scatter alarm` },
-      second: blind[1] ? { value: `${blind[1].scatterLow}/${blind[1].scatterRuns}`, label: `${MATERIALS[blind[1].material as MaterialId].label} runs below the alarm` } : undefined,
+      title: `An ISS-style scatter detector read below HALO's ${volts} V scatter alarm proxy in ${phr} smoke runs.`,
+      stat: { value: `${first.scatterLow}/${first.scatterRuns}`, label: `${MATERIALS[first.material as MaterialId].label} runs below the ${volts} V proxy` },
+      second: blind[1] ? { value: `${blind[1].scatterLow}/${blind[1].scatterRuns}`, label: `${MATERIALS[blind[1].material as MaterialId].label} runs below the ${volts} V proxy` } : undefined,
       provenance: ["measured"],
-      body: `In SAME, smoke from spacecraft wire insulation was mostly too fine for the photoelectric channel to reach ${data.detector.thresholds.scatterV} V. Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${(data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1)} atm); smoke behavior at habitat atmosphere is untested.`,
-      viz: { kind: "runs", rows: blind.map((d) => ({ label: MATERIALS[d.material as MaterialId].label, low: d.scatterLow, runs: d.scatterRuns })), threshold: data.detector.thresholds.scatterV },
+      body: `The ISS detector is certified in obscuration, not volts, so HALO treats a ${volts} V forward-scatter reading as the alarm point. ${finest} Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${(data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1)} atm); smoke behavior at habitat atmosphere is untested.`,
+      viz: { kind: "runs", rows: blind.map((d) => ({ label: MATERIALS[d.material as MaterialId].label, low: d.scatterLow, runs: d.scatterRuns })), threshold: data.detector.thresholds.scatterV.toFixed(1) },
       sources: [det.doi ? { label: `${det.note ?? "SAME"}: smoke aerosol measurement experiment`, href: doiHref(det.doi), detail: `NASA PSI ${det.psiId} dataset, doi:${det.doi}` } : { label: "SAME smoke detector runs", href: null }],
       brief: briefLink(iss, data),
     });
@@ -208,12 +223,12 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       topic: "Large-scale fires",
       title:
         fastest.o2 === Math.max(...spread.map((r) => r.o2))
-          ? `The fastest Saffire flame spread, ${fastest.rate} mm/s, came from the highest-oxygen burn reported: ${fmt1(fastest.o2)}% O2.`
+          ? `The fastest Saffire flame spread, ${fastest.rate} mm/s, came from the highest-oxygen burn with a reported spread rate: ${fmt1(fastest.o2)}% O2.`
           : `Saffire's fastest flame spread, ${fastest.rate} mm/s, came from a burn at elevated oxygen (${fmt1(fastest.o2)}% O2).`,
       stat: { value: String(fastest.rate), unit: "mm/s", label: `${fastest.mission} ${fastest.id} at ${fmt1(fastest.o2)}% O2` },
       second: { value: `${lo}–${hi}`, unit: "mm/s", label: `${baseRows.length} burns at ${fmt1(Math.min(...baseRows.map((r) => r.o2)))}–${fmt1(Math.max(...baseRows.map((r) => r.o2)))}% O2` },
       provenance: ["literature"],
-      body: `Saffire burned large samples inside uncrewed cargo vehicles after they left the station. The handful of spread rates reported in NASA technical reports rise with oxygen, but sample size and flow also changed between missions, so this is a trend from few points, not a fit.`,
+      body: `Saffire burned large samples inside uncrewed cargo vehicles after they left the station. Of the ${spread.length} spread rates in NASA technical reports, the fastest came at the highest oxygen: ${fastest.mission} ${fastest.id}, ${shortMaterial(fastest.material)}${fastest.p !== null ? ` at ${fastest.p} psia` : ""}. Material, sample size, flow and pressure changed between missions too (${pressureSpan(spread)}), so this is a few points, not a fit.`,
       viz: { kind: "spread", rows: spread.map((r) => ({ id: r.id, o2: r.o2, rate: r.rate, mission: r.mission, elevated: r.o2 > ELEVATED_O2 })) },
       sources: uniq(spread.map((r) => r.url)).map((u) => ({ label: `NASA Technical Reports Server ${u.split("/").pop()}`, href: safeUrl(u), detail: "Saffire mission report" })),
       brief: briefLink(artemis, data),
@@ -227,7 +242,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     topic: "Gravity",
     title: `None of the ${invs} PSI combustion investigations ran at lunar or Martian gravity.`,
     stat: { value: "0", unit: `of ${invs}`, label: "Investigations at partial gravity" },
-    provenance: ["measured"],
+    provenance: ["literature"],
     body: "Every test HALO uses ran in microgravity (or on the ground). A Moon or Mars habitat has some buoyancy, so flames there will behave between the two; that regime is untested here, and the challenge statement says the same.",
     viz: { kind: "gravity", tested: 0, total: invs },
     sources: [{ label: "NASA Space Apps 2026: Flame in Freefall challenge", href: CHALLENGE_URL, detail: "States that PSI holds no partial-gravity combustion data" }],
@@ -250,7 +265,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     stat: { value: String(near), label: `Tests within distance ${dRing}` },
     second: { value: fmt2(maxO2), unit: "%", label: "Highest O2 in any eligible test" },
     provenance: ["model", "measured"],
-    body: `The ${suit.name} preset (${suit.o2Pct}% O2, ${suit.pressurePsia} psia) is the farthest point HALO grades. Its nearest test of any kind, ${nearestAll.n.test?.acronym ?? "n/a"}, is ${fmt2(nearestAll.n.d as number)} away; every fuel class grades F.`,
+    body: `The ${suit.name} preset (${suit.o2Pct}% O2, ${suit.pressurePsia} psia) is the farthest point HALO grades. Its nearest test of any kind, ${nearestAll.n.test?.acronym ?? "n/a"}, is ${fmt2(nearestAll.n.d as number)} away${classRows.every((x) => classGrade(x.n) === "F") ? "; every fuel class grades F" : ""}.`,
     viz: { kind: "distance", rows: classRows.map((x) => ({ label: x.n.test ? `${x.n.test.acronym}` : x.c, d: x.n.d as number })), rings: GRADE_RINGS },
     sources: uniq(classRows.map((x) => x.n.test?.psiId).filter((x): x is string => !!x)).map((id) => datasetSource(data, id)),
     brief: briefLink(suit, data),

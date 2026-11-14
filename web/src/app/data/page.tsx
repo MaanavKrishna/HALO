@@ -241,8 +241,8 @@ export default function DataPage() {
 
         <H2 id="downloads">Downloads</H2>
         <p>
-          The same JSON files the app is built from, as static copies. Each is listed in <code>manifest.json</code> with its
-          sha256, so you can check a download against the build.
+          The JSON files the app is built from, served byte for byte. The {DOWNLOADS.filter((d) => d.sha256).length} files the pipeline writes carry the sha256 it
+          recorded in <code>manifest.json</code>, so you can check a download against the build.
         </p>
         <ul className="content-list flex flex-col divide-y divide-[var(--border)] overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface-1">
           {DOWNLOADS.map((d) => (
@@ -254,7 +254,10 @@ export default function DataPage() {
                 </a>
                 <span className="text-sm leading-snug text-fg-2">{d.what}</span>
               </div>
-              <span className="shrink-0 font-mono text-[0.8125rem] text-fg-3">{bytes(JSON.stringify(d.body).length)}</span>
+              <span className="flex shrink-0 flex-col font-mono text-[0.8125rem] text-fg-3 sm:items-end">
+                <span>{bytes(d.bytes)}</span>
+                {d.sha256 && <span title={`sha256 ${d.sha256}`}>sha256 {d.sha256.slice(0, 12)}…</span>}
+              </span>
             </li>
           ))}
         </ul>

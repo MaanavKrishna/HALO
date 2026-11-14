@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { test, expect } from "@playwright/test";
 
 const PAGES = [
@@ -65,7 +66,13 @@ test("icons and share images are PNGs", async ({ request }) => {
 test("data downloads serve JSON and reject unknown files", async ({ request }) => {
   const ok = await request.get("/data/files/manifest.json");
   expect(ok.status()).toBe(200);
-  expect((await ok.json()).eligibleRows).toBeGreaterThan(0);
+  const manifest = await ok.json();
+  expect(manifest.eligibleRows).toBeGreaterThan(0);
+  // Served byte for byte: every file the manifest lists matches its recorded sha256.
+  for (const [file, sha] of Object.entries(manifest.files as Record<string, string>)) {
+    const body = await (await request.get(`/data/files/${file}`)).body();
+    expect(createHash("sha256").update(body).digest("hex"), file).toBe(sha);
+  }
   expect((await request.get("/data/files/secret.env")).status()).toBe(404);
 });
 

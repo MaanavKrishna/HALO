@@ -3,7 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import { Footer } from "@/components/ui/Footer";
 import { Navbar } from "@/components/ui/Navbar";
 import { THEME_INIT_SCRIPT } from "@/components/ui/theme";
-import { SITE_DESCRIPTION, SITE_EXPANSION, SITE_NAME, SITE_URL, TAGLINE } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_EXPANSION, SITE_NAME, SITE_URL, TAGLINE, THEME_DARK, THEME_LIGHT } from "@/lib/site";
 import "./globals.css";
 
 // Self-hosted at build time by next/font: no external font requests at runtime.
@@ -42,8 +42,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#05080f" },
-    { media: "(prefers-color-scheme: light)", color: "#f4f3ef" },
+    { media: "(prefers-color-scheme: dark)", color: THEME_DARK },
+    { media: "(prefers-color-scheme: light)", color: THEME_LIGHT },
   ],
 };
 

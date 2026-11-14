@@ -18,7 +18,7 @@ const f1 = (x: number) => String(Math.round(x * 10) / 10);
 function Figure({ label, caption, children, height }: { label: string; caption: ReactNode; children: ReactNode; height: number }) {
   return (
     <figure className="flex flex-col gap-3">
-      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="h-auto w-full overflow-visible">
+      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="finding-viz h-auto w-full overflow-visible">
         {children}
       </svg>
       <figcaption className="type-caption text-fg-3">{caption}</figcaption>
@@ -53,7 +53,8 @@ function O2Range({ v }: { v: Extract<Viz, { kind: "o2-range" }> }) {
       </text>
       {v.markers.map((m, i) => {
         const outside = m.o2 > b || m.o2 < a;
-        const tone = outside ? "var(--warn)" : "var(--text-2)";
+        // Presets are habitats, not risks: accent when outside the tested band, neutral inside.
+        const tone = outside ? "var(--accent)" : "var(--text-2)";
         const y = 18 + (i % 2) * 18;
         return (
           <g key={m.label}>
@@ -108,11 +109,11 @@ function Runs({ v }: { v: Extract<Viz, { kind: "runs" }> }) {
   return (
     <Figure
       height={y}
-      label={v.rows.map((r) => `${r.label}: ${r.low} of ${r.runs} runs stayed below the ${v.threshold} volt scatter alarm`).join(". ")}
+      label={v.rows.map((r) => `${r.label}: ${r.low} of ${r.runs} runs read below HALO's ${v.threshold} volt scatter alarm proxy`).join(". ")}
       caption={
         <span className="inline-flex flex-wrap items-center gap-x-4 gap-y-1">
           <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true" className="inline-block size-2.5 rounded-full border-[1.5px] border-warn" /> below the {v.threshold} V alarm
+            <span aria-hidden="true" className="inline-block size-2.5 rounded-full border-[1.5px] border-warn" /> below the {v.threshold} V alarm proxy
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span aria-hidden="true" className="inline-block size-2.5 rounded-full bg-fg-3" /> reached it
@@ -182,8 +183,8 @@ function Curve({ v }: { v: Extract<Viz, { kind: "curve" }> }) {
       <circle cx={x(v.at50.median)} cy={y(0.5)} r={4} fill="var(--accent)" stroke="var(--surface-1)" strokeWidth={1.5} />
       {inRange && (
         <g>
-          <line x1={x(m.o2)} x2={x(m.o2)} y1={y(1)} y2={y(0)} stroke="var(--warn)" strokeWidth={1.25} />
-          <text x={x(m.o2) - 5} y={y(1) + 12} textAnchor="end" fontSize={12} fill="var(--warn)">
+          <line x1={x(m.o2)} x2={x(m.o2)} y1={y(1)} y2={y(0)} stroke="var(--text-2)" strokeWidth={1.25} strokeDasharray="4 3" />
+          <text x={x(m.o2) - 5} y={y(1) + 12} textAnchor="end" fontSize={12} fill="var(--text-1)">
             {m.label}
           </text>
         </g>
@@ -363,10 +364,15 @@ function Next({ v }: { v: Extract<Viz, { kind: "next" }> }) {
       {v.presets.map((p) => {
         // Presets inside the pick's ring label to the left, clear of the ring.
         const near = Math.abs(p.o2 - v.pick.o2) < 5 && Math.abs(p.p - v.pick.p) < 1.5;
+        // Near the right edge, label below and to the left so it stays inside the card.
+        const edge = x(p.o2) > W - 110;
         return (
         <g key={p.label}>
           <circle cx={x(p.o2)} cy={y(p.p)} r={4} fill="none" stroke="var(--text-1)" strokeWidth={1.5} />
-          <text x={near ? x(v.pick.o2) - rx - 6 : x(p.o2) + 7} y={near ? y(p.p) - 2 : y(p.p) - 6} textAnchor={near ? "end" : "start"} fontSize={11.5} fill="var(--text-1)">
+          <text
+            x={near ? x(v.pick.o2) - rx - 6 : edge ? x(p.o2) + 4 : x(p.o2) + 7}
+            y={near ? y(p.p) - 2 : edge ? y(p.p) + 18 : y(p.p) - 6}
+            textAnchor={near || edge ? "end" : "start"} fontSize={11.5} fill="var(--text-1)">
             {p.label}
           </text>
         </g>

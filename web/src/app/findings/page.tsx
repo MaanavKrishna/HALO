@@ -40,7 +40,7 @@ export default function FindingsPage() {
           <StatGroup className="max-w-3xl">
             <Stat label="PSI investigations" value={investigations.length} />
             <Stat label="Eligible test rows" value={fmt.format(manifest.eligibleRows)} />
-            {ceiling && <Stat label="Real-solid O2 ceiling" value={ceiling.stat.value} unit="%" />}
+            {ceiling && <Stat label="Real-solid O2 ceiling, PSI rows" value={ceiling.stat.value} unit="%" />}
             {win && <Stat label="Real solids, Moon window" value={win.stat.value} />}
           </StatGroup>
         }

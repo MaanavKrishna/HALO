@@ -5,7 +5,8 @@ import { dataset } from "@/components/landing/data";
 import "@/components/landing/landing.css";
 
 export const metadata: Metadata = {
-  title: "HALO · Where the evidence runs out",
+  title: { absolute: "HALO · Where the evidence runs out" },
+  alternates: { canonical: "/" },
   description:
     "In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire data into a one-page fire brief for your habitat.",
 };

@@ -370,7 +370,7 @@ export function PillarsSection() {
             <h3 className="type-title text-fg">{it.title}</h3>
             <p className="type-body text-fg-2">{it.body}</p>
             <p className="type-body-s border-l-2 border-accent-line pl-3 text-fg-2">{it.proof}</p>
-            <Link href={it.href} prefetch={false} className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline">
+            <Link href={it.href} className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline">
               {it.cta}
               <Icon name="arrowRight" size={16} />
             </Link>
@@ -404,7 +404,7 @@ export function DataSection() {
             joined into one table of test conditions.
           </p>
           <div className="flex flex-wrap gap-3">
-            <ButtonLink href="/data" variant="secondary" prefetch={false}>
+            <ButtonLink href="/data" variant="secondary">
               How the data was built
             </ButtonLink>
             <ButtonLink href="/explore" variant="ghost" iconEnd={<Icon name="arrowRight" size={16} />}>
@@ -521,7 +521,7 @@ export function CloseSection() {
           <ButtonLink href="/build" size="lg">
             Build a brief
           </ButtonLink>
-          <ButtonLink href="/method" size="lg" variant="secondary" prefetch={false}>
+          <ButtonLink href="/method" size="lg" variant="secondary">
             How it works
           </ButtonLink>
         </Reveal>

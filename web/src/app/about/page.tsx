@@ -35,7 +35,7 @@ export default function AboutPage() {
   const { investigations, summaries } = HALO_DATA;
   const buildModels = [...new Set(Object.values(summaries).map((s) => s.model))];
   const nSummaries = Object.keys(summaries).length;
-  const reviewed = Object.values(summaries).filter((s) => !s.needsReview).length;
+  const humanEdited = Object.values(summaries).filter((s) => s.model === "human-edited").length;
   const evalPct = evalResult.total ? Math.round((evalResult.passed / evalResult.total) * 100) : 0;
   const evalDate = evalResult.runAt.slice(0, 10);
 
@@ -129,11 +129,11 @@ export default function AboutPage() {
         </p>
         <h3>At build time</h3>
         <p>
-          An LLM (<code>{buildModels.join(", ")}</code>) wrote a short summary and habitat note for each of the {nSummaries}{" "}
+          An LLM (<code>{buildModels.filter((m) => m !== "human-edited").join(", ")}</code>) wrote a short summary and habitat note for each of the {nSummaries}{" "}
           investigations from its PSI record only. A validator checks every answer: hazard tags from a closed vocabulary, quotes
           that must appear word for word in the source, no number that the source does not contain, and no “safe” or “unsafe”.
-          The author then read all {nSummaries} against PSI; {reviewed} are shown, and any entry flagged for review is never shown
-          as SI.
+          The author’s line-by-line review against PSI is ongoing: {humanEdited} of {nSummaries} are hand-edited so far, and any
+          entry flagged for review is never shown as SI.
         </p>
         <h3>At run time</h3>
         <p>

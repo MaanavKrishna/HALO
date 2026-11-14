@@ -216,8 +216,8 @@ export default function MethodPage() {
         </p>
         <ul>
           <li>
-            <strong>Scatter</strong> (ISS-style photoelectric) alarms at {det.thresholds.scatterV} V or more{" "}
-            <ProvenanceBadge provenance="measured" />. The ISS detector is certified in obscuration, not volts, so this is a
+            <strong>Scatter</strong> (ISS-style photoelectric) alarms at {det.thresholds.scatterV.toFixed(1)} V or more{" "}
+            <ProvenanceBadge provenance="assumed" />. The ISS detector is certified in obscuration, not volts, so this is a
             working proxy.
           </li>
           <li>

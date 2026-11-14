@@ -33,25 +33,36 @@ export function Segmented<T extends string>({
     0,
     options.findIndex((o) => o.value === value),
   );
+  // Four or more options fold into a 3-column tray on phones (below 30rem),
+  // where one capsule row cannot hold them; the thumb then moves in 2D.
+  const wrap = options.length > 3;
+  const cols = 3;
+  const rows = Math.ceil(options.length / cols);
   return (
-    <fieldset className={cx("inline-flex", className)}>
+    <fieldset className={cx("inline-flex max-w-full", className)}>
       <legend className="sr-only">{label}</legend>
       <div
-        className="relative grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)]"
-        style={{ ["--n" as string]: options.length, ["--i" as string]: index }}
+        data-wrap={wrap || undefined}
+        className="relative grid auto-cols-fr grid-flow-col rounded-[var(--radius-pill)] bg-surface-2 p-[3px] shadow-[inset_0_0_0_1px_var(--border)] max-[30rem]:data-wrap:grid-flow-row max-[30rem]:data-wrap:grid-cols-3 max-[30rem]:data-wrap:rounded-[var(--radius-lg)]"
+        style={{
+          ["--n" as string]: options.length,
+          ["--i" as string]: index,
+          ["--rows" as string]: rows,
+          ["--col" as string]: index % cols,
+          ["--row" as string]: Math.floor(index / cols),
+        }}
       >
         <span
           aria-hidden="true"
-          className="absolute bottom-[3px] left-[3px] top-[3px] rounded-[var(--radius-pill)] bg-surface-1 shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)] transition-transform duration-[var(--spring-dur-snappy)] ease-[var(--spring)]"
-          style={{ width: `calc((100% - 6px) / var(--n))`, transform: `translateX(calc(var(--i) * 100%))` }}
+          className="absolute left-[3px] top-[3px] h-[calc(100%-6px)] w-[calc((100%-6px)/var(--n))] translate-x-[calc(var(--i)*100%)] rounded-[var(--radius-pill)] bg-surface-1 shadow-[0_0_0_1px_var(--border-strong),var(--inner-highlight),var(--elev-2)] transition-[translate] duration-[var(--spring-dur-snappy)] ease-[var(--spring)] in-data-wrap:max-[30rem]:h-[calc((100%-6px)/var(--rows))] in-data-wrap:max-[30rem]:w-[calc((100%-6px)/3)] in-data-wrap:max-[30rem]:translate-x-[calc(var(--col)*100%)] in-data-wrap:max-[30rem]:translate-y-[calc(var(--row)*100%)] in-data-wrap:max-[30rem]:rounded-[var(--radius-md)]"
         />
         {options.map((o) => (
           <label
             key={o.value}
             className={cx(
-              "relative z-[1] flex cursor-pointer items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] font-medium transition-colors duration-[var(--dur-fast)]",
+              "relative z-[1] flex cursor-pointer items-center justify-center whitespace-nowrap rounded-[var(--radius-pill)] font-medium transition-colors duration-[var(--dur-fast)] in-data-wrap:max-[30rem]:rounded-[var(--radius-md)]",
               "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-[var(--focus)]",
-              size === "sm" ? "h-7 px-3 text-[0.8125rem]" : "h-9 px-4 text-sm",
+              size === "sm" ? "h-7 px-3 text-[0.8125rem] pointer-coarse:h-10" : "h-9 px-4 text-sm pointer-coarse:h-10",
               o.value === value ? "text-fg" : "text-fg-2 hover:text-fg",
             )}
           >

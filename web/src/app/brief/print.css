@@ -52,10 +52,11 @@
     border-bottom: 1.5pt solid var(--text-1) !important;
   }
   .brief-hero > .container-page {
+    display: flex !important;
+    flex-direction: column;
     padding-top: 0;
     padding-bottom: 5mm;
-    gap: 6mm;
-    grid-template-columns: minmax(0, 1fr) 52mm;
+    gap: 4mm;
   }
   .brief-hero .bg-grid,
   .brief-hero [aria-hidden="true"].pointer-events-none {
@@ -68,16 +69,20 @@
   .brief-hero .grade-panel svg[viewBox="0 0 400 400"] {
     display: none !important;
   }
+  /* The grade prints as one row: badge, then its words and reason. */
   .brief-hero .grade-panel {
-    gap: 2mm;
+    flex-direction: row !important;
+    align-items: center !important;
+    text-align: left !important;
+    gap: 5mm;
     border: 0.75pt solid var(--border-strong);
     border-radius: 3mm;
-    padding: 4mm;
-    align-self: start;
+    padding: 3mm 5mm;
   }
-  .brief-hero .grade-panel > div:first-child {
-    max-width: none;
-    width: auto;
+  .brief-hero .grade-panel > div {
+    max-width: none !important;
+    width: auto !important;
+    align-items: flex-start !important;
   }
   .brief-grade-glow {
     filter: none !important;
@@ -104,6 +109,7 @@
   }
   /* Keep cards, rows and figures whole. */
   .flag-card,
+  [data-nearest],
   .ranked-item,
   .grade-panel,
   [data-print-keep],

@@ -2,6 +2,8 @@ import { sensorWhatIf } from '@/lib/engine/detection';
 import { detectorSource, scatterThresholdFact } from '@/lib/engine/flags';
 import { HABITAT_SOURCE, habitatFacts } from '@/lib/engine/brief';
 import { classGrade } from '@/lib/engine/grade';
+import { literatureInWindow } from '@/lib/engine/literatureWindow';
+import { scaledDistance } from '@/lib/engine/distance';
 import { MATERIALS } from '@/lib/engine/materials';
 import { PRESETS } from '@/lib/engine/presets';
 import type { Brief, Fact, FuelClass, Grade, HaloData, MaterialId, Source, TestPoint } from '@/lib/engine/types';
@@ -120,8 +122,22 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     }
   });
 
+  // The top suggestion sits near the Saffire VI runs (NASA reports, not PSI): its distance to the nearest one.
+  const best = b.nextTests[0];
+  const lit = best ? literatureInWindow(data) : null;
+  if (best && lit) {
+    const d = Math.min(...lit.rows.map((r) => scaledDistance(best.o2Pct, best.pressurePsia, r.o2Pct as number, r.pressurePsia as number)));
+    out.push(...lit.facts, {
+      id: NEXT_LITERATURE_DISTANCE,
+      label: `Evidence distance from suggested test 1 to the nearest ${lit.missions.join(', ')} run (literature, not PSI)`,
+      value: r2(d), provenance: 'model', source: lit.facts[0].source,
+    });
+  }
+
   return out;
 }
+
+export const NEXT_LITERATURE_DISTANCE = 'next-first-literature-distance';
 
 /** Engine facts first, then page facts not already present. */
 export function allFacts(b: Brief, data: HaloData): Fact[] {

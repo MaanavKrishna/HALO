@@ -252,7 +252,7 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
           }
         }}
         onBlur={() => keyboard && setActive(null)}
-        className="relative w-full rounded-[var(--radius-md)] outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus)]"
+        className="relative w-full rounded-[var(--radius-md)] outline-none focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus)]"
       >
         <svg
           viewBox={`0 0 ${width} ${height}`}
@@ -423,8 +423,8 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
                       ? c.x + 6 + lw < right - 2 && c.y - 14 > m.t && c.y < plotB - 4
                       : c.x - 6 - lw > left + 2 && c.y - 14 > m.t && c.y < plotB - 4,
                   ) ?? null;
-              // Phones: only the B-ring is labelled; the legend names the rest.
-              if (!spot || (narrow && i > 0)) return null;
+              // Phones: no ring labels over the data; the legend names the rings.
+              if (!spot || narrow) return null;
               const on = i === 0;
               return (
                 <g key={r.label}>
@@ -469,7 +469,7 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
                 stroke="var(--text-1)"
                 strokeWidth={2}
               />
-              <NearestLabel
+              {!narrow && <NearestLabel
                 x={sx(nearestSolid.o2)}
                 y={sy(nearestSolid.p)}
                 lines={[`Nearest real solid · ${nearestSolid.acronym}`, nearestSolid.label]}
@@ -477,7 +477,7 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
                 minX={m.l + 4}
                 maxX={plotR - 4}
                 above={sy(nearestSolid.p) > m.t + 48}
-              />
+              />}
             </g>
           )}
 
@@ -569,6 +569,17 @@ export function HaloChart({ points, acronyms, fuels, habitat, nearestSolid, clas
             </svg>
             Your habitat
           </span>
+          {narrow && nearestSolid && !solidAtHabitat && (
+            // Phones: the nearest-solid callout sits here instead of over the data.
+            <span className="inline-flex items-center gap-1.5" data-nearest-legend>
+              <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+                <rect x="3" y="3" width="10" height="10" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1.8" />
+              </svg>
+              <span>
+                Nearest real solid · {nearestSolid.acronym}: <span className="font-semibold text-fg">{nearestSolid.label}</span>
+              </span>
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5">
             <svg viewBox="0 0 26 14" className="h-3.5 w-6" aria-hidden="true">
               <ellipse cx="13" cy="7" rx="5" ry="2.6" fill="none" stroke="var(--accent)" strokeWidth="1.3" />

@@ -11,7 +11,7 @@ import { splitSentences } from '@/lib/brief/explain';
 export type ExplainSource = 'live' | 'fallback';
 export interface ExplainResult { text: string; factIds: string[]; source: ExplainSource }
 
-/** The one SDK method explainCore uses; an Anthropic client satisfies it, and tests pass a mock. */
+/** The one SDK method explainCore uses; the LLM SDK client satisfies it, and tests pass a mock. */
 export interface SiClient {
   messages: {
     create(body: Anthropic.MessageCreateParamsNonStreaming, options?: Anthropic.RequestOptions): Promise<Anthropic.Message>;

@@ -1,5 +1,5 @@
 import { briefContext } from "@/lib/brief/context";
-import { CLASS_LABEL, gainId, nextId, presetName } from "@/lib/brief/pageFacts";
+import { CLASS_LABEL, NEXT_LITERATURE_DISTANCE, gainId, nextId, presetName } from "@/lib/brief/pageFacts";
 import type { Brief } from "@/lib/engine/types";
 import { Panel } from "@/components/ui/Panel";
 import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
@@ -38,6 +38,18 @@ export function NextTestCard({ brief }: { brief: Brief }) {
         <p className="type-headline text-balance tabular-nums text-fg">
           {CLASS_LABEL[best.fuelClass]} at <Num brief={brief} id={nextId(0, "oxygen")} cite={false} /> O<sub>2</sub>,{" "}
           <Num brief={brief} id={nextId(0, "pressure")} />
+        </p>
+
+        <p className="mt-3 max-w-[60ch] text-sm text-pretty text-fg-2">
+          A real-solid test archived in PSI at this point.
+          {ctx.fact(NEXT_LITERATURE_DISTANCE) && (
+            <>
+              {" "}
+              It sits near the Saffire VI conditions (evidence distance <Num brief={brief} id={NEXT_LITERATURE_DISTANCE} /> from the nearest run,{" "}
+              <ProvenanceBadge provenance="literature" />
+              ), but those runs are NASA reports, not PSI test rows, so HALO cannot grade on them.
+            </>
+          )}
         </p>
 
         <h3 className="type-label mt-8 text-fg-3">Evidence distance for each reference habitat</h3>

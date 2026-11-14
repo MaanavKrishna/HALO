@@ -104,6 +104,18 @@
   .brief-section-head h2 {
     font-size: 15pt;
   }
+  /* Never strand a heading at the foot of a page: its first block may not break away from it, and
+     sections that fit on one page move whole (taller ones still break inside as normal). */
+  .brief-section-head + * {
+    break-before: avoid;
+  }
+  #detection,
+  #extinction,
+  #next-test,
+  #aftermath,
+  #earth {
+    break-inside: avoid;
+  }
   .brief-section-head p {
     display: none;
   }

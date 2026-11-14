@@ -132,9 +132,9 @@ export default function AboutPage() {
           An LLM (<code>{buildModels.filter((m) => m !== "human-edited").join(", ")}</code>) wrote a short summary and habitat note for each of the {nSummaries}{" "}
           investigations from its PSI record only. A validator checks every answer: hazard tags from a closed vocabulary, quotes
           that must appear word for word in the source, no number that the source does not contain, and no “safe” or “unsafe”.
-          Each summary passes these automatic checks; the author’s line-by-line review against PSI is in progress
-          {humanEdited > 0 ? ` (${humanEdited} of ${nSummaries} hand-edited so far)` : ""}. An entry flagged for review is never
-          shown as SI.
+          Each summary passes these automatic checks and stays labelled as SI output, not author copy; the author spot-checks
+          them against PSI{humanEdited > 0 ? ` (${humanEdited} of ${nSummaries} hand-edited)` : ""}. An entry flagged for review
+          is never shown as SI.
         </p>
         <h3>At run time</h3>
         <p>
@@ -159,7 +159,8 @@ export default function AboutPage() {
         </p>
         <h3>In development</h3>
         <p>
-          An LLM coding assistant helped write code; all data processing, models and copy were reviewed by the author.
+          An LLM coding assistant helped write code; all data processing, models and copy were reviewed by the author. The
+          build-time summaries above are SI output, not copy, and always carry the SI chip.
         </p>
 
         <h2 id="license">Licence</h2>

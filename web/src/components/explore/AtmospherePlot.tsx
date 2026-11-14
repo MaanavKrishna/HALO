@@ -75,6 +75,44 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
   };
   const showEnv = ENV.o2 < xs.hi && ENV.p > ys.lo;
 
+  // Reference labels: pick the corner around each crosshair whose text box covers the fewest data
+  // points (and never the envelope label or an earlier label), so names stay off the data on phones.
+  type Box = { x0: number; y0: number; x1: number; y1: number };
+  const lfs = fs - 1;
+  const hits = (b: Box, cx: number, cy: number, rad: number) =>
+    cx + rad > b.x0 && cx - rad < b.x1 && cy + rad > b.y0 && cy - rad < b.y1;
+  const overlap = (a: Box, b: Box) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+  const envLabelW = "Moon envelope".length * (fs - 0.5) * 0.56;
+  const taken: Box[] = showEnv ? [{ x0: env.x1 - 7 - envLabelW, y0: env.y1 - 7 - fs, x1: env.x1 - 7, y1: env.y1 - 4 }] : [];
+  const plotBox = { x0: M.l, y0: M.t, x1: width - M.r, y1: H - M.b };
+  const refLabels = REFS.filter((r) => inside(r.o2Pct, r.pressurePsia)).map((r) => {
+    const cx = x(r.o2Pct);
+    const cy = y(r.pressurePsia);
+    const w = r.name.length * lfs * 0.58;
+    const options = [
+      { dx: 9, dy: lfs + 4, anchor: "start" as const },
+      { dx: 9, dy: -8, anchor: "start" as const },
+      { dx: -9, dy: -8, anchor: "end" as const },
+      { dx: -9, dy: lfs + 4, anchor: "end" as const },
+      { dx: 0, dy: -14, anchor: "middle" as const },
+      { dx: 0, dy: lfs + 12, anchor: "middle" as const },
+    ].map((o) => {
+      const lx = cx + o.dx;
+      const ly = cy + o.dy;
+      const x0 = o.anchor === "start" ? lx : o.anchor === "end" ? lx - w : lx - w / 2;
+      const box = { x0: x0 - 2, y0: ly - lfs, x1: x0 + w + 2, y1: ly + 3 };
+      const outside = box.x0 < plotBox.x0 || box.x1 > plotBox.x1 || box.y0 < plotBox.y0 || box.y1 > plotBox.y1;
+      const cost =
+        points.reduce((n, p) => n + (hits(box, x(p.o2Pct), y(p.pressurePsia), 3.5 + Math.min(4.5, Math.log2(p.count) * 1.2)) ? 1 : 0), 0) +
+        (outside ? 100 : 0) +
+        taken.reduce((n, t) => n + (overlap(box, t) ? 50 : 0), 0);
+      return { lx, ly, anchor: o.anchor, box, cost };
+    });
+    const best = options.reduce((a, b) => (b.cost < a.cost ? b : a));
+    taken.push(best.box);
+    return { r, cx, cy, lx: best.lx, ly: best.ly, anchor: best.anchor };
+  });
+
   return (
     <figure className="m-0 flex flex-col gap-4">
       <div ref={wrap} className="w-full">
@@ -168,15 +206,13 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
                 <circle key={`${p.o2Pct}|${p.pressurePsia}`} cx={cx} cy={cy} r={r} fill="var(--surface-1)" stroke="var(--accent)" strokeWidth={1.6} />
               );
             })}
-            {REFS.filter((r) => inside(r.o2Pct, r.pressurePsia)).map((r) => {
-              const cx = x(r.o2Pct);
-              const cy = y(r.pressurePsia);
+            {refLabels.map(({ r, cx, cy, lx, ly, anchor }) => {
               return (
                 <g key={r.name}>
                   <path d={`M${cx - 6} ${cy}H${cx + 6}M${cx} ${cy - 6}V${cy + 6}`} stroke="var(--text-2)" strokeWidth={1.25} strokeLinecap="round" />
                   <text
-                    x={cx > width - 110 ? cx - 9 : cx + 9}
-                    y={cy + fs + 4}
+                    x={lx}
+                    y={ly}
                     fontSize={fs - 1}
                     fontWeight={500}
                     fill="var(--text-2)"
@@ -184,7 +220,7 @@ export function AtmospherePlot({ points, label }: { points: PlotPoint[]; label: 
                     strokeWidth={3}
                     paintOrder="stroke"
                     strokeLinejoin="round"
-                    textAnchor={cx > width - 110 ? "end" : "start"}
+                    textAnchor={anchor}
                   >
                     {r.name}
                   </text>

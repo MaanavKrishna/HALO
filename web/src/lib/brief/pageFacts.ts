@@ -1,6 +1,9 @@
 import { sensorWhatIf } from '@/lib/engine/detection';
-import { detectorSource } from '@/lib/engine/flags';
+import { detectorSource, scatterThresholdFact } from '@/lib/engine/flags';
+import { HABITAT_SOURCE, habitatFacts } from '@/lib/engine/brief';
 import { classGrade } from '@/lib/engine/grade';
+import { literatureInWindow } from '@/lib/engine/literatureWindow';
+import { scaledDistance } from '@/lib/engine/distance';
 import { MATERIALS } from '@/lib/engine/materials';
 import { PRESETS } from '@/lib/engine/presets';
 import type { Brief, Fact, FuelClass, Grade, HaloData, MaterialId, Source, TestPoint } from '@/lib/engine/types';
@@ -31,7 +34,7 @@ export type PresetKey = (typeof PRESET_ORDER)[number];
 export const presetName = (k: string) => (PRESETS as Record<string, { name: string }>)[k]?.name ?? k;
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
-const HABITAT: Source = { note: 'Habitat definition from the brief URL' };
+const HABITAT = HABITAT_SOURCE;
 
 export function testSource(data: HaloData, t: Pick<TestPoint, 'psiId'>): Source {
   const doi = data.manifest.psiDatasetDois[t.psiId] ?? data.investigations.find((i) => i.psiId === t.psiId)?.datasetDoi;
@@ -49,11 +52,9 @@ export const nextId = (rank: number, what: 'oxygen' | 'pressure') =>
 export function pageFacts(b: Brief, data: HaloData): Fact[] {
   const h = b.habitat;
   const out: Fact[] = [
-    { id: 'hab-oxygen', label: 'Habitat O2', value: h.o2Pct, unit: '%', provenance: 'assumed', source: HABITAT },
-    { id: 'hab-pressure', label: 'Habitat total pressure', value: h.pressurePsia, unit: 'psia', provenance: 'assumed', source: HABITAT },
-    { id: 'hab-flow', label: 'Habitat cabin air flow', value: h.flowCmS, unit: 'cm/s', provenance: 'assumed', source: HABITAT },
+    ...habitatFacts(h),
     {
-      id: 'hab-oxygen-partial-pressure', label: 'Habitat O2 partial pressure (O2 fraction × total pressure)',
+      id: 'habitat-oxygen-partial-pressure', label: 'Habitat O2 partial pressure (O2 fraction × total pressure)',
       value: r2((h.o2Pct / 100) * h.pressurePsia), unit: 'psia', provenance: 'model', source: HABITAT,
     },
   ];
@@ -76,8 +77,8 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
   out.push(
     { id: 'det-ambient-oxygen', label: 'O2 of the SAME detector runs', value: data.detector.ambient.o2Pct, unit: '%', provenance: 'assumed', source: detSrc },
     { id: 'det-ambient-pressure', label: 'Pressure of the SAME detector runs', value: Number((data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1)), unit: 'atm', provenance: 'assumed', source: detSrc },
-    { id: 'det-scatter-threshold', label: 'Scatter (photoelectric) alarm level', value: data.detector.thresholds.scatterV, unit: 'V', provenance: 'measured', source: detSrc },
-    { id: 'det-ionization-threshold', label: 'Ionization alarm level (10th percentile of Lampwick ΔV)', value: r2(data.detector.thresholds.ionizationDV), unit: 'V', provenance: 'inferred', source: detSrc },
+    scatterThresholdFact(data),
+    { id: 'det-ionization-threshold', label: 'Ionization alarm level (10th percentile of Lampwick ΔV)', value: Number(data.detector.thresholds.ionizationDV.toFixed(3)), unit: 'V', provenance: 'inferred', source: detSrc },
   );
 
   // Sensor what-if: scatter alone versus scatter + ionization, per material with SAME runs.
@@ -121,8 +122,22 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     }
   });
 
+  // The top suggestion sits near the Saffire VI runs (NASA reports, not PSI): its distance to the nearest one.
+  const best = b.nextTests[0];
+  const lit = best ? literatureInWindow(data) : null;
+  if (best && lit) {
+    const d = Math.min(...lit.rows.map((r) => scaledDistance(best.o2Pct, best.pressurePsia, r.o2Pct as number, r.pressurePsia as number)));
+    out.push(...lit.facts, {
+      id: NEXT_LITERATURE_DISTANCE,
+      label: `Evidence distance from suggested test 1 to the nearest ${lit.missions.join(', ')} run (literature, not PSI)`,
+      value: r2(d), provenance: 'model', source: lit.facts[0].source,
+    });
+  }
+
   return out;
 }
+
+export const NEXT_LITERATURE_DISTANCE = 'next-first-literature-distance';
 
 /** Engine facts first, then page facts not already present. */
 export function allFacts(b: Brief, data: HaloData): Fact[] {

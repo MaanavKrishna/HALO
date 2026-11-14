@@ -51,7 +51,7 @@ function chartProps(brief: Brief): HaloChartProps {
   const h = brief.habitat;
   const description =
     `${plotted.length} of ${HALO_DATA.tests.length} eligible NASA tests plotted by oxygen percent (x) and pressure in psia (y); ${hiddenAbove} tests above ${Y_MAX} psia are not shown. ` +
-    `Your habitat is at ${val("hab-oxygen")}% O2 and ${val("hab-pressure")} psia, ringed by halo ellipses at evidence distance ${GRADE_RINGS.join(", ")}. ` +
+    `Your habitat is at ${val("habitat-oxygen")}% O2 and ${val("habitat-pressure")} psia, ringed by halo ellipses at evidence distance ${GRADE_RINGS.join(", ")}. ` +
     (s.test
       ? `The nearest real cabin solid test is ${s.test.acronym} at ${val(nearId("solid", "oxygen"))}% O2 and ${val(nearId("solid", "pressure"))} psia, evidence distance ${dist}. `
       : "No real cabin solid test is eligible. ") +
@@ -170,8 +170,8 @@ function NearestTable({ brief }: { brief: Brief }) {
           <Th scope="row" className="type-body-s normal-case tracking-normal text-fg shadow-none">Your habitat</Th>
           <Td numeric>–</Td>
           <Td>{brief.habitat.name}</Td>
-          <Td numeric><Num brief={brief} id="hab-oxygen" cite={false} /></Td>
-          <Td numeric><Num brief={brief} id="hab-pressure" cite={false} /></Td>
+          <Td numeric><Num brief={brief} id="habitat-oxygen" cite={false} /></Td>
+          <Td numeric><Num brief={brief} id="habitat-pressure" cite={false} /></Td>
           <Td numeric>–</Td>
         </Tr>
         {CLASS_ORDER.map((c) => {

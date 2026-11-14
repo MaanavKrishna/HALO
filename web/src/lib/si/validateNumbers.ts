@@ -20,7 +20,7 @@ const FOREIGN_DIGIT = /(?![0-9])[\p{Nd}\p{No}]/u;
 const NUMBER_WORD =
   /\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|percent)\b/i;
 
-interface NumToken { value: number; decimals: number }
+export interface NumToken { value: number; decimals: number }
 
 function tokens(text: string): NumToken[] {
   const clean = text.replace(CITATION, ' ').replace(GAS, ' ');
@@ -29,6 +29,16 @@ function tokens(text: string): NumToken[] {
     const dot = raw.indexOf('.');
     return { value: Number(raw), decimals: dot === -1 ? 0 : raw.length - dot - 1 };
   });
+}
+
+/** Numbers written in the text, with the decimals each was written to. */
+export function numberTokens(text: string): NumToken[] {
+  return tokens(text);
+}
+
+/** True when a written number equals the value, or the value rounded to the written decimals. */
+export function numberMatches(t: NumToken, v: number): boolean {
+  return v === t.value || Math.abs(roundTo(v, t.decimals) - t.value) < EPS;
 }
 
 export function extractNumbers(text: string): number[] {
@@ -61,8 +71,7 @@ const roundTo = (v: number, k: number) => Math.round(v * 10 ** k) / 10 ** k;
  */
 export function validateNumbers(text: string, facts: Fact[]): { ok: boolean; offending: number[] } {
   const allowed = factNumbers(facts);
-  const matches = ({ value, decimals }: NumToken) =>
-    allowed.some((v) => v === value || Math.abs(roundTo(v, decimals) - value) < EPS);
+  const matches = (t: NumToken) => allowed.some((v) => numberMatches(t, v));
   const offending = [...new Set(tokens(text).filter((t) => !matches(t)).map((t) => t.value))];
   return { ok: offending.length === 0 && !hasHiddenNumbers(text), offending };
 }

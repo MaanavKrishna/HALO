@@ -119,13 +119,13 @@ The model's answer is replaced by the fallback when any check fails:
 
 | Check | Rule |
 |---|---|
-| Numbers | SI text never introduces a number that is not a Fact value. After `[fact-id]` citations and gas formulas (O2, CO2, H2O and a few others) are removed, every number must equal an allowed number, or that number rounded to the decimals the answer wrote. For a fact of 0.248, "0.25" and "0.2" pass and "0.29" fails; for 92.3, "92" passes; for 20, "21" fails. There is no relative tolerance. Allowed numbers are brief fact values, numbers inside text facts and fact labels, and the habitat inputs (O2, pressure, flow). "20 of 35", "20/35", "1.5–3.2 kW" and "0.118 µm" are read as separate numbers. |
+| Numbers | SI text never introduces a number that is not a Fact value. After `[fact-id]` citations and gas formulas (O2, CO2, H2O and a few others) are removed, every number must equal an allowed number, or that number rounded to the decimals the answer wrote. For a fact of 0.248, "0.25" and "0.2" pass and "0.29" fails; for 92.3, "92" passes; for 20, "21" fails. There is no relative tolerance. Allowed numbers are brief fact values (the habitat inputs are facts too: `habitat-oxygen`, `habitat-pressure`, `habitat-flow`), numbers inside text facts and fact labels. "20 of 35", "20/35", "1.5–3.2 kW" and "0.118 µm" are read as separate numbers. |
 | Hidden numbers | no digits outside ASCII 0–9 (full-width, Arabic-Indic, superscripts, fractions) and no number words (two to nineteen, the tens, hundred, thousand, million, percent). "one" is allowed so that "one of the runs" passes. |
 | Verdict words | no "safe" or "unsafe" |
 | Instruction leaks | no line of the system prompt (with or without its list number) and no data-block tag in the answer |
 | Stop reason | a refusal or an empty answer fails; an answer cut off at the token cap keeps only whole sentences |
 
-Citations of ids the brief does not have are removed from the text and from `factIds`. Like the build-time validator, this cannot catch spelled-out numbers or a real number used in the wrong context.
+Citations of ids the brief does not have are removed from the text and from `factIds`. A citation of a numeric fact whose value does not match (at the written precision) any number in the same sentence is also removed, so "34% [det-ambient-oxygen]" loses its chip; a sentence without numbers may cite qualitatively. The system prompt adds: values describing the user's habitat must cite `habitat-*` facts. Like the build-time validator, this cannot catch spelled-out numbers or a real number used in the wrong context.
 
 ### Fallback
 

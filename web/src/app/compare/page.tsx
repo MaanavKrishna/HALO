@@ -74,7 +74,7 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/compare"
   const onlyA = new Set([...idsA].filter((id) => !idsB.has(id)));
   const onlyB = new Set([...idsB].filter((id) => !idsA.has(id)));
   const amb = HALO_DATA.detector.ambient;
-  const detectorNote = `SAME ran at ISS air (${amb.o2Pct}% O₂, ${amb.pressurePsia} psia); smoke behavior at the habitat atmosphere is untested.`;
+  const detectorNote = `SAME ran at ISS air (${amb.o2Pct}% O₂, ${Number((amb.pressurePsia / 14.696).toFixed(1))} atm); smoke behavior at habitat atmosphere is untested.`;
 
   return (
     <>

@@ -80,9 +80,14 @@ test("prev/next navigation walks investigations in PSI order", async ({ page }) 
   await expect(page.getByRole("navigation", { name: "Other investigations" }).getByRole("link", { name: /Previous/ })).toHaveCount(0);
 });
 
-test("unknown investigation is a 404", async ({ page }) => {
+test("unknown investigation is a styled 404 that hydrates cleanly", async ({ page }) => {
+  const problems = watchConsole(page);
   const res = await page.goto("/explore/PSI-999");
   expect(res?.status()).toBe(404);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Investigation not found");
+  await page.waitForTimeout(1500);
+  // The browser always logs the document's own 404 status; anything else (a hydration error) fails.
+  expect(problems.filter((m) => !/Failed to load resource: the server responded with a status of 404/.test(m))).toEqual([]);
 });
 
 test("/compare shows two grade badges and the heading", async ({ page }) => {

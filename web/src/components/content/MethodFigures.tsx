@@ -32,8 +32,14 @@ export function Sqrt({ children }: { children: ReactNode }) {
 export function Equation({ label, children, note }: { label: string; children: ReactNode; note?: ReactNode }) {
   return (
     <figure className="content-block not-italic">
-      <div className="flex flex-col gap-3 overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 px-5 py-6 shadow-[var(--inner-highlight),var(--elev-1)] sm:px-8">
-        <p role="math" aria-label={label} className="math flex flex-wrap items-center justify-center gap-x-1 text-[1.15rem] sm:text-[1.35rem]">
+      {/* Never wraps: on narrow screens the equation scrolls sideways inside a focusable, labelled region. */}
+      <div
+        role="region"
+        aria-label="Equation (scrolls sideways on narrow screens)"
+        tabIndex={0}
+        className="flex flex-col gap-3 overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 px-5 py-6 shadow-[var(--inner-highlight),var(--elev-1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)] sm:px-8"
+      >
+        <p role="math" aria-label={label} className="math mx-auto flex w-max flex-nowrap items-center gap-x-1 whitespace-nowrap text-[1.05rem] sm:text-[1.35rem]">
           {children}
         </p>
       </div>
@@ -201,10 +207,10 @@ export function EvidenceRings({
 /* ---------- Ranking weights ---------- */
 
 const PART_LABEL: Record<keyof RankWeights, string> = {
-  proximity: "Proximity",
+  proximity: "Closeness",
   fuel: "Fuel match",
-  hazard: "Hazard coverage",
-  richness: "Data richness",
+  hazard: "Hazards",
+  richness: "Evidence size",
 };
 const PART_TONE: Record<keyof RankWeights, string> = {
   proximity: "bg-accent",

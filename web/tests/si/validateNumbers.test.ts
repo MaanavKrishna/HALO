@@ -87,3 +87,14 @@ describe('validateNumbers', () => {
     expect(validateNumbers('No real cabin material was tested here.', []).ok).toBe(true);
   });
 });
+
+describe('fixed-decimal display values', () => {
+  it('"2.0 V" and "31.0%" match facts of 2 and 31 written to one decimal', () => {
+    const facts = [
+      { id: 'det-scatter-threshold', label: 'Scatter alarm proxy', value: 2, unit: 'V', decimals: 1, provenance: 'assumed' as const, source: { note: 'SAME' } },
+      { id: 'lit-window-oxygen-high', label: 'Highest O2', value: 31, unit: '%', decimals: 1, provenance: 'literature' as const, source: { note: 'Saffire VI' } },
+    ];
+    expect(validateNumbers('The scatter proxy is 2.0 V and Saffire VI burned at 31.0% O2.', facts).ok).toBe(true);
+    expect(validateNumbers('The scatter proxy is 2.1 V.', facts).ok).toBe(false);
+  });
+});

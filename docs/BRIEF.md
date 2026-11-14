@@ -23,7 +23,7 @@
 
 | Severity | Title | When |
 |---|---|---|
-| critical | No real cabin material tested at this atmosphere | The nearest `solid` test has d > 1.0, or there is none |
+| critical | No real cabin material in the PSI data tested at this atmosphere | The nearest `solid` test has d > 1.0, or there is none. The detail is scoped to PSI and, when `literature.json` holds solids burned in the Moon envelope (O2 ≥ Moon preset, recorded pressure ≤ Moon preset), adds one sentence built from those rows (`lit-window-*` facts): they are stated, never graded on |
 | critical | Your detector would likely miss `<material>` smoke | One per material where the selected detectors catch under 50% of SAME runs. A material with no runs (for example PMMA, which has no SAME analog) has no data and is never treated as 0% |
 | warning | Smoke data only exists at ISS air | Habitat O2 > 23% or pressure < 13 psia |
 | warning | Droplet-fuel pressure outside tested range | `liquids` is true and the droplet extinction model had to clamp pressure (`extrapolatedPressure`); the model covers droplet fuels only |
@@ -41,6 +41,10 @@ Each flag lists `factIds`. Each id resolves in `brief.facts`, and each number in
 | `det-<material>-scatter-low`, `det-<material>-scatter-runs` | measured | SAME investigation PSI id and dataset DOI |
 | `det-<material>-<detectors>-low`, `-runs` (combos other than scatter alone) | inferred / measured | SAME |
 | `det-ambient-oxygen`, `det-ambient-pressure` | assumed | SAME |
+| `det-scatter-threshold` | assumed | SAME; label "Scatter alarm proxy (photoelectric, assumed)". Cited by detector-miss flags that use scatter |
+| `habitat-oxygen`, `habitat-pressure`, `habitat-flow` | assumed | Note "Habitat definition from the brief URL" (user inputs; in `brief.facts` so SI text about the habitat cites them) |
+| `lit-window-oxygen-low`, `lit-window-oxygen-high`, `lit-window-pressure` | literature | NTRS URL of the Saffire VI rows inside the Moon envelope; note lists the sample ids (`web/src/lib/engine/literatureWindow.ts`) |
+| `next-first-literature-distance` | model | Page fact: evidence distance from the top next-test point to the nearest Saffire VI run in the Moon envelope |
 | `cov-solid-distance` | model | PSI id and DOI of the nearest solid test |
 | `cov-solid-oxygen`, `cov-solid-pressure` | the test's `o2Src` / `pSrc` | same |
 | `cov-solid-count` | measured | Note listing the PSI ids searched |

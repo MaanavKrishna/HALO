@@ -60,7 +60,7 @@ export default function MethodPage() {
   const lampIon = lamp.filter((r) => r.ionizationDV !== null);
   const lampCaught = lampIon.filter((r) => (r.ionizationDV as number) >= det.thresholds.ionizationDV).length;
   const ext = data.extinction;
-  const samePAtm = (det.ambient.pressurePsia / PSI_PER_ATM).toFixed(1);
+  const samePAtm = Number((det.ambient.pressurePsia / PSI_PER_ATM).toFixed(1));
   const picks = nextTests(data.tests);
   const pName = (k: string) => (PRESETS as Record<string, { name: string }>)[k]?.name ?? k;
   const extInv = data.investigations.find((i) => i.psiId === ext.source.psiId);
@@ -186,7 +186,7 @@ export default function MethodPage() {
           </THead>
           <TBody>
             <Tr>
-              <Td className="font-medium text-fg">Proximity</Td>
+              <Td className="font-medium text-fg">Closeness</Td>
               <Td numeric>{DEFAULT_WEIGHTS.proximity}</Td>
               <Td>1 / (1 + d) to the investigation’s nearest eligible test. Detection studies use the air they ran in.</Td>
             </Tr>
@@ -196,12 +196,12 @@ export default function MethodPage() {
               <Td>1 when a fuel class matches the habitat (solids when materials are listed, droplets when liquids are on); gas counts half.</Td>
             </Tr>
             <Tr>
-              <Td className="font-medium text-fg">Hazard coverage</Td>
+              <Td className="font-medium text-fg">Hazards</Td>
               <Td numeric>{DEFAULT_WEIGHTS.hazard}</Td>
               <Td>Share of spread, extinction, smoke detection and toxicity the investigation covers.</Td>
             </Tr>
             <Tr>
-              <Td className="font-medium text-fg">Data richness</Td>
+              <Td className="font-medium text-fg">Evidence size</Td>
               <Td numeric>{DEFAULT_WEIGHTS.richness}</Td>
               <Td>log(1 + rows + 5 × publications), scaled to the richest investigation.</Td>
             </Tr>

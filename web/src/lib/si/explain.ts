@@ -5,12 +5,13 @@ import { queryToHabitat } from '@/lib/engine/url';
 import type { Brief, Fact } from '@/lib/engine/types';
 import { fallbackFactIds, fallbackNarrative } from './fallback';
 import { buildPrompt, SI_MAX_TOKENS, SI_MODEL, SI_TIMEOUT_MS, SYSTEM_PROMPT } from './prompt';
-import { validateNumbers } from './validateNumbers';
+import { numberMatches, numberTokens, validateNumbers } from './validateNumbers';
+import { splitSentences } from '@/lib/brief/explain';
 
 export type ExplainSource = 'live' | 'fallback';
 export interface ExplainResult { text: string; factIds: string[]; source: ExplainSource }
 
-/** The one SDK method explainCore uses; an Anthropic client satisfies it, and tests pass a mock. */
+/** The one SDK method explainCore uses; the LLM SDK client satisfies it, and tests pass a mock. */
 export interface SiClient {
   messages: {
     create(body: Anthropic.MessageCreateParamsNonStreaming, options?: Anthropic.RequestOptions): Promise<Anthropic.Message>;
@@ -24,14 +25,12 @@ export function briefFromQuery(query: string): Brief {
 }
 
 /**
- * Numbers the SI may write: every brief fact, plus the habitat's own inputs
- * (O2, pressure, flow), which the user chose and the prompt shows. The inputs
- * are not Facts, so they are never returned as citable fact ids.
+ * Numbers the SI may write: every brief fact. The habitat's own inputs (O2,
+ * pressure, flow) are brief facts too (habitat-oxygen, habitat-pressure,
+ * habitat-flow), so text about the habitat cites the habitat, not a test.
  */
 export function groundingFacts(brief: Brief): Fact[] {
-  const h = brief.habitat;
-  const input = (id: string, value: number): Fact => ({ id, label: id, value, provenance: 'assumed', source: { note: 'habitat input' } });
-  return [...brief.facts, input('habitat-oxygen', h.o2Pct), input('habitat-pressure', h.pressurePsia), input('habitat-flow', h.flowCmS)];
+  return brief.facts;
 }
 
 export function fallbackResult(brief: Brief): ExplainResult {
@@ -54,14 +53,37 @@ function leaksPrompt(text: string): boolean {
 
 const CITE = /\[([a-z-]+(?:\s*,\s*[a-z-]+)*)\]/g;
 
-/** Keep citations of real brief facts; drop citations of ids the brief does not have. */
-function resolveCitations(text: string, known: Set<string>): { text: string; factIds: string[] } {
+/**
+ * True when a cited fact belongs in its sentence: a numeric fact's value must
+ * equal (at the written precision) one of the numbers the sentence writes. A
+ * sentence with no numbers may cite a fact qualitatively. Text facts always pass.
+ */
+export function citationFits(sentence: string, fact: Fact): boolean {
+  if (typeof fact.value !== 'number') return true;
+  const nums = numberTokens(sentence);
+  if (nums.length === 0) return true;
+  return nums.some((t) => numberMatches(t, fact.value as number));
+}
+
+/**
+ * Keep citations of real brief facts whose value fits their sentence; drop
+ * citations of ids the brief does not have, and citations that pin a number
+ * to the wrong fact (for example "34%" cited to the SAME ambient O2).
+ */
+export function resolveCitations(text: string, facts: Fact[]): { text: string; factIds: string[] } {
+  const byId = new Map(facts.map((f) => [f.id, f]));
   const factIds: string[] = [];
-  const out = text.replace(CITE, (_, group: string) => {
-    const ids = group.split(',').map((s) => s.trim()).filter((id) => known.has(id));
-    for (const id of ids) if (!factIds.includes(id)) factIds.push(id);
-    return ids.map((id) => `[${id}]`).join(' ');
-  });
+  const sentences = splitSentences(text).map((sentence) =>
+    sentence.replace(CITE, (_, group: string) => {
+      const ids = group
+        .split(',')
+        .map((s) => s.trim())
+        .filter((id) => byId.has(id) && citationFits(sentence, byId.get(id) as Fact));
+      for (const id of ids) if (!factIds.includes(id)) factIds.push(id);
+      return ids.map((id) => `[${id}]`).join(' ');
+    }),
+  );
+  const out = sentences.join(' ');
   return { text: out.replace(/[ \t]+([.,;:])/g, '$1').replace(/[ \t]{2,}/g, ' ').trim(), factIds };
 }
 
@@ -101,7 +123,7 @@ export async function explainCore(query: string, question: string | undefined, c
   if (VERDICT.test(raw) || leaksPrompt(raw)) return fallback;
   if (!validateNumbers(raw, groundingFacts(brief)).ok) return fallback;
 
-  const { text, factIds } = resolveCitations(raw, new Set(brief.facts.map((f) => f.id)));
+  const { text, factIds } = resolveCitations(raw, brief.facts);
   if (!text) return fallback;
   return { text, factIds, source: 'live' };
 }

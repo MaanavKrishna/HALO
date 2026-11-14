@@ -53,7 +53,7 @@ export function DetectionCard({ brief }: { brief: Brief }) {
 
       <dl className="mt-4 grid gap-px overflow-hidden rounded-[var(--radius-md)] border border-line bg-line sm:grid-cols-2">
         <div className="flex items-baseline justify-between gap-3 bg-surface-1 px-4 py-3">
-          <dt className="type-label text-fg-3">Scatter alarm level</dt>
+          <dt className="type-label text-fg-3">Scatter alarm proxy</dt>
           <dd className="font-mono text-sm text-fg">
             <Num brief={brief} id="det-scatter-threshold" />
           </dd>

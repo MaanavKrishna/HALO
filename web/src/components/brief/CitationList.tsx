@@ -1,7 +1,7 @@
 import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
 import { TBody, THead, TableFrame, Td, Th, Tr } from "@/components/ui/Table";
 import { briefContext } from "@/lib/brief/context";
-import type { Brief, Provenance } from "@/lib/engine/types";
+import { factText, type Brief, type Provenance } from "@/lib/engine/types";
 import { Section, unitText } from "./parts";
 
 const PROVENANCE_ORDER: Provenance[] = ["measured", "inferred", "assumed", "literature", "model", "si"];
@@ -85,7 +85,7 @@ export function CitationList({ brief }: { brief: Brief }) {
                   {f.label}
                 </Th>
                 <Td className="num max-w-[18rem] text-fg">
-                  {String(f.value)}
+                  {factText(f)}
                   {unitText(f)}
                 </Td>
                 <Td>

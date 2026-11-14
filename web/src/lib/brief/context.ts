@@ -33,6 +33,7 @@ export function appearanceOrder(brief: Brief, datasets: Source[]): Array<string 
   if (brief.coolFlame) out.push(brief.coolFlame.id);
   brief.nextTests.forEach((t, i) => {
     out.push(nextId(i, 'oxygen'), nextId(i, 'pressure'));
+    if (i === 0) out.push('next-first-literature-distance');
     for (const g of t.gains) out.push(gainId(i, g.preset, 'before'), gainId(i, g.preset, 'after'));
   });
   out.push(...brief.earth.map((f) => f.id));

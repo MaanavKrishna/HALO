@@ -148,8 +148,14 @@ export function ProblemSection() {
         </Reveal>
         <Reveal delay={80}>
           <p className="type-body-l max-w-[52ch] text-fg-2">
-            Exploration habitats lower the pressure and raise the oxygen. In the NASA data HALO uses, every real cabin
-            material was burned in air much closer to the ISS.
+            Exploration habitats lower the pressure and raise the oxygen. In the PSI test data HALO grades on, every
+            real cabin material was burned in air much closer to the ISS.
+            {problem.literature && (
+              <>
+                {" "}
+                {problem.literature.sentence} <ExtLink href={problem.literature.url}>Report</ExtLink>
+              </>
+            )}
           </p>
         </Reveal>
       </div>
@@ -188,13 +194,18 @@ export function ProblemSection() {
           />
           <Stat
             size="lg"
-            label="Real solids in the Moon envelope"
+            label="PSI real-solid tests in the Moon envelope"
             value={problem.moonWindow.solids}
             unit={`of ${problem.moonWindow.tests} tests`}
             provenance={<ProvenanceBadge provenance="model" />}
             detail={
               <>
                 ≥{problem.moonWindow.o2}% O₂, ≤{problem.moonWindow.p} psia
+                {problem.literature && (
+                  <>
+                    . {problem.literature.missions} burned {problem.literature.runs} real solids there, outside PSI (literature)
+                  </>
+                )}
               </>
             }
             className="col-span-2 sm:col-span-1"

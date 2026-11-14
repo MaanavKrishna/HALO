@@ -10,7 +10,7 @@ In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire dat
 
 Pick a habitat atmosphere, cabin materials and smoke detectors. HALO shows which NASA tests are closest, how much evidence covers them, where the evidence stops, what your detector would likely miss, and which test should fly next. Every number is cited to its source.
 
-**Live demo:** coming soon (Vercel).
+**Live demo:** https://halo-fire-brief-maanavkrishnas-projects.vercel.app
 
 ---
 
@@ -30,8 +30,8 @@ The challenge asks for an SI-powered tool that summarizes, ranks and interprets 
 
 Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atmospheres: at least 30% O2 at no more than 10.2 psi, and an exploration atmosphere of 34% O2 at 8.2 psia. Fire behaves differently there, and in microgravity. The PSI evidence was mostly gathered somewhere else:
 
-- **No real cabin material was tested at Moon-base oxygen.** Real solid materials in PSI were never burned above 22.2% O2 or below 1 atm (BASS-II 13.6–22.2%, Saffire-I/II 21.5–22.1%, at an assumed cabin pressure of about 1 atm).
-- **Only a surrogate reached Moon conditions.** In the Moon window (≥ 30% O2, ≤ 10.2 psia) there are 33 eligible rows: 20 ACME CFI-G gas flames and 13 ACME BRE rows. BRE is a gas-fed porous burner that emulates a burning solid, with pressure inferred from its stated objectives. Zero are real solids.
+- **No real cabin material in the PSI data was tested at Moon-base oxygen.** Real solid materials in the PSI test rows were never burned above 22.2% O2 or below 1 atm (BASS-II 13.6–22.2%, Saffire-I/II 21.5–22.1%, at an assumed cabin pressure of about 1 atm). Outside PSI, NASA technical reports on Saffire VI describe SIBAL fabric and PMMA burned at 30.3–31.0% O2 and about 7.9 psia (literature); those runs are not PSI test rows, so HALO states them but does not grade on them.
+- **Only a surrogate reached Moon conditions.** In the Moon window (≥ 30% O2, ≤ 10.2 psia) there are 33 eligible rows: 20 ACME CFI-G gas flames and 13 ACME BRE rows. BRE is a gas-fed porous burner that emulates a burning solid, with pressure inferred from its stated objectives. None of the PSI rows is a real solid; the only real solids burned there are the Saffire VI literature runs above.
 - **The ISS-style scatter detector read low on two cabin materials.** In SAME/SAME-R flight runs it read below the 2.0 V alarm proxy in 20 of 35 Kapton runs and 18 of 23 Teflon runs. All of those runs were in ISS air (21% O2, 1 atm), so smoke behavior at habitat atmospheres is untested.
 - **No partial-gravity data.** PSI holds no partial-gravity combustion data, so lunar and Martian gravity are outside the evidence entirely.
 
@@ -44,25 +44,12 @@ Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atm
 | **Ranked investigations** | All 24 PSI investigations ordered by proximity, fuel relevance, hazard coverage and data richness, with short "why" notes. |
 | **Detector blind spot + sensor what-if** | For each listed material with a SAME analog: how many flight runs the scatter detector would have missed, smoke particle size, and how many runs scatter plus ionization would have flagged. Shown as "x of y runs". |
 | **Droplet self-extinction** | "Will it go out on its own?" for liquid droplet fuels: probability with a 95% bootstrap band from the FLEX model, flagged when your pressure is outside the tested 0.7–1.0 atm. |
-| **Aftermath (Saffire VI)** | Literature results from Saffire VI: flame power and toxic-gas load from PMMA burns in an oxygen-enriched, low-pressure atmosphere. |
+| **Aftermath (Saffire VI)** | Literature results from Saffire VI (NASA reports, not PSI test rows): flame power and toxic-gas load from PMMA burns in an oxygen-enriched, low-pressure atmosphere inside the Moon envelope. Stated with a `literature` badge; not used for the grade. |
 | **Cool-flame note** | When liquids are present: FLEX heptane droplets kept burning on an invisible ~500–800 K cool flame after the visible flame went out. |
 | **Next test to fly** | A computed (not hand-written) candidate test, plus diverse runners-up, chosen to reduce evidence distance most across the habitat presets. |
 | **Earth relevance** | Three NASA Spinoff facts linking the findings to fire safety on Earth. |
 | **Citations** | Every number is a fact with a provenance and a source: PSI id, dataset DOI or NTRS/Spinoff URL. |
 | **Print/PDF and shareable URL** | The full habitat is encoded in the query string, for example `/brief?o2=34&p=8.2&f=10&m=kapton,teflon,cotton&d=scatter&l=0&n=Artemis%20Base`. |
-
-### Build status
-
-The engine is complete and unit-tested. The pages that render it are being built.
-
-| Part | Status |
-|---|---|
-| Data pipeline (`pipeline/`) and generated JSON (`web/src/data/`) | Implemented, tested |
-| Engine: grade, distance, ranking, detection, extinction, flags, facts, next test, URL state, brief assembly (`web/src/lib/engine/`) | Implemented, unit-tested |
-| Security headers and pre-commit secret hook | Implemented |
-| Fire Brief page, presets, print stylesheet, citation list | In progress |
-| Build-time SI summaries with validation | Pipeline implemented and tested (`make si`); summaries generated before submission |
-| Live SI explanations (`/api/explain`) | Planned |
 
 ## How it works
 
@@ -84,7 +71,7 @@ flowchart TD
 1. **Pipeline** (`pipeline/`, Python). Reads the vendored PSI experimental tables, detail records and the SAME workbook. Normalizes units, records where each value came from, applies documented data-quality fixes, and fits the extinction model. 1,967 rows in, 1,225 eligible for habitat coverage.
 2. **Versioned JSON** (`web/src/data/`). Static files with a `manifest.json` that records build time, row counts, the sha256 of each file and every PSI dataset DOI. The app imports them at build time and validates them once with zod.
 3. **Engine** (`web/src/lib/engine/`, TypeScript). Pure functions that turn a habitat and the data into a `Brief`. No randomness at run time, no network.
-4. **SI layer.** Numbers come from code; words come from SI. The SI only writes narrative over the frozen facts object. A validator rejects any sentence containing a number that is not a fact value, and the brief falls back to a template. Planned build-time summaries of the 24 investigations follow the same rule: tags from a closed vocabulary, quotes checked against the source text.
+4. **SI layer.** Numbers come from code; words come from SI. The SI only writes narrative over the frozen facts object. A validator rejects any sentence containing a number that is not a fact value, and the brief falls back to a template. Build-time summaries of all 24 investigations (in `web/src/data/summaries.json`) follow the same rule: tags from a closed vocabulary, quotes checked against the source text.
 
 ### Provenance badges
 
@@ -129,11 +116,12 @@ Then open http://localhost:3000.
 
 **Tests:**
 
-| Suite | Command |
-|---|---|
-| Engine unit tests (Vitest) | `cd web && pnpm test` |
-| Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` |
-| End-to-end (Playwright, production build on port 3100) | `cd web && pnpm exec playwright test` |
+| Suite | Command | Count |
+|---|---|---|
+| Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 227 tests in 23 files |
+| Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` | 76 tests |
+| End-to-end (Playwright, production build on port 3100) | `cd web && pnpm test:e2e` | 53 tests in 6 specs |
+| Type check | `cd web && pnpm exec next typegen && pnpm exec tsc --noEmit` | |
 
 **Environment.** Copy [`.env.example`](.env.example) to `.env` (gitignored). It holds the server-only LLM API key and `SI_LIVE` (set to `false` to serve precomputed text only). The data pipeline and the engine need no keys.
 
@@ -159,14 +147,17 @@ Then open http://localhost:3000.
 
 | Route | What it is |
 |---|---|
-| `/` | Home and habitat builder |
-| `/brief` | The Fire Brief for a habitat (shareable URL) |
-| `/findings` | The headline evidence gaps, each cited |
-| `/explore` | All 24 investigations; `/explore/PSI-69` etc. for one |
+| `/` | Landing: the problem, a live mini brief and the habitat presets |
+| `/build` | Habitat builder (atmosphere, materials, detectors, liquids) |
+| `/brief` | The Fire Brief for a habitat (shareable URL), with Ask HALO |
+| `/findings` | The headline evidence gaps, each computed and cited |
+| `/explore` | All 24 investigations, filterable and sortable |
+| `/explore/[psiId]` | One investigation, for example `/explore/PSI-69`; unknown ids return a 404 |
 | `/compare` | Two habitats side by side |
 | `/method` | Every formula, threshold and model |
 | `/data` | Sources, provenance, fixes, downloads and every DOI |
 | `/about` | The challenge, use of SI, licence |
+| `/design` | The living design system |
 
 ## Documentation
 
@@ -193,7 +184,7 @@ Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 **In the product.**
 - *Build-time summaries (see [docs/SI.md](docs/SI.md)).* An LLM writes a short summary and habitat relevance note for each of the 24 investigations from its PSI record. Output is validated: hazard tags from a closed vocabulary, quotes must appear in the source text.
-- *Optional live explanations (planned).* An LLM writes a short narrative over the brief's computed facts. Every number it writes must match a fact value, or the brief uses a template instead.
+- *Live explanations ("Ask HALO" on `/brief`, via `/api/explain`).* An LLM writes a short narrative over the brief's computed facts. Every number it writes must match a fact value, or the brief uses a template instead; a citation whose fact value is not a number in its sentence is dropped, and values describing the habitat cite the `habitat-*` facts.
 - Every SI sentence carries an `si` badge. All numbers, grades, rankings and models come from deterministic code.
 
 **In development.** An LLM coding assistant helped write code. All data processing, models and copy were reviewed by the author.

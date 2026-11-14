@@ -59,7 +59,7 @@ describe.skipIf(!isReal)('real data: page facts', () => {
     expect(v(nearId('solid', 'gap'))).toBe(11.8);
   });
   it('ppO2 for Artemis is 2.79 psia', () => {
-    expect(v('hab-oxygen-partial-pressure')).toBe(2.79);
+    expect(v('habitat-oxygen-partial-pressure')).toBe(2.79);
   });
   it('kapton what-if: scatter catches 15 of 35', () => {
     expect(v(whatIfId('kapton', ['scatter'], 'caught'))).toBe(15);

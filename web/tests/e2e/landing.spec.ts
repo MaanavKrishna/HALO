@@ -26,7 +26,7 @@ test("the Artemis mini-brief shows grade D and links to the real brief", async (
   const mini = page.locator("[data-mini-brief]");
   await mini.scrollIntoViewIfNeeded();
   await expect(mini.getByRole("img", { name: /^Evidence grade D/ })).toBeVisible();
-  await expect(mini).toContainText("No real cabin material tested at this atmosphere");
+  await expect(mini).toContainText("No real cabin material in the PSI data tested at this atmosphere");
   await expect(mini.getByRole("link", { name: "Open the full brief" })).toHaveAttribute(
     "href",
     `/brief?${habitatToQuery(PRESETS.artemis)}`,

@@ -291,11 +291,19 @@ function Gravity({ v, W, compact }: { v: Extract<Viz, { kind: "gravity" }>; W: n
           <text x={s.at} y={24} textAnchor={s.at < 40 ? "start" : s.at > W - 40 ? "end" : "middle"} fontSize={12.5} fill={s.tested ? "var(--text-1)" : "var(--warn)"}>
             {s.label}
           </text>
-          <text x={s.at} y={76} textAnchor={s.at < 40 ? "start" : s.at > W - 40 ? "end" : "middle"} className="font-mono" fontSize={11} fill="var(--text-3)">
-            {s.tested ? "tested" : "untested"}
-          </text>
+          {(!compact || s.tested) && (
+            <text x={s.at} y={76} textAnchor={s.at < 40 ? "start" : s.at > W - 40 ? "end" : "middle"} className="font-mono" fontSize={11} fill="var(--text-3)">
+              {s.tested ? "tested" : "untested"}
+            </text>
+          )}
         </g>
       ))}
+      {compact && (
+        // Narrow widths: one shared "untested" label between Moon and Mars, so it never collides with "tested".
+        <text x={Math.round((stops[1].at + stops[2].at) / 2)} y={76} textAnchor="middle" className="font-mono" fontSize={11} fill="var(--text-3)">
+          untested
+        </text>
+      )}
     </Figure>
   );
 }

@@ -35,11 +35,29 @@ describe('explainCore', () => {
     expect(opts.timeout).toBe(12_000);
   });
 
-  it('accepts the habitat inputs (34% O2, 8.2 psia) but never lists them as fact ids', async () => {
-    const { client } = mockClient('At 34% O2 and 8.2 psia, the nearest test ran at 22.2% O2 [cov-solid-oxygen].');
+  it('accepts the habitat inputs (34% O2, 8.2 psia) cited to the habitat-* facts', async () => {
+    const { client } = mockClient('Your habitat runs at 34% O2 [habitat-oxygen] and 8.2 psia [habitat-pressure], while the nearest test ran at 22.2% O2 [cov-solid-oxygen].');
     const r = await explainCore(QUERY, undefined, client);
     expect(r.source).toBe('live');
-    expect(r.factIds).toEqual(['cov-solid-oxygen']);
+    expect(r.factIds).toEqual(['habitat-oxygen', 'habitat-pressure', 'cov-solid-oxygen']);
+  });
+
+  it('strips a citation whose fact value is not a number in its sentence (habitat 34% cited to the SAME ambient O2)', async () => {
+    const { client } = mockClient('Your habitat runs at 34% O2 [det-ambient-oxygen]. SAME ran at 21% O2 [det-ambient-oxygen].');
+    const r = await explainCore(QUERY, undefined, client);
+    expect(r.source).toBe('live');
+    // Numbers are still validated: both 34 and 21 are fact values.
+    expect(r.text).toBe('Your habitat runs at 34% O2. SAME ran at 21% O2 [det-ambient-oxygen].');
+    expect(r.factIds).toEqual(['det-ambient-oxygen']);
+  });
+
+  it('the prompt lists the habitat-* facts and tells the model to cite them for the habitat', async () => {
+    const { client, create } = mockClient('Evidence grade D.');
+    await explainCore(QUERY, undefined, client);
+    const [body] = create.mock.calls[0];
+    const user = body.messages[0].content as string;
+    for (const id of ['habitat-oxygen', 'habitat-pressure', 'habitat-flow']) expect(user).toContain(`"id":"${id}"`);
+    expect(SYSTEM_PROMPT).toContain("Values describing the user's habitat must cite habitat-* facts");
   });
 
   it('falls back when the model invents a number', async () => {

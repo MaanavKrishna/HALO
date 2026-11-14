@@ -201,10 +201,10 @@ export function EvidenceRings({
 /* ---------- Ranking weights ---------- */
 
 const PART_LABEL: Record<keyof RankWeights, string> = {
-  proximity: "Proximity",
+  proximity: "Closeness",
   fuel: "Fuel match",
-  hazard: "Hazard coverage",
-  richness: "Data richness",
+  hazard: "Hazards",
+  richness: "Evidence size",
 };
 const PART_TONE: Record<keyof RankWeights, string> = {
   proximity: "bg-accent",

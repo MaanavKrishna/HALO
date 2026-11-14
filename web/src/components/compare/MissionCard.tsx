@@ -5,7 +5,7 @@ import type { Brief, DetectionResult, Flag } from "@/lib/engine/types";
 
 export const SEVERITY: Record<Flag["severity"], { status: Status; label: string }> = {
   critical: { status: "crit", label: "Critical" },
-  warning: { status: "warn", label: "Warning" },
+  warning: { status: "warn", label: "Caution" },
   info: { status: "idle", label: "Note" },
 };
 

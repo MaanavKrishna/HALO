@@ -1,0 +1,10 @@
+/* Brief page: screen helpers shared by the charts. */
+.halo-label {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+}
+.brief .cite-ref a {
+  text-decoration: none;
+}

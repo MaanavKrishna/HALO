@@ -5,7 +5,8 @@ import type { Fact, HaloData, LiteratureRow } from './types';
  * numeric aftermath facts are read from the Saffire VI rows in literature.json.
  */
 
-export const BASS_GUIDE_URL = 'https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/';
+export const BASS_GUIDE_URL =
+  'https://www.nasa.gov/sites/default/files/atoms/files/np-2015-10-034-jsc_combustion_in_reduced_gravity-iss-mini-book-011116-508.pdf';
 export const FLEX_COOL_FLAME_DOI = '10.1016/j.combustflame.2012.07.012';
 
 export const COOL_FLAME_FACT: Fact = {
@@ -19,7 +20,7 @@ export const COOL_FLAME_FACT: Fact = {
 export const BASS_FACT: Fact = {
   id: 'bass-test-one',
   label: 'BASS finding on the standard flammability test',
-  value: 'NASA-STD-6001 Test 1 is not conservative…',
+  value: 'NASA-STD-6001 Test 1 is not conservative, and materials can burn at lower oxygen levels in microgravity than on Earth',
   provenance: 'literature',
   source: { url: BASS_GUIDE_URL, note: 'A Researcher’s Guide to: Combustion Science (2015)' },
 };

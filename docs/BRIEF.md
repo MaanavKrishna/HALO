@@ -26,7 +26,7 @@
 | critical | No real cabin material tested at this atmosphere | The nearest `solid` test has d > 1.0, or there is none |
 | critical | Your detector would likely miss `<material>` smoke | One per material where the selected detectors catch under 50% of SAME runs. A material with no runs (for example PMMA, which has no SAME analog) has no data and is never treated as 0% |
 | warning | Smoke data only exists at ISS air | Habitat O2 > 23% or pressure < 13 psia |
-| warning | Pressure outside tested range | The extinction model had to clamp pressure (`extrapolatedPressure`) |
+| warning | Droplet-fuel pressure outside tested range | `liquids` is true and the droplet extinction model had to clamp pressure (`extrapolatedPressure`); the model covers droplet fuels only |
 | warning | Droplet flames unlikely to self-extinguish | `liquids` is true and the median extinction probability is below 0.1 |
 | info | No partial-gravity data in PSI | Always |
 
@@ -48,9 +48,9 @@ Fact ids use lowercase letters and hyphens only, with no digits. An "x of y" fig
 | `ext-pressure-used`, `ext-probability`, `ext-probability-lo`, `ext-probability-hi`, `ext-droplet-size` | model | FLEX |
 | `psi-investigations` | measured | PSI ids of all investigations |
 | `aftermath-pmma-power-low`, `aftermath-pmma-power-high` | literature | Saffire VI rows; values parsed from the PMMA outcome text |
-| `aftermath-toxic-oxygen` | literature | The Saffire VI row whose outcome reports CO over its limit |
+| `aftermath-toxic-oxygen` | literature | The Saffire VI row whose outcome reports CO over its limit; `o2Pct` rounded to a whole percent (copy renders it as "~{value}% O2") |
 | `flex-cool-flame` | literature | DOI 10.1016/j.combustflame.2012.07.012 |
-| `bass-test-one` | literature | A Researcher's Guide to: Combustion Science (2015) |
+| `bass-test-one` | literature | A Researcher's Guide to: Combustion Science (2015), PDF edition |
 | `earth-air-tanks`, `earth-fire-detector`, `earth-fire-attire` | literature | spinoff.nasa.gov nodes 9582, 9407, 9918 |
 
 ## URL parameters

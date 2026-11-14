@@ -136,7 +136,8 @@ export function buildFlags(
 
   // warning: pressure outside the extinction model's tested range
   const extSrc: Source = { psiId: data.extinction.source.psiId, doi: data.extinction.source.doi };
-  if (extinction.extrapolatedPressure) {
+  // The extinction model covers droplet fuels only.
+  if (h.liquids && extinction.extrapolatedPressure) {
     const rng: Fact[] = [
       { id: 'ext-pressure-min', label: 'Lowest pressure in the droplet extinction fit', value: data.extinction.pRangeAtm[0], unit: 'atm', provenance: 'measured', source: extSrc },
       { id: 'ext-pressure-max', label: 'Highest pressure in the droplet extinction fit', value: data.extinction.pRangeAtm[1], unit: 'atm', provenance: 'measured', source: extSrc },
@@ -145,7 +146,7 @@ export function buildFlags(
     facts.push(...rng);
     flags.push({
       id: 'pressure-extrapolated', severity: 'warning',
-      title: 'Pressure outside tested range',
+      title: 'Droplet-fuel pressure outside tested range',
       detail: `FLEX droplet tests span ${rng[0].value} to ${rng[1].value} atm. Your cabin pressure is outside that range, so the extinction estimate is evaluated at ${rng[2].value} atm and is an extrapolation.`,
       factIds: rng.map((f) => f.id),
     });

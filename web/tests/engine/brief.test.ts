@@ -25,7 +25,6 @@ describe('buildBrief (fixtures)', () => {
     expect(crit).toContain('No real cabin material tested at this atmosphere');
     expect(crit.some((t) => /^Your detector would likely miss .+ smoke$/.test(t))).toBe(true);
     expect(b.flags.map((f) => f.title)).toContain('Smoke data only exists at ISS air');
-    expect(b.flags.map((f) => f.title)).toContain('Pressure outside tested range');
     expect(b.flags.map((f) => f.title)).toContain('No partial-gravity data in PSI');
   });
 
@@ -81,12 +80,21 @@ describe('buildBrief (fixtures)', () => {
     for (const f of b.earth) expect(f.source.url).toMatch(/^https:\/\/spinoff\.nasa\.gov\/node\/\d+$/);
     const bass = b.facts.find((f) => f.id === 'bass-test-one');
     expect(String(bass?.value)).toMatch(/^NASA-STD-6001 Test 1 is not conservative/);
-    expect(bass?.source.url).toBe('https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/');
+    expect(bass?.value).toBe('NASA-STD-6001 Test 1 is not conservative, and materials can burn at lower oxygen levels in microgravity than on Earth');
+    expect(bass?.provenance).toBe('literature');
+    expect(bass?.source.url).toMatch(/^https:\/\/www\.nasa\.gov\/.+\.pdf$/);
   });
 
   it('never uses verdict words', () => {
     const text = JSON.stringify([b.flags, b.facts, b.grade]);
     expect(text).not.toMatch(/\b(un)?safe\b/i);
+  });
+
+  it('droplet pressure flag fires only when liquids are present', () => {
+    const t = 'Droplet-fuel pressure outside tested range';
+    expect(b.extinction.extrapolatedPressure).toBe(true);
+    expect(b.flags.map((f) => f.title)).not.toContain(t);
+    expect(buildBrief({ ...PRESETS.artemis, liquids: true }, data).flags.map((f) => f.title)).toContain(t);
   });
 
   it('coolFlame is set only when liquids are present', () => {

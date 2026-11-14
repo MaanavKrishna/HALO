@@ -35,7 +35,7 @@ describe.skipIf(!isReal)('real data: Artemis fire brief', () => {
     const v = (id: string) => b.aftermath.find((f) => f.id === id)?.value;
     expect(v('aftermath-pmma-power-low')).toBe(1.5);
     expect(v('aftermath-pmma-power-high')).toBe(3.2);
-    expect(v('aftermath-toxic-oxygen')).toBeTypeOf('number');
+    expect(v('aftermath-toxic-oxygen')).toBe(30); // Saffire VI-3 at 30.3% O2
   });
   it('kapton scatter facts are 20 of 35', () => {
     const v = (id: string) => b.facts.find((f) => f.id === id)?.value;

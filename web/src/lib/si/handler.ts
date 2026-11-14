@@ -60,9 +60,15 @@ async function readCapped(req: Request, max: number): Promise<string | null> {
   return new TextDecoder().decode(Buffer.concat(chunks));
 }
 
+/** Client IP for the rate limit: platform-set headers first, then the first x-forwarded-for hop. */
 function clientIp(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for');
-  return fwd?.split(',')[0]?.trim() || req.headers.get('x-real-ip')?.trim() || 'unknown';
+  const h = req.headers;
+  return (
+    h.get('x-real-ip')?.trim() ||
+    h.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
+    h.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    'unknown'
+  );
 }
 
 export async function handleExplain(req: Request, deps: ExplainDeps): Promise<Response> {
@@ -92,7 +98,10 @@ export async function handleExplain(req: Request, deps: ExplainDeps): Promise<Re
     const result = await explainCore(query, question, deps.getClient());
     cache.set(key, result);
     return json(result, 200);
-  } catch {
+  } catch (e) {
+    // Log only a non-secret status code, never the error object or message.
+    const status = typeof (e as { status?: unknown })?.status === 'number' ? (e as { status: number }).status : undefined;
+    console.error('explain: model call failed', status ?? 'unknown');
     return json(fallbackResult(briefFromQuery(query)), 502);
   }
 }

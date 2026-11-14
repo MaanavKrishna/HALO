@@ -52,6 +52,8 @@ describe('explainCore', () => {
   it('falls back on "safe"/"unsafe", refusals, empty text and leaked instructions', async () => {
     for (const [text, stop] of [
       ['This habitat is unsafe.', 'end_turn'],
+      ['Kapton burns at ２７% O2 [det-kapton-scatter-low].', 'end_turn'],
+      ['Kapton burns at twenty-seven percent O2 [det-kapton-scatter-low].', 'end_turn'],
       ['', 'end_turn'],
       ['Sorry.', 'refusal'],
       [SYSTEM_PROMPT, 'end_turn'],

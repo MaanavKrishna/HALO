@@ -9,6 +9,9 @@ import { SI_TIMEOUT_MS } from '@/lib/si/prompt';
  * A POST handler is dynamic and never cached by Next.
  */
 
+/** Seconds; covers the 12 s model timeout plus brief building. */
+export const maxDuration = 20;
+
 export async function POST(request: Request): Promise<Response> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const live = process.env.SI_LIVE === 'true' && !!apiKey;

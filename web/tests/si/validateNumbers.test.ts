@@ -45,16 +45,40 @@ describe('validateNumbers', () => {
   it('flags an invented number', () => {
     expect(validateNumbers('burns at 27%', facts)).toEqual({ ok: false, offending: [27] });
   });
-  it('allows 5% relative or 0.05 absolute tolerance', () => {
-    expect(validateNumbers('about 35.5', facts).ok).toBe(true); // within 5% of 34 or 35
-    expect(validateNumbers('0.04', [fact('x', 0)]).ok).toBe(true); // 0.05 absolute
-    expect(validateNumbers('0.2', [fact('x', 0)]).ok).toBe(false);
-    expect(validateNumbers('40', facts, 0).ok).toBe(false);
+  it('matches by written precision only, with no relative tolerance', () => {
+    expect(validateNumbers('21 of 35 runs', facts)).toEqual({ ok: false, offending: [21] });
+    expect(validateNumbers('27 runs', [fact('det-cotton-scatter-runs', 26)])).toEqual({ ok: false, offending: [27] });
+    expect(validateNumbers('about 35.5', facts).ok).toBe(false);
+    const v = [fact('det-reading', 0.248, 'V')];
+    expect(validateNumbers('0.29 V', v)).toEqual({ ok: false, offending: [0.29] });
+    expect(validateNumbers('0.25 V', v).ok).toBe(true);
+    expect(validateNumbers('0.2 V', v).ok).toBe(true);
+    expect(validateNumbers('0.248 V', v).ok).toBe(true);
+    expect(validateNumbers('1,280 rows', [fact('rows', 1225)])).toEqual({ ok: false, offending: [1280] });
+    expect(validateNumbers('92%', [fact('p', 92.3)]).ok).toBe(true);
+    expect(validateNumbers('1.50 kW', [fact('p', 1.5)]).ok).toBe(true);
+    expect(validateNumbers('0.04', [fact('x', 0)]).ok).toBe(false);
+  });
+  it('accepts numbers written in fact labels', () => {
+    expect(validateNumbers('the lower 95% bound', [fact('ext-probability-lo', 3)]).ok).toBe(false);
+    const labelled: Fact = { ...fact('ext-probability-lo', 3), label: 'Lower 95% bound of that chance' };
+    expect(validateNumbers('the lower 95% bound is 3%', [labelled]).ok).toBe(true);
+  });
+  it('rejects non-ASCII digits and number words', () => {
+    for (const t of ['burns at ２７%', 'twenty-seven percent', 'Two runs', 'a thousand rows', 'x²', '٣ runs', 'half of ninety']) {
+      expect(validateNumbers(t, facts).ok, t).toBe(false);
+    }
+    // "one" is allowed so that "one of the runs" still passes.
+    expect(validateNumbers('one of the runs [det-kapton-scatter-low]', facts).ok).toBe(true);
+    expect(validateNumbers('Someone attended; network often', facts).ok).toBe(true);
   });
   it('accepts numbers that appear inside text facts', () => {
     const text = [fact('flex-cool-flame', 'cool flame at ~500–800 K')];
     expect(validateNumbers('a 500 to 800 K cool flame', text).ok).toBe(true);
     expect(validateNumbers('a 900 K cool flame', text)).toEqual({ ok: false, offending: [900] });
+  });
+  it('reports number words and foreign digits with ok false even when every ASCII number matches', () => {
+    expect(validateNumbers('34% and twenty-seven percent', facts)).toEqual({ ok: false, offending: [] });
   });
   it('reports each offending number once', () => {
     expect(validateNumbers('27 and 27 and 99', facts).offending).toEqual([27, 99]);

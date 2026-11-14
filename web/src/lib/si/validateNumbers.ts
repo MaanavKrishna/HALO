@@ -1,10 +1,11 @@
 import type { Fact } from '@/lib/engine/types';
 
 /**
- * Number grounding for runtime SI text. Every number the SI writes must match
- * a Fact value (or a number inside a text Fact) within a small tolerance.
- * Extraction errs on the side of counting more numbers: an extra number can
- * only turn an answer into the fallback, never let an invented one through.
+ * Number grounding for runtime SI text. SI text never introduces a number that
+ * is not a Fact value: every number it writes must equal a Fact value rounded
+ * to the precision the SI wrote it with ("0.25" or "0.2" for 0.248, never
+ * "0.29"; "92" for 92.3; "20" never "21"). Extraction errs on the side of
+ * counting more: an extra number can only turn an answer into the fallback.
  */
 
 /** Gas formulas whose digits are subscripts, not quantities. */
@@ -13,25 +14,55 @@ const GAS = /\b(?:CO2|O2|N2|H2O|H2|CH4|N2O|NO2|SO2|O3|SF6)\b/g;
 const CITATION = /\[[a-z-]+(?:\s*,\s*[a-z-]+)*\]/g;
 /** 1,967 · 20 · 0.118 · .5 (signs are ignored: "5-10" is a range, not -10). */
 const NUMBER = /\d{1,3}(?:,\d{3})+(?![\d,])(?:\.\d+)?|\d+(?:\.\d+)?|\.\d+/g;
+/** Digits other than ASCII 0-9: full-width, Arabic-Indic, superscripts, fractions, circled numbers. */
+const FOREIGN_DIGIT = /(?![0-9])[\p{Nd}\p{No}]/u;
+/** Spelled-out numbers. "one" is left out so that "one of the runs" passes. */
+const NUMBER_WORD =
+  /\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|percent)\b/i;
 
-export function extractNumbers(text: string): number[] {
+interface NumToken { value: number; decimals: number }
+
+function tokens(text: string): NumToken[] {
   const clean = text.replace(CITATION, ' ').replace(GAS, ' ');
-  return [...clean.matchAll(NUMBER)].map((m) => Number(m[0].replace(/,/g, '')));
+  return [...clean.matchAll(NUMBER)].map((m) => {
+    const raw = m[0].replace(/,/g, '');
+    const dot = raw.indexOf('.');
+    return { value: Number(raw), decimals: dot === -1 ? 0 : raw.length - dot - 1 };
+  });
 }
 
-/** Every number a list of facts can vouch for: numeric values, plus numbers written inside text values. */
-export function factNumbers(facts: Fact[]): number[] {
-  return facts.flatMap((f) => (typeof f.value === 'number' ? [f.value] : extractNumbers(f.value)));
+export function extractNumbers(text: string): number[] {
+  return tokens(text).map((t) => t.value);
+}
+
+/** True when the text writes a number some other way than ASCII digits. */
+export function hasHiddenNumbers(text: string): boolean {
+  return FOREIGN_DIGIT.test(text) || NUMBER_WORD.test(text);
 }
 
 /**
- * ok when every number in `text` is within `tol` (relative, default 5%) or
- * 0.05 absolute of some fact number. `offending` lists each failing number once.
+ * Every number a list of facts can vouch for: numeric values, numbers written
+ * inside text values, and numbers in the (server-owned) labels.
  */
-export function validateNumbers(text: string, facts: Fact[], tol = 0.05): { ok: boolean; offending: number[] } {
+export function factNumbers(facts: Fact[]): number[] {
+  return facts.flatMap((f) => [
+    ...(typeof f.value === 'number' ? [f.value] : extractNumbers(f.value)),
+    ...extractNumbers(f.label),
+  ]);
+}
+
+const EPS = 1e-9;
+const roundTo = (v: number, k: number) => Math.round(v * 10 ** k) / 10 ** k;
+
+/**
+ * ok when every number in `text` equals some fact number, or that number
+ * rounded to the decimals the text wrote, and the text spells no number in
+ * words or non-ASCII digits. `offending` lists each unmatched digit number once.
+ */
+export function validateNumbers(text: string, facts: Fact[]): { ok: boolean; offending: number[] } {
   const allowed = factNumbers(facts);
-  const abs = tol === 0 ? 0 : 0.05;
-  const matches = (n: number) => allowed.some((v) => Math.abs(n - v) <= Math.max(abs, tol * Math.abs(v)));
-  const offending = [...new Set(extractNumbers(text).filter((n) => !matches(n)))];
-  return { ok: offending.length === 0, offending };
+  const matches = ({ value, decimals }: NumToken) =>
+    allowed.some((v) => v === value || Math.abs(roundTo(v, decimals) - value) < EPS);
+  const offending = [...new Set(tokens(text).filter((t) => !matches(t)).map((t) => t.value))];
+  return { ok: offending.length === 0 && !hasHiddenNumbers(text), offending };
 }

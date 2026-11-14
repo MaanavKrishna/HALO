@@ -41,7 +41,10 @@ export function fallbackResult(brief: Brief): ExplainResult {
 const VERDICT = /\b(un)?safe\b/i;
 const DATA_TAG = /<\/?(habitat|facts|flags|question)>/i;
 const norm = (s: string) => s.toLowerCase().replace(/\s+/g, ' ');
-const RULE_LINES = SYSTEM_PROMPT.split('\n').map((l) => norm(l.trim())).filter((l) => l.length > 30);
+/** System prompt lines without their list numbers, so a bare restatement of a rule is caught. */
+const RULE_LINES = SYSTEM_PROMPT.split('\n')
+  .map((l) => norm(l.trim().replace(/^\d+\.\s*/, '')))
+  .filter((l) => l.length > 30);
 
 /** True when the text repeats a line of the system prompt or a data-block tag. */
 function leaksPrompt(text: string): boolean {

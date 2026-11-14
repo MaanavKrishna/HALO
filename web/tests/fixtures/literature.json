@@ -1,0 +1,38 @@
+[
+  {
+    "mission": "Saffire-VI",
+    "sampleId": "S6-PMMA-1",
+    "material": "PMMA",
+    "o2Pct": 32,
+    "pressurePsia": 10.2,
+    "flowCmS": 20,
+    "spreadRateMmS": 3.1,
+    "outcome": "Fire power 1.5-3.2 kW; CO and CO2 exceeded 24 h limits",
+    "sourceUrl": "https://example.org/saffire-vi",
+    "confidence": "medium"
+  },
+  {
+    "mission": "Saffire-VI",
+    "sampleId": "S6-NOMEX-1",
+    "material": "Nomex",
+    "o2Pct": 32,
+    "pressurePsia": 10.2,
+    "flowCmS": 20,
+    "spreadRateMmS": null,
+    "outcome": "Did not sustain flame",
+    "sourceUrl": "https://example.org/saffire-vi",
+    "confidence": "medium"
+  },
+  {
+    "mission": "Saffire-I",
+    "sampleId": "S1-SIBAL",
+    "material": "SIBAL",
+    "o2Pct": 21,
+    "pressurePsia": 14.7,
+    "flowCmS": 25,
+    "spreadRateMmS": 10.5,
+    "outcome": "Full-length burn",
+    "sourceUrl": "https://example.org/saffire-i",
+    "confidence": "high"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "builtAt": "2026-11-14T00:00:00Z",
+  "totalRows": 30,
+  "eligibleRows": 30,
+  "files": {
+    "tests.json": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "psiDatasetDois": {
+    "PSI-25": "10.26023/example-psi-25",
+    "PSI-69": "10.26023/example-psi-69"
+  }
+}

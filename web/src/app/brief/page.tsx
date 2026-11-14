@@ -120,7 +120,7 @@ function Part({ title, children }: { title: string; children: React.ReactNode })
 function BriefSkeleton() {
   return (
     <div aria-busy="true" aria-label="Loading the fire brief">
-      <div data-theme="dark" className="border-b border-line bg-canvas-deep">
+      <div className="theater-well border-b border-line">
         <div className="container-page grid animate-pulse gap-10 pb-16 pt-14 motion-reduce:animate-none lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div className="flex flex-col gap-6">
             <div className="h-3 w-28 rounded-full bg-surface-2" />

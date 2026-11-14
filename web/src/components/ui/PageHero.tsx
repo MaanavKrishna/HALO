@@ -8,8 +8,8 @@ import { cx } from "./cx";
 const settle = (ms: number) => ({ ["--settle-delay" as string]: `${ms}ms` }) as CSSProperties;
 
 /**
- * Page opener: always a dark "theater well" (scoped data-theme="dark", even in
- * the light theme) so the orb keeps its energy. Instrument grid, display type
+ * Page opener: a "theater well" that follows the theme (deep space in dark,
+ * instrument bone lit from the orb side in light). Instrument grid, display type
  * and the signature visual, with one choreographed entrance: the orb ignites,
  * the rings draw in, then the text settles. Runs once; static under reduced
  * motion. `size="cinematic"` is for the landing page and the styleguide only.
@@ -43,9 +43,8 @@ export function PageHero({
   const orb = visual === "orb";
   return (
     <section
-      data-theme="dark"
       aria-labelledby={titleId}
-      className={cx("relative isolate overflow-hidden border-b border-line bg-canvas-deep text-fg", className)}
+      className={cx("theater-well relative isolate overflow-hidden border-b border-line text-fg", className)}
     >
       <GridLines corners />
       {visual !== "none" && (
@@ -54,8 +53,8 @@ export function PageHero({
           className={cx(
             "pointer-events-none absolute -z-[1]",
             cinematic
-              ? "right-[-48%] top-6 w-[115%] opacity-50 sm:right-[-14%] sm:top-1/2 sm:w-[74%] sm:-translate-y-1/2 sm:opacity-100 lg:right-[-2%] lg:w-[52%]"
-              : "right-[-50%] top-4 w-[100%] opacity-40 sm:right-[-10%] sm:top-1/2 sm:w-[55%] sm:-translate-y-1/2 sm:opacity-100 lg:right-0 lg:w-[38%]",
+              ? "right-[-48%] top-6 w-[115%] opacity-50 sm:right-[-24%] sm:top-1/2 sm:w-[74%] sm:-translate-y-1/2 sm:opacity-75 lg:right-[-2%] lg:w-[52%] lg:opacity-100 min-[100rem]:right-[max(-2%,calc((100%-var(--container-wide))/2-4rem))] min-[100rem]:w-[min(52%,64rem)]"
+              : "right-[-50%] top-4 w-[100%] opacity-40 sm:right-[-22%] sm:top-1/2 sm:w-[55%] sm:-translate-y-1/2 sm:opacity-60 lg:right-0 lg:w-[38%] lg:opacity-100 min-[100rem]:right-[max(0px,calc((100%-var(--container-wide))/2-2rem))] min-[100rem]:w-[min(38%,44rem)]",
           )}
         >
           {/* Crosshair axes through the orb centre, running out to the hero edges. */}
@@ -77,7 +76,9 @@ export function PageHero({
       <div
         className={cx(
           "container-wide relative flex flex-col",
-          cinematic ? "min-h-[min(88svh,56rem)] justify-center gap-7 py-24" : "gap-6 pb-16 pt-20 sm:pb-20 sm:pt-28",
+          cinematic
+            ? "min-h-[min(calc(100svh-var(--nav-h)),56rem)] justify-center gap-[clamp(1.25rem,3svh,1.75rem)] py-[clamp(3rem,9svh,6rem)]"
+            : "gap-6 pb-16 pt-[clamp(3.5rem,12svh,7rem)] sm:pb-20",
         )}
       >
         {eyebrow && (

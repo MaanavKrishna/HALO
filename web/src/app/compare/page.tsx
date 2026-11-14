@@ -48,7 +48,7 @@ const NO_JS_CSS =
 
 function HeroFallback() {
   return (
-    <section data-compare-fallback="" data-theme="dark" aria-busy="true" className="relative border-b border-line bg-canvas-deep">
+    <section data-compare-fallback="" aria-busy="true" className="theater-well relative border-b border-line">
       <noscript>
         <style>{NO_JS_CSS}</style>
       </noscript>

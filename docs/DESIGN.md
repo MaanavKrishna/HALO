@@ -8,7 +8,7 @@ HALO is a mission theater for fire evidence. Three influences each own one layer
 
 | Influence | Owns | Shows up as |
 |---|---|---|
-| **Theater** (showcase demo) | The story | Dark, immersive heroes; huge display type; light used as energy, once per view; one narrative reveal per section, on scroll. |
+| **Theater** (showcase demo) | The story | Immersive "theater well" heroes; huge display type; light used as energy, once per view; one narrative reveal per section, on scroll. |
 | **Material** (Apple product UI) | The surface | Optical-size type with tight display tracking and generous body leading; lots of space; frosted glass for floating chrome only; soft offset shadows; rounded geometry; critically damped springs that can be interrupted. |
 | **Instrument** (mission control) | The data | Tabular mono numerals; telemetry labels; grid lines, axes and tick marks; status lamps; every number carries its provenance. |
 
@@ -20,7 +20,14 @@ HALO is a mission theater for fire evidence. Three influences each own one layer
 
 Dark-first "mission theater" for the app; a light "archival paper" theme (a warm neutral, not stock cool grey) for print/PDF and for anyone who prefers light. The toggle offers System / Light / Dark; System is the default, and the browser's `theme-color` follows a forced theme.
 
-**Heroes are always dark.** `PageHero` and the orb panels scope `data-theme="dark"`, so the halo keeps its energy in the light theme too.
+**Every section follows the theme.** Nothing scopes `data-theme="dark"` on a page any more: heroes, the landing's orb and evidence panels, the closing call to action, loading and error states all render in the reader's theme. (`/design` keeps its side-by-side theme samples, which exist to show both.)
+
+**The theater well** (`theater-well` utility; `PageHero`, `BriefHeader`, the landing panels) is the hero ground in both themes:
+
+- Dark: flat `--bg-deep` deep space, exactly as before.
+- Light: an instrument-bone well (`--bg-deep`), lit from the orb side by a soft paper glow (`--well-glow`) and a faint flame-blue tint (`--well-tint`); place the light with `--well-x` / `--well-y`. The fine instrument grid stays at ink 4%.
+- The orb on paper: a deep flame-blue shell, a white-hot inner rim and a soft blue bloom. Additive blending (`plus-lighter`) glows on ink but washes out on white, so `--halo-blend` switches the orb's bloom and rim to normal compositing in light (it follows the same theme resolution as `light-dark()`: OS, then forced or scoped theme). Rings, ticks and axes are ink (`--border-strong`) at low alpha.
+- Risk marks inside a well keep >= 3:1 non-text contrast on the light ground (e.g. the detector blind-spot grid: `--crit` mark on `--crit-soft`, `--border-strong` cell edges).
 
 - Every colour token is written once as `light-dark(light, dark)` in `web/src/styles/tokens.css`. `color-scheme` picks the branch.
 - `html[data-theme="light" | "dark"]` forces a theme; no attribute follows the OS. The choice is stored in `localStorage["halo-theme"]` and applied by a tiny static inline script in `<head>` before first paint, so there is no flash.
@@ -34,7 +41,7 @@ Use the semantic names only. Raw hex in a page or component is a bug. Tailwind n
 | Token | Light | Dark | Use |
 |---|---|---|---|
 | `--bg` (`canvas`) | #f4f3ef | #05080f | Page background. Deep space ink, never pure black; warm archival paper in light. |
-| `--bg-deep` (`canvas-deep`) | #ebe9e3 | #020409 | Hero wells, footer. |
+| `--bg-deep` (`canvas-deep`) | #ebe9e3 | #020409 | Theater wells (instrument bone / deep space), footer. |
 | `--surface-1` | #fcfbf8 | #0c1320 | Cards, inputs, tables. |
 | `--surface-2` | #ebe9e3 | #141d2d | Hover, tracks, wells. |
 | `--surface-3` | #e0ddd5 | #1e293c | Pressed, switch off. Each dark step is clearly lighter. |
@@ -79,12 +86,12 @@ Two self-hosted families via `next/font/google` (downloaded at build; the CSP ne
 - **Inter** (`font-display`, `font-sans`): everything you read. Its optical-size axis (14–32) gives an SF-like split: display sizes use `opsz 32` (tighter, crisper), body uses the text cut automatically (`font-optical-sizing: auto`). No width squeeze.
 - **Geist Mono** (`font-mono`): every number, unit, code and telemetry label. Tabular by construction; `type-data` adds slashed zero.
 
-Fluid sizes run from a 390px phone to a 1440px desktop. Tracking tightens and leading closes as size grows.
+Fluid sizes run from a 320px phone to a 1440px desktop (`clamp()` with a `vw` slope). Display sizes are also capped by viewport height (`svh`), so a short laptop screen (1366×600) keeps the hero's actions above the fold. Past ~1920px the root size itself grows (16px → 18.75px at 2560px), so type, space and containers scale together on ultrawide screens. Tracking tightens and leading closes as size grows.
 
 | Utility | Size | Leading | Tracking | Face |
 |---|---|---|---|---|
-| `type-display-xl` | 52 → 132px | 0.95 | −0.022em | Inter 650, opsz 32 |
-| `type-display-l` | 40 → 84px | 1.0 | −0.018em | Inter 650, opsz 32 |
+| `type-display-xl` | 44 → 132px (≤ 15svh) | 0.95 | −0.022em | Inter 650, opsz 32 |
+| `type-display-l` | 36 → 84px (≤ 12svh) | 1.0 | −0.018em | Inter 650, opsz 32 |
 | `type-display-m` | 32 → 56px | 1.06 | −0.012em | Inter 600, opsz 32 |
 | `type-headline` | 24 → 36px | 1.12 | −0.01em | Inter 600, opsz 28 |
 | `type-title` | 19 → 23px | 1.3 | −0.012em | Inter 600 |
@@ -104,6 +111,13 @@ Rules: one `display-xl` per page at most (landing hero). Headings balance (`text
 - **Containers:** `container-narrow` 56rem, `container-page` 76rem, `container-wide` 90rem (nav, heroes, dashboards), prose 42rem.
 - **Grid:** `grid-12`: 4 columns on phones, 8 from 768px, 12 from 1024px.
 - **Breakpoints:** Tailwind defaults (sm 640, md 768, lg 1024, xl 1280). 390px is a first-class target: design it first, never let it scroll sideways.
+- **Responsive rules** (checked by `tests/e2e/responsive.spec.ts` at 320, 768, 1024, 1440 and 2560px in both themes):
+  - No horizontal scroll at any width from 320px up. Grids use `minmax(0, 1fr)` tracks; long tokens (`PSI-20`, dates) never wrap mid-token.
+  - Tablets (768–1023px) get real two-column layouts; card rows of five go 1 → 2 → 3 → 5 columns.
+  - `Stat` readouts scale with their cell (container units), so a long value fits a narrow cell; `StatGroup` puts three or four readouts in one row from sm, never a 3 + 1 orphan.
+  - Segmented controls with four or more options fold into a 3-column tray below 30rem; the preset picker does the same below 640px.
+  - Hero visuals sit behind the text, dimmed, below 1024px; side by side from 1024px; on ultrawide they anchor to the content column rather than the window edge.
+  - Touch targets are at least 40px on coarse pointers (`pointer-coarse:` on small buttons, segmented options, chips).
 - **Radii:** `xs` 4 (kbd, code), `sm` 8 (inputs, tooltips), `md` 12 (callouts, icon buttons), `lg` 18 (cards, panels, tables), `xl` 28 (sheets, hero media), `pill` (buttons, chips, segmented). A nested surface uses the next size down.
 
 ## Depth and materials
@@ -166,7 +180,7 @@ All in `web/src/components/ui/`, exported from `@/components/ui`. Typed props, n
 | `HaloOrb` (`sm`/`md`/`lg`/`xl` or px, `fuel`, `animate`) | The signature visual; decorative, `aria-hidden`. | More than one per view; encoding data. |
 | `RingsGraphic` (`rings`, `active`, `labels`, `spin`, `drawIn`, `maskInner`, `title`) | Concentric ring language; becomes an `img` with `title`. | Implying measured data without a title and source. |
 | `Reveal` (`delay`, `as`) | Scroll reveal wrapper. | Wrapping every block. |
-| `PageHero` (`eyebrow`, `title`, `lede`, `actions`, `visual` orb/rings, `ringLabels`, `size` cinematic/page, `meta`) | Page opener; always a dark theater well with the choreographed entrance. `cinematic` for the landing page and the styleguide only. | Stacking a second hero. |
+| `PageHero` (`eyebrow`, `title`, `lede`, `actions`, `visual` orb/rings, `ringLabels`, `size` cinematic/page, `meta`) | Page opener; a theater well in the reader's theme, with the choreographed entrance. `cinematic` for the landing page and the styleguide only. | Stacking a second hero. |
 | `Article` (`toc`) / `Prose` | Long-form pages (Method, Data, About): sticky "On this page" list on desktop, disclosure on phones, `prose-halo` column. Headings inside need the `toc` ids. | Dense data tables inside prose without `TableFrame`. |
 | `Navbar` | Sticky glass bar: Findings, Explore, Compare, Method, Data, About, plus the "Build a brief" CTA (`/build`). Below 1024px a glass sheet (modal: rest of page inert, Tab cycles inside, Escape closes, focus returns to the button) with theme toggle. | Adding links without updating `site.ts`. |
 | `Footer` | Product / Science / Project columns, theme toggle, the required NASA disclaimer. No decorative wordmark. | Removing the disclaimer. |
@@ -186,7 +200,7 @@ Navigation data (links, footer groups, external URLs, disclaimer) lives in `comp
 - The mobile menu is modal: the page behind is `inert` and does not scroll, Tab stays inside, and Escape, outside tap, route change or a link closes it and returns focus to its button.
 - Pages with a sticky bottom action bar mark it `data-sticky-action`; `scroll-padding-bottom` (from `--sticky-action-h`) keeps focused fields clear of it (WCAG 2.4.11).
 - Non-text contrast: switch tracks, segmented and theme-toggle thumbs, and control edges reach 3:1 against what surrounds them.
-- Hit areas are at least 40px for icon buttons and nav controls on touch.
+- Hit areas are at least 40px for icon buttons, nav controls, small buttons, segmented options and chips on touch (coarse pointers).
 - Decorative visuals (`HaloOrb`, untitled `RingsGraphic`, `GridLines`) are `aria-hidden`.
 - Reduced motion, reduced transparency and increased contrast preferences are honoured (see Motion and Themes).
 - Browser surfaces are themed: selection, caret, scrollbars, accent-color, tabular numerals.

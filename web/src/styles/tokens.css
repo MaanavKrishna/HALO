@@ -22,7 +22,7 @@
   /* Dark: deep space ink, never pure black; each surface step is clearly lighter.
      Light: "archival paper", a warm neutral rather than stock cool grey. */
   --bg: light-dark(#f4f3ef, #05080f);
-  --bg-deep: light-dark(#ebe9e3, #020409); /* footer, wells (heroes are always dark) */
+  --bg-deep: light-dark(#ebe9e3, #020409); /* footer and theater wells (heroes): instrument bone / deep space */
   --surface-1: light-dark(#fcfbf8, #0c1320); /* cards, inputs */
   --surface-2: light-dark(#ebe9e3, #141d2d); /* raised / hover / tracks */
   --surface-3: light-dark(#e0ddd5, #1e293c); /* pressed, switch off */
@@ -56,12 +56,19 @@
   --fill-highlight: rgb(255 255 255 / 0.22); /* top edge of solid fills */
   --thumb: light-dark(#ffffff, #f4f6fa); /* switch and slider thumbs */
 
-  /* Halo orb: the microgravity flame. Decorative only, never data. */
-  --halo-core: light-dark(rgb(40 90 230 / 0.05), rgb(50 95 230 / 0.16));
-  --halo-shell: light-dark(rgb(36 92 235 / 0.6), rgb(110 160 255 / 0.9));
-  --halo-hot: light-dark(rgb(235 242 255 / 0.9), rgb(232 240 255 / 0.95)); /* thin white-hot rim */
-  --halo-rim: light-dark(rgb(30 80 220 / 0.22), rgb(90 140 255 / 0.42));
-  --halo-bloom: light-dark(rgb(40 100 240 / 0.14), rgb(60 110 255 / 0.3));
+  /* Theater well (heroes, orb panels): follows the theme. Light is an instrument-bone
+     well lit from the orb side by a soft paper glow; dark is unchanged deep space. */
+  --well-glow: light-dark(rgb(255 254 250 / 0.85), transparent);
+  --well-tint: light-dark(rgb(47 95 240 / 0.05), transparent);
+
+  /* Halo orb: the microgravity flame. Decorative only, never data.
+     Light: a deep flame-blue shell with a white-hot inner rim and a soft blue bloom,
+     composited normally (additive light washes out on paper). Dark: additive light. */
+  --halo-core: light-dark(rgb(47 95 240 / 0.07), rgb(50 95 230 / 0.16));
+  --halo-shell: light-dark(rgb(28 76 226 / 0.88), rgb(110 160 255 / 0.9));
+  --halo-hot: light-dark(rgb(255 255 255 / 0.75), rgb(232 240 255 / 0.95)); /* thin white-hot rim */
+  --halo-rim: light-dark(rgb(40 92 236 / 0.34), rgb(90 140 255 / 0.42));
+  --halo-bloom: light-dark(rgb(58 110 250 / 0.17), rgb(60 110 255 / 0.3));
 
   /* ---------- Colour: semantics (risk colours only for risk) ---------- */
   --warn: light-dark(#8a5000, #f3b54d);
@@ -89,9 +96,12 @@
   /* Families (--font-display, --font-sans, --font-mono) and radii/easings live in the
      @theme block of app/globals.css so Tailwind and CSS share one definition. */
 
-  /* Fluid scale (390px -> 1440px). Line-height and tracking tighten as size grows. */
-  --fs-display-xl: clamp(3.25rem, 1.4rem + 7.6vw, 8.25rem);
-  --fs-display-l: clamp(2.5rem, 1.45rem + 4.3vw, 5.25rem);
+  /* Fluid scale (320px -> 1440px; past ~1920px the root size itself grows, see
+     globals.css). Display sizes are also capped by the viewport height, so a
+     short laptop screen keeps the hero's actions above the fold. Line-height
+     and tracking tighten as size grows. */
+  --fs-display-xl: clamp(2.75rem, min(1.4rem + 7.6vw, 15svh), 8.25rem);
+  --fs-display-l: clamp(2.25rem, min(1.45rem + 4.3vw, 12svh), 5.25rem);
   --fs-display-m: clamp(2rem, 1.4rem + 2.5vw, 3.5rem);
   --fs-headline: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
   --fs-title: clamp(1.1875rem, 1.1rem + 0.35vw, 1.4375rem);
@@ -188,6 +198,22 @@
   color-scheme: light;
 }
 
+/* Orb blending is not a colour, so light-dark() cannot pick it: it follows the
+   same theme resolution by hand (OS default, then a forced or scoped theme).
+   Additive light (plus-lighter) glows on ink but washes out on paper. */
+:root,
+[data-theme="dark"] {
+  --halo-blend: plus-lighter;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --halo-blend: normal;
+  }
+}
+[data-theme="light"] {
+  --halo-blend: normal;
+}
+
 @media (min-resolution: 2dppx) {
   :root,
   [data-theme] {
@@ -231,6 +257,9 @@
     --surface-2: #ffffff;
     --surface-3: #ffffff;
     --accent-glow: transparent;
+    --halo-blend: normal;
+    --well-glow: transparent;
+    --well-tint: transparent;
     --elev-1: none;
     --elev-2: none;
     --elev-3: none;

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
-import { CompareColumn } from "@/components/compare/CompareColumn";
-import { DEFAULT_A, DEFAULT_B, changes, compareHref, habitatFromParam, samePreset } from "@/lib/compare";
+import { ButtonLink, Callout, PageHero } from "@/components/ui";
+import { DeltaRail } from "@/components/compare/DeltaRail";
+import { MissionCard } from "@/components/compare/MissionCard";
+import { PresetPicker, type PickerOption } from "@/components/compare/PresetPicker";
+import { DEFAULT_A, DEFAULT_B, compareDelta, compareHref, habitatFromParam, presetKey } from "@/lib/compare";
 import { HALO_DATA } from "@/lib/data/load";
 import { buildBrief } from "@/lib/engine/brief";
 import { PRESETS } from "@/lib/engine/presets";
@@ -13,31 +15,46 @@ export const metadata: Metadata = {
   description: "Two habitat atmospheres side by side: evidence grade, flags and smoke detection.",
 };
 
-const PRESET_LIST = Object.values(PRESETS);
+const SHORT: Record<keyof typeof PRESETS, string> = {
+  iss: "ISS",
+  artemis: "Artemis",
+  moon: "Moon",
+  rover: "Rover",
+  suit: "EVA suit",
+};
+const KEYS = Object.keys(PRESETS) as Array<keyof typeof PRESETS>;
 
-function Picker({ side, current, a, b }: { side: "a" | "b"; current: Habitat; a: Habitat; b: Habitat }) {
+function pickerOptions(side: "a" | "b", a: Habitat, b: Habitat): { options: PickerOption[]; value: string } {
+  const current = side === "a" ? a : b;
+  const key = presetKey(current);
+  const options: PickerOption[] = KEYS.map((k) => ({
+    value: k,
+    label: SHORT[k],
+    href: side === "a" ? compareHref(PRESETS[k], b) : compareHref(a, PRESETS[k]),
+  }));
+  if (!key) options.push({ value: "custom", label: "Custom", href: compareHref(a, b) });
+  return { options, value: key ?? "custom" };
+}
+
+// Without JS, React never swaps the streamed comparison in (it waits in a hidden div at the end of <body>).
+// This no-JS-only stylesheet shows it in place of the fallback, above the footer, so the plain-link
+// pickers give a complete page without scripts.
+const NO_JS_CSS =
+  "[data-compare-fallback]{display:none}" +
+  // In the base layer: Tailwind's preflight hides [hidden] with a layered !important, which an unlayered rule cannot beat.
+  "@layer base{body>div[hidden][id^='S:']{display:flex!important;flex-direction:column;order:1}}" +
+  "body>footer{order:2}";
+
+function HeroFallback() {
   return (
-    <div>
-      <p id={`pick-${side}`} className="text-sm font-semibold">{side === "a" ? "From" : "To"}</p>
-      <ul aria-labelledby={`pick-${side}`} className="mt-2 flex flex-wrap gap-2">
-        {PRESET_LIST.map((p) => {
-          const on = samePreset(p, current);
-          const href = side === "a" ? compareHref(p, b) : compareHref(a, p);
-          return (
-            <li key={p.name}>
-              <Link
-                href={href}
-                prefetch={false}
-                aria-current={on ? "true" : undefined}
-                className={`inline-block rounded-full border px-3 py-1.5 text-sm ${on ? "border-flame bg-flame-soft font-semibold" : "border-rule-strong bg-surface hover:border-muted"}`}
-              >
-                {p.name}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <section data-compare-fallback="" data-theme="dark" aria-busy="true" className="relative border-b border-line bg-canvas-deep">
+      <noscript>
+        <style>{NO_JS_CSS}</style>
+      </noscript>
+      <div className="container-wide min-h-[22rem] pb-16 pt-20 sm:pt-28">
+        <p className="type-body-l text-fg-2">Loading comparison…</p>
+      </div>
+    </section>
   );
 }
 
@@ -48,70 +65,90 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/compare"
   const notices = [...na, ...nb];
   const briefA = buildBrief(a, HALO_DATA);
   const briefB = buildBrief(b, HALO_DATA);
-  const diff = changes(briefA, briefB);
+  const delta = compareDelta(briefA, briefB);
+  const pickA = pickerOptions("a", a, b);
+  const pickB = pickerOptions("b", a, b);
+  const idsA = new Set(briefA.flags.map((f) => f.id));
+  const idsB = new Set(briefB.flags.map((f) => f.id));
+  const onlyA = new Set([...idsA].filter((id) => !idsB.has(id)));
+  const onlyB = new Set([...idsB].filter((id) => !idsA.has(id)));
+  const amb = HALO_DATA.detector.ambient;
+  const detectorNote = `SAME ran at ISS air (${amb.o2Pct}% O₂, ${amb.pressurePsia} psia); smoke behavior at the habitat atmosphere is untested.`;
 
   return (
     <>
-      <h1 className="wide text-[clamp(1.6rem,3.6vw,2.4rem)] font-extrabold leading-tight text-balance">
-        What changes when you move from {a.name} to {b.name}
-      </h1>
-      <p className="mt-3 max-w-[44rem] text-[17px] leading-snug text-muted">
-        Same materials, same evidence rules. Evidence grades describe how close the nearest NASA test is, not the habitat itself.
-      </p>
+      <PageHero
+        titleId="compare-title"
+        visual="rings"
+        eyebrow="Compare habitats"
+        title={
+          <>
+            <span className="type-headline block text-fg-2">What changes when you move from</span>{" "}
+            <span className="mt-2 block">
+              {a.name} <span className="text-fg-3">to</span> {b.name}
+            </span>
+          </>
+        }
+        lede="Same materials, same evidence rules. Evidence grades describe how close the nearest NASA test is, not the habitat itself."
+        actions={
+          <ButtonLink href={compareHref(b, a)} prefetch={false} scroll={false} variant="secondary" size="sm" icon={<SwapIcon />}>
+            Swap sides
+          </ButtonLink>
+        }
+      />
 
-      {notices.length > 0 && (
-        <div role="note" aria-label="Notices" className="mt-5 max-w-[46rem] rounded-md border border-amber bg-amber-soft p-3 text-sm">
-          <p className="font-semibold">Some of the link could not be read.</p>
-          <ul className="mt-1 list-disc space-y-0.5 pl-5">
-            {notices.map((n) => (
-              <li key={n}>{n}</li>
-            ))}
-          </ul>
+      <div className="container-wide flex flex-col gap-8 pb-24 pt-10 sm:pt-12">
+        {notices.length > 0 && (
+          <div role="note" aria-label="Notices" className="max-w-[48rem]">
+            <Callout tone="info" title="Some of the link could not be read.">
+              <ul className="mt-1 list-disc space-y-0.5 pl-5">
+                {notices.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            </Callout>
+          </div>
+        )}
+
+        <section
+          aria-label="Choose habitats"
+          className="grid gap-5 rounded-[var(--radius-lg)] border border-line bg-surface-1 p-5 shadow-[var(--inner-highlight),var(--elev-1)] md:grid-cols-2 lg:grid-cols-[1fr_20rem_1fr] lg:items-end"
+        >
+          <PresetPicker label="From" options={pickA.options} value={pickA.value} />
+          <p className="hidden text-center text-xs text-fg-3 lg:block">Pick a preset on each side, or open a brief and compare from there.</p>
+          <div className="lg:justify-self-end">
+            <PresetPicker label="To" options={pickB.options} value={pickB.value} />
+          </div>
+        </section>
+
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem_minmax(0,1fr)]">
+          <div className="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)] lg:col-start-2 lg:row-start-1">
+            <DeltaRail a={a} b={b} delta={delta} sameAmbient={amb} />
+          </div>
+          <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+            <MissionCard brief={briefA} side="From" headingId="col-a" uniqueFlagIds={onlyA} detectorNote={detectorNote} />
+          </div>
+          <div className="min-w-0 lg:col-start-3 lg:row-start-1">
+            <MissionCard brief={briefB} side="To" headingId="col-b" uniqueFlagIds={onlyB} detectorNote={detectorNote} />
+          </div>
         </div>
-      )}
-
-      <section aria-label="Choose habitats" className="mt-6 grid gap-5 sm:grid-cols-2">
-        <Picker side="a" current={a} a={a} b={b} />
-        <Picker side="b" current={b} a={a} b={b} />
-      </section>
-
-      <section aria-labelledby="changes" className="mt-8 border-t-2 border-ink pt-5">
-        <h2 id="changes" className="wide text-lg font-bold">Summary of the change</h2>
-        <ul className="mt-3 max-w-[46rem] list-disc space-y-1.5 pl-5 leading-snug marker:text-muted">
-          <li>
-            Atmosphere:{" "}
-            <span className="num">{a.o2Pct}% O<sub>2</sub> at {a.pressurePsia} psia</span> to{" "}
-            <span className="num">{b.o2Pct}% O<sub>2</sub> at {b.pressurePsia} psia</span>.
-          </li>
-          <li>
-            Evidence grade:{" "}
-            {diff.gradeChanged ? (
-              <>{briefA.grade.grade} to {briefB.grade.grade}.</>
-            ) : (
-              <>unchanged at {briefA.grade.grade}.</>
-            )}
-          </li>
-          {diff.added.map((f) => (
-            <li key={`add-${f.id}`}>New in {b.name}: {f.title}.</li>
-          ))}
-          {diff.removed.map((f) => (
-            <li key={`rem-${f.id}`}>No longer flagged in {b.name}: {f.title}.</li>
-          ))}
-        </ul>
-      </section>
-
-      <div className="mt-8 grid gap-5 lg:grid-cols-2">
-        <CompareColumn brief={briefA} heading="col-a" />
-        <CompareColumn brief={briefB} heading="col-b" />
       </div>
     </>
   );
 }
 
+function SwapIcon() {
+  return (
+    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 7h11M12 4l3 3-3 3M16 13H5M8 10l-3 3 3 3" />
+    </svg>
+  );
+}
+
 export default function ComparePage(props: PageProps<"/compare">) {
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pb-16 pt-10 sm:px-8 sm:pt-14">
-      <Suspense fallback={<p className="text-muted">Loading comparison…</p>}>
+    <main>
+      <Suspense fallback={<HeroFallback />}>
         <Comparison searchParams={props.searchParams} />
       </Suspense>
     </main>

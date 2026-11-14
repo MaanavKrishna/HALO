@@ -19,7 +19,7 @@ test("page hydrates with no CSP violations", async ({ page }) => {
   });
   page.on("pageerror", (e) => problems.push(String(e)));
 
-  await page.goto("/");
+  await page.goto("/build");
   await expect(page.getByRole("heading", { name: "HALO" })).toBeVisible();
   const o2 = page.getByRole("spinbutton", { name: /Oxygen/ });
   await expect(o2).toHaveValue(String(PRESETS.artemis.o2Pct));
@@ -32,7 +32,7 @@ test("page hydrates with no CSP violations", async ({ page }) => {
 
 test("each preset generates the matching brief URL", async ({ page }) => {
   for (const [id, habitat] of Object.entries(PRESETS)) {
-    await page.goto("/");
+    await page.goto("/build");
     await page.locator(`[data-preset="${id}"]`).click();
     await page.getByRole("button", { name: "Generate brief" }).click();
     await page.waitForURL((u) => u.pathname === "/brief");
@@ -41,7 +41,7 @@ test("each preset generates the matching brief URL", async ({ page }) => {
 });
 
 test("editing a loaded preset marks the name as modified", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/build");
   await page.locator('[data-preset="artemis"]').click();
   const o2 = page.getByRole("spinbutton", { name: /Oxygen/ });
   await o2.fill("27");

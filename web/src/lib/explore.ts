@@ -73,21 +73,30 @@ export function psiNumber(psiId: string): number {
 
 export interface PlotPoint { o2Pct: number; pressurePsia: number; count: number; measured: boolean }
 
-/** Unique (O2, pressure) points of an investigation's eligible tests. `measured` = both values measured for every test at the point. */
+/**
+ * Distinct (O2, pressure) conditions of an investigation's eligible tests, with
+ * both values rounded to 0.1 so near-duplicates (14.696 vs 14.7 psia) merge.
+ * `measured` = both values measured for every test at the point.
+ */
 export function plotPoints(tests: TestPoint[], psiId: string): PlotPoint[] {
   const map = new Map<string, PlotPoint>();
   for (const t of tests) {
     if (t.psiId !== psiId) continue;
-    const key = `${t.o2Pct}|${t.pressurePsia}`;
+    const o2 = r1(t.o2Pct);
+    const p = r1(t.pressurePsia);
+    const key = `${o2}|${p}`;
     const m = t.o2Src === 'measured' && t.pSrc === 'measured';
     const cur = map.get(key);
     if (cur) {
       cur.count++;
       cur.measured = cur.measured && m;
-    } else map.set(key, { o2Pct: t.o2Pct, pressurePsia: t.pressurePsia, count: 1, measured: m });
+    } else map.set(key, { o2Pct: o2, pressurePsia: p, count: 1, measured: m });
   }
   return [...map.values()].sort((a, b) => a.o2Pct - b.o2Pct || a.pressurePsia - b.pressurePsia);
 }
+
+/** Ranges that exist without per-test rows come from the PSI design matrix, not from logged tests. */
+export const fromDesignMatrix = (i: Investigation) => i.nRows === 0 && !!(i.o2Range || i.pRangePsia || i.flowRangeCmS);
 
 const VARIABLES: Record<string, string> = {
   o2: 'Oxygen fraction',
@@ -102,3 +111,44 @@ export const variableLabel = (k: string) => VARIABLES[k] ?? k;
 export function doiUrl(doi: string): string | null {
   return /^10\.\d{4,9}\/\S+$/.test(doi) ? `https://doi.org/${encodeURI(doi)}` : null;
 }
+
+/** Multi-select hazard filter (any selected hazard matches) plus one fuel class. Empty hazards = all. */
+export function filterByHazards(list: Investigation[], hazards: Hazard[], fuel: FuelClass | 'all'): Investigation[] {
+  return list.filter(
+    (i) => (hazards.length === 0 || hazards.some((h) => i.hazards.includes(h))) && (fuel === 'all' || i.fuelClasses.includes(fuel)),
+  );
+}
+
+export type HardwareFamily = 'rack' | 'glovebox' | 'vehicle' | 'smoke' | 'lab' | 'none';
+
+export const HARDWARE_LABEL: Record<HardwareFamily, string> = {
+  rack: 'Combustion Integrated Rack',
+  glovebox: 'Science Glovebox',
+  vehicle: 'Cygnus cargo vehicle',
+  smoke: 'Smoke diagnostics',
+  lab: 'Investigator laboratory',
+  none: 'Hardware not tabulated',
+};
+
+/** Groups the free-text hardware field into a few families, for the glyph and label. */
+export function hardwareFamily(hardware: string): HardwareFamily {
+  const h = hardware.toLowerCase();
+  if (!h.trim()) return 'none';
+  if (/saffire|cygnus/.test(h)) return 'vehicle';
+  if (/glovebox|\bmsg\b/.test(h)) return 'glovebox';
+  if (/combustion integrated rack|\bcir\b|acme|mdca/.test(h)) return 'rack';
+  if (/soot|p-trak/.test(h)) return 'smoke';
+  if (/laboratory/.test(h)) return 'lab';
+  return 'none';
+}
+
+/** Neighbours in PSI-id order, for prev/next navigation. */
+export function neighbours(list: Investigation[], psiId: string): { prev: Investigation | null; next: Investigation | null } {
+  const sorted = [...list].sort((a, b) => psiNumber(a.psiId) - psiNumber(b.psiId));
+  const i = sorted.findIndex((x) => x.psiId === psiId);
+  if (i < 0) return { prev: null, next: null };
+  return { prev: sorted[i - 1] ?? null, next: sorted[i + 1] ?? null };
+}
+
+/** The O2 track the coverage bars draw on (percent of atmosphere). */
+export const O2_TRACK: [number, number] = [0, 40];

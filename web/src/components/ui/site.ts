@@ -8,6 +8,13 @@ export const NAV_LINKS = [
   { href: "/about", label: "About" },
 ] as const;
 
+/** Tool views reached from the footer and from Explore, kept out of the top bar so it stays at six links. */
+export const TOOL_LINKS = [
+  { href: "/investigations/compare", label: "Compare investigations" },
+  { href: "/materials", label: "Material screener" },
+  { href: "/gravity", label: "Partial-gravity bounds" },
+] as const;
+
 export const BUILD_HREF = "/build";
 export const CHALLENGE_URL = "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/";
 export const REPO_URL = "https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations";
@@ -21,7 +28,9 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
       { href: BUILD_HREF, label: "Build a brief" },
       { href: "/findings", label: "Findings" },
       { href: "/explore", label: "Explore" },
-      { href: "/compare", label: "Compare" },
+      { href: "/compare", label: "Compare habitats" },
+      { href: "/investigations/compare", label: "Compare investigations" },
+      { href: "/materials", label: "Material screener" },
     ],
   },
   {
@@ -29,6 +38,7 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
     links: [
       { href: "/method", label: "Method" },
       { href: "/data", label: "Data" },
+      { href: "/gravity", label: "Partial-gravity bounds" },
       { href: "/data#sources", label: "Sources and DOIs" },
     ],
   },

@@ -151,7 +151,7 @@ def load_unified(raw_et: Path | None = None) -> pd.DataFrame:
                 fuel_class="gas (condensed-fuel surrogate, porous plate)", o2_pct=v, pressure_atm=p, flow_cm_s=0.0,
                 diluent="N2", geometry_mm=num(r["Burner Size (mm)"]), n_tests_day=int(num(r["Flames Ignited"])),
                 n_tests=int(num(r["Flames Ignited"])) / len(vals), o2_src="table (list per day)",
-                p_src=("INFERRED from objective pairing 26.5%/10.2psia, 34%/8.2psia" if p == p else "not reported"),
+                p_src=("INFERRED from objective pairing 26.5%/10.2psia, 34%/8.2psia" if not pd.isna(p) else "not reported"),
                 flow_src="quiescent burner")
 
     # ACME s-Flame PSI-23

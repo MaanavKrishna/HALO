@@ -6,6 +6,7 @@ import {
   ATMOSPHERE_PRESETS, SCREEN_MATERIALS, clusterPsi, outcomeLabel, type PsiEvidence, evidenceCounts, parseScreenParams, screenHref, screenMaterial,
 } from "@/components/materials/screener";
 import { EvidencePlot, SeriesSwatch } from "@/components/views/EvidencePlot";
+import { count, joinNames, plural } from "@/components/views/plural";
 import { LinkChips } from "@/components/views/LinkChips";
 import { StreamFallback } from "@/components/views/StreamFallback";
 import { HALO_DATA } from "@/lib/data/load";
@@ -70,7 +71,7 @@ function PsiTable({ rows, caption }: { rows: PsiEvidence[]; caption: string }) {
                 <td className="max-w-[16rem] px-4 py-2.5 text-fg-2">
                   {fuel}
                   {fuelFromPreviousRow ? (
-                    <span className="mt-0.5 block text-xs text-fg-3">PSI: &ldquo;{t.fuel}&rdquo;; carried from the row above</span>
+                    <span className="mt-0.5 block text-xs text-fg-3">sample cell blank in PSI; carried from the row above</span>
                   ) : (
                     inferredMaterial && <span className="mt-0.5 block text-xs text-fg-3">material inferred from the sample name</span>
                   )}
@@ -135,7 +136,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
     detail: String(counts[m.id]),
     selected: m.id === material.id,
     href: screenHref(m.id, a),
-    ariaLabel: `${m.label}, ${counts[m.id]} evidence points`,
+    ariaLabel: `${m.label}, ${count(counts[m.id], "evidence point")}`,
   }));
   const atmChips = ATMOSPHERE_PRESETS.map((p) => ({
     key: p.key,
@@ -156,7 +157,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
           <>
             {material.label}
             <span className="type-headline mt-3 block text-fg-2">
-              at {a.name}, <span className="font-mono">{a.o2Pct}%</span> O₂ and <span className="font-mono">{a.pressurePsia}</span> psia
+              at {a.name}, <span className="tabular-nums">{a.o2Pct}%</span> O₂ and <span className="tabular-nums">{a.pressurePsia}</span> psia
             </span>
           </>
         }
@@ -237,7 +238,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
             <Stat
               label="Nearest Saffire point"
               value={s.nearestLit ? s.nearestLit.d.toFixed(2) : "none"}
-              detail={s.nearestLit ? `${s.nearestLit.label} (literature)` : "No flight point with both O₂ and pressure"}
+              detail={s.nearestLit ? `${s.nearestLit.label} (literature)` : s.literature.length ? "No flight point with both O₂ and pressure" : "No Saffire flight point for this material"}
               provenance={s.nearestLit ? <ProvenanceBadge provenance="computed" /> : undefined}
             />
           </StatGroup>
@@ -272,7 +273,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
                   },
                 ]}
                 refs={[{ label: a.name, o2Pct: a.o2Pct, pressurePsia: a.pressurePsia, primary: true }]}
-                label={`${material.label}: ${s.psi.length} PSI test rows and ${litPlot.length} Saffire flight points by oxygen and pressure, with your atmosphere (${a.o2Pct}% O2, ${a.pressurePsia} psia) marked. Tables follow.`}
+                label={`${material.label}: ${count(s.psi.length, "PSI test row")} and ${count(litPlot.length, "Saffire flight point")} by oxygen and pressure, with your atmosphere (${a.o2Pct}% O2, ${a.pressurePsia} psia) marked. Tables follow.`}
                 legend={
                   <>
                     <span className="inline-flex items-center gap-1.5 text-fg-2">
@@ -302,10 +303,10 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
           <SectionHead
             id="psi-rows"
             title="PSI test rows"
-            aside={`${s.psi.length} rows · nearest first`}
+            aside={`${count(s.psi.length, "row")}${s.psi.length > 1 ? " · nearest first" : ""}`}
             lede={
               s.psi.length
-                ? `Rows from ${s.investigations.map((id) => byPsi.get(id)?.acronym ?? id).join(", ")} whose fuel is ${material.label}. Only rows with both oxygen and pressure known are listed.`
+                ? `Rows from ${joinNames(s.investigations.map((id) => byPsi.get(id)?.acronym ?? id))} whose fuel is ${material.label}. Only rows with both oxygen and pressure known are listed.`
                 : `No PSI row with a known atmosphere names ${material.label}.${s.smoke ? " Its only microgravity evidence is the smoke-detector runs below." : ""}`
             }
           />
@@ -313,7 +314,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
             <p className="flex max-w-[70ch] flex-wrap items-center gap-2 text-sm text-fg-2">
               <ProvenanceBadge provenance="inferred" />
               <span>
-                {shapeInferred} of {s.psi.length} rows. {material.inferNote}
+                {shapeInferred} of {count(s.psi.length, "row")}. {material.inferNote}
               </span>
             </p>
           )}
@@ -321,20 +322,20 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
             <p className="flex max-w-[70ch] flex-wrap items-center gap-2 text-sm text-fg-2">
               <ProvenanceBadge provenance="inferred" />
               <span>
-                {fromPrevious} {fromPrevious === 1 ? "row reads" : "rows read"} &ldquo;(see previous row)&rdquo; in PSI; HALO carries the material
-                forward from the row above in the same table.
+                {fromPrevious} {plural(fromPrevious, "row leaves", "rows leave")} the sample cell blank in PSI; HALO carries the material forward
+                from the row above in the same table.
               </span>
             </p>
           )}
-          {s.psi.length > 0 && <PsiTable rows={s.psi.slice(0, FIRST_ROWS)} caption={`The ${Math.min(FIRST_ROWS, s.psi.length)} PSI test rows for ${material.label} nearest your atmosphere`} />}
+          {s.psi.length > 0 && <PsiTable rows={s.psi.slice(0, FIRST_ROWS)} caption={s.psi.length === 1 ? `The one PSI test row for ${material.label}` : `The ${Math.min(FIRST_ROWS, s.psi.length)} PSI test rows for ${material.label} nearest your atmosphere`} />}
           {s.psi.length > FIRST_ROWS && (
             <details className="group">
               <summary className={buttonClass("secondary", "sm", "cursor-pointer list-none [&::-webkit-details-marker]:hidden")}>
-                <span className="group-open:hidden">Show the other {s.psi.length - FIRST_ROWS} rows</span>
-                <span className="hidden group-open:inline">Hide the other rows</span>
+                <span className="group-open:hidden">Show the other {count(s.psi.length - FIRST_ROWS, "row")}</span>
+                <span className="hidden group-open:inline">Hide the other {plural(s.psi.length - FIRST_ROWS, "row")}</span>
               </summary>
               <div className="mt-4">
-                <PsiTable rows={s.psi.slice(FIRST_ROWS)} caption={`The remaining ${s.psi.length - FIRST_ROWS} PSI test rows for ${material.label}`} />
+                <PsiTable rows={s.psi.slice(FIRST_ROWS)} caption={`The remaining ${count(s.psi.length - FIRST_ROWS, "PSI test row")} for ${material.label}`} />
               </div>
             </details>
           )}
@@ -352,7 +353,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
           <SectionHead
             id="lit"
             title="Saffire flight results"
-            aside={<span className="inline-flex items-center gap-2">{s.literature.length} points <ProvenanceBadge provenance="literature" /></span>}
+            aside={<span className="inline-flex items-center gap-2">{count(s.literature.length, "point")} <ProvenanceBadge provenance="literature" /></span>}
             lede={
               s.literature.length
                 ? `Large-scale burns on Cygnus cargo vehicles, read from NASA technical reports. These are literature values, not PSI rows, and do not count toward a brief's coverage grade.${overlap ? " Saffire-I and II also appear above as PSI rows: the same burns, reported in two sources." : ""}`
@@ -395,7 +396,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
               ))}
             </ol>
           )}
-          {litNoP > 0 && <p className="text-xs text-fg-3">{litNoP} of these points report no cabin pressure, so they have no distance and are not plotted.</p>}
+          {litNoP > 0 && <p className="text-xs text-fg-3">{litNoP} of these points {litNoP === 1 ? "reports no cabin pressure, so it has no distance and is not plotted" : "report no cabin pressure, so they have no distance and are not plotted"}.</p>}
         </section>
 
         <section aria-labelledby="smoke" className="flex flex-col gap-4">

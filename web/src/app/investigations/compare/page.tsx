@@ -3,6 +3,7 @@ import { ButtonLink, Callout, Icon, PageHero, Panel, ProvenanceBadge } from "@/c
 import { CompareMatrix } from "@/components/views/CompareMatrix";
 import { EvidencePlot, SERIES_STYLES, SeriesSwatch, type PlotSeries } from "@/components/views/EvidencePlot";
 import { LinkChips } from "@/components/views/LinkChips";
+import { joinNames } from "@/components/views/plural";
 import { StreamFallback } from "@/components/views/StreamFallback";
 import {
   MAX_IDS, MIN_IDS, compareMatrix, compareSummary, parseIds, plotPoints, sortedIds, toggleHref,
@@ -18,10 +19,6 @@ export const metadata = pageMetadata({
     "Two to four NASA PSI combustion investigations side by side: hardware, fuels, oxygen, pressure and flow ranges, what varied, hazards, sensors and the atmospheres each one tested.",
   path: "/investigations/compare",
 });
-
-function joinNames(names: string[]): string {
-  return names.length <= 2 ? names.join(" and ") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
-}
 
 const r1 = (x: number) => Number(x.toFixed(1));
 

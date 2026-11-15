@@ -3,8 +3,9 @@ import { ButtonLink, Callout, Icon, PageHero, ProvenanceBadge } from "@/componen
 import { ExternalLink, SectionHead } from "@/components/materials/parts";
 import { GravityAxis, GravityStrip, StripMarker } from "@/components/gravity/GravityStrip";
 import {
-  BURN_LABEL, CHALLENGE_URL, FACT_SHEET_URL, FM2_URL, LEVELS, LUCI_URL, SURFACE_GRAVITY, materialBounds, pairTally, parseSaffireII,
+  BURN_LABEL, CHALLENGE_URL, FACT_SHEET_URL, FM2_URL, LEVELS, LUCI_URL, SURFACE_GRAVITY, materialBounds, noteRef, pairTally, parseSaffireII, psiNote,
 } from "@/components/gravity/gravity";
+import { count, plural } from "@/components/views/plural";
 import { PSI99_SOURCE_FILE } from "@/components/gravity/psi99Table";
 import { HALO_DATA } from "@/lib/data/load";
 import { BASS_FACT } from "@/lib/engine/facts";
@@ -26,6 +27,7 @@ export default function GravityPage() {
   const pairs = parseSaffireII();
   const tally = pairTally(pairs);
   const bounds = materialBounds(HALO_DATA);
+  const mixedPairs = pairs.filter((p) => p.components.length > 1);
   const invCount = HALO_DATA.investigations.length;
   const efield = HALO_DATA.investigations.find((i) => i.psiId === "PSI-22");
   const efieldRows = HALO_DATA.tests.filter((t) => t.psiId === "PSI-22").length;
@@ -86,7 +88,7 @@ export default function GravityPage() {
                 const micro = b.psiRows > 0 ? "psi" : b.litPoints > 0 ? "lit" : "none";
                 const oneGText = b.oneG.length > 0;
                 const inheritedOneG = b.oneG.filter((p) => p.materialFromPrevious).map((p) => p.sample);
-                const label = `${b.label}: microgravity ${micro === "none" ? "no evidence" : `${b.psiRows} PSI rows and ${b.litPoints} Saffire points`}; Moon and Mars untested in PSI${b.luci ? "; LUCI burned it in simulated lunar gravity, results outside PSI" : ""}; 1 g ${b.oneG.length ? `${b.oneG.length} Saffire-II pairs${inheritedOneG.length ? ` (material of ${inheritedOneG.join(", ")} inferred: blank in PSI)` : ""}` : "no paired test in PSI"}.`;
+                const label = `${b.label}: microgravity ${micro === "none" ? "no evidence" : `${count(b.psiRows, "PSI row")} and ${count(b.litPoints, "Saffire point")}`}; Moon and Mars untested in PSI${b.luci ? "; LUCI burned it in simulated lunar gravity, results outside PSI" : ""}; 1 g ${b.oneG.length ? `${count(b.oneG.length, "Saffire-II pair")}${inheritedOneG.length ? ` (material of ${inheritedOneG.join(", ")} inferred: blank in PSI)` : ""}` : "no paired test in PSI"}${b.oneGElsewhere.length ? `; mixed ${plural(b.oneGElsewhere.length, "sample")} ${b.oneGElsewhere.map((p) => p.sample).join(", ")} not counted, the 1 g result is not this material's` : ""}.`;
                 return (
                   <li key={b.id} className="grid gap-4 border-b border-line px-5 py-5 last:border-b-0 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)_minmax(0,13rem)] md:items-center md:gap-6">
                     <div className="flex flex-col gap-1">
@@ -94,7 +96,7 @@ export default function GravityPage() {
                       <p className="text-sm text-fg-2">
                         {b.psiRows > 0 ? (
                           <>
-                            <span className="font-mono text-fg">{b.psiRows}</span> PSI rows
+                            <span className="font-mono text-fg">{b.psiRows}</span> PSI {plural(b.psiRows, "row")}
                             {rangeText(b.psiO2, "%") && <> at <span className="font-mono">{rangeText(b.psiO2, "%")}</span> O₂</>}
                           </>
                         ) : (
@@ -103,7 +105,7 @@ export default function GravityPage() {
                       </p>
                       {b.litPoints > 0 && (
                         <p className="text-sm text-fg-2">
-                          <span className="font-mono text-fg">{b.litPoints}</span> Saffire flight {b.litPoints === 1 ? "point" : "points"}
+                          <span className="font-mono text-fg">{b.litPoints}</span> Saffire flight {plural(b.litPoints, "point")}
                           {rangeText(b.litO2, "%") && <> at <span className="font-mono">{rangeText(b.litO2, "%")}</span> O₂</>}
                         </p>
                       )}
@@ -115,11 +117,14 @@ export default function GravityPage() {
                       <GravityStrip micro={micro} oneG={b.oneG.length > 0} luci={b.luci} label={label} />
                     </div>
                     <div className="flex flex-col gap-1 md:text-right">
-                      {oneGText ? (
+                      {!oneGText && <p className="text-sm text-fg-3">No paired 1 g burn in PSI</p>}
+                      {(oneGText || b.oneGElsewhere.length > 0) && (
                         <>
+                          {oneGText && (
                           <p className="text-sm text-fg">
-                            <span className="font-mono">{b.oneG.length}</span> Saffire-II 1 g {b.oneG.length === 1 ? "burn" : "burns"}
+                            <span className="font-mono">{b.oneG.length}</span> Saffire-II 1 g {plural(b.oneG.length, "burn")}
                           </p>
+                          )}
                           <ul className="flex flex-col gap-0.5 text-xs leading-relaxed text-fg-3 md:items-end">
                             {b.oneG.map((p) => (
                               <li key={p.sample} className="flex flex-wrap items-center gap-x-2 md:justify-end">
@@ -134,10 +139,14 @@ export default function GravityPage() {
                                 )}
                               </li>
                             ))}
+                            {b.oneGElsewhere.map((p) => (
+                              <li key={p.sample}>
+                                {p.sample} ({p.material}):{" "}
+                                {p.oneGOf ? `1 g result is the ${p.oneGOf} part only` : "1 g result names no material"}; not counted
+                              </li>
+                            ))}
                           </ul>
                         </>
-                      ) : (
-                        <p className="text-sm text-fg-3">No paired 1 g burn in PSI</p>
                       )}
                     </div>
                   </li>
@@ -165,7 +174,7 @@ export default function GravityPage() {
             id="pairs"
             title="The one table with both ends"
             aside={<span className="inline-flex items-center gap-2">PSI-99 <ProvenanceBadge provenance="measured" /></span>}
-            lede={`Saffire-II's PSI table lists, for each sample burned in microgravity, how far the same material burned at 1 g. In ${tally.oneGFurther} of ${tally.comparable} comparable samples the 1 g burn went further, in ${tally.same} the two matched, and in ${tally.microFurther} microgravity went further.`}
+            lede={`Saffire-II's PSI table lists, for each sample burned in microgravity, how far the same material burned at 1 g. In ${tally.oneGFurther} of ${tally.comparable} comparable samples the 1 g burn went further, in ${tally.same} the two matched, and ${tally.microFurther === 0 ? "in none did microgravity go further" : `in ${tally.microFurther} microgravity went further`}.`}
           />
           <div className="relative overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" tabIndex={0} role="region" aria-label="Saffire-II microgravity and 1 g burns">
             <table className="w-full min-w-[52rem] border-collapse text-sm">
@@ -207,7 +216,10 @@ export default function GravityPage() {
                     <td className="px-4 py-2.5 font-mono text-fg-2">{p.microSpread}</td>
                     <td className="px-4 py-2.5 text-fg">
                       <span className="font-mono">{p.oneGBurn}</span>
-                      <span className="block text-xs text-fg-3">{BURN_LABEL[p.oneG]}</span>
+                      <span className="block text-xs text-fg-3">
+                        {BURN_LABEL[p.oneG]}
+                        {p.oneGOf && ` (${p.oneGOf} part only)`}
+                      </span>
                     </td>
                     <td className="px-4 py-2.5 font-mono text-fg-2">{p.oneGSpread}</td>
                     <td className="px-4 py-2.5 text-fg-2">
@@ -221,6 +233,17 @@ export default function GravityPage() {
           <p className="max-w-[72ch] text-xs text-fg-3">
             Values are PSI&apos;s text, verbatim ({PSI99_SOURCE_FILE}), except materials marked inferred: PSI leaves those cells blank and HALO carries the material from the row above. The table does not state the 1 g test atmosphere or flow. Thicknesses marked [sic] are printed that way in PSI. A burn length equal to
             the sample length counts as a full burn; &ldquo;~ 0&rdquo; as no sustained burn.{" "}
+            {mixedPairs.map((p) => {
+              const n = noteRef(p.microBurn);
+              const note = n === null ? null : psiNote(n);
+              return (
+                <span key={p.sample}>
+                  Sample {p.sample} joins two materials ({p.material})
+                  {p.oneGOf ? `; its 1 g cell reports the ${p.oneGOf} part only, so it counts as a 1 g burn for ${p.oneGOf} alone` : "; its 1 g cell names neither, so it counts as a 1 g burn for neither"}
+                  .{note && <> PSI&apos;s note on its microgravity burn: &ldquo;{note}&rdquo;</>}{" "}
+                </span>
+              );
+            })}
             {saffire2 && doiUrl(saffire2.datasetDoi) && <ExternalLink href={doiUrl(saffire2.datasetDoi)!}>Saffire-II dataset (DOI {saffire2.datasetDoi})</ExternalLink>}
           </p>
           <Callout tone="info" title="Gravity does not push flammability one way">
@@ -239,7 +262,7 @@ export default function GravityPage() {
         {efield && (
           <section aria-labelledby="efield" className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <div className="flex flex-col gap-4">
-              <SectionHead id="efield" title="E-FIELD: the closest PSI gets to dialling gravity" aside={efield.psiId} />
+              <SectionHead id="efield" title="E-FIELD: the closest PSI gets to dialing gravity" aside={efield.psiId} />
               <p className="max-w-[62ch] text-fg-2">
                 Without gravity a flame has no buoyant plume. E-FIELD put an electric field across small gas flames, and the field drags the
                 flame&apos;s charged molecules along with it, creating a flow that does some of the work buoyancy does on Earth. The challenge

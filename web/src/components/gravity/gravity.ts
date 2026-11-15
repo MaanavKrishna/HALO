@@ -34,6 +34,14 @@ export interface SaffirePair {
   material: string;
   /** PSI's material cell is blank; HALO carried the material from the row above (an inference, not PSI text). */
   materialFromPrevious: boolean;
+  /** The materials in the sample: one, or several when PSI lists a mixed sample ("PMMA & Nomex"). */
+  components: string[];
+  /**
+   * For a mixed sample, the component the 1 g cell names in brackets ("~ 0 (Nomex)"):
+   * the 1 g result is that component's alone. Null when the sample is one material,
+   * or when the 1 g cell of a mixed sample names no component.
+   */
+  oneGOf: string | null;
   thickness: string;
   flowDirection: string;
   o2: string;
@@ -83,6 +91,25 @@ export function classifyBurn(text: string, sampleLength: string): BurnClass {
   return 'unknown';
 }
 
+/** "PMMA & Nomex" -> ["PMMA", "Nomex"]; a single material comes back as one component. */
+export function splitComponents(material: string): string[] {
+  return material
+    .split(/\s*(?:&|\+|\/|\band\b)\s*/i)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+/** The component of a mixed sample that a result cell names in brackets, e.g. "~ 0 (Nomex)" -> "Nomex". */
+export function namedComponent(cell: string, components: string[]): string | null {
+  if (components.length < 2) return null;
+  for (const m of cell.matchAll(/\(([^)]*)\)/g)) {
+    const inner = m[1].trim().toLowerCase();
+    const hit = components.find((c) => c.toLowerCase() === inner);
+    if (hit) return hit;
+  }
+  return null;
+}
+
 export function parseSaffireII(csv: string = PSI99_CSV): SaffirePair[] {
   const lines = csv.split(/\r?\n/);
   const out: SaffirePair[] = [];
@@ -93,6 +120,7 @@ export function parseSaffireII(csv: string = PSI99_CSV): SaffirePair[] {
     const materialFromPrevious = !c[1] && !!lastMaterial;
     const material = c[1] || lastMaterial;
     lastMaterial = material;
+    const components = splitComponents(material);
     const micro = classifyBurn(c[11] ?? '', c[3] ?? '');
     const oneG = classifyBurn(c[13] ?? '', c[3] ?? '');
     let further: SaffirePair['further'] = null;
@@ -105,6 +133,8 @@ export function parseSaffireII(csv: string = PSI99_CSV): SaffirePair[] {
       sample: c[0],
       material,
       materialFromPrevious,
+      components,
+      oneGOf: namedComponent(c[13] ?? '', components),
       thickness: c[2] ?? '',
       sampleLength: c[3] ?? '',
       flow: c[5] ?? '',
@@ -121,6 +151,21 @@ export function parseSaffireII(csv: string = PSI99_CSV): SaffirePair[] {
   }
   return out;
 }
+
+/** PSI's own footnote text ("Note 2 ...") from the table, without the label; null when the table has no such note. */
+export function psiNote(n: number, csv: string = PSI99_CSV): string | null {
+  for (const line of csv.split(/\r?\n/)) {
+    const m = new RegExp(`^Note ${n}\\s+(.+?)[,\\s]*$`).exec(line);
+    if (m) return m[1].trim();
+  }
+  return null;
+}
+
+/** The PSI footnote a result cell points at ("5 cm & 0 (note 2)" -> 2), or null. */
+export const noteRef = (cell: string): number | null => {
+  const m = /\(note (\d+)\)/i.exec(cell);
+  return m ? Number(m[1]) : null;
+};
 
 export function pairTally(pairs: SaffirePair[]) {
   const comparable = pairs.filter((p) => p.further !== null);
@@ -144,7 +189,13 @@ export interface MaterialBound {
   psiO2: [number, number] | null;
   litPoints: number;
   litO2: [number, number] | null;
+  /** Saffire-II samples whose 1 g result is this material's. */
   oneG: SaffirePair[];
+  /**
+   * Mixed samples that contain this material but whose 1 g result is not its own:
+   * PSI's 1 g cell names another component (`oneGOf`), or names none. Never counted.
+   */
+  oneGElsewhere: SaffirePair[];
   /** NTRS reports LUCI burned this material in simulated lunar gravity (results outside PSI). */
   luci: boolean;
 }
@@ -158,8 +209,12 @@ export function materialBounds(data: HaloData, pairs: SaffirePair[] = parseSaffi
   const at = { name: '', o2Pct: PRESETS.iss.o2Pct, pressurePsia: PRESETS.iss.pressurePsia, presetKey: null };
   return SCREEN_MATERIALS.flatMap((m) => {
     const s = screenMaterial(m, at, data);
-    const oneG = pairs.filter((p) => m.match.test(p.material));
-    if (s.psi.length === 0 && s.literature.length === 0 && oneG.length === 0) return [];
+    const inSample = pairs.filter((p) => m.match.test(p.material));
+    // A mixed sample's 1 g result counts only for the component PSI's 1 g cell names.
+    const own = (p: SaffirePair) => p.components.length < 2 || (p.oneGOf !== null && m.match.test(p.oneGOf));
+    const oneG = inSample.filter(own);
+    const oneGElsewhere = inSample.filter((p) => !own(p));
+    if (s.psi.length === 0 && s.literature.length === 0 && inSample.length === 0) return [];
     const lit = s.literature.map((l) => l.row.o2Pct).filter((v): v is number => v !== null);
     return [
       {
@@ -170,6 +225,7 @@ export function materialBounds(data: HaloData, pairs: SaffirePair[] = parseSaffi
         litPoints: s.literature.length,
         litO2: range(lit),
         oneG,
+        oneGElsewhere,
         luci: LUCI_MATERIALS.has(m.id),
       },
     ];

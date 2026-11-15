@@ -3,7 +3,7 @@ import { PageHero } from "@/components/ui";
 import { ExploreBrowser } from "@/components/explore/ExploreBrowser";
 import { HALO_DATA } from "@/lib/data/load";
 import { investigationRows } from "@/lib/data/schema";
-import { psiNumber, sensorMap } from "@/lib/explore";
+import { conditionsByPsi, psiNumber, sensorMap } from "@/lib/explore";
 
 export const metadata: Metadata = {
   title: "Explore the investigations",
@@ -44,7 +44,7 @@ export default function ExplorePage() {
         }
       />
       <section aria-label="Investigation list" className="container-wide pb-24 pt-10 sm:pt-14">
-        <ExploreBrowser investigations={sorted} sensors={sensors} />
+        <ExploreBrowser investigations={sorted} sensors={sensors} conditions={conditionsByPsi(HALO_DATA.tests)} />
       </section>
     </main>
   );

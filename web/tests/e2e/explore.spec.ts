@@ -67,6 +67,19 @@ test("/explore/PSI-69 shows FLEX with DOI links", async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
+test("/explore/PSI-21 shows the assumed air conditions, PSI-102 none", async ({ page }) => {
+  await page.goto("/explore/PSI-21");
+  const spec = page.getByRole("complementary", { name: "Spec sheet" });
+  await expect(spec).toContainText("Assumed");
+  await expect(spec).not.toContainText("No test conditions in PSI");
+  await page.goto("/explore/PSI-102");
+  await expect(page.getByRole("complementary", { name: "Spec sheet" }).first()).toContainText("No test conditions in PSI");
+  await page.goto("/explore");
+  const cld = page.locator("tbody tr", { hasText: "ACME CLD Flame" });
+  await expect(cld).toContainText("21%");
+  await expect(cld).toContainText("Assumed");
+});
+
 test("prev/next navigation walks investigations in PSI order", async ({ page }) => {
   await page.goto("/explore/PSI-69");
   const nav = page.getByRole("navigation", { name: "Other investigations" });

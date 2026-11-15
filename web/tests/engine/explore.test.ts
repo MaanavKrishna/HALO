@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { doiUrl, filterInvestigations, formatRange, plotPoints, sortInvestigations } from '@/lib/explore';
+import { doiUrl, filterInvestigations, conditionsByPsi, formatRange, plotPoints, shownCondition, sortInvestigations } from '@/lib/explore';
 import type { Investigation, TestPoint } from '@/lib/engine/types';
+import { HALO_DATA } from '@/lib/data/load';
 
 const inv = (o: Partial<Investigation>): Investigation => ({
   psiId: 'PSI-1', acronym: 'A', title: '', hardware: 'h', fuelClasses: ['solid'], hazards: ['spread'], objective: '',
@@ -35,8 +36,8 @@ describe('explore helpers', () => {
     expect(list).toEqual(copy);
   });
   it('formats ranges', () => {
-    expect(formatRange(null, '%')).toBe('not tabulated');
-    expect(formatRange([21, 40], '%')).toBe('21–40 %');
+    expect(formatRange(null, '%')).toBe('No test conditions in PSI');
+    expect(formatRange([21, 40], '%')).toBe('21–40%');
     expect(formatRange([14.696, 14.696], 'psia')).toBe('14.7 psia');
   });
   it('builds DOI links only for well-formed DOIs', () => {
@@ -52,5 +53,31 @@ describe('explore helpers', () => {
       { o2Pct: 21, pressurePsia: 14.7, count: 2, measured: false },
       { o2Pct: 30, pressurePsia: 10, count: 1, measured: true },
     ]);
+  });
+});
+
+describe('shown O2 and pressure conditions (real data)', () => {
+  const conds = conditionsByPsi(HALO_DATA.tests as TestPoint[]);
+  const find = (id: string) => (HALO_DATA.investigations as Investigation[]).find((i) => i.psiId === id)!;
+  const text = (id: string, which: 'o2' | 'pressure') => {
+    const s = shownCondition(find(id), conds[id], which);
+    return { text: formatRange(s.range, which === 'o2' ? '%' : 'psia'), src: s.src };
+  };
+  it('CLD (PSI-21) shows 21% with assumed provenance', () => {
+    expect(text('PSI-21', 'o2')).toEqual({ text: '21%', src: 'assumed' });
+    expect(text('PSI-21', 'pressure')).toEqual({ text: '14.7 psia', src: 'assumed' });
+  });
+  it('SAME (PSI-102) has no test conditions', () => {
+    expect(shownCondition(find('PSI-102'), conds['PSI-102'], 'o2').basis).toBe('none');
+    expect(text('PSI-102', 'o2').text).toBe('No test conditions in PSI');
+  });
+  it('FLEX (PSI-69) shows its measured range, untagged', () => {
+    expect(text('PSI-69', 'o2')).toEqual({ text: '12–34%', src: null });
+    expect(text('PSI-69', 'pressure').src).toBeNull();
+  });
+  it('sorts by the shown range, with no-condition rows last', () => {
+    const rows = ['PSI-102', 'PSI-69', 'PSI-21'].map(find);
+    expect(sortInvestigations(rows, 'o2', 'asc', conds).map((i) => i.psiId)).toEqual(['PSI-69', 'PSI-21', 'PSI-102']);
+    expect(sortInvestigations(rows, 'o2', 'desc', conds).map((i) => i.psiId)).toEqual(['PSI-21', 'PSI-69', 'PSI-102']);
   });
 });

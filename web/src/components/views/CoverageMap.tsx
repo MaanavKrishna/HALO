@@ -1,7 +1,8 @@
 import "server-only";
 import Link from "next/link";
-import { GradeBadge } from "@/components/ui";
-import { COVERAGE_CLASSES, COVERAGE_LABEL, MOON_WINDOW, VIEW, coverageMap, type ClassCoverage } from "@/lib/coverage";
+import { CHART_SIZES, COVERAGE_CLASSES, COVERAGE_LABEL, MOON_WINDOW, VIEW, chartScale, coverageMap, probePoints, type ClassCoverage } from "@/lib/coverage";
+import { habitatToQuery } from "@/lib/engine/url";
+import { CoverageProbe, type ProbePreset } from "./CoverageProbe";
 import { HALO_DATA } from "@/lib/data/load";
 import { PSI_SEARCH_URL } from "@/lib/engine/brief";
 import { GRADE_RINGS, SURROGATE_CAP } from "@/lib/engine/grade";
@@ -20,6 +21,15 @@ import "./coverage-map.css";
 
 const MAP = coverageMap(HALO_DATA);
 const BY_CLASS = Object.fromEntries(MAP.map((c) => [c.fuelClass, c])) as Record<FuelClass, ClassCoverage>;
+const PROBE_POINTS = probePoints(HALO_DATA);
+const PROBE_PRESETS: ProbePreset[] = MAP[0].presets.map((pr) => ({
+  key: pr.key,
+  name: pr.name,
+  o2: PRESETS[pr.key].o2Pct,
+  p: PRESETS[pr.key].pressurePsia,
+  href: `/brief?${habitatToQuery(PRESETS[pr.key])}`,
+  grades: Object.fromEntries(MAP.map((c) => [c.fuelClass, c.presets.find((x) => x.key === pr.key)!.grade])) as Record<FuelClass, Grade>,
+}));
 
 const FILL = {
   F: "color-mix(in oklab, var(--warn) 17%, var(--surface-1))",
@@ -71,15 +81,9 @@ function Defs({ uid }: { uid: string }) {
 }
 
 function Chart({ uid, width, height, fs, compact, className }: { uid: string; width: number; height: number; fs: number; compact: boolean; className: string }) {
-  const M = { l: fs * 3.6, r: compact ? 10 : 16, t: 12, b: fs * 3.6 };
-  const kx = (width - M.l - M.r) / (VIEW.o2[1] - VIEW.o2[0]);
-  const ky = (height - M.t - M.b) / (VIEW.p[1] - VIEW.p[0]);
-  const r1 = (v: number) => Math.round(v * 10) / 10;
+  const { M, kx, ky, x, y, plot } = chartScale(width, height, fs, compact);
   const r4 = (v: number) => Math.round(v * 1e4) / 1e4;
-  const x = (v: number) => r1(M.l + (v - VIEW.o2[0]) * kx);
-  const y = (v: number) => r1(height - M.b - (v - VIEW.p[0]) * ky);
   const matrix = `matrix(${r4(kx)} 0 0 ${r4(-ky)} ${r4(M.l - VIEW.o2[0] * kx)} ${r4(height - M.b + VIEW.p[0] * ky)})`;
-  const plot = { x: M.l, y: M.t, w: width - M.l - M.r, h: height - M.t - M.b };
   const clip = `${uid}-clip-${compact ? "s" : "w"}`;
   const win = { x0: x(MOON_WINDOW.o2Min), x1: x(VIEW.o2[1]), y0: y(MOON_WINDOW.pMax), y1: y(VIEW.p[0]) };
   const lit = HALO_DATA.literature.flatMap((l) => (l.pressurePsia !== null && l.o2Pct !== null && l.o2Pct >= VIEW.o2[0] && l.o2Pct <= VIEW.o2[1] ? [{ o2: l.o2Pct, p: l.pressurePsia }] : []));
@@ -214,9 +218,68 @@ function rangeSentence(c: ClassCoverage): string {
 }
 
 export function CoverageMap({ id = "cov", compact = false }: { id?: string; compact?: boolean }) {
-  const [b, cR, d] = GRADE_RINGS;
+  const [b] = GRADE_RINGS;
+  const wideSize = compact ? CHART_SIZES.wideCompact : CHART_SIZES.wide;
+  const phoneSize = CHART_SIZES.phone;
+  const legend = (
+    <ul className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-fg-2" aria-label="Legend">
+      <li className="flex items-center gap-2"><Swatch fill={FILL.B} edge="var(--accent-line)" />A/B: tested close by</li>
+      <li className="flex items-center gap-2"><Swatch fill={FILL.C} edge="var(--border-strong)" />C: near</li>
+      <li className="flex items-center gap-2"><Swatch fill={FILL.D} edge="var(--warn-line)" />D: some way off</li>
+      <li className="flex items-center gap-2"><Swatch fill={FILL.F} hatch edge="var(--warn-line)" />F: untested</li>
+      <li className="flex items-center gap-2">
+        <svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="2.6" fill="var(--text-1)" stroke="var(--surface-1)" strokeWidth="1.5" /></svg>
+        PSI test condition
+      </li>
+      <li className="flex items-center gap-2" data-cov="solid">
+        <svg width="14" height="14" aria-hidden="true"><path d="M7 1.5L12.5 7L7 12.5L1.5 7Z" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1.4" /></svg>
+        Saffire runs, NASA reports (not graded)
+      </li>
+      <li className="flex items-center gap-2">
+        <svg width="16" height="12" aria-hidden="true"><rect x="1" y="1" width="14" height="10" fill="none" stroke="var(--text-1)" strokeWidth="1.3" strokeDasharray="3 2" /></svg>
+        Moon window (≥{MOON_WINDOW.o2Min}% O₂, ≤{MOON_WINDOW.pMax} psia)
+      </li>
+    </ul>
+  );
+  const captions = MAP.map((c) => {
+    const L = COVERAGE_LABEL[c.fuelClass];
+    return (
+      <div key={c.fuelClass} data-cov={c.fuelClass}>
+        <p className="type-caption max-w-[72ch] text-fg-3">
+          Each zone grades how close the nearest{" "}
+          <a href={PSI_SEARCH_URL} target="_blank" rel="noopener noreferrer" className="text-accent underline-offset-4 hover:underline">NASA PSI</a>{" "}
+          {L.alone.replace(/ alone$/, "").replace(/tests$/, "test")} sits (
+          <Link href="/method#distance" className="text-accent underline-offset-4 hover:underline">evidence distance</Link>): evidence coverage, not safety.{" "}
+          {c.fuelClass === "solid" || c.fuelClass === "solid_surrogate"
+            ? <>A brief can read one letter higher, to {SURROGATE_CAP} at most, when a surrogate test sits inside the first ring ({b}).</>
+            : <>{rangeSentence(c)}</>}
+        </p>
+        <div className="sr-only">
+          <p>
+            Graded on {L.long}. {rangeSentence(c)} Share of the mapped window at each grade: A {pct(c.share.A)}, B {pct(c.share.B)}, C {pct(c.share.C)}, D {pct(c.share.D)}, F {pct(c.share.F)}.
+          </p>
+          <table>
+            <caption>Preset grades from {L.alone}</caption>
+            <thead>
+              <tr><th scope="col">Preset</th><th scope="col">O₂ %</th><th scope="col">Pressure, psia</th><th scope="col">Grade</th></tr>
+            </thead>
+            <tbody>
+              {c.presets.map((p) => (
+                <tr key={p.key}>
+                  <th scope="row">{p.name}</th>
+                  <td>{PRESETS[p.key].o2Pct}</td>
+                  <td>{PRESETS[p.key].pressurePsia}</td>
+                  <td>{p.grade}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  });
   return (
-    <figure className="covmap relative m-0 flex flex-col gap-5" data-coverage-map>
+    <figure className={`covmap relative m-0 flex flex-col gap-5${compact ? " covmap-compact" : ""}`} data-coverage-map>
       <Defs uid={id} />
       <fieldset className="covmap-toggle flex flex-wrap gap-2">
         <legend className="type-label mb-2 text-fg-3">Graded on</legend>
@@ -227,88 +290,19 @@ export function CoverageMap({ id = "cov", compact = false }: { id?: string; comp
           </label>
         ))}
       </fieldset>
-
-      <div
-        role="img"
-        aria-label={`Evidence coverage map. Oxygen from ${VIEW.o2[0]} to ${VIEW.o2[1]}% across, total pressure from ${VIEW.p[0]} to ${VIEW.p[1]} psia up. Each zone is shaded and lettered with the evidence grade from the chosen fuel class's PSI tests. The Moon window and the five habitat presets are marked. A text summary follows.`}
-        className={compact ? "max-w-[760px]" : undefined}
-      >
-        <Chart uid={id} width={compact ? 680 : 880} height={compact ? 400 : 470} fs={12} compact={false} className="hidden h-auto w-full overflow-visible sm:block" />
-        <Chart uid={id} width={340} height={430} fs={11.5} compact className="block h-auto w-full overflow-visible sm:hidden" />
-      </div>
-
-      <ul className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-fg-2" aria-label="Legend">
-        <li className="flex items-center gap-2"><Swatch fill={FILL.B} edge="var(--accent-line)" />A/B: tested close by</li>
-        <li className="flex items-center gap-2"><Swatch fill={FILL.C} edge="var(--border-strong)" />C: near</li>
-        <li className="flex items-center gap-2"><Swatch fill={FILL.D} edge="var(--warn-line)" />D: some way off</li>
-        <li className="flex items-center gap-2"><Swatch fill={FILL.F} hatch edge="var(--warn-line)" />F: untested</li>
-        <li className="flex items-center gap-2">
-          <svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="2.6" fill="var(--text-1)" stroke="var(--surface-1)" strokeWidth="1.5" /></svg>
-          PSI test condition
-        </li>
-        <li className="flex items-center gap-2" data-cov="solid">
-          <svg width="14" height="14" aria-hidden="true"><path d="M7 1.5L12.5 7L7 12.5L1.5 7Z" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1.4" /></svg>
-          Saffire runs, NASA reports (not graded)
-        </li>
-        <li className="flex items-center gap-2">
-          <svg width="16" height="12" aria-hidden="true"><rect x="1" y="1" width="14" height="10" fill="none" stroke="var(--text-1)" strokeWidth="1.3" strokeDasharray="3 2" /></svg>
-          Moon window (≥{MOON_WINDOW.o2Min}% O₂, ≤{MOON_WINDOW.pMax} psia)
-        </li>
-      </ul>
-
-      {MAP.map((c) => {
-        const L = COVERAGE_LABEL[c.fuelClass];
-        return (
-          <div key={c.fuelClass} data-cov={c.fuelClass} className="flex flex-col gap-4">
-            <p className="type-label text-fg-3">Preset grades from {L.alone}</p>
-            <ul className="-mt-2 flex flex-wrap gap-2" aria-label={`Preset grades from ${L.alone}`}>
-              {c.presets.map((p) => (
-                <li key={p.key} className="flex items-center gap-2 rounded-[var(--radius-pill)] border border-line bg-surface-1 py-1 pl-1 pr-3 text-[0.8125rem] text-fg">
-                  <GradeBadge grade={p.grade} size="sm" />
-                  {p.name}
-                </li>
-              ))}
-            </ul>
-            <p className="type-caption max-w-[72ch] text-fg-3">
-              Each zone shows the evidence grade a habitat at that atmosphere would get from {L.alone}. It measures how close the
-              nearest test sits (<Link href="/method#distance" className="text-accent underline-offset-4 hover:underline">evidence distance</Link>{" "}
-              rings at {b}, {cR} and {d}): evidence coverage, not safety.{" "}
-              {(c.fuelClass === "solid" || c.fuelClass === "solid_surrogate") && (
-                <>
-                  A Fire Brief&apos;s overall grade starts from the real-solid grade and can rise one step, to {SURROGATE_CAP} at most, when a
-                  surrogate test sits inside the first ring ({b}), so a brief can read one letter higher than this map.{" "}
-                </>
-              )}
-              {rangeSentence(c)} Data:{" "}
-              <a href={PSI_SEARCH_URL} target="_blank" rel="noopener noreferrer" className="text-accent underline-offset-4 hover:underline">
-                NASA PSI
-              </a>
-              .
-            </p>
-            <div className="sr-only">
-              <p>
-                Graded on {L.long}. {rangeSentence(c)} Share of the mapped window at each grade: A {pct(c.share.A)}, B {pct(c.share.B)}, C {pct(c.share.C)}, D {pct(c.share.D)}, F {pct(c.share.F)}.
-              </p>
-              <table>
-                <caption>Preset grades from {L.alone}</caption>
-                <thead>
-                  <tr><th scope="col">Preset</th><th scope="col">O₂ %</th><th scope="col">Pressure, psia</th><th scope="col">Grade</th></tr>
-                </thead>
-                <tbody>
-                  {c.presets.map((p) => (
-                    <tr key={p.key}>
-                      <th scope="row">{p.name}</th>
-                      <td>{PRESETS[p.key].o2Pct}</td>
-                      <td>{PRESETS[p.key].pressurePsia}</td>
-                      <td>{p.grade}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-      })}
+      <CoverageProbe
+        id={id}
+        data={PROBE_POINTS}
+        presets={PROBE_PRESETS}
+        initial="artemis"
+        wideSize={wideSize}
+        phoneSize={phoneSize}
+        wideClassName={compact ? "max-w-[760px]" : undefined}
+        wide={<Chart uid={id} {...wideSize} className="block h-auto w-full overflow-visible" />}
+        phone={<Chart uid={id} {...phoneSize} className="block h-auto w-full overflow-visible" />}
+        legend={legend}
+        captions={captions}
+      />
     </figure>
   );
 }

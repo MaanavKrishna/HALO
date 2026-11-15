@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+import { CoverageMap } from "@/components/views/CoverageMap";
 import { FindingCard } from "@/components/content/FindingCard";
 import { computeFindings } from "@/components/content/findings";
 import { Article, ButtonLink, Icon, PageHero, Stat, StatGroup } from "@/components/ui";
@@ -51,7 +53,17 @@ export default function FindingsPage() {
       >
         <div className="content-block flex flex-col gap-8 sm:gap-10">
           {findings.map((f) => (
-            <FindingCard key={f.id} finding={f} />
+            <Fragment key={f.id}>
+              <FindingCard finding={f} />
+              {f.id === "solid-ceiling" && (
+                <section aria-labelledby="coverage-map-title" className="flex flex-col gap-4">
+                  <h2 id="coverage-map-title" className="type-title text-fg">
+                    Where the tests stop
+                  </h2>
+                  <CoverageMap id="findings-cov" compact />
+                </section>
+              )}
+            </Fragment>
           ))}
         </div>
         <p className="type-body-s mt-10 text-fg-3">

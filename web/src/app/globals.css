@@ -874,8 +874,9 @@
     color: inherit;
     text-decoration: none;
   }
+  /* Keep small units whole (figures, cards, table rows); tables and sections may break. */
   figure,
-  table,
+  tr,
   [data-print-keep] {
     break-inside: avoid;
   }

@@ -13,6 +13,10 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+  /* A brief-sized type scale: spacing is rem-based, so this tightens the whole page evenly. */
+  html:has(.brief) {
+    font-size: 9.5pt;
+  }
   /* Chrome: nav, actions, sticky bar, interactive controls. */
   header.no-print,
   nav,
@@ -48,7 +52,7 @@
   .print-only {
     display: block !important;
   }
-  /* Ranked list: top rows only, objectives clamped to two lines, no paper links. */
+  /* Ranked list: every row, objectives clamped to two lines, no paper links. */
   .print-hide,
   .paper-link {
     display: none !important;
@@ -73,8 +77,8 @@
     display: flex !important;
     flex-direction: column;
     padding-top: 0;
-    padding-bottom: 5mm;
-    gap: 4mm;
+    padding-bottom: 3mm;
+    gap: 2mm;
   }
   .brief-hero .bg-grid,
   .brief-hero [aria-hidden="true"].pointer-events-none {
@@ -110,8 +114,8 @@
   .brief-section {
     break-inside: auto;
     display: block;
-    padding-top: 6mm;
-    padding-bottom: 6mm;
+    padding-top: 4mm;
+    padding-bottom: 3mm;
   }
   .brief-section-head {
     position: static !important;
@@ -120,27 +124,24 @@
     break-inside: avoid;
   }
   .brief-section-head h2 {
-    font-size: 15pt;
+    font-size: 14pt;
   }
-  /* Never strand a heading at the foot of a page: its first block may not break away from it, and
-     sections that fit on one page move whole (taller ones still break inside as normal). */
+  /* Never strand a heading at the foot of a page: its first block may not break away from it.
+     Sections themselves flow across pages; only the small units below are kept whole. */
   .brief-section-head + * {
     break-before: avoid;
-  }
-  #detection,
-  #extinction,
-  #next-test,
-  #aftermath,
-  #earth {
-    break-inside: avoid;
   }
   .brief-section-head p {
     display: none;
   }
   /* Keep cards, rows and figures whole (list items in general may break). */
   .flag-card,
-  [data-nearest],
+  [data-nearest] > li,
+  [data-earth] > li,
+  [data-next-vehicles] li,
+  [data-next-test] ul > li,
   .ranked-item,
+  .ranked-top > li,
   .grade-panel,
   [data-print-keep],
   figure,
@@ -150,8 +151,21 @@
   }
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     break-after: avoid;
+  }
+  /* A panel's label strip never ends a page without the panel body under it. */
+  .brief-section-head + * > section > div:first-child {
+    break-after: avoid;
+  }
+  .brief-section-head + * > section > div:first-child + div > :first-child {
+    break-inside: avoid;
+  }
+  p,
+  li {
+    orphans: 2;
+    widows: 2;
   }
   /* Vector charts on paper: no glows, no drop shadows, nothing animated. */
   .chart-glow,
@@ -162,8 +176,68 @@
   [style*="drop-shadow"] {
     filter: none !important;
   }
+  /* Small tables (a handful of rows) stay whole so a header row never ends a page. */
+  table {
+    break-inside: avoid;
+  }
+  thead {
+    break-after: avoid;
+  }
+  .brief td,
+  .brief th {
+    padding-top: 1mm !important;
+    padding-bottom: 1mm !important;
+  }
+  /* The evidence chart's data table repeats the nearest-test cards printed just above it. */
+  #evidence .print-only {
+    display: none !important;
+  }
+  [data-flags] {
+    gap: 2mm !important;
+  }
+  /* Grid gaps drawn as a grey background would show as an empty grey box when an item moves to the
+     next page, so these grids print as plain stacks with ruled items. */
+  [data-earth],
+  [data-nearest] {
+    background: transparent !important;
+    gap: 0 !important;
+  }
+  [data-earth] > li,
+  [data-nearest] > li {
+    border-top: 0.75pt solid var(--border);
+    padding: 3mm 4mm !important;
+  }
+  [data-earth] > li:first-child,
+  [data-nearest] > li:first-child {
+    border-top: 0;
+  }
+  /* Ranked rows: tighter on paper, score meter beside the title as on a wide screen. */
+  .ranked-item {
+    padding-top: 2mm !important;
+    padding-bottom: 2mm !important;
+  }
+  .ranked-item .md\:grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 11rem;
+    align-items: start;
+    gap: 6mm;
+  }
+  /* Small caps labels stay legible on paper. */
+  .brief .type-label {
+    font-size: 7pt;
+  }
+  /* The detector meters are short: keep the panel with its section heading. */
+  #detection .brief-section-head + * > section:first-child {
+    break-inside: avoid;
+  }
+  .detector-bars > ul {
+    gap: 3mm;
+  }
+  .ranked-item .mt-3 {
+    margin-top: 1mm !important;
+  }
   .halo-chart svg {
-    max-height: 95mm;
+    max-height: 85mm;
   }
   .extinction-curve svg {
     max-height: 70mm;
@@ -201,23 +275,30 @@
     display: block !important;
     columns: 2;
     column-gap: 6mm;
-    font-size: 8pt;
+    font-size: 7.5pt;
+    line-height: 1.35;
     border: 0 !important;
   }
   .citations > li {
     break-inside: avoid;
-    padding: 1.2mm 0 !important;
+    padding: 0.6mm 0 !important;
     grid-template-columns: 7mm minmax(0, 1fr) !important;
     border-top: 0 !important;
   }
-  /* The sources list prints each link's full URL after it. */
-  .citations a.cite-link[href^="http"]::after {
-    content: " " attr(href);
-    color: var(--text-2);
-    word-break: break-all;
+  /* Each source link already reads as its address (doi:… or the URL), so it prints once, small. */
+  .citations a.cite-link {
+    font-size: 7.5pt !important;
   }
+  /* The closing disclaimer prints as one compact block straight after the sources. */
   .brief-disclaimer {
+    display: block !important;
     break-inside: avoid;
+    break-before: avoid;
+    padding-top: 3mm !important;
+    padding-bottom: 0 !important;
+  }
+  .brief-disclaimer > p + p {
+    margin-top: 1mm;
   }
   /* The grade rule prints open, without its disclosure arrow. */
   .brief details.grade-rule {

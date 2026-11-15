@@ -72,7 +72,7 @@ export function EarthCard({ brief }: { brief: Brief }) {
       title="Back on Earth"
       kicker="Space fire research already protects people on the ground. Each technology below answers a finding in this brief."
     >
-      <ul className="grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-line bg-line grid-cols-1 md:grid-cols-2" data-print-keep="" data-earth>
+      <ul className="grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-line bg-line grid-cols-1 md:grid-cols-2" data-earth>
         {brief.earth.map((f) => {
           const url = safeUrl(f.source.url);
           const tie = EARTH_TIES[f.id];

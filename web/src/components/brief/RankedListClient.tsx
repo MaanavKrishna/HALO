@@ -29,8 +29,6 @@ export interface RankedItem {
   fuelTotal: number;
 }
 
-/** Rows printed on paper; the rest are named as "more in the online brief". */
-const PRINT_SHOWN = 5;
 /** Rows shown before the reader opens the full list. */
 const TOP_SHOWN = 3;
 
@@ -180,10 +178,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
         {ranked.map(({ it, s }, i) => (
           <li
             key={it.psiId}
-            className={cx(
-              "ranked-item grid grid-cols-1 gap-x-3 border-t border-line px-4 py-5 first:border-t-0 sm:grid-cols-[3rem_minmax(0,1fr)] sm:px-6 sm:py-6",
-              i >= PRINT_SHOWN && "print-hide",
-            )}
+            className="ranked-item grid grid-cols-1 gap-x-3 border-t border-line px-4 py-5 first:border-t-0 sm:grid-cols-[3rem_minmax(0,1fr)] sm:px-6 sm:py-6"
           >
             <Rank i={i} />
             <div className="min-w-0">
@@ -278,11 +273,6 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
         ))}
       </ol>
       </details>
-      {ranked.length > PRINT_SHOWN && (
-        <p className="print-only mt-2 hidden text-sm text-fg-2">
-          <span className="num">{ranked.length - PRINT_SHOWN}</span> more in the online brief.
-        </p>
-      )}
     </div>
   );
 }

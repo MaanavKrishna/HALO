@@ -89,7 +89,7 @@ export function EvidenceSection({ brief }: { brief: Brief }) {
         </div>
       </figure>
 
-      <div className="mt-10" data-print-keep>
+      <div className="mt-10">
         <Eyebrow>Nearest test per fuel class</Eyebrow>
         <ul className="mt-3 grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-line bg-line grid-cols-1 sm:grid-cols-2" data-nearest>
           {CLASS_ORDER.map((c) => {

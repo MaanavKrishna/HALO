@@ -29,7 +29,7 @@ export function ExtinctionCard({ brief }: { brief: Brief }) {
           : "No liquid fuels are listed for this habitat; shown for reference. From FLEX droplet tests on the ISS."
       }
     >
-      <Panel label="Droplet self-extinction · FLEX" meta={<ProvenanceBadge provenance="model" />} bodyClassName="p-0 sm:p-0" data-print-keep="">
+      <Panel label="Droplet self-extinction · FLEX" meta={<ProvenanceBadge provenance="model" />} bodyClassName="p-0 sm:p-0">
         <StatGroup className="rounded-none border-0 border-b max-sm:grid-cols-1 sm:grid-cols-3 [&>div]:p-4 sm:[&>div]:p-5">
           <Stat
             label="Median chance it goes out"

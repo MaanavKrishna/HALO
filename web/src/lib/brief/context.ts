@@ -2,7 +2,8 @@ import { cache } from 'react';
 import { HALO_DATA } from '@/lib/data/load';
 import type { Brief, Fact, Source } from '@/lib/engine/types';
 import { numberSources, type CiteEntry, type Citation } from './citations';
-import { allFacts, CLASS_ORDER, gainId, nearId, nextId, whatIfId } from './pageFacts';
+import { allFacts, archiveId, CLASS_ORDER, gainId, nearId, nextId, whatIfId } from './pageFacts';
+import { flowId, nearFlowId } from '@/lib/engine/flow';
 
 /** Number of ranked investigations the brief shows. */
 export const RANKED_SHOWN = 8;
@@ -24,7 +25,8 @@ export function appearanceOrder(brief: Brief, datasets: Source[]): Array<string 
   const h = brief.habitat;
   const out: Array<string | Source> = [];
   for (const f of brief.flags) out.push(...f.factIds);
-  for (const c of CLASS_ORDER) out.push(nearId(c, 'distance'), nearId(c, 'oxygen'), nearId(c, 'pressure'), nearId(c, 'gap'));
+  for (const c of CLASS_ORDER) out.push(nearId(c, 'distance'), nearId(c, 'oxygen'), nearId(c, 'pressure'), nearId(c, 'gap'), flowId(c, 'min'), flowId(c, 'max'), nearFlowId(c, 'flow'));
+  out.push('flow-guide-minimum', 'flow-guide-upstream', 'lit-flow-low-spread', 'lit-flow-low', 'lit-flow-high-spread', 'lit-flow-high', nearFlowId('solid', 'flow-high'));
   out.push('bass-test-one', ...datasets);
   for (const m of h.materials) for (const combo of [['scatter'], ['scatter', 'ionization']]) out.push(whatIfId(m, combo, 'runs'), whatIfId(m, combo, 'caught'));
   out.push('det-ambient-oxygen', 'det-ambient-pressure', 'det-scatter-threshold', 'det-ionization-threshold');
@@ -35,6 +37,10 @@ export function appearanceOrder(brief: Brief, datasets: Source[]): Array<string 
     out.push(nextId(i, 'oxygen'), nextId(i, 'pressure'));
     if (i === 0) out.push('next-first-literature-distance');
     for (const g of t.gains) out.push(gainId(i, g.preset, 'before'), gainId(i, g.preset, 'after'));
+    if (i === 0) {
+      for (const g of brief.archiveGains) out.push(archiveId(g.preset, 'before'), archiveId(g.preset, 'after'));
+      out.push('next-archived-oxygen', 'next-archived-pressure', 'vehicle-luci', 'vehicle-fm');
+    }
   });
   out.push(...brief.earth.map((f) => f.id));
   return out;

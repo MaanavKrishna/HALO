@@ -6,7 +6,7 @@ import type { Fact, HaloData, LiteratureRow } from './types';
  */
 
 export const BASS_GUIDE_URL =
-  'https://www.nasa.gov/sites/default/files/atoms/files/np-2015-10-034-jsc_combustion_in_reduced_gravity-iss-mini-book-011116-508.pdf';
+  'https://www.nasa.gov/wp-content/uploads/2016/05/np-2015-10-034-jsc_combustion_in_reduced_gravity-iss-mini-book-011116-508.pdf';
 export const FLEX_COOL_FLAME_DOI = '10.1016/j.combustflame.2012.07.012';
 
 export const COOL_FLAME_FACT: Fact = {

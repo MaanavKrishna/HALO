@@ -4,6 +4,7 @@ import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
 import { TBody, THead, TableFrame, Td, Th, Tr } from "@/components/ui/Table";
 import { briefContext } from "@/lib/brief/context";
 import { CLASS_LABEL, CLASS_ORDER, gradeOf, nearId } from "@/lib/brief/pageFacts";
+import { flowId, nearFlowId } from "@/lib/engine/flow";
 import { HALO_DATA } from "@/lib/data/load";
 import type { Brief, FuelClass } from "@/lib/engine/types";
 import { GRADE_RINGS } from "@/lib/engine/grade";
@@ -117,6 +118,7 @@ export function EvidenceSection({ brief }: { brief: Brief }) {
                         </span>
                         {pf && <ProvenanceBadge provenance={pf.provenance} />}
                       </p>
+                      <FlowLine brief={brief} c={c} />
                     </>
                   ) : (
                     <p className="mt-0.5 text-sm text-fg-2">No eligible test.</p>
@@ -127,6 +129,8 @@ export function EvidenceSection({ brief }: { brief: Brief }) {
           })}
         </ul>
       </div>
+
+      <FlowCallout brief={brief} />
 
       {bass && (
         <Callout tone="info" title="Why ground tests are not enough" className="mt-6">
@@ -148,6 +152,83 @@ export function EvidenceSection({ brief }: { brief: Brief }) {
         <NearestTable brief={brief} />
       </div>
     </Section>
+  );
+}
+
+/** Air flow for one fuel class: the tested range, the nearest test's flow and where the habitat's flow falls. */
+function FlowLine({ brief, c }: { brief: Brief; c: FuelClass }) {
+  const ctx = briefContext(brief);
+  const f = brief.flow[c];
+  if (!f.range || !ctx.fact(flowId(c, "min"))) return null;
+  const still = f.range[0] === 0 && f.range[1] === 0;
+  return (
+    <p className="mt-2.5 text-[0.8125rem] leading-snug text-fg-2" data-flow={c} data-flow-inside={String(f.inside)}>
+      <span className="text-fg-3">Air flow </span>
+      {still ? (
+        <>
+          tested in still air (<Num brief={brief} id={flowId(c, "max")} cite={false} />)
+        </>
+      ) : (
+        <>
+          tested <Num brief={brief} id={flowId(c, "min")} unit={false} cite={false} />–<Num brief={brief} id={flowId(c, "max")} />
+        </>
+      )}
+      {ctx.fact(nearFlowId(c, "flow")) && (
+        <>
+          {"; nearest test "}
+          <Num brief={brief} id={nearFlowId(c, "flow")} />
+        </>
+      )}
+      {"; yours "}
+      <Num brief={brief} id="habitat-flow" cite={false} />
+      {f.inside === false ? (
+        <span className="font-medium text-fg">, outside the tested range</span>
+      ) : (
+        <>, inside the tested range</>
+      )}
+      .
+    </p>
+  );
+}
+
+/** What the data and the literature say about air flow, against this cabin's flow. */
+function FlowCallout({ brief }: { brief: Brief }) {
+  const ctx = briefContext(brief);
+  const min = ctx.fact("flow-guide-minimum");
+  const up = ctx.fact("flow-guide-upstream");
+  const pair = ctx.fact("lit-flow-low") && ctx.fact("lit-flow-high-spread");
+  const nearPoint = ctx.fact(nearFlowId("solid", "flow-count"));
+  if (!min) return null;
+  const pairLabel = ctx.fact("lit-flow-low")?.label.split(":")[0].replace(/ sample .*/, "");
+  return (
+    <div className="mt-6" data-flow-callout="">
+    <Callout tone="info" title="Air flow changes how a fire behaves in microgravity">
+      <span className="block">
+        With no buoyant plume, the cabin&rsquo;s forced air flow feeds the flame. NASA&rsquo;s Researcher&rsquo;s Guide puts the flow at which solids burn at the
+        lowest oxygen, and spread fastest, on the order of <Num brief={brief} id="flow-guide-minimum" />, typical of spacecraft ventilation. Your cabin
+        runs at <Num brief={brief} id="habitat-flow" />. <ProvenanceBadge provenance="literature" className="ml-1 align-middle" />
+      </span>
+      {up && (
+        <span className="mt-2 block">
+          At low flow a flame on a thin fuel can spread upstream, into the oncoming air, the opposite of what happens on Earth.
+          <CiteMark n={ctx.cite(up.id)} />
+        </span>
+      )}
+      {pair && (
+        <span className="mt-2 block">
+          In {pairLabel}, the same material spread at <Num brief={brief} id="lit-flow-low-spread" /> in <Num brief={brief} id="lit-flow-low" /> of
+          flow and <Num brief={brief} id="lit-flow-high-spread" /> in <Num brief={brief} id="lit-flow-high" /> (NASA report, not PSI).
+        </span>
+      )}
+      {nearPoint && (
+        <span className="mt-2 block">
+          At the nearest tested real-solid condition, <Num brief={brief} id={nearFlowId("solid", "flow-count")} cite={false} /> PSI tests ran between{" "}
+          <Num brief={brief} id={nearFlowId("solid", "flow-low")} unit={false} cite={false} /> and <Num brief={brief} id={nearFlowId("solid", "flow-high")} />; the one named above is the closest to your flow.
+        </span>
+      )}
+      <span className="mt-2 block text-fg-3">HALO grades on oxygen and pressure; air flow is reported beside the grade, not folded into it.</span>
+    </Callout>
+    </div>
   );
 }
 

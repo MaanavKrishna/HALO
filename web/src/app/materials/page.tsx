@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Button, ButtonLink, Callout, Icon, NumberField, PageHero, Panel, ProvenanceBadge, Stat, StatGroup } from "@/components/ui";
 import { Cond, ExternalLink, SectionHead, ringText, signed } from "@/components/materials/parts";
 import {
-  ATMOSPHERE_PRESETS, SCREEN_MATERIALS, clusterPsi, evidenceCounts, parseScreenParams, screenHref, screenMaterial,
+  ATMOSPHERE_PRESETS, SCREEN_MATERIALS, clusterPsi, outcomeLabel, evidenceCounts, parseScreenParams, screenHref, screenMaterial,
 } from "@/components/materials/screener";
 import { EvidencePlot, SeriesSwatch } from "@/components/views/EvidencePlot";
 import { LinkChips } from "@/components/views/LinkChips";
@@ -12,7 +12,15 @@ import { BASS_FACT } from "@/lib/engine/facts";
 import { PRESETS } from "@/lib/engine/presets";
 import { habitatToQuery } from "@/lib/engine/url";
 import { doiUrl } from "@/lib/explore";
+import type { LiteratureEntry } from "@/lib/data/schema";
+import type { LiteratureRow } from "@/lib/engine/types";
 import { pageMetadata } from "@/lib/site";
+
+/** Every report a Saffire point cites (the data adds `sources`; older data has one URL). */
+function litSources(r: LiteratureRow): Array<{ url: string; label: string }> {
+  const all = (r as LiteratureEntry).sources;
+  return all?.length ? all : [{ url: r.sourceUrl, label: "NASA technical report" }];
+}
 
 export const metadata = pageMetadata({
   title: "Material screener",
@@ -36,7 +44,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
   const litNoP = s.literature.length - litPlot.length;
   const inferredRows = s.psi.filter((e) => e.inferredMaterial).length;
   const anyFlow = s.psi.some((e) => e.test.flowCmS != null);
-  const anyOutcome = s.psi.some((e) => !!e.test.outcome);
+  const anyOutcome = s.psi.some((e) => outcomeLabel(e.test.outcome) !== null);
 
   const briefHref = material.briefId
     ? `/brief?${habitatToQuery({
@@ -275,9 +283,17 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
                           <Cond value={t.pressurePsia} src={t.pSrc} />
                         </td>
                         <td className="px-4 py-2.5 text-right font-mono">
-                          {t.flowCmS != null ? <span className="text-fg">{t.flowCmS}</span> : <span className="font-sans text-xs text-fg-3">not tabulated</span>}
+                          {t.flowCmS != null ? (
+                            t.flowSrc && t.flowSrc !== "measured" ? (
+                              <Cond value={t.flowCmS} src={t.flowSrc} />
+                            ) : (
+                              <span className="text-fg">{t.flowCmS}</span>
+                            )
+                          ) : (
+                            <span className="font-sans text-xs text-fg-3">not tabulated</span>
+                          )}
                         </td>
-                        <td className="max-w-[14rem] px-4 py-2.5 text-fg-2">{t.outcome ? t.outcome : <span className="text-xs text-fg-3">not tabulated</span>}</td>
+                        <td className="max-w-[14rem] px-4 py-2.5 text-fg-2">{outcomeLabel(t.outcome) ?? <span className="text-xs text-fg-3">not tabulated</span>}</td>
                         <td className="px-4 py-2.5 text-right font-mono text-fg">{d.toFixed(2)}</td>
                       </tr>
                     );
@@ -286,10 +302,12 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
               </table>
             </div>
           )}
-          {s.psi.length > 0 && (!anyFlow || !anyOutcome) && (
+          {s.psi.length > 0 && (!anyFlow || s.psi.some((e) => outcomeLabel(e.test.outcome) === null)) && (
             <p className="max-w-[70ch] text-xs text-fg-3">
-              {[!anyFlow && "per-row flow", !anyOutcome && "per-row outcome"].filter(Boolean).join(" and ")} {!anyFlow && !anyOutcome ? "are" : "is"} not
-              in HALO&apos;s test table yet; the investigation&apos;s flow range is on its dossier.
+              {!anyOutcome
+                ? "The PSI tables for these rows do not state how each burn ended, so outcome reads “not tabulated”."
+                : "Outcome reads “not tabulated” where the PSI table does not state how the burn ended."}
+              {!anyFlow && " Per-row flow is not tabulated; the investigation’s flow range is on its dossier."}
             </p>
           )}
         </section>
@@ -330,9 +348,13 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
                     ))}
                   </dl>
                   <p className="text-sm leading-relaxed text-fg-2">{r.outcome}</p>
-                  <ExternalLink href={r.sourceUrl} className="self-start text-xs">
-                    NASA technical report
-                  </ExternalLink>
+                  <ul className="flex flex-col gap-1 text-xs">
+                    {litSources(r).map((src) => (
+                      <li key={src.url}>
+                        <ExternalLink href={src.url}>{src.label}</ExternalLink>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               ))}
             </ol>

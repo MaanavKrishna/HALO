@@ -113,7 +113,22 @@ export function screenHref(materialId: string, a: { o2Pct: number; pressurePsia:
 }
 
 /** Optional per-row fields another data pass may add (flow, outcome, geometry); read defensively. */
-export type RowExtra = Partial<{ flowCmS: number | null; outcome: string | null; geometry: string | null }>;
+export type RowExtra = Partial<{ flowCmS: number | null; flowSrc: 'measured' | 'assumed' | 'inferred' | null; outcome: string | null }>;
+
+const OUTCOME_LABEL: Record<string, string> = {
+  extinguished: 'Extinguished',
+  'burned-out': 'Burned out',
+  'flow-stopped': 'Flow stopped',
+  'no-ignition': 'No ignition',
+  disrupted: 'Disrupted',
+  spread: 'Spread',
+};
+
+/** A tabulated outcome as words, or null when the table does not state one. */
+export function outcomeLabel(o: string | null | undefined): string | null {
+  if (!o || o === 'unknown') return null;
+  return OUTCOME_LABEL[o] ?? o;
+}
 
 export interface PsiEvidence { test: TestPoint & RowExtra; d: number; inferredMaterial: boolean }
 export interface LitEvidence { row: LiteratureRow; d: number | null }

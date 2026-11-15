@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiChip, cx } from "@/components/ui";
+import type { InvestigationRow } from "@/lib/data/schema";
 import type { Investigation } from "@/lib/engine/types";
 import { doiUrl } from "@/lib/explore";
 import { SeriesSwatch, SERIES_STYLES } from "./EvidencePlot";
@@ -75,7 +76,10 @@ export function CompareMatrix({ invs, rows }: { invs: Investigation[]; rows: Mat
                       {inv.acronym}
                     </Link>
                   </span>
-                  <span className="mt-1 block font-mono text-xs font-normal text-fg-3">{inv.psiId}</span>
+                  <span className="mt-1 block font-mono text-xs font-normal text-fg-3">
+                    {inv.psiId}
+                    {(inv as InvestigationRow).acronymSource === "halo" && <span className="font-sans"> · name is a HALO label</span>}
+                  </span>
                 </th>
               );
             })}

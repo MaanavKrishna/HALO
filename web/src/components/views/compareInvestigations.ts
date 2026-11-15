@@ -2,6 +2,7 @@ import type { HaloData, Investigation, TestPoint } from '@/lib/engine/types';
 import {
   FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, formatRange, hardwareFamily, plotPoints, psiNumber, variableLabel,
 } from '@/lib/explore';
+import { count } from './plural';
 
 /** Investigation-vs-investigation comparison: URL selection and the attribute matrix. */
 
@@ -168,7 +169,7 @@ export function compareMatrix(invs: Investigation[], data: HaloData): MatrixRow[
     ),
     setRow('hazards', 'Hazards studied', invs.map((i) => (i.hazards.length ? i.hazards.map((h) => HAZARD_LABEL[h]) : null)), 'None listed'),
     setRow('sensors', 'Sensors', sensors, 'Not extracted', { si: true }),
-    textRow('rows', 'Test rows', invs.map((i, k) => text(`${i.nRows} rows · ${eligible[k]} with a known atmosphere`))),
+    textRow('rows', 'Test rows', invs.map((i, k) => text(`${count(i.nRows, 'row')} · ${eligible[k]} with a known atmosphere`))),
     textRow('pubs', 'Publications', invs.map((i) => text(`${i.publications.length} listed`))),
     textRow('doi', 'Dataset DOI', invs.map((i) => text(i.datasetDoi))),
   );

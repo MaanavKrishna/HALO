@@ -5,6 +5,7 @@ import type { Investigation } from "@/lib/engine/types";
 import { doiUrl } from "@/lib/explore";
 import { SeriesSwatch, SERIES_STYLES } from "./EvidencePlot";
 import { isMissing, type Cell, type MatrixRow } from "./compareInvestigations";
+import { joinNames } from "./plural";
 
 function CellBody({ cell, row }: { cell: Cell; row: MatrixRow }) {
   if (cell.kind === "set") {
@@ -59,7 +60,7 @@ export function CompareMatrix({ invs, rows }: { invs: Investigation[]; rows: Mat
     <div className="relative overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" tabIndex={0} role="region" aria-label="Comparison matrix (scrolls sideways on small screens)">
       <table className="w-full min-w-[44rem] border-collapse text-sm">
         <caption className="sr-only">
-          Attributes of {invs.map((i) => i.acronym).join(", ")} side by side. Rows marked Differs have different values.
+          Attributes of {joinNames(invs.map((i) => i.acronym))} side by side. Rows marked Differs have different values.
         </caption>
         <thead>
           <tr className="border-b border-line">

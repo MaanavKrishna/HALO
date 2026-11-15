@@ -116,3 +116,25 @@ test("gravity: Saffire-II pairs, E-FIELD and the lunar missions are cited", asyn
   await expect(page.locator('a[href*="ntrs.nasa.gov/citations/20250010653"]')).toHaveCount(1);
   await expect(page.locator('a[href*="flammability-of-materials-on-the-moon-fm2"]')).toHaveCount(1);
 });
+
+test("gravity: the mixed PMMA and Nomex sample counts at 1 g for Nomex only", async ({ page }) => {
+  await page.goto("/gravity");
+  const rows = page.locator("#bounds").locator("xpath=ancestor::section").locator("ul > li");
+  const pmma = rows.filter({ has: page.getByText("PMMA (acrylic)", { exact: true }) });
+  await expect(pmma).toContainText("2 Saffire-II 1 g burns");
+  await expect(pmma).toContainText("2-7 (PMMA & Nomex): 1 g result is the Nomex part only; not counted");
+  await expect(pmma).not.toContainText("2-7: no sustained burn");
+  const nomex = rows.filter({ has: page.getByText("Nomex", { exact: true }) });
+  await expect(nomex).toContainText("1 Saffire-II 1 g burn");
+  await expect(nomex).toContainText("2-7: no sustained burn");
+  const wax = rows.filter({ has: page.getByText("Candle wax", { exact: true }) });
+  await expect(wax).toContainText("1 PSI row at");
+  await expect(wax).not.toContainText("PSI rows");
+});
+
+test("materials: the atmosphere in the heading has no gaps around the decimal point", async ({ page }) => {
+  await page.goto("/materials");
+  const h1 = page.getByRole("heading", { level: 1 });
+  await expect(h1).toContainText("34% O₂ and 8.2 psia");
+  expect(await h1.locator(".font-mono").count()).toBe(0);
+});

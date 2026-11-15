@@ -7,7 +7,8 @@ import {
   DEFAULT_IDS, compareMatrix, compareSummary, normalizeId, parseIds, toggleHref,
 } from '@/components/views/compareInvestigations';
 import { SCREEN_MATERIALS, outcomeLabel, parseScreenParams, resolvedFuels, screenMaterial } from '@/components/materials/screener';
-import { LEVELS, classifyBurn, materialBounds, pairTally, parseSaffireII } from '@/components/gravity/gravity';
+import { LEVELS, classifyBurn, materialBounds, namedComponent, pairTally, parseSaffireII, splitComponents } from '@/components/gravity/gravity';
+import { count, plural } from '@/components/views/plural';
 import { PSI99_CSV, PSI99_SOURCE_FILE } from '@/components/gravity/psi99Table';
 import { STATIC_ROUTES } from '@/lib/site';
 
@@ -218,6 +219,62 @@ describe('partial-gravity bounds', () => {
     const t = pairTally(pairs);
     expect(t.oneGFurther + t.same + t.microFurther).toBe(t.comparable);
     expect(t.comparable).toBeLessThan(t.total);
+  });
+
+  it('gives a mixed sample\'s 1 g result only to the material PSI names', () => {
+    const pairs = parseSaffireII();
+    const mixed = pairs.find((p) => p.sample === '2-7')!;
+    // PSI: material "PMMA & Nomex", 1 g burn "~ 0 (Nomex)".
+    expect(mixed.components).toEqual(['PMMA', 'Nomex']);
+    expect(mixed.oneGBurn).toBe('~ 0 (Nomex)');
+    expect(mixed.oneGOf).toBe('Nomex');
+    expect(pairs.filter((p) => p.components.length > 1).map((p) => p.sample)).toEqual(['2-7']);
+    expect(pairs.filter((p) => p.sample !== '2-7').every((p) => p.oneGOf === null)).toBe(true);
+
+    const b = materialBounds(HALO_DATA, pairs);
+    const pmma = b.find((x) => x.id === 'pmma')!;
+    const nomex = b.find((x) => x.id === 'nomex')!;
+    // PMMA's 1 g burns are 2-8 and 2-9 (both burned fully); 2-7 is listed apart, never counted.
+    expect(pmma.oneG.map((p) => p.sample)).toEqual(['2-8', '2-9']);
+    expect(pmma.oneG.every((p) => p.oneG === 'complete')).toBe(true);
+    expect(pmma.oneGElsewhere.map((p) => p.sample)).toEqual(['2-7']);
+    expect(nomex.oneG.map((p) => p.sample)).toEqual(['2-7']);
+    expect(nomex.oneGElsewhere).toEqual([]);
+    // Every pair lands with exactly the materials it belongs to: no 1 g result is counted twice.
+    const counted = b.flatMap((x) => x.oneG.map((p) => p.sample)).sort();
+    expect(counted).toEqual(pairs.map((p) => p.sample).sort());
+  });
+
+  it('handles mixed samples in general, not only 2-7', () => {
+    expect(splitComponents('PMMA & Nomex')).toEqual(['PMMA', 'Nomex']);
+    expect(splitComponents('Silicone and Cotton-Fiberglass (SIBAL)')).toEqual(['Silicone', 'Cotton-Fiberglass (SIBAL)']);
+    expect(splitComponents('Cotton-Fiberglass (SIBAL)')).toEqual(['Cotton-Fiberglass (SIBAL)']);
+    expect(namedComponent('~ 0 (Nomex)', ['PMMA', 'Nomex'])).toBe('Nomex');
+    expect(namedComponent('Complete (pmma)', ['PMMA', 'Nomex'])).toBe('PMMA');
+    // A note reference is not a component; neither is a bracket on a single-material sample.
+    expect(namedComponent('5 cm & 0 (note 2)', ['PMMA', 'Nomex'])).toBeNull();
+    expect(namedComponent('~ 10 cm (note 3)', ['PMMA'])).toBeNull();
+
+    const header = PSI99_CSV.split(/\r?\n/)[0];
+    const row = (sample: string, material: string, oneG: string) =>
+      [sample, material, '1 mm', '29 cm', '5 cm', '20 cm/s', '~ 22', '80 W', '9 s', '100 s', 'Concurrent', '~ 0', 'n/a', oneG, 'n/a', '', ''].join(',');
+    const csv = [header, row('9-1', 'Silicone & PMMA', 'Complete (PMMA)'), row('9-2', 'PMMA & Nomex', 'Complete'), row('9-3', 'Nomex', '~ 0')].join('\r\n');
+    const b = materialBounds(HALO_DATA, parseSaffireII(csv));
+    const of = (id: string) => b.find((x) => x.id === id)!;
+    expect(of('pmma').oneG.map((p) => p.sample)).toEqual(['9-1']);
+    // 9-2 names no component at 1 g, so neither half may claim the result.
+    expect(of('pmma').oneGElsewhere.map((p) => p.sample)).toEqual(['9-2']);
+    expect(of('silicone').oneG).toEqual([]);
+    expect(of('silicone').oneGElsewhere.map((p) => p.sample)).toEqual(['9-1']);
+    expect(of('nomex').oneG.map((p) => p.sample)).toEqual(['9-3']);
+    expect(of('nomex').oneGElsewhere.map((p) => p.sample)).toEqual(['9-2']);
+  });
+
+  it('words counts in the right number', () => {
+    expect(count(1, 'PSI row')).toBe('1 PSI row');
+    expect(count(0, 'PSI row')).toBe('0 PSI rows');
+    expect(count(3, 'burn')).toBe('3 burns');
+    expect(plural(1, 'row reads', 'rows read')).toBe('row reads');
   });
 
   it('orders the gravity levels and bounds only materials with evidence', () => {

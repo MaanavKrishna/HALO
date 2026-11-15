@@ -112,7 +112,7 @@ export function FormDemo() {
             what is this?
           </Tooltip>{" "}
           <span className="mx-1 text-fg-3">/</span> Icon trigger{" "}
-          <Tooltip label="About provenance" align="end" content="Measured, inferred, assumed, literature, model or SI-generated.">
+          <Tooltip label="About provenance" align="end" content="Measured, inferred, assumed, literature, computed, model or SI-generated.">
             <Icon name="info" size={16} />
           </Tooltip>
         </p>

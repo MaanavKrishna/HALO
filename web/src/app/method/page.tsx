@@ -143,7 +143,9 @@ export default function MethodPage() {
         <p>
           <strong>Measured</strong> means the test logged that value in its data table. Values taken from a documented setup are{" "}
           <ProvenanceBadge provenance="assumed" />, values derived from text are <ProvenanceBadge provenance="inferred" />, and
-          only a test with both values measured can earn an A.
+          only a test with both values measured can earn an A. Distances, counts and rankings are{" "}
+          <ProvenanceBadge provenance="computed" />: arithmetic on the data. Only the fitted extinction model below is marked{" "}
+          <ProvenanceBadge provenance="model" />.
         </p>
 
         <H2 id="overall">Overall grade</H2>

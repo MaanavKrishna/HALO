@@ -156,7 +156,7 @@ export default function DesignPage() {
         titleId="ds-title"
         eyebrow="Design system, v1"
         title="Built like an instrument."
-        lede="The tokens, type and parts behind HALO: a dark mission theater for exploring the data, a paper theme for the printed brief, and one flame-blue halo that ties them together."
+        lede="The tokens, type and parts behind HALO: a dark theme for exploring and a light paper theme for reading and print, with one flame-blue halo across both. The toggle offers System, Light and Dark."
         actions={
           <>
             <ThemeToggle showLabels />
@@ -514,7 +514,7 @@ export default function DesignPage() {
           <div className="flex flex-col gap-8">
             <Specimen name="ProvenanceBadge">
               <ul className="flex flex-col gap-2.5">
-                {(["measured", "inferred", "assumed", "literature", "model", "si"] as const).map((p) => (
+                {(["measured", "inferred", "assumed", "literature", "computed", "model", "si"] as const).map((p) => (
                   <li key={p}>
                     <ProvenanceBadge provenance={p} />
                   </li>

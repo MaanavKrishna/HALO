@@ -237,7 +237,7 @@ export function ProblemSection() {
             label="Real cabin materials tested in Moon-base air"
             value={problem.moonWindow.solids}
             unit={`of ${problem.moonWindow.tests} tests`}
-            provenance={<ProvenanceBadge provenance="model" />}
+            provenance={<ProvenanceBadge provenance="computed" />}
             detail={
               <>
                 PSI real-solid tests at ≥{problem.moonWindow.o2}% O₂, ≤{problem.moonWindow.p} psia
@@ -447,7 +447,8 @@ const PROVENANCE: { p: Provenance; text: string }[] = [
   { p: "inferred", text: "Derived from test documentation, not a logged channel." },
   { p: "assumed", text: "Not recorded; a stated assumption, such as cabin air." },
   { p: "literature", text: "Taken from a published paper." },
-  { p: "model", text: "Computed by HALO from cited inputs, such as how far the nearest test sits." },
+  { p: "computed", text: "Arithmetic on the data, such as counts and how far the nearest test sits." },
+  { p: "model", text: "From a model fitted to the data: the FLEX droplet extinction model." },
 ];
 
 export function DataSection() {

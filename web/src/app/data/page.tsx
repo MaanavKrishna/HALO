@@ -36,7 +36,8 @@ const PROVENANCE: Array<{ p: Provenance; meaning: string }> = [
   { p: "assumed", meaning: "Not logged; taken from the experiment's documented setup, such as ISS cabin air." },
   { p: "inferred", meaning: "Derived from other recorded quantities or stated only in text." },
   { p: "literature", meaning: "Taken from a published paper or NASA technical report." },
-  { p: "model", meaning: "Computed by HALO from the data: distances, rankings, the extinction model." },
+  { p: "computed", meaning: "Arithmetic on the data: counts, distances, rankings, O2 partial pressure." },
+  { p: "model", meaning: "From a model fitted to the data: the FLEX droplet extinction model." },
   { p: "si", meaning: "Wording written by an LLM over cited facts. It never introduces a number." },
 ];
 
@@ -172,7 +173,7 @@ export default function DataPage() {
 
         <H2 id="provenance">Provenance</H2>
         <p>
-          Every number HALO shows carries one of six provenance marks. The marker shape differs for each, so it still reads in
+          Every number HALO shows carries one of {PROVENANCE.length} provenance marks. The marker shape differs for each, so it still reads in
           greyscale print.
         </p>
         <TableFrame caption="Provenance vocabulary">

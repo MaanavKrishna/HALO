@@ -87,7 +87,8 @@ Every number in a brief carries one of these badges.
 | `assumed` | Not recorded; assumed from the experiment's documented setup (for example ISS cabin pressure). |
 | `inferred` | Derived from other recorded quantities or described only in text. |
 | `literature` | Taken from a published paper or report. |
-| `model` | Computed by HALO from the data (distance, ranking, extinction probability). |
+| `computed` | Arithmetic on the data (counts, distances, ranking, O2 partial pressure). |
+| `model` | From the fitted FLEX droplet extinction model (extinction probability and its band). |
 | `si` | Wording written by an LLM. It never introduces a number that is not a fact value. |
 
 Method details: [docs/METHOD.md](docs/METHOD.md). Brief structure and flag rules: [docs/BRIEF.md](docs/BRIEF.md).

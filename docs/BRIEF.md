@@ -15,7 +15,7 @@
 | `aftermath` | Saffire VI results read from `literature.json` | `facts.ts` |
 | `coolFlame` | FLEX cool-flame fact, only when `liquids` is true, otherwise `null` | `facts.ts` |
 | `nextTests` | Computed next tests that would close the evidence gap most | `nextTest.ts` |
-| `earth` | Three NASA Spinoff facts, each with its Spinoff URL | `facts.ts` |
+| `earth` | Four NASA Spinoff facts, each with its Spinoff URL and the finding it answers | `facts.ts` |
 | `facts` | Every Fact the brief can show, unique by id | `brief.ts` |
 | `notices` | Messages from URL parsing, passed through | `url.ts` |
 
@@ -34,6 +34,14 @@ The interface labels the middle severity "Caution"; in code its key is `warning`
 
 Each flag lists `factIds`. Each id resolves in `brief.facts`, and each number in the flag's title or detail equals `String(value)` of one of those facts.
 
+## Grade reason, air flow, next test and Earth
+
+- **Grade reason.** Every brief states the grade in plain words first (for example, "No real cabin material in PSI was tested anywhere near this atmosphere, so real materials alone would grade F. A stand-in ... lifts the grade one step to D."), then the rule ("How the grade is set").
+- **Air flow.** Each fuel class shows the tested air-flow range against the cabin flow. HALO grades on oxygen and pressure only, and reports flow beside the grade. When the cabin flow is outside every tested solid flow, a caution is raised. The nearest test is chosen by flow when several tests share the nearest condition.
+- **Next test.** The pick is measured against every Saffire run (NASA reports, not PSI). The card shows what archiving those runs in PSI would cover, and names LUCI and FM2 as the partial-gravity vehicles.
+- **Earth.** Four NASA Spinoffs (air tanks, fire detector, firefighter gear, ISS water-mist extinguisher), each tied to the finding it answers.
+- **Provenance.** `computed` = arithmetic on data (counts, distances, partial pressure); `model` = the fitted FLEX extinction model.
+
 ## Fact ids and provenance
 
 `source.psiId` always holds a single PSI id, so the UI can link it; lists of ids go in `source.note`. Fact ids use lowercase letters and hyphens only, with no digits. An "x of y" figure is two facts, so a validator can match each number on its own.
@@ -46,8 +54,8 @@ Each flag lists `factIds`. Each id resolves in `brief.facts`, and each number in
 | `det-scatter-threshold` | assumed | SAME; label "Scatter alarm proxy (photoelectric, assumed)". Cited by detector-miss flags that use scatter |
 | `habitat-oxygen`, `habitat-pressure`, `habitat-flow` | assumed | Note "Habitat definition from the brief URL" (user inputs; in `brief.facts` so SI text about the habitat cites them) |
 | `lit-window-oxygen-low`, `lit-window-oxygen-high`, `lit-window-pressure` | literature | NTRS URL of the Saffire VI rows inside the Moon envelope; note lists the sample ids (`web/src/lib/engine/literatureWindow.ts`) |
-| `next-first-literature-distance` | model | Page fact: evidence distance from the top next-test point to the nearest Saffire VI run in the Moon envelope |
-| `cov-solid-distance` | model | PSI id and DOI of the nearest solid test |
+| `next-first-literature-distance` | computed | Page fact: evidence distance from the top next-test point to the nearest Saffire VI run in the Moon envelope |
+| `cov-solid-distance` | computed | PSI id and DOI of the nearest solid test |
 | `cov-solid-oxygen`, `cov-solid-pressure` | the test's `o2Src` / `pSrc` | same |
 | `cov-solid-count` | measured | Note listing the PSI ids searched |
 | `ext-pressure-min`, `ext-pressure-max` | measured | extinction model source (FLEX) |
@@ -98,11 +106,11 @@ The hero is a full-width theater well in the reader's theme (deep space in dark,
 | 3 | `RankedList` | Top 8 investigations: rank, acronym and title, a score bar showing the four weighted parts (closeness, fuel match, hazards, evidence size; legend above), why-chips, the SI summary with `SiChip` (only when present and not flagged `needsReview`; otherwise the investigation objective), dataset DOI and paper links (`rel="noopener noreferrer"`), and a weight-slider disclosure (`SliderField`) that re-ranks in the browser from the engine's score parts |
 | 4 | `DetectionCard` | `DetectorBars` as instrument meters (caught share in accent, missed share hatched, a tick scale with the half-of-runs mark, "x of y runs caught"); the sensor what-if (scatter vs scatter + ionization) as a segmented radio capsule; materials without SAME runs read "No SAME data" with an idle lamp, never 0%; the SAME ISS-air caveat as a warn callout always shows (`data-iss-air`), ISS included; alarm levels |
 | 5 | `ExtinctionCard` | Panel with median, 95% band and evaluation point as stats, the `ExtinctionCurve`, an extrapolation warn callout when pressure or O2 is outside the fit, and the curve as a table (disclosure) |
-| 6 | `AftermathCard` | Saffire VI PMMA fire power range and the O2 level where CO and CO2 exceeded crew limits, as stats with provenance |
+| 6 | `AftermathCard` | Saffire VI PMMA fire power range and the CO/CO2 results against crew limits as the report states them (CO over the 24-hour SMAC, approaching but not over the 1-hour SMAC; CO2 over the NASA-STD-3001 1-hour limit), as stats with provenance |
 | – | `CoolFlameNote` | Only when liquids are on board (info callout) |
 | 7 | `NextTestCard` | The top computed next test (fuel class, O2, pressure), evidence distance before (hatched) and after (accent) for each reference habitat, habitats with zero gain listed as "not helped", and the runner-up tests |
 | 8 | `ExplainPanel` ("Ask HALO") | See below |
-| 9 | `EarthCard` | Three NASA Spinoff facts with links |
+| 9 | `EarthCard` | Four NASA Spinoff facts with links, each tied to the finding it answers |
 | 10 | `CitationList` | Numbered sources in first-use order, each with the provenance kinds it backs on this brief, and an "every fact" table |
 | – | footer | "HALO summarizes published NASA test evidence. It is not a safety certification." |
 

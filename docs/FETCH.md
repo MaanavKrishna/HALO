@@ -15,4 +15,5 @@ Fetch into a scratch directory, not straight into `data/raw/det/`. To refresh th
 2. Run `cd pipeline && make trim-raw && make data && make test`.
 3. Review the diff before committing.
 
-The experimental tables (`data/raw/et/`) are linked from each record's `experimentalTable[].remote_url` on psi.nasa.gov. They are vendored verbatim.
+The experimental tables (`data/raw/et/`) are listed in each record's `experimentalTable[]` on psi.nasa.gov and vendored verbatim. The `remote_url` path itself returns 404; download a file with
+`curl -L 'https://psi.nasa.gov/geode-py/ws/studies/PSI-<n>/download?source=datamanager&file=<url-encoded file_name>'` (it redirects to S3). The SAME/SAME-R results workbook is filed under PSI-101 as `PSI-101_Analyzed Data_SAME, SAME-R_Results.xlsx`. The full public listing is `https://psi.nasa.gov/geode-py/ws/repo/search?q=&size=500`.

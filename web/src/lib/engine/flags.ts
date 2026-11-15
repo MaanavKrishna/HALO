@@ -31,11 +31,14 @@ function testSource(data: HaloData, psiId: string): Source {
 
 /** SAME (smoke detection) investigation source, if the data has one. */
 export function detectorSource(data: HaloData): Source {
-  // The detector runs are SAME; prefer it over other smoke-detection investigations (DAFT, SAME-R).
+  // The detector runs pool the SAME and SAME-R flights; PSI files their results workbook under SAME-R.
   const inv =
+    data.investigations.find((i) => i.acronym.trim().toUpperCase() === 'SAME-R') ??
     data.investigations.find((i) => i.acronym.trim().toUpperCase() === 'SAME') ??
     data.investigations.find((i) => i.hazards.includes('smoke_detection'));
-  return inv ? { psiId: inv.psiId, doi: inv.datasetDoi, note: inv.acronym } : { note: 'SAME smoke detector runs' };
+  return inv
+    ? { psiId: inv.psiId, doi: inv.datasetDoi, note: 'SAME and SAME-R flight runs (results workbook filed under this PSI record)' }
+    : { note: 'SAME smoke detector runs' };
 }
 
 /** The 2.0 V scatter level is an assumed alarm proxy for an ISS-style photoelectric detector, not a logged alarm. */

@@ -45,7 +45,7 @@ Every kept value is unchanged. To get the full records back, see [`FETCH.md`](FE
 | PSI-39 | CFI | 87 | `Oxygen` × 100 | `Pressure` ("1 atm" strings) | quiescent, 0 | |
 | PSI-10 | ACME Flame Design | 207 normal + 120 inverse | `XO2 (init)` (normal), `XO2` (inverse) | `pmean (atm)` | none | Excluded from coverage (see below). Its `o2Range` and `pRangePsia` in `investigations.json` are null: XO2 is the burner-issued oxidizer, not the cabin atmosphere. |
 | PSI-159 | ACME CFI-G | 179 normal + 154 inverse | ` XO2 before test` (normal), `XO2` (inverse) | `approx p (bar)` | none | `Hot ignition`, `burn time (sec)` and `Self-ext or flow term` kept. |
-| PSI-20 | ACME BRE | 43 (18 test days × listed O2) | `Oxygen Conc (percent)`, a list per day | **inferred** from the objective text: 26.5% ↔ 10.2 psia, 34% ↔ 8.2 psia; other O2 levels have no pressure | quiescent, 0 | One row per (day, O2). `n_tests` = `Flames Ignited` ÷ number of O2 values that day. |
+| PSI-20 | ACME BRE | 43 (18 test days × listed O2) | `Oxygen Conc (percent)`, a list per day | **inferred** from the objective text: 26.5% ↔ 10.2 psia, 34% ↔ 8.2 psia; other O2 levels have no pressure (the objective's third pairing, 21% ↔ 14.7 psia, is deliberately not applied, so the 21% rows stay ineligible) | quiescent, 0 | One row per (day, O2). `n_tests` = `Flames Ignited` ÷ number of O2 values that day. |
 | PSI-23 | ACME s-Flame | 23 | `Atmosphere*` text before "O2" (~21 or ~30) | "~1 atm" table note | none | Diluent He if `Atmosphere*` mentions He. |
 | PSI-21 | ACME CLD Flame | 32 | assumed air (no column) | assumed 1 atm | not tabulated | |
 | PSI-22 | ACME E-FIELD | 20 | assumed air | assumed 1 atm | not tabulated | Blank-key continuation rows and the duplicated row dropped. |

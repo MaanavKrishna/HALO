@@ -345,7 +345,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
         higher.length === others.length
           ? `In FLEX droplet burns, flames went out on their own more often when the inert gas was ${others.map((r) => DILUENT_TEXT[r.d]).join(" or ")} instead of nitrogen.`
           : `In FLEX droplet burns, the inert gas changed how often a flame went out on its own.`,
-      stat: { value: String(share(top.matched)), unit: "%", label: `${DILUENT_TEXT[top.d] === "CO2" ? "CO2" : cap(DILUENT_TEXT[top.d])} runs that self-extinguished`, detail: `${top.matched.ext} of ${top.matched.n} at ${levels} O2` },
+      stat: { value: String(share(top.matched)), unit: "%", label: `${DILUENT_TEXT[top.d] === "CO2" ? "CO2" : cap(DILUENT_TEXT[top.d])} runs that self-extinguished`, detail: `${top.matched.ext} of ${top.matched.n} at the ${shared.length} O2 levels all gases share (${levels})` },
       second: { value: String(share(n2.matched)), unit: "%", label: `Nitrogen runs at the same O2 levels (${n2.matched.ext} of ${n2.matched.n})` },
       provenance: ["measured", "computed"],
       body: `FLEX burned ${fuels.join(" and ").toLowerCase()} droplets in microgravity with nitrogen, carbon dioxide or helium as the inert gas. A run counts here when the flame went out before the droplet burned away or broke up. Over all ${flex.length} eligible runs that is ${rows

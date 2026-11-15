@@ -66,11 +66,11 @@ describe.skipIf(!isReal)('real data: Artemis fire brief', () => {
 });
 
 describe.skipIf(!isReal)('real data: detector facts cite SAME', () => {
-  it('det facts use the SAME investigation, not another smoke-detection one', () => {
+  it('det facts cite the PSI record that holds the SAME/SAME-R results workbook (PSI-101)', () => {
     const b = buildBrief(PRESETS.artemis, HALO_DATA);
     const f = b.facts.find((x) => x.id === 'det-kapton-scatter-runs');
-    expect(f?.source.note).toBe('SAME');
-    expect(f?.source.psiId).toBe('PSI-102');
+    expect(f?.source.psiId).toBe('PSI-101');
+    expect(f?.source.note).toMatch(/SAME and SAME-R/);
   });
 });
 

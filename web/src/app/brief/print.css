@@ -110,6 +110,10 @@
     filter: none !important;
     zoom: 1 !important;
   }
+  /* The grade ladder stays on screen only: its distances print in the next-test section, and the brief keeps to 8 pages. */
+  .grade-ladder {
+    display: none !important;
+  }
   /* Single column: the section heading sits above its content. */
   .brief-section {
     break-inside: auto;

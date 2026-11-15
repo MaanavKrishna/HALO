@@ -305,3 +305,16 @@ test("Ask HALO suggestion chips are tailored to the brief and submit on click", 
   expect(body?.question).toBe("What test would help most?");
   await expect(panel.getByLabel("Ask about this brief")).toHaveValue("What test would help most?");
 });
+
+test("grade ladder: Artemis shows today and two hypothetical grades that anchor to their sections; ISS hides it", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const ladder = page.locator("[data-grade-ladder]");
+  await expect(ladder.locator("[data-ladder-step]")).toHaveCount(3);
+  await expect(ladder.locator('[data-ladder-step="today"]')).toHaveAttribute("data-ladder-grade", "D");
+  await expect(ladder.getByText("Hypothetical", { exact: true })).toHaveCount(2);
+  await expect(ladder.locator('[data-ladder-step="archive"] a[href="#next-archive"]')).toBeVisible();
+  await expect(ladder.locator('[data-ladder-step="next"] a[href="#next-test"]')).toBeVisible();
+  await expect(page.locator("#next-archive")).toHaveCount(1);
+  await page.goto(briefUrl("iss"));
+  await expect(page.locator("[data-grade-ladder]")).toHaveCount(0);
+});

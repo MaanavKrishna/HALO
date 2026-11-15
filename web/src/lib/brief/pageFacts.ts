@@ -1,9 +1,10 @@
 import { sensorWhatIf } from '@/lib/engine/detection';
 import { detectorSource, scatterThresholdFact } from '@/lib/engine/flags';
 import { HABITAT_SOURCE, habitatFacts } from '@/lib/engine/brief';
-import { classGrade } from '@/lib/engine/grade';
+import { classGrade, overallGrade } from '@/lib/engine/grade';
+import { nearestByClass } from '@/lib/engine/distance';
 import { literatureInWindow, missionInPsi, missionSpan } from '@/lib/engine/literatureWindow';
-import { archivableLiterature, nearestArchivable, nearestLiterature } from '@/lib/engine/nextTest';
+import { archivableLiterature, literaturePoints, nearestArchivable, nearestLiterature } from '@/lib/engine/nextTest';
 import { MATERIALS } from '@/lib/engine/materials';
 import { PRESETS } from '@/lib/engine/presets';
 import type { Brief, Fact, FuelClass, Grade, HaloData, MaterialId, Source, TestPoint } from '@/lib/engine/types';
@@ -21,6 +22,8 @@ const PSI_PER_ATM = 14.696;
 const r1 = (x: number) => Number(x.toFixed(1));
 const r2 = (x: number) => Number(x.toFixed(2));
 const pct = (x: number) => Math.round(x * 100);
+/** Display O2 and pressure to 1 decimal when the value carries more (14.696 psia prints as 14.7); the value stays exact. */
+const dp1 = (v: number) => (Math.abs(v * 10 - Math.round(v * 10)) < 1e-9 ? {} : { decimals: 1 });
 
 export const CLASS_ORDER: FuelClass[] = ['solid', 'solid_surrogate', 'droplet', 'gas'];
 export const CLASS_LABEL: Record<FuelClass, string> = {
@@ -66,8 +69,8 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     const src = testSource(data, n.test);
     out.push(
       { id: nearId(c, 'distance'), label: `Evidence distance to the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: r2(n.d), provenance: 'computed', source: src },
-      { id: nearId(c, 'oxygen'), label: `O2 of the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: n.test.o2Pct, unit: '%', provenance: n.test.o2Src, source: src },
-      { id: nearId(c, 'pressure'), label: `Pressure of the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: n.test.pressurePsia, unit: 'psia', provenance: n.test.pSrc, source: src },
+      { id: nearId(c, 'oxygen'), label: `O2 of the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: n.test.o2Pct, unit: '%', ...dp1(n.test.o2Pct), provenance: n.test.o2Src, source: src },
+      { id: nearId(c, 'pressure'), label: `Pressure of the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: n.test.pressurePsia, unit: 'psia', ...dp1(n.test.pressurePsia), provenance: n.test.pSrc, source: src },
       { id: nearId(c, 'gap'), label: `O2 gap between the habitat and the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: r1(Math.abs(n.o2Gap ?? 0)), unit: 'O2-points', provenance: 'computed', source: src },
     );
   }
@@ -160,7 +163,73 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     );
   }
 
+  // Grade ladder: distances for a habitat that matches no preset (presets cite the next-test and archive facts).
+  if (!ladderPreset(h)) {
+    const lad = gradeLadder(b, data);
+    for (const s of lad) {
+      if (s.kind === 'today' || s.d === null || s.factId === 'grade-solid-distance') continue;
+      out.push({
+        id: `ladder-${s.kind}-distance`,
+        label: s.kind === 'archive'
+          ? `Real-solid evidence distance if the ${archMissions} runs not yet in PSI were archived there`
+          : 'Real-solid evidence distance after suggested test 1',
+        value: r2(s.d), provenance: 'computed', source: s.kind === 'archive' ? archSrc(h) : nextSrc,
+      });
+    }
+  }
+
   return out;
+}
+
+/** The preset whose atmosphere this habitat matches (its next-test and archive facts apply), or null. */
+export function ladderPreset(h: { o2Pct: number; pressurePsia: number }): PresetKey | null {
+  return PRESET_ORDER.find((k) => PRESETS[k].o2Pct === h.o2Pct && PRESETS[k].pressurePsia === h.pressurePsia) ?? null;
+}
+
+/**
+ * Overall grade if the nearest real cabin solid test sat at evidence distance `d`,
+ * by the engine's own rule (overallGrade): the surrogate lift still applies.
+ */
+export function gradeIfSolidDistance(b: Brief, d: number | null, measuredBoth = false): Grade {
+  return overallGrade({ ...b.byClass, solid: { ...b.byClass.solid, d, measuredBoth } }).grade;
+}
+
+export interface LadderStep {
+  kind: 'today' | 'archive' | 'next';
+  grade: Grade;
+  /** Real-solid evidence distance at this step (unrounded). */
+  d: number | null;
+  /** Fact the page renders the distance from. */
+  factId: string;
+  href: string;
+  /** The step lowers the real-solid distance below today's. */
+  closer: boolean;
+}
+
+/**
+ * "What would raise this grade": today, with the literature runs not yet in PSI
+ * archived there, and after the top suggested test. Each hypothetical step reruns
+ * the engine's nearest-test search with the extra points, then overallGrade.
+ */
+export function gradeLadder(b: Brief, data: HaloData): LadderStep[] {
+  const h = b.habitat;
+  const solid = data.tests.filter((t) => t.fuelClass === 'solid');
+  const preset = ladderPreset(h);
+  const today = b.byClass.solid;
+  const step = (kind: 'archive' | 'next', extra: TestPoint[], factId: string, href: string): LadderStep => {
+    const n = nearestByClass(h, [...solid, ...extra]).solid;
+    // A hypothetical step is never graded as measured-in-PSI: it tops out at B until the data is actually archived.
+    return { kind, grade: gradeIfSolidDistance(b, n.d, false), d: n.d, factId, href, closer: n.d !== null && (today.d === null || n.d < today.d - 1e-9) };
+  };
+  const best = b.nextTests[0];
+  const planned: TestPoint[] = best && best.fuelClass === 'solid'
+    ? [{ id: 'next:1', psiId: 'PSI-0', acronym: 'Suggested test', fuelClass: 'solid', fuel: 'real cabin solid', o2Pct: best.o2Pct, pressurePsia: best.pressurePsia, o2Src: 'measured', pSrc: 'measured', flowCmS: null }]
+    : [];
+  return [
+    { kind: 'today', grade: b.grade.grade, d: today.d, factId: 'grade-solid-distance', href: '#grade', closer: false },
+    step('archive', literaturePoints(data.literature, data.tests), preset ? archiveId(preset, 'after') : 'ladder-archive-distance', '#next-archive'),
+    step('next', planned, planned.length === 0 ? 'grade-solid-distance' : preset ? gainId(0, preset, 'after') : 'ladder-next-distance', '#next-test'),
+  ];
 }
 
 /** The literature missions that "if archived" counts, as a span from the data ("Saffire IV–VI"). */

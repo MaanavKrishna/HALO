@@ -127,7 +127,7 @@ Then open http://localhost:3000.
 
 | Suite | Command | Count |
 |---|---|---|
-| Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 308 tests in 27 files |
+| Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 309 tests in 27 files |
 | Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` | 84 tests |
 | End-to-end (Playwright, production build on port 3100) | `cd web && pnpm test:e2e` | 103 tests in 9 specs |
 | Type check | `cd web && pnpm exec next typegen && pnpm exec tsc --noEmit` | |

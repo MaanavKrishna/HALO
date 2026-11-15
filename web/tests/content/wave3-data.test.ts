@@ -70,6 +70,12 @@ describe.skipIf(!real)('findings from the real data', () => {
     expect(f.provenance).toContain('computed');
   });
 
+  it('next-test finding names the same nearest literature run as the brief', () => {
+    const body = by('next-test').body;
+    expect(body).toMatch(/Saffire-?V run V-2 burned .* at evidence distance 0\.39 from this point \(NASA report, literature; mission not in PSI\)/);
+    expect(body).not.toMatch(/0\.69/);
+  });
+
   it('cites FM2, SoFIE, FLARE and ASE', () => {
     expect(by('partial-gravity').body).toMatch(/LUCI, which burned samples.*planned FM2/);
     expect(by('partial-gravity').sources.some((s) => s.href?.includes('flammability-of-materials-on-the-moon-fm2'))).toBe(true);

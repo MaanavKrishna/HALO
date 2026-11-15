@@ -7,9 +7,9 @@ import { scaledDistance } from "@/lib/engine/distance";
 import { extinctionAt } from "@/lib/engine/extinction";
 import { detectorSource } from "@/lib/engine/flags";
 import { GRADE_RINGS, classGrade } from "@/lib/engine/grade";
-import { literatureInWindow, literatureWindowSentence } from "@/lib/engine/literatureWindow";
+import { literatureInWindow, literatureWindowSentence, missionInPsi } from "@/lib/engine/literatureWindow";
 import { MATERIALS } from "@/lib/engine/materials";
-import { nextTests } from "@/lib/engine/nextTest";
+import { nearestLiterature, nextTests } from "@/lib/engine/nextTest";
 import { PRESETS } from "@/lib/engine/presets";
 import { habitatToQuery } from "@/lib/engine/url";
 import type { FuelClass, Grade, Habitat, HaloData, LiteratureRow, MaterialId, Provenance, TestPoint } from "@/lib/engine/types";
@@ -431,9 +431,17 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   const [pick] = nextTests(data.tests);
   if (pick) {
     const helped = pick.gains.filter((g) => g.after < g.before).sort((a, b) => b.before - b.after - (a.before - a.after));
-    const litW = literatureInWindow(data, moon.o2Pct, moon.pressurePsia);
-    const litNear = litW
-      ? { ...litW, d: Math.min(...litW.rows.map((r) => scaledDistance(pick.o2Pct, pick.pressurePsia, r.o2Pct as number, r.pressurePsia as number))) }
+    // The literature run nearest the pick, the same one the brief's next-test card names.
+    const near = nearestLiterature(pick, data.literature);
+    const litNear = near
+      ? {
+          missions: [near.row.mission],
+          run: near.row.sampleId,
+          materials: [shortMaterial(near.row.material)],
+          d: near.d,
+          inPsi: missionInPsi(near.row.mission, data.tests),
+          sourceUrls: [near.row.sourceUrl],
+        }
       : null;
     const pname = (k: string) => (PRESETS as Record<string, Habitat>)[k]?.name ?? k;
     const seen = new Set<string>();
@@ -447,17 +455,17 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     out.push({
       id: "next-test",
       topic: "Next test to fly",
-      title: `The single test that would close the most evidence gap: a new real-solid test at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia, archived in PSI${litNear ? ", near the Saffire VI conditions" : ""}.`,
+      title: `The single test that would close the most evidence gap: a new real-solid test at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia, archived in PSI${litNear ? `, near conditions ${litNear.missions[0]} already flew` : ""}.`,
       stat: { value: `${pick.o2Pct}`, unit: `% · ${pick.pressurePsia} psia`, label: "Suggested solid-fuel test" },
       second: helped[0] ? { value: fmt2(helped[0].after), unit: `from ${fmt2(helped[0].before)}`, label: `${pname(helped[0].preset)} evidence distance after` } : undefined,
       provenance: litNear ? ["computed", "literature"] : ["computed"],
       body: `HALO scores every solid, droplet and gas test on a grid of atmospheres by how far it would pull the presets' nearest evidence in, weighted toward the lunar habitats and toward real solids. ${helped
         .map((g) => `${pname(g.preset)} ${fmt2(g.before)} → ${fmt2(g.after)}`)
-        .join("; ")}.${litNear ? ` ${litNear.missions.join(", ")} burned ${litNear.materials.join(" and ")} at evidence distance ${fmt2(litNear.d)} from this point (literature), but those runs are not in PSI, so HALO cannot grade on them; a new test with its data archived in PSI would close that gap.` : ""}`,
+        .join("; ")}.${litNear ? ` ${litNear.missions[0]} run ${litNear.run} burned ${litNear.materials.join(" and ")} at evidence distance ${fmt2(litNear.d)} from this point (NASA report, literature${litNear.inPsi ? "" : "; mission not in PSI"}). HALO grades only on PSI rows, so a new test with its data archived in PSI would close that gap.` : ""}`,
       viz: { kind: "next", tests: pts, pick: { o2: pick.o2Pct, p: pick.pressurePsia }, presets: [iss, moon, artemis].map((h) => ({ label: h.name, o2: h.o2Pct, p: h.pressurePsia })) },
       sources: [
         { label: "HALO next-test search (method)", href: "/method#next-test", detail: "Scores candidates over the eligible PSI test rows" },
-        ...(litNear ? litNear.sourceUrls.map((url) => ({ label: `${litNear.missions.join(", ")} (NASA report, literature)`, href: url, detail: "Not PSI test rows; distance only, never graded" })) : []),
+        ...(litNear ? litNear.sourceUrls.map((url) => ({ label: `${litNear.missions.join(", ")} (NASA report, literature)`, href: url, detail: litNear.inPsi ? "Literature run; distance only, never graded" : "Not PSI test rows; distance only, never graded" })) : []),
       ],
       brief: briefLink(moon, data),
     });

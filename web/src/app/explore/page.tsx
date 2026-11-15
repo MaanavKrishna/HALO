@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/ui";
 import { ExploreBrowser } from "@/components/explore/ExploreBrowser";
 import { HALO_DATA } from "@/lib/data/load";
-import { psiNumber } from "@/lib/explore";
+import { investigationRows } from "@/lib/data/schema";
+import { psiNumber, sensorMap } from "@/lib/explore";
 
 export const metadata: Metadata = {
   title: "Explore the investigations",
@@ -14,7 +15,8 @@ const fmt = new Intl.NumberFormat("en-US");
 
 export default function ExplorePage() {
   const { investigations, manifest } = HALO_DATA;
-  const sorted = [...investigations].sort((a, b) => psiNumber(a.psiId) - psiNumber(b.psiId));
+  const sorted = [...investigationRows(HALO_DATA)].sort((a, b) => psiNumber(a.psiId) - psiNumber(b.psiId));
+  const sensors = sensorMap(HALO_DATA.summaries);
   const pubs = investigations.reduce((s, i) => s + i.publications.length, 0);
   const readouts: Array<[string, string]> = [
     ["Investigations", fmt.format(investigations.length)],
@@ -42,7 +44,7 @@ export default function ExplorePage() {
         }
       />
       <section aria-label="Investigation list" className="container-wide pb-24 pt-10 sm:pt-14">
-        <ExploreBrowser investigations={sorted} />
+        <ExploreBrowser investigations={sorted} sensors={sensors} />
       </section>
     </main>
   );

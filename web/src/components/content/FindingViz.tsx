@@ -96,8 +96,103 @@ function Breakdown({ v }: { v: Extract<Viz, { kind: "breakdown" }> }) {
           );
         })}
       </div>
-      <figcaption className="type-caption text-fg-3">Eligible rows in the Moon window, by fuel kind. Bars share one scale.</figcaption>
+      {v.outcomes && <Outcomes o={v.outcomes} />}
+      <figcaption className="type-caption text-fg-3">
+        Eligible rows in the Moon window, by fuel kind. Bars share one scale.{v.outcomes ? " Strip: how each logged burn there ended." : ""}
+      </figcaption>
     </figure>
+  );
+}
+
+const OUTCOME_TONE: Record<string, { fill: string; swatch: string }> = {
+  extinguished: { fill: "bg-accent", swatch: "bg-accent" },
+  "flow-stopped": { fill: "bg-fg-3", swatch: "bg-fg-3" },
+  "no-ignition": { fill: "border border-dashed border-line-strong bg-transparent", swatch: "border border-dashed border-line-strong" },
+};
+
+/** One stacked strip of recorded burn outcomes (count-proportional segments), with a legend that carries the counts. */
+function Outcomes({ o }: { o: NonNullable<Extract<Viz, { kind: "breakdown" }>["outcomes"]> }) {
+  const desc = o.parts.map((p) => `${p.count} ${p.label.toLowerCase()}`).join(", ");
+  return (
+    <div className="flex flex-col gap-2 border-t border-line pt-4" role="group" aria-label={`${o.label}: ${desc}, of ${o.total} burns`}>
+      <div className="flex items-baseline justify-between gap-4 text-sm">
+        <span className="text-fg-2">{o.label}</span>
+        <span className={`${mono} text-fg`}>{o.total}</span>
+      </div>
+      <div aria-hidden="true" className="flex h-2.5 gap-0.5 overflow-hidden rounded-[var(--radius-pill)]">
+        {o.parts.map((p) => (
+          <div key={p.outcome} className={`h-full ${OUTCOME_TONE[p.outcome]?.fill ?? "bg-fg-3"}`} style={{ width: `${(p.count / o.total) * 100}%` }} />
+        ))}
+      </div>
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-2">
+        {o.parts.map((p) => (
+          <li key={p.outcome} className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" className={`inline-block size-2.5 rounded-full ${OUTCOME_TONE[p.outcome]?.swatch ?? "bg-fg-3"}`} />
+            {p.label} <span className={`${mono} text-fg`}>{p.count}</span>
+          </li>
+        ))}
+      </ul>
+      <ProvenanceBadge provenance="measured" className="self-start" />
+    </div>
+  );
+}
+
+/** Self-extinction share per diluent: solid bar at the shared O2 levels, outline tick for all runs. */
+function Diluent({ v, W, compact }: { v: Extract<Viz, { kind: "diluent" }>; W: number; compact: boolean }) {
+  const rowH = compact ? 60 : 46;
+  const top = 6;
+  const H = top + v.rows.length * rowH + 24;
+  const x0 = compact ? 0 : 150;
+  const x = lin(0, 100, x0, W - 40);
+  const share = (r: { ext: number; n: number }) => (r.n ? (100 * r.ext) / r.n : 0);
+  return (
+    <Figure
+      W={W}
+      height={H}
+      label={`Share of FLEX droplet runs whose flame went out on its own, by inert gas. At the O2 levels all gases share (${v.levels}): ${v.rows
+        .map((r) => `${r.label} ${Math.round(share(r.matched))} percent, ${r.matched.ext} of ${r.matched.n}`)
+        .join("; ")}. All runs: ${v.rows.map((r) => `${r.label} ${Math.round(share(r.all))} percent`).join("; ")}.`}
+      caption={
+        <span className="inline-flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-accent" /> runs at the shared O2 levels ({v.levels})
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" className="inline-block h-3 w-0.5 bg-fg-2" /> all eligible runs
+          </span>
+        </span>
+      }
+    >
+      {[0, 50, 100].map((t) => (
+        <g key={t}>
+          <line x1={x(t)} x2={x(t)} y1={top} y2={H - 22} stroke="var(--border)" />
+          <text x={x(t)} y={H - 6} textAnchor={t === 0 && compact ? "start" : "middle"} className={mono} {...LABEL}>
+            {t}%
+          </text>
+        </g>
+      ))}
+      {v.rows.map((r, i) => {
+        const yy = top + i * rowH;
+        const by = compact ? yy + 18 : yy + 8;
+        const m = share(r.matched);
+        const a = share(r.all);
+        return (
+          <g key={r.label}>
+            <text x={0} y={compact ? yy + 12 : by + 13} fontSize={12.5} fill="var(--text-1)">
+              {r.label}
+            </text>
+            <rect x={x(0)} y={by} width={Math.max(2, x(m) - x(0))} height={18} rx={4} fill="var(--accent)" fillOpacity={0.85} />
+            <line x1={x(a)} x2={x(a)} y1={by - 4} y2={by + 22} stroke="var(--text-2)" strokeWidth={2} />
+            <text x={x(m) + 6} y={by + 13} className={mono} fontSize={11.5} fill="var(--text-1)">
+              {Math.round(m)}%
+            </text>
+            <text x={W} y={compact ? yy + 12 : by + 32} textAnchor="end" className={mono} fontSize={10.5} fill="var(--text-3)">
+              {r.matched.ext}/{r.matched.n} · all {r.all.ext}/{r.all.n}
+            </text>
+          </g>
+        );
+      })}
+    </Figure>
   );
 }
 
@@ -427,6 +522,8 @@ function Svg({ viz, ...p }: { viz: Viz } & FigProps) {
       return <Distance v={viz} {...p} />;
     case "next":
       return <Next v={viz} {...p} />;
+    case "diluent":
+      return <Diluent v={viz} {...p} />;
     default:
       return null;
   }

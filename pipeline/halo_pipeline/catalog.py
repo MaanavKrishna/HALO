@@ -47,6 +47,47 @@ ACRONYM_FALLBACK = {
     "PSI-142": "Cool-flame counterflow",
 }
 
+# Sample geometry per investigation, read from the PSI tables (material/size columns) and, where the
+# tables log none, from the PSI objective or hardware text. FLEX and SPICE ranges are computed from rows
+# (see _geometry). Plain text, shown on /explore.
+GEOMETRY: dict[str, str] = {
+    "PSI-10": "Spherical and coflow gas diffusion flames (porous sphere burner; size not tabulated)",
+    "PSI-20": "Porous circular burners, 25 and 50 mm diameter (gas surrogate for a burning solid)",
+    "PSI-21": "Coflow jet diffusion flames (burner size not tabulated)",
+    "PSI-22": "Coflow jet flames with an electrified mesh (burner size not tabulated)",
+    "PSI-23": "Spherical diffusion flames (burner size not tabulated)",
+    "PSI-25": "PMMA rods 1/4 to 1/2 in. diameter, PMMA films 0.1 to 0.4 mm thick (1 to 2 cm wide), "
+              "PMMA slabs and spherical sections, SIBAL fabric 1 to 2 cm wide, Nomex",
+    "PSI-26": "PMMA spheres 1 and 2 cm, PMMA slabs, SIBAL and Nomex strips 1 to 2 cm, wax candles and slabs",
+    "PSI-39": "Free and fiber-supported n-dodecane droplets (diameter not tabulated)",
+    "PSI-47": "Arizona Road Dust test aerosol (no flame)",
+    "PSI-60": "Analysis of SPICE coflow jet flame images (no new samples)",
+    "PSI-62": "Numerical model of concurrent flame spread over solids (no samples)",
+    "PSI-68": "Droplets 1.5 to 5 mm initial diameter (design matrix)",
+    "PSI-98": "SIBAL cotton/fiberglass fabric sheet, 40.6 x 94 cm",
+    "PSI-99": "Strips 5 cm wide, 5 to 29 cm long: silicone, SIBAL, PMMA and Nomex, 0.27 mm to 1 cm thick",
+    "PSI-100": "SIBAL cotton/fiberglass fabric sheet, 94 x 40.6 cm",
+    "PSI-101": "Heated solid samples, no flame: Kapton, Teflon, silicone, lampwick, Pyrell",
+    "PSI-102": "Heated solid samples, no flame: Kapton, Teflon, silicone rubber, lampwick, dibutyl phthalate",
+    "PSI-106": "Coflow jet diffusion flames, several burner diameters (not tabulated)",
+    "PSI-115": "Numerical model of pyrolysis smoke (no samples)",
+    "PSI-117": "Numerical model of FLEX droplet cool flames, small and large droplets",
+    "PSI-142": "Ground counterflow flames, ozone-sensitized (laboratory)",
+    "PSI-159": "Gaseous diffusion flames, normal and inverse (burner size not tabulated)",
+}
+
+
+def _geometry(pid: str, rows: pd.DataFrame) -> str:
+    g = pd.to_numeric(rows.get("geometry_mm", pd.Series(dtype=float)), errors="coerce").dropna()
+    if pid == "PSI-69" and len(g):
+        return f"Free droplets, {g.min():g} to {g.max():g} mm initial diameter"
+    if pid == "PSI-107" and len(g):
+        sizes = [f"{x:.2f}" for x in sorted(g.unique())]
+        listed = ", ".join(sizes[:-1]) + (" and " if len(sizes) > 1 else "") + sizes[-1]
+        return f"Coflow jet flames from {listed} mm nozzles"
+    return GEOMETRY[pid]
+
+
 # Fuel classes for investigations without per-test rows in the unified table.
 FUEL_CLASSES_EXTRA = {
     "PSI-10": ["gas"], "PSI-68": ["droplet"], "PSI-60": ["gas"], "PSI-62": ["solid"],
@@ -130,6 +171,9 @@ def build_investigations(U: pd.DataFrame, det: dict[str, dict] | None = None) ->
         out.append({
             "psiId": pid,
             "acronym": (rec.get("investigationAcronym") or "").strip() or ACRONYM_FALLBACK[pid],
+            # "halo" marks a label HALO assigned because the PSI record's acronym is blank.
+            "acronymSource": "psi" if (rec.get("investigationAcronym") or "").strip() else "halo",
+            "geometry": _geometry(pid, rows),
             "title": rec["title"].strip(),
             "hardware": (rec.get("experimentHardware") or "").strip(),
             "fuelClasses": classes,

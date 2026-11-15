@@ -6,6 +6,9 @@ const range = z.tuple([finite, finite]);
 
 export const FuelClassZ = z.enum(['solid', 'solid_surrogate', 'droplet', 'gas']);
 export const ConditionSourceZ = z.enum(['measured', 'assumed', 'inferred']);
+/** Normalized test end (tests.json `outcome`); only values a PSI table states are mapped, the rest are "unknown". */
+export const OutcomeZ = z.enum(['extinguished', 'burned-out', 'flow-stopped', 'no-ignition', 'disrupted', 'spread', 'unknown']);
+export const DiluentZ = z.enum(['N2', 'CO2', 'He']);
 export const HazardZ = z.enum(['ignition', 'spread', 'extinction', 'smoke_detection', 'suppression', 'toxicity']);
 
 export const TestPointZ = z.object({
@@ -18,6 +21,11 @@ export const TestPointZ = z.object({
   pressurePsia: finite.min(0),
   o2Src: ConditionSourceZ,
   pSrc: ConditionSourceZ,
+  // Added in wave 3; optional so older data and the fixtures still parse.
+  flowCmS: finite.min(0).nullable().optional(),
+  flowSrc: ConditionSourceZ.nullable().optional(),
+  outcome: OutcomeZ.optional(),
+  diluent: DiluentZ.nullable().optional(),
 });
 
 export const InvestigationZ = z.object({
@@ -42,6 +50,9 @@ export const InvestigationZ = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   dateNote: z.string().nullable(),
+  // Added in wave 3 (optional): sample geometry text, and whether the acronym is PSI's or a HALO label.
+  geometry: z.string().optional(),
+  acronymSource: z.enum(['psi', 'halo']).optional(),
 });
 
 export const DetectorZ = z.object({
@@ -83,6 +94,8 @@ export const LiteratureZ = z.object({
   spreadRateMmS: finite.nullable(),
   outcome: z.string(),
   sourceUrl: z.string(),
+  /** Every report the row cites, primary first, each labelled by its own title (wave 3, optional). */
+  sources: z.array(z.object({ url: z.string(), label: z.string() })).optional(),
   confidence: z.string(),
 });
 
@@ -121,6 +134,18 @@ export type _SchemaMatchesTypes = [
   Assert<Same<z.infer<typeof SummaryZ>, import('@/lib/engine/types').Summary>>,
   Assert<Same<z.infer<typeof ManifestZ>, import('@/lib/engine/types').Manifest>>,
 ];
+
+/**
+ * Rows with the wave-3 optional fields. HaloData types its arrays with the engine's interfaces; the parsed
+ * objects carry these fields too, so these views only widen the static type.
+ */
+export type TestRow = z.infer<typeof TestPointZ>;
+export type InvestigationRow = z.infer<typeof InvestigationZ>;
+export type LiteratureEntry = z.infer<typeof LiteratureZ>;
+export type Outcome = z.infer<typeof OutcomeZ>;
+export const testRows = (d: Pick<HaloData, 'tests'>): TestRow[] => d.tests as TestRow[];
+export const investigationRows = (d: Pick<HaloData, 'investigations'>): InvestigationRow[] => d.investigations as InvestigationRow[];
+export const literatureRows = (d: Pick<HaloData, 'literature'>): LiteratureEntry[] => d.literature as LiteratureEntry[];
 
 export function parseHaloData(raw: {
   tests: unknown; investigations: unknown; detector: unknown; extinction: unknown;

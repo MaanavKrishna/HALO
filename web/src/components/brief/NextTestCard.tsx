@@ -104,7 +104,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
           <div className="mt-3 flex max-w-[64ch] flex-col gap-2.5 text-sm text-pretty text-fg-2" data-next-literature>
             <p>
               <span className="font-medium text-fg">This is not a first burn.</span> {list(missions)} already burned {list(materials)} near here (the
-              nearest run sits at evidence distance <Num brief={brief} id={NEXT_LITERATURE_DISTANCE} />) <ProvenanceBadge provenance="literature" className="align-middle" />.
+              nearest run sits at evidence distance <Num brief={brief} id={NEXT_LITERATURE_DISTANCE} />) <ProvenanceBadge provenance="literature" className="align-middle" />.{" "}
               {nearLitOutsidePsi ? "Those flights are NASA reports, not PSI test rows." : "Their spread data come from NASA reports."}
             </p>
             <p>
@@ -150,7 +150,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
                 <span className="font-medium text-fg">
                   <Num brief={brief} id="next-archived-oxygen" cite={false} /> O<sub>2</sub>, <Num brief={brief} id="next-archived-pressure" cite={false} />
                 </span>
-                .<CiteMark n={ctx.cite(archiveId(archive[0].preset, "before"))} />
+                .<CiteMark n={ctx.cite("next-archived-oxygen")} />
               </p>
             )}
           </div>

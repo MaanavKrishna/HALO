@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { BUILD_HREF, CHALLENGE_URL, DISCLAIMER, NAV_LINKS, REPO_URL } from "@/components/ui/site";
+import { BUILD_HREF, CHALLENGE_URL, DISCLAIMER, NAV_LINKS, REPO_URL, TOOL_LINKS } from "@/components/ui/site";
 
-export { BUILD_HREF, CHALLENGE_URL, DISCLAIMER, NAV_LINKS, REPO_URL };
+export { BUILD_HREF, CHALLENGE_URL, DISCLAIMER, NAV_LINKS, REPO_URL, TOOL_LINKS };
 
 /** Production URL; a deployment can override it with NEXT_PUBLIC_SITE_URL. */
 const DEFAULT_SITE_URL = "https://halo-fire-brief-maanavkrishnas-projects.vercel.app";
@@ -34,7 +34,14 @@ export const THEME_LIGHT = "#f4f3ef";
 export const absoluteUrl = (path: string) => new URL(path, SITE_URL).toString();
 
 /** Static, indexable routes (dynamic ones are added by the sitemap). */
-export const STATIC_ROUTES = ["/", BUILD_HREF, "/brief", ...NAV_LINKS.map((l) => l.href)] as const;
+export const STATIC_ROUTES = [
+  "/",
+  BUILD_HREF,
+  "/brief",
+  ...NAV_LINKS.map((l) => l.href),
+  ...TOOL_LINKS.map((l) => l.href),
+  "/design",
+] as const;
 
 /**
  * Per-page metadata: title (the root template adds " · HALO"), description,

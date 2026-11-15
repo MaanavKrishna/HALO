@@ -50,7 +50,13 @@ export function AftermathCard({ brief }: { brief: Brief }) {
                 value={<span className="num" data-fact={tox.id}>~{String(tox.value)}</span>}
                 unit={
                   <>
-                    {tox.unit}
+                    {tox.unit === "% O2" ? (
+                      <>
+                        % O<sub>2</sub>
+                      </>
+                    ) : (
+                      tox.unit
+                    )}
                     <CiteMark n={ctx.cite(tox.id)} />
                   </>
                 }

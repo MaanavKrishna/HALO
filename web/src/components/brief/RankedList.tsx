@@ -28,6 +28,7 @@ export function RankedList({ brief }: { brief: Brief }) {
   const ctx = briefContext(brief);
   const items: RankedItem[] = brief.ranked.map((r) => {
     const s = HALO_DATA.summaries[r.inv.psiId];
+    const fuels = fuelsFor(r.inv.psiId);
     // SI summaries flagged for review are never shown as SI text.
     const si = s && !s.needsReview && s.summary.trim() ? s.summary.trim() : null;
     return {
@@ -48,8 +49,8 @@ export function RankedList({ brief }: { brief: Brief }) {
       paperCount: r.inv.publications.length,
       // Sensors are SI-extracted from the PSI record; a summary flagged for review hides them too.
       sensors: s && !s.needsReview ? s.sensors.filter((x) => x.trim()) : [],
-      fuels: fuelsFor(r.inv.psiId).shown,
-      fuelTotal: fuelsFor(r.inv.psiId).total,
+      fuels: fuels.shown,
+      fuelTotal: fuels.total,
     };
   });
 

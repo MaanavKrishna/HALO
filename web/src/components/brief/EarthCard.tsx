@@ -6,15 +6,16 @@ import type { Brief } from "@/lib/engine/types";
 import { BriefIcon } from "./icons";
 import { CiteMark, Num, Section } from "./parts";
 
-/** The brief finding each Earth technology answers, in one line with its numbers cited. */
 /** What each aftermath technology does about the finding. */
 const AFTERMATH_POINT: Record<string, string> = {
-  "earth-air-tanks": "so firefighters, like crews, need their own clean breathing air.",
-  "earth-fire-attire": "so protective gear has to guard against smoke and gas as well as heat.",
-  "earth-water-mist": "so an extinguisher that adds no CO₂ matters as much as putting the fire out.",
+  "earth-air-tanks": "firefighters, like crews, need their own clean breathing air.",
+  "earth-fire-attire": "protective gear has to guard against smoke and gas as well as heat.",
+  "earth-water-mist": "an extinguisher that adds no CO₂ matters as much as putting the fire out.",
 };
+const AFTERMATH_DEFAULT = "clean air after a fire matters as much as putting it out.";
 
-function Tie({ brief, kind, id }: { brief: Brief; kind: "smoke" | "aftermath"; id: string }) {
+/** The brief finding an Earth technology answers. The Saffire VI CO and CO2 sentence is written once, on the first aftermath tie. */
+function Tie({ brief, kind, id, first }: { brief: Brief; kind: "smoke" | "aftermath"; id: string; first: boolean }) {
   const ctx = briefContext(brief);
   if (kind === "smoke") {
     const miss = brief.flags.find((f) => f.id.startsWith("detector-miss-"));
@@ -45,13 +46,16 @@ function Tie({ brief, kind, id }: { brief: Brief; kind: "smoke" | "aftermath"; i
         This brief
       </a>
       {": "}
-      {toxic ? (
+      {toxic && first ? (
         <>
-          in the Saffire VI burn at about <Num brief={brief} id="aftermath-toxic-oxygen" />, CO exceeded the 24-hour crew limit and CO<sub>2</sub> its 1-hour
-          limit, {AFTERMATH_POINT[id] ?? "so clean air after a fire matters as much as putting it out."}
+          in the Saffire VI burn at about <Num brief={brief} id="aftermath-toxic-oxygen" unit={false} cite={false} />% O<sub>2</sub>
+          <CiteMark n={ctx.cite("aftermath-toxic-oxygen")} />, CO exceeded the 24-hour crew limit and CO<sub>2</sub> its 1-hour limit, so{" "}
+          {AFTERMATH_POINT[id] ?? AFTERMATH_DEFAULT}
         </>
+      ) : toxic ? (
+        <>the same burn&rsquo;s gases mean {AFTERMATH_POINT[id] ?? AFTERMATH_DEFAULT}</>
       ) : (
-        <>a fire leaves smoke and toxic gas behind, {AFTERMATH_POINT[id] ?? "so clean air after a fire matters as much as putting it out."}</>
+        <>a fire leaves smoke and toxic gas behind, so {AFTERMATH_POINT[id] ?? AFTERMATH_DEFAULT}</>
       )}
     </p>
   );
@@ -60,6 +64,7 @@ function Tie({ brief, kind, id }: { brief: Brief; kind: "smoke" | "aftermath"; i
 /** NASA Spinoff technologies from space fire research, each tied to the finding in this brief it answers. */
 export function EarthCard({ brief }: { brief: Brief }) {
   const ctx = briefContext(brief);
+  const firstAftermath = brief.earth.find((f) => EARTH_TIES[f.id] === "aftermath")?.id;
   return (
     <Section
       id="earth"
@@ -79,7 +84,7 @@ export function EarthCard({ brief }: { brief: Brief }) {
               </p>
               {tie && (
                 <div className="mt-1 border-t border-line pt-3">
-                  <Tie brief={brief} kind={tie} id={f.id} />
+                  <Tie brief={brief} kind={tie} id={f.id} first={f.id === firstAftermath} />
                 </div>
               )}
               {url && (

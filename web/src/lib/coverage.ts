@@ -206,3 +206,82 @@ export function classCoverage(data: HaloData, fuelClass: FuelClass): ClassCovera
 export function coverageMap(data: HaloData): ClassCoverage[] {
   return COVERAGE_CLASSES.map((c) => classCoverage(data, c));
 }
+
+// ---------------------------------------------------------------- chart scales and the habitat probe
+
+/** Margins and data-to-pixel scales of one coverage chart (shared by the map and the probe's crosshair). */
+export function chartScale(width: number, height: number, fs: number, compact: boolean) {
+  const M = { l: fs * 3.6, r: compact ? 10 : 16, t: 12, b: fs * 3.6 };
+  const kx = (width - M.l - M.r) / (VIEW.o2[1] - VIEW.o2[0]);
+  const ky = (height - M.t - M.b) / (VIEW.p[1] - VIEW.p[0]);
+  const r1 = (v: number) => Math.round(v * 10) / 10;
+  return {
+    M,
+    kx,
+    ky,
+    x: (v: number) => r1(M.l + (v - VIEW.o2[0]) * kx),
+    y: (v: number) => r1(height - M.b - (v - VIEW.p[0]) * ky),
+    plot: { x: M.l, y: M.t, w: width - M.l - M.r, h: height - M.t - M.b },
+  };
+}
+
+/** Chart sizes used by the map; the probe overlays a crosshair on each with the same scales. */
+export const CHART_SIZES = {
+  wide: { width: 880, height: 470, fs: 12, compact: false },
+  wideCompact: { width: 680, height: 400, fs: 12, compact: false },
+  phone: { width: 340, height: 430, fs: 11.5, compact: true },
+} as const;
+
+/**
+ * The probe's client payload: each class's distinct tested conditions as
+ * [O2 %, psia, acronym index, 1 if both conditions were measured]. Tests at one condition are interchangeable for
+ * the grade; the one kept is the engine's own tie-break winner there, so the
+ * named investigation matches the brief's.
+ */
+export interface ProbePoints {
+  acronyms: string[];
+  points: Record<FuelClass, Array<[number, number, number, 0 | 1]>>;
+}
+
+export function probePoints(data: HaloData): ProbePoints {
+  const acronyms: string[] = [];
+  const points = {} as ProbePoints["points"];
+  for (const fuelClass of COVERAGE_CLASSES) {
+    const rows = data.tests.filter((t) => t.fuelClass === fuelClass);
+    const groups = new Map<string, TestPoint[]>();
+    for (const t of rows) {
+      const k = `${t.o2Pct},${t.pressurePsia}`;
+      groups.set(k, [...(groups.get(k) ?? []), t]);
+    }
+    points[fuelClass] = [...groups.values()].map((g) => {
+      const win = nearestByClass(probe(g[0].o2Pct, g[0].pressurePsia), g)[fuelClass].test!;
+      let i = acronyms.indexOf(win.acronym);
+      if (i < 0) i = acronyms.push(win.acronym) - 1;
+      return [win.o2Pct, win.pressurePsia, i, win.o2Src === "measured" && win.pSrc === "measured" ? 1 : 0];
+    });
+  }
+  return { acronyms, points };
+}
+
+/** Rebuild engine test points from the probe payload (client side). */
+export function probeTests(pp: ProbePoints): TestPoint[] {
+  return COVERAGE_CLASSES.flatMap((fuelClass) =>
+    pp.points[fuelClass].map(([o2Pct, pressurePsia, a, m], i) => ({
+      id: `${fuelClass}-${i}`,
+      psiId: pp.acronyms[a],
+      acronym: pp.acronyms[a],
+      fuelClass,
+      fuel: "",
+      o2Pct,
+      pressurePsia,
+      o2Src: m ? ("measured" as const) : ("assumed" as const),
+      pSrc: "measured" as const,
+    })),
+  );
+}
+
+/** What the probe reads out at one atmosphere: the class grade and the engine's nearest test of that class. */
+export function probeReadout(o2Pct: number, pressurePsia: number, fuelClass: FuelClass, tests: TestPoint[]) {
+  const h = probe(o2Pct, pressurePsia);
+  return { grade: gradeAt(h, fuelClass, tests), nearest: nearestByClass(h, tests)[fuelClass], habitat: h };
+}

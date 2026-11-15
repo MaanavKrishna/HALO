@@ -239,7 +239,7 @@ NASA's fire-safety work focuses on prevention, detection and suppression; three 
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hood-trust-dark.svg" />
-  <img src="docs/readme/hood-trust-light.svg" alt="Trust layers: 7 provenance badge kinds on every fact; SI number validator with misfit-citation removal and code fallback; web data rebuilt in CI from NASA's 22 raw tables and the SAME workbook; live NASA check of all 24 datasets with raw files byte-identical to psi.nasa.gov and all 1,225 rows rechecked; 577 tests (pytest 84, Vitest 377, Playwright 116); CodeQL, secret scanning and SHA-pinned actions." width="100%" />
+  <img src="docs/readme/hood-trust-light.svg" alt="Trust layers: 7 provenance badge kinds on every fact; SI number validator with a misfit citation sends the answer to the code fallback; web data rebuilt in CI from NASA's 22 raw tables and the SAME workbook; live NASA check of all 24 datasets with raw files byte-identical to psi.nasa.gov and all 1,225 rows rechecked; 577 tests (pytest 84, Vitest 377, Playwright 116); CodeQL, secret scanning and SHA-pinned actions." width="100%" />
 </picture>
 
 <details>

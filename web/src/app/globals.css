@@ -445,16 +445,16 @@
     transform: rotate(360deg);
   }
 }
+/* Opacity and scale only: a blur keyframe here re-rasterised the whole blended,
+   blurred orb every frame on the main thread. */
 @keyframes halo-ignite {
   from {
     opacity: 0;
     scale: 0.86;
-    filter: blur(12px);
   }
   to {
     opacity: 1;
     scale: 1;
-    filter: blur(0);
   }
 }
 
@@ -490,16 +490,15 @@
     animation-delay: var(--settle-delay, 700ms);
   }
 }
+/* Compositor-only (opacity + translate): no blur, so the headline never repaints per frame. */
 @keyframes hero-settle {
   from {
     opacity: 0;
     translate: 0 14px;
-    filter: blur(6px);
   }
   to {
     opacity: 1;
     translate: 0 0;
-    filter: none;
   }
 }
 

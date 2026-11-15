@@ -77,8 +77,7 @@ export function splitCitations(text: string, known: (id: string) => boolean = ()
 
 /**
  * Sentences of the narrative, each with its citations attached (a citation
- * that follows a sentence's full stop belongs to that sentence). Every SI
- * sentence gets its own SI chip, so the UI needs sentence boundaries.
+ * that follows a sentence's full stop belongs to that sentence).
  */
 export function splitSentences(text: string): string[] {
   const t = text.replace(/\s+/g, " ").trim();
@@ -86,4 +85,78 @@ export function splitSentences(text: string): string[] {
   // Break after ". " (optionally followed by citations) when the next sentence starts with a capital.
   const parts = t.split(/(?<=[.!?](?:\s*\[[a-z-]+\])*)\s+(?=[A-Z])/);
   return parts.map((s) => s.trim()).filter(Boolean);
+}
+
+/** Paragraphs break after a sentence that ends in citations (one flag per paragraph). */
+export function splitParagraphs(text: string): string[] {
+  const out: string[][] = [[]];
+  for (const s of splitSentences(text)) {
+    out[out.length - 1].push(s);
+    if (/\]\s*$/.test(s)) out.push([]);
+  }
+  return out.filter((p) => p.length).map((p) => p.join(" "));
+}
+
+/** Whether a fact's value (number, with or without its unit) already appears in the prose. */
+export function valueInText(text: string, value: string): boolean {
+  const num = value.match(/^-?[\d.]+/)?.[0];
+  if (!num) return false;
+  const re = new RegExp(`(^|[^\\d.])${num.replace(/\./g, "\\.")}(?![\\d])`);
+  return re.test(text);
+}
+
+/** What a citation chip needs to know about a fact. */
+export interface ChipFact {
+  label: string;
+  /** Numeric value with its unit; null for text facts. */
+  value: string | null;
+  /** Source number in the citation list. */
+  n: number | null;
+}
+
+export type NarrativeChip =
+  | { type: "text"; value: string }
+  | {
+      type: "cite";
+      /** Fact ids this chip stands for; the first is the one it jumps to. */
+      ids: string[];
+      /** Labels of those facts, for the tooltip and the spoken name; never the chip's visible text. */
+      labels: string[];
+      /** The value to print, only when the paragraph does not already state it. */
+      show: string | null;
+      n: number | null;
+    };
+
+/**
+ * One paragraph of narrative as text and compact citations. A chip prints a
+ * fact's value only when the prose does not already contain it; otherwise it
+ * is just its source number. Neighbouring chips that would look identical
+ * (same source number, same printed value) merge into one.
+ */
+export function citationChips(paragraph: string, facts: Record<string, ChipFact>): NarrativeChip[] {
+  const parts = splitCitations(paragraph, (id) => Object.hasOwn(facts, id));
+  const prose = parts.map((p) => (p.type === "text" ? p.value : " ")).join("");
+  const out: NarrativeChip[] = [];
+  for (const part of parts) {
+    if (part.type === "text") {
+      out.push({ type: "text", value: part.value });
+      continue;
+    }
+    const f = facts[part.id];
+    const show = f.value !== null && !valueInText(prose, f.value) ? f.value : null;
+    // The chip before this one, looking past the space between them.
+    let k = out.length - 1;
+    while (k >= 0 && out[k].type === "text" && !(out[k] as { value: string }).value.trim()) k--;
+    const prev = k >= 0 ? out[k] : null;
+    if (prev && prev.type === "cite" && prev.n === f.n && prev.show === show) {
+      out.length = k + 1;
+      if (!prev.ids.includes(part.id)) {
+        prev.ids.push(part.id);
+        prev.labels.push(f.label);
+      }
+      continue;
+    }
+    out.push({ type: "cite", ids: [part.id], labels: [f.label], show, n: f.n });
+  }
+  return out;
 }

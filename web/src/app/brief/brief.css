@@ -53,6 +53,10 @@ html:has(main.brief) {
 .score-seg-1 { background: color-mix(in oklab, var(--accent) 68%, transparent); }
 .score-seg-2 { background: color-mix(in oklab, var(--accent) 44%, transparent); }
 .score-seg-3 { background: color-mix(in oklab, var(--accent) 24%, transparent); }
+/* The one-line top rows give way to the full list once its disclosure is open. */
+.ranked-wrap:has(> details.ranked-all[open]) > .ranked-top {
+  display: none;
+}
 /* Missed-share hatch in meters (risk: warn). */
 .hatch-warn {
   background-image: repeating-linear-gradient(135deg, var(--warn) 0 1.5px, transparent 1.5px 5px);

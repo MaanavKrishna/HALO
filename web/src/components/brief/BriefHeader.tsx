@@ -8,6 +8,7 @@ import { RingsGraphic } from "@/components/ui/RingsGraphic";
 import { Stat, StatGroup } from "@/components/ui/Stat";
 import { StatusLight } from "@/components/ui/StatusLight";
 import { briefContext } from "@/lib/brief/context";
+import { surrogateCaveat } from "@/lib/brief/notes";
 import { CLASS_ORDER } from "@/lib/brief/pageFacts";
 import { HALO_DATA } from "@/lib/data/load";
 import { MATERIALS } from "@/lib/engine/materials";
@@ -27,7 +28,7 @@ const GRADE_WORD: Record<Grade, string> = {
 /** Ring (0 = innermost) lit on the hero dial: the closer the evidence, the tighter the ring. */
 const GRADE_RING: Record<Grade, number> = { A: 1, B: 1, C: 2, D: 3, F: 4 };
 
-const DETECTOR_LABEL: Record<string, string> = { scatter: "Scatter", ionization: "Ionization" };
+const DETECTOR_LABEL: Record<string, string> = { scatter: "ISS-style photoelectric (scatter)", ionization: "Ionization" };
 
 /** The JSON offered by "Download data": every fact plus the rows they cite. */
 function downloadData(brief: Brief) {
@@ -57,6 +58,21 @@ function fileName(name: string) {
   return `halo-fire-brief-${s}.json`;
 }
 
+/** The reader typed these in the builder, so their "assumed" provenance reads as "Your input". */
+const USER_INPUTS = new Set(["habitat-oxygen", "habitat-pressure", "habitat-flow"]);
+
+/** Same marker as the Assumed provenance badge (hollow dot), with the label a reader recognises. */
+function YourInputBadge() {
+  const help = "Set by you in the habitat builder";
+  return (
+    <span title={help} data-your-input className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[0.75rem] tracking-[0.01em] text-fg-2">
+      <span aria-hidden="true" className="inline-block size-2 rounded-full border-[1.5px] border-fg-3" />
+      Your input
+      <span className="sr-only"> ({help})</span>
+    </span>
+  );
+}
+
 /** One atmosphere readout: a fact value, its unit and its provenance. */
 function Readout({ brief, id, label }: { brief: Brief; id: string; label: React.ReactNode }) {
   const f = briefContext(brief).fact(id);
@@ -65,7 +81,7 @@ function Readout({ brief, id, label }: { brief: Brief; id: string; label: React.
       label={label}
       value={<Num brief={brief} id={id} unit={false} cite={false} />}
       unit={f?.unit}
-      provenance={f ? <ProvenanceBadge provenance={f.provenance} /> : undefined}
+      provenance={f ? USER_INPUTS.has(id) && f.provenance === "assumed" ? <YourInputBadge /> : <ProvenanceBadge provenance={f.provenance} /> : undefined}
     />
   );
 }
@@ -81,6 +97,7 @@ export function BriefHeader({ brief }: { brief: Brief }) {
   const materials = h.materials.map((m) => MATERIALS[m].label);
   const crit = brief.flags.filter((f) => f.severity === "critical").length;
   const warn = brief.flags.filter((f) => f.severity === "warning").length;
+  const caveat = surrogateCaveat(brief);
 
   return (
     <BriefActionsProvider download={downloadData(brief)} filename={fileName(h.name)}>
@@ -178,6 +195,13 @@ export function BriefHeader({ brief }: { brief: Brief }) {
                 <p className="mt-2 text-pretty text-[0.8125rem] leading-relaxed text-fg-3" data-grade-technical>
                   {brief.grade.technical}
                 </p>
+                {caveat && (
+                  <p className="mt-2 text-pretty text-[0.8125rem] leading-relaxed text-fg-3" data-grade-caveat>
+                    {caveat.acronym} is a stand-in, and its pressure was not logged by the experiment: HALO{" "}
+                    {caveat.pressureSrc === "inferred" ? "inferred it from the investigation\u2019s stated objective" : "assumed it"}. Without that
+                    test the grade would be {caveat.without}.
+                  </p>
+                )}
               </details>
             </div>
             <a

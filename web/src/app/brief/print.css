@@ -27,6 +27,19 @@
   details {
     display: none !important;
   }
+  /* The ranked list prints its full rows whether or not the reader opened them on screen. */
+  .brief details.ranked-all {
+    display: block !important;
+    margin-top: 0;
+  }
+  .brief details.ranked-all::details-content {
+    content-visibility: visible;
+    display: block;
+  }
+  .brief details.ranked-all > summary,
+  .brief .ranked-top {
+    display: none !important;
+  }
   .print-only {
     display: block !important;
   }
@@ -202,8 +215,12 @@
     break-inside: avoid;
   }
   /* The grade rule prints open, without its disclosure arrow. */
+  .brief details.grade-rule {
+    display: block !important;
+  }
   .grade-rule::details-content {
     content-visibility: visible;
+    display: block;
   }
   .grade-rule > summary {
     display: none;

@@ -1,22 +1,49 @@
-# HALO
+<a href="https://halo-fire-brief.vercel.app">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hero-dark.svg" />
+  <img src="docs/readme/hero-light.svg" alt="HALO: Habitat Assessment from Low-gravity Observations. In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire data into a cited fire brief for your habitat." width="100%" />
+</picture>
+</a>
 
-**Habitat Assessment from Low-gravity Observations**
+<p align="center">
+  <a href="https://github.com/MaanavKrishna/HALO/actions/workflows/ci.yml"><img src="https://github.com/MaanavKrishna/HALO/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/MaanavKrishna/HALO/actions/workflows/codeql.yml"><img src="https://github.com/MaanavKrishna/HALO/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
+</p>
 
-In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire data into a cited fire brief for your habitat.
+<p align="center">
+  <a href="https://halo-fire-brief.vercel.app"><img src="https://img.shields.io/badge/Live_demo-halo--fire--brief.vercel.app-3A66FF?style=for-the-badge&labelColor=05080F" alt="Live demo: halo-fire-brief.vercel.app" /></a>
+  <a href="https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"><img src="https://img.shields.io/badge/NASA_Space_Apps-2026_%C2%B7_Flame_in_Freefall-3A66FF?style=for-the-badge&labelColor=05080F" alt="NASA Space Apps 2026: Flame in Freefall" /></a>
+  <a href="docs/DATA.md"><img src="https://img.shields.io/badge/Data-NASA_PSI_%C2%B7_CC0-4FD4A4?style=for-the-badge&labelColor=05080F" alt="Data: NASA PSI, CC0" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-7EA6FF?style=for-the-badge&labelColor=05080F" alt="License: Apache-2.0" /></a>
+</p>
 
-[![CI](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/ci.yml/badge.svg)](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/codeql.yml/badge.svg)](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/codeql.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![NASA Space Apps 2026](https://img.shields.io/badge/NASA%20Space%20Apps-2026-0b3d91.svg)](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)
-[![Data: NASA PSI CC0](https://img.shields.io/badge/data-NASA%20PSI%20%C2%B7%20CC0-lightgrey.svg)](docs/DATA.md)
+<p align="center">
+  Pick a habitat atmosphere, cabin materials and smoke detectors. HALO shows which NASA tests are closest, how much evidence covers them, where the evidence stops, what your detector would likely miss, and which test should fly next. <b>Every number is cited to its source.</b>
+</p>
 
-Pick a habitat atmosphere, cabin materials and smoke detectors. HALO shows which NASA tests are closest, how much evidence covers them, where the evidence stops, what your detector would likely miss, and which test should fly next. Every number is cited to its source.
+<p align="center">
+  <sub>
+    <b>FOR</b> &nbsp; habitat and equipment designers &nbsp;·&nbsp; modelers who need the PSI test rows with provenance
+  </sub>
+</p>
 
-**Live demo:** https://halo-fire-brief.vercel.app
+<p align="center">
+  <sub>
+    <b>JUMP TO</b> &nbsp;
+    <a href="#the-gap">The gap</a> &nbsp;·&nbsp;
+    <a href="#what-a-fire-brief-tells-you">Fire Brief</a> &nbsp;·&nbsp;
+    <a href="#try-it">Try it</a> &nbsp;·&nbsp;
+    <a href="#under-the-hood">Under the hood</a> &nbsp;·&nbsp;
+    <a href="#data">Data</a> &nbsp;·&nbsp;
+    <a href="#run-it">Run it</a> &nbsp;·&nbsp;
+    <a href="#security">Security</a> &nbsp;·&nbsp;
+    <a href="#use-of-si">Use of SI</a>
+  </sub>
+</p>
 
----
-
-## Built for NASA Space Apps Challenge 2026: Flame in Freefall
+<details>
+<summary><sub><b>BUILT FOR NASA SPACE APPS CHALLENGE 2026: FLAME IN FREEFALL</b></sub></summary>
+<br>
 
 [Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity Combustion Data](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/) (14–15 November 2026). In Space Apps 2026, "SI" means Super Intelligence, the challenge's term for AI.
 
@@ -28,11 +55,32 @@ The challenge asks for an SI-powered tool that summarizes, ranks and interprets 
 | Data for predictive flammability modeling | Evidence distance from your atmosphere to every eligible test, per fuel class, plus a bootstrapped droplet self-extinction model fitted to FLEX data. |
 | Research that informs next-generation fire-safety equipment | A detector blind-spot analysis from SAME/SAME-R flight runs with a sensor what-if, and a computed "next test to fly" that closes the largest evidence gap. |
 
-## Why it matters
+</details>
 
-NASA's fire-safety work focuses on prevention, detection and suppression; three spacecraft emergencies show why: [Apollo 1](https://sma.nasa.gov/sma-disciplines/accllp/apollo-1) (1967, a flash fire in a 100% oxygen cabin during a pre-launch test), [Apollo 13](https://sma.nasa.gov/sma-disciplines/accllp/apollo-13) (1970, an oxygen-tank failure and explosion, a fire hazard, after heaters degraded the tank's Teflon wire insulation) and the [Mir fire](https://www.nasa.gov/history/25-years-ago-fire-aboard-space-station-mir/) (1997, a solid-fuel oxygen generator that filled the station with smoke).
+<br>
+
+<a id="the-gap"></a>
+
+<img src="docs/readme/h-gap.svg" alt="The gap" width="100%" />
 
 Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atmospheres: at least 30% O2 at no more than 10.2 psi ([challenge statement](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)), and an exploration atmosphere of 34% O2 at 8.2 psia ([NTRS 20150021491](https://ntrs.nasa.gov/citations/20150021491)). Fire behaves differently there, and in microgravity. The PSI evidence was mostly gathered somewhere else:
+
+<p align="center">
+  <picture>   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/tile-moon-dark.svg" />   <img src="docs/readme/tile-moon-light.svg" alt="0 of 33: no eligible PSI row in the Moon window (at least 30% O2, at most 10.2 psia) is a real solid. 20 are ACME gas flames and 13 a burner that emulates a burning solid." width="65%" /> </picture>
+  <picture>   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/tile-kapton-dark.svg" />   <img src="docs/readme/tile-kapton-light.svg" alt="20 of 35 Kapton flight runs read below the 2.0 V scatter-detector alarm proxy (SAME/SAME-R, ISS air)." width="32%" /> </picture>
+</p>
+<p align="center">
+  <picture>   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/tile-artemis-dark.svg" />   <img src="docs/readme/tile-artemis-light.svg" alt="Artemis Base evidence distance falls from 2.47 to 0.72 after the one suggested test, at 30% O2 and 10 psia." width="32%" /> </picture>
+  <picture>   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/tile-psi-dark.svg" />   <img src="docs/readme/tile-psi-light.svg" alt="24 investigations and 1,225 eligible rows: 1,967 test rows from the NASA PSI combustion repository, 1,225 eligible for habitat coverage." width="65%" /> </picture>
+</p>
+
+<p align="center"><sub>Numbers from the PSI data as HALO processes it; the Artemis Base figure is the brief's own "what would raise this grade" ladder on the live site.</sub></p>
+
+<details>
+<summary><sub><b>WHY IT MATTERS: THE FULL EVIDENCE GAP, WITH SOURCES</b></sub></summary>
+<br>
+
+NASA's fire-safety work focuses on prevention, detection and suppression; three spacecraft emergencies show why: [Apollo 1](https://sma.nasa.gov/sma-disciplines/accllp/apollo-1) (1967, a flash fire in a 100% oxygen cabin during a pre-launch test), [Apollo 13](https://sma.nasa.gov/sma-disciplines/accllp/apollo-13) (1970, an oxygen-tank failure and explosion, a fire hazard, after heaters degraded the tank's Teflon wire insulation) and the [Mir fire](https://www.nasa.gov/history/25-years-ago-fire-aboard-space-station-mir/) (1997, a solid-fuel oxygen generator that filled the station with smoke).
 
 - **No real cabin material in the PSI data was tested at Moon-base oxygen.** Real solid materials in the PSI test rows were never burned above 22.2% O2 (BASS-II 13.6–22.2%, Saffire-I/II/III 21.0–22.1%). Their pressure is not tabulated; HALO assumes cabin pressure of about 1 atm. Outside PSI, NASA technical reports on Saffire VI describe SIBAL fabric and PMMA burned at 30.3–31.0% O2 and about 7.9 psia (literature); those runs are not PSI test rows, so HALO states them but does not grade on them.
 - **Only a surrogate reached Moon conditions.** In the Moon window (≥ 30% O2, ≤ 10.2 psia) there are 33 eligible rows: 20 ACME CFI-G gas flames and 13 ACME BRE rows. BRE is a gas-fed porous burner that emulates a burning solid, with pressure inferred from its stated objectives. None of the PSI rows is a real solid; the only real solids burned there are the Saffire VI literature runs above.
@@ -41,7 +89,45 @@ Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atm
 - **Suppression: the inert gas matters.** In FLEX droplet burns, flames went out on their own more often when the inert gas was CO2 or helium instead of nitrogen, compared at the O2 levels all three were run at. These are flames self-extinguishing in a diluted atmosphere, not tests of an extinguisher (see the suppression card on `/findings`).
 - **The standard screening test may not be conservative.** BASS results indicate that NASA-STD-6001 Test 1 ([NASA-STD-6001B](https://standards.nasa.gov/standard/NASA/NASA-STD-6001)) is not conservative: materials can burn at lower oxygen in microgravity than on Earth ([A Researcher's Guide to Combustion Science, 2015](https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/)).
 
-## What you get in a Fire Brief
+</details>
+
+<br>
+
+<a id="what-a-fire-brief-tells-you"></a>
+
+<img src="docs/readme/h-brief.svg" alt="What a Fire Brief tells you" width="100%" />
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/grades-dark.svg" />
+  <img src="docs/readme/grades-light.svg" alt="Readiness grades on the full dataset: Artemis Base D, ISS B, Moon envelope C, Rover C, EVA suit F. Grades describe evidence coverage, not safety." width="100%" />
+</picture>
+
+<p align="center"><sub>Readiness grades (A–F) on the full dataset. A grade describes how well tested evidence covers an atmosphere, not whether it is safe.</sub></p>
+
+<a href="https://halo-fire-brief.vercel.app/brief?o2=34&p=8.2&f=10&m=kapton%2Cteflon%2Ccotton&d=scatter&l=0&n=Artemis+Base">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/shot-brief-dark.webp" />
+  <img src="docs/readme/shot-brief-light.webp" alt="The Artemis Base Fire Brief: grade D, with the ladder of tests that would raise it." width="100%" />
+</picture>
+</a>
+
+<p align="center"><sub>The Artemis Base brief (34% O2, 8.2 psia, Kapton, Teflon and cotton, scatter detector). Click to open it live.</sub></p>
+
+| | |
+|---|---|
+| **Fire Brief** | A readiness grade, overall and per fuel class, with evidence distance to the nearest eligible test and whether its O2 and pressure were measured, assumed or inferred. |
+| **Grade ladder** | "What would raise this grade": the step-by-step evidence distances behind the grade, and the test that would move it. |
+| **Coverage map + "place your habitat"** | The O2 × pressure plane shaded by the grade a habitat there would get, with every tested condition, the Moon window and the presets. Drop your own habitat on it. |
+| **Ask HALO** | Plain-words answers over the brief's computed facts, with suggested questions built from the brief's own grade and flags. Numbers are checked against the facts. |
+| **Detection what-if** | How many flight runs the scatter detector would have missed for each material, and how many scatter plus ionization would have flagged. |
+| **Next test to fly** | A computed candidate test, plus diverse runners-up, chosen to reduce evidence distance most. |
+| **Earth spinoffs** | Four NASA Spinoff facts, each tied to the finding it answers. |
+| **Explore, compare, materials, gravity** | All 24 investigations, habitats and investigations side by side, a material screener and the partial-gravity bounds. |
+| **Print and CSV** | Print/PDF and a shareable URL for every brief; every test row with provenance as CSV. |
+
+<details>
+<summary><sub><b>EVERY SECTION OF THE FIRE BRIEF</b></sub></summary>
+<br>
 
 | Section | What it shows |
 |---|---|
@@ -58,7 +144,66 @@ Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atm
 | **Citations** | Every number is a fact with a provenance and a source: PSI id, dataset DOI or NTRS/Spinoff URL. |
 | **Print/PDF and shareable URL** | The full habitat is encoded in the query string, for example `/brief?o2=34&p=8.2&f=10&m=kapton,teflon,cotton&d=scatter&l=0&n=Artemis%20Base`. |
 
-## How it works
+</details>
+
+<br>
+
+<a id="try-it"></a>
+
+<img src="docs/readme/h-try.svg" alt="Try it" width="100%" />
+
+<p align="center">
+  <a href="https://halo-fire-brief.vercel.app"><img src="https://img.shields.io/badge/Open_HALO-halo--fire--brief.vercel.app-3A66FF?style=for-the-badge&labelColor=05080F" alt="Open HALO: halo-fire-brief.vercel.app" /></a>
+</p>
+
+<a href="https://halo-fire-brief.vercel.app">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/shot-home-dark.webp" />
+  <img src="docs/readme/shot-home-light.webp" alt="HALO landing page: Where the evidence runs out." width="100%" />
+</picture>
+</a>
+
+<p align="center"><sub><b>Home.</b> Why fire safety in space matters, the problem, a live mini brief and the habitat presets.</sub></p>
+
+<img src="docs/readme/shot-coverage-dark.webp" alt="Where the tests stop: the evidence coverage map, with oxygen and pressure sliders to place your habitat." width="100%" />
+
+<p align="center"><sub><b>Where the tests stop.</b> The evidence coverage map, drawn from the engine's own distance and grade rules. Move the sliders to place your habitat.</sub></p>
+
+<p align="center">
+  <img src="docs/readme/shot-detection-dark.webp" alt="Would your smoke detector notice? The detection card: Kapton 15 of 35 runs caught, Teflon 5 of 23, cotton 26 of 26." width="49%" />
+  <img src="docs/readme/shot-ask-dark.webp" alt="Ask HALO, with suggested questions such as Why is the grade D? and What test would help most?" width="49%" />
+</p>
+
+<p align="center"><sub><b>Detection what-if</b> (left): Kapton 15 of 35 runs caught, Teflon 5 of 23, cotton 26 of 26. &nbsp;·&nbsp; <b>Ask HALO</b> (right): suggested questions from the brief's own grade and flags.</sub></p>
+
+<details>
+<summary><sub><b>EVERY PAGE</b></sub></summary>
+<br>
+
+| Route | What it is |
+|---|---|
+| `/` | Landing: why fire safety in space matters (Apollo 1, Apollo 13, Mir), the problem, a live mini brief and the habitat presets |
+| `/build` | Habitat builder (atmosphere, materials, detectors, liquids) |
+| `/brief` | The Fire Brief for a habitat (shareable URL), with Ask HALO |
+| `/findings` | The headline evidence gaps and the suppression finding, each computed and cited |
+| `/explore` | All 24 investigations, filterable and sortable |
+| `/explore/[psiId]` | One investigation, for example `/explore/PSI-69`; unknown ids return a 404 |
+| `/compare` | Two habitats side by side |
+| `/investigations/compare?ids=…` | 2–4 investigations side by side, differences marked, overlaid O2 × pressure plot |
+| `/materials?m=pmma&o2=34&p=8.2` | Material screener: every PSI row for the material, Saffire literature, SAME smoke stats, the Test 1 caveat and the distance to the nearest evidence |
+| `/gravity` | Partial-gravity bounds: microgravity vs 1 g per material, the untested Moon/Mars band, the E-FIELD analogue, LUCI and FM2 |
+| `/method` | Every formula, threshold and model |
+| `/data` | Sources (PSI, Glenn fact sheets), partner agency research, provenance, fixes, downloads (including the `tests.csv` export) and every DOI |
+| `/about` | Who it is for, why it was built, fire history, the challenge and its resources, use of SI, licence |
+| `/design` | The living design system |
+
+</details>
+
+<br>
+
+<a id="under-the-hood"></a>
+
+<img src="docs/readme/h-hood.svg" alt="Under the hood" width="100%" />
 
 ```mermaid
 flowchart TD
@@ -80,7 +225,9 @@ flowchart TD
 3. **Engine** (`web/src/lib/engine/`, TypeScript). Pure functions that turn a habitat and the data into a `Brief`. No randomness at run time, no network.
 4. **SI layer.** Numbers come from code; words come from SI. The SI only writes narrative over the frozen facts object. A validator rejects any sentence containing a number that is not a fact value, and the brief falls back to a template. Build-time summaries of all 24 investigations (in `web/src/data/summaries.json`) follow the same rule: tags from a closed vocabulary, quotes checked against the source text.
 
-### Provenance badges
+<details>
+<summary><sub><b>PROVENANCE BADGES</b></sub></summary>
+<br>
 
 Every number in a brief carries one of these badges.
 
@@ -96,7 +243,54 @@ Every number in a brief carries one of these badges.
 
 Method details: [docs/METHOD.md](docs/METHOD.md). Brief structure and flag rules: [docs/BRIEF.md](docs/BRIEF.md).
 
-## Data and citation
+</details>
+
+<details>
+<summary><sub><b>REPOSITORY LAYOUT</b></sub></summary>
+<br>
+
+```
+.
+├── pipeline/     Python data pipeline: PSI tables -> versioned JSON (tests in pipeline/tests)
+├── data/
+│   ├── raw/      Vendored PSI experimental tables, trimmed detail records, SAME workbook
+│   └── literature/  Saffire points transcribed from NTRS reports
+├── web/          Next.js app
+│   ├── src/data/        Generated JSON data contract (do not edit by hand)
+│   ├── src/lib/engine/  Pure TypeScript engine that builds the Fire Brief
+│   └── tests/           Vitest engine tests, Playwright e2e, fixtures
+├── docs/         Data, method, brief and architecture documentation
+├── .githooks/    Pre-commit secret guard
+├── LICENSE       Apache-2.0
+└── NOTICE        Attribution notices
+```
+
+</details>
+
+<details>
+<summary><sub><b>DOCUMENTATION</b></sub></summary>
+<br>
+
+| Document | Contents |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Repo layout, data flow, security headers, secrets and cost control. |
+| [docs/DATA.md](docs/DATA.md) | Sources, column map per investigation, provenance rules, eligibility, data-quality fixes, DOIs. |
+| [docs/DATA-CONTRACT.md](docs/DATA-CONTRACT.md) | Shape of every generated JSON file and the provenance vocabulary. |
+| [docs/METHOD.md](docs/METHOD.md) | Evidence distance, grades, detector blind spot, ranking, extinction model, next test. |
+| [docs/BRIEF.md](docs/BRIEF.md) | Fire Brief sections, flag rules, fact ids and URL parameters. |
+| [docs/SI.md](docs/SI.md) | SI features: build-time summaries, Ask HALO, validators, evaluation and disclosure. |
+| [docs/PAGES.md](docs/PAGES.md) | Every route, what it shows and the data it reads. |
+| [docs/DESIGN.md](docs/DESIGN.md) | Design system: tokens, type, components, motion and provenance markers. |
+| [docs/FETCH.md](docs/FETCH.md) | How to re-fetch full PSI detail records. |
+| [pipeline/README.md](pipeline/README.md) | Pipeline setup, modules and tests. |
+
+</details>
+
+<br>
+
+<a id="data"></a>
+
+<img src="docs/readme/h-data.svg" alt="Data" width="100%" />
 
 - **Source.** The NASA Physical Sciences Informatics (PSI) combustion repository: 24 investigations, released under CC0 1.0. HALO cites each investigation by its PSI dataset DOI (`https://doi.org/<doi>`). The full list is in [docs/DATA.md](docs/DATA.md) and in `manifest.json`.
 - **Literature.** Saffire IV, V and VI results (and Saffire I and II points) come from NASA technical reports on NTRS, with a URL on every row.
@@ -108,7 +302,11 @@ Method details: [docs/METHOD.md](docs/METHOD.md). Brief structure and flag rules
 
 HALO summarizes published NASA test evidence. **It is not a safety certification.** HALO is not affiliated with or endorsed by NASA.
 
-## Quick start
+<br>
+
+<a id="run-it"></a>
+
+<img src="docs/readme/h-run.svg" alt="Run it" width="100%" />
 
 Requirements: Python 3.12+, Node.js and pnpm.
 
@@ -137,59 +335,15 @@ Then open http://localhost:3000.
 
 **Environment.** Copy [`.env.example`](.env.example) to `.env` (gitignored). It holds the server-only LLM API key and `SI_LIVE` (set to `false` to serve precomputed text only). The data pipeline and the engine need no keys.
 
-## Repository layout
+<br>
 
-```
-.
-├── pipeline/     Python data pipeline: PSI tables -> versioned JSON (tests in pipeline/tests)
-├── data/
-│   ├── raw/      Vendored PSI experimental tables, trimmed detail records, SAME workbook
-│   └── literature/  Saffire points transcribed from NTRS reports
-├── web/          Next.js app
-│   ├── src/data/        Generated JSON data contract (do not edit by hand)
-│   ├── src/lib/engine/  Pure TypeScript engine that builds the Fire Brief
-│   └── tests/           Vitest engine tests, Playwright e2e, fixtures
-├── docs/         Data, method, brief and architecture documentation
-├── .githooks/    Pre-commit secret guard
-├── LICENSE       Apache-2.0
-└── NOTICE        Attribution notices
-```
+<a id="security"></a>
 
-## Pages
+<img src="docs/readme/h-security.svg" alt="Security" width="100%" />
 
-| Route | What it is |
-|---|---|
-| `/` | Landing: why fire safety in space matters (Apollo 1, Apollo 13, Mir), the problem, a live mini brief and the habitat presets |
-| `/build` | Habitat builder (atmosphere, materials, detectors, liquids) |
-| `/brief` | The Fire Brief for a habitat (shareable URL), with Ask HALO |
-| `/findings` | The headline evidence gaps and the suppression finding, each computed and cited |
-| `/explore` | All 24 investigations, filterable and sortable |
-| `/explore/[psiId]` | One investigation, for example `/explore/PSI-69`; unknown ids return a 404 |
-| `/compare` | Two habitats side by side |
-| `/investigations/compare?ids=…` | 2–4 investigations side by side, differences marked, overlaid O2 × pressure plot |
-| `/materials?m=pmma&o2=34&p=8.2` | Material screener: every PSI row for the material, Saffire literature, SAME smoke stats, the Test 1 caveat and the distance to the nearest evidence |
-| `/gravity` | Partial-gravity bounds: microgravity vs 1 g per material, the untested Moon/Mars band, the E-FIELD analogue, LUCI and FM2 |
-| `/method` | Every formula, threshold and model |
-| `/data` | Sources (PSI, Glenn fact sheets), partner agency research, provenance, fixes, downloads (including the `tests.csv` export) and every DOI |
-| `/about` | Who it is for, why it was built, fire history, the challenge and its resources, use of SI, licence |
-| `/design` | The living design system |
-
-## Documentation
-
-| Document | Contents |
-|---|---|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Repo layout, data flow, security headers, secrets and cost control. |
-| [docs/DATA.md](docs/DATA.md) | Sources, column map per investigation, provenance rules, eligibility, data-quality fixes, DOIs. |
-| [docs/DATA-CONTRACT.md](docs/DATA-CONTRACT.md) | Shape of every generated JSON file and the provenance vocabulary. |
-| [docs/METHOD.md](docs/METHOD.md) | Evidence distance, grades, detector blind spot, ranking, extinction model, next test. |
-| [docs/BRIEF.md](docs/BRIEF.md) | Fire Brief sections, flag rules, fact ids and URL parameters. |
-| [docs/SI.md](docs/SI.md) | SI features: build-time summaries, Ask HALO, validators, evaluation and disclosure. |
-| [docs/PAGES.md](docs/PAGES.md) | Every route, what it shows and the data it reads. |
-| [docs/DESIGN.md](docs/DESIGN.md) | Design system: tokens, type, components, motion and provenance markers. |
-| [docs/FETCH.md](docs/FETCH.md) | How to re-fetch full PSI detail records. |
-| [pipeline/README.md](pipeline/README.md) | Pipeline setup, modules and tests. |
-
-## Security
+<details>
+<summary><sub><b>HEADERS, SERVER-ONLY KEY, SECRET HOOK, RATE LIMITS, GITHUB</b></sub></summary>
+<br>
 
 - **Headers.** CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options` on every route, set in [`web/next.config.ts`](web/next.config.ts). HTML is never rendered from data or SI output. The e2e test asserts the headers on a production build.
 - **Server-only key.** The LLM API key lives only in server environment variables, never in client code. `.env` is gitignored.
@@ -200,7 +354,13 @@ Then open http://localhost:3000.
 
 Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Use of SI (AI)
+</details>
+
+<br>
+
+<a id="use-of-si"></a>
+
+<img src="docs/readme/h-si.svg" alt="Use of SI" width="100%" />
 
 **In the product.**
 - *Build-time summaries (see [docs/SI.md](docs/SI.md)).* An LLM writes a short summary and habitat relevance note for each of the 24 investigations from its PSI record. Output is validated: hazard tags from a closed vocabulary, quotes must appear in the source text, no number the source lacks. All 24 pass the automatic checks; the author's manual read-through against PSI is in progress, so every summary stays labelled as SI output.
@@ -209,16 +369,25 @@ Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 **In development.** An LLM coding assistant helped write code. All data processing, models and copy were reviewed by the author.
 
-## Team
+<br>
 
-Maanav Krishna.
+<p align="center">
+  <sub>
+    <b>TEAM</b> &nbsp; Maanav Krishna &nbsp;·&nbsp;
+    <b>LICENSE</b> &nbsp; Apache-2.0, see <a href="LICENSE">LICENSE</a> and <a href="NOTICE">NOTICE</a>. PSI data is CC0 1.0.
+  </sub>
+</p>
 
-## License
-
-Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). PSI data is CC0 1.0.
-
-## Acknowledgements
+<details>
+<summary><sub><b>ACKNOWLEDGEMENTS</b></sub></summary>
+<br>
 
 - NASA Physical Sciences Informatics, for curating and openly releasing the combustion data.
 - NASA Glenn Research Center combustion research, behind the investigations HALO draws on.
 - The authors of the NASA Space Apps Challenge "Flame in Freefall".
+
+</details>
+
+<p align="center">
+  <sub>HALO summarizes published NASA test evidence. <b>It is not a safety certification.</b> HALO is not affiliated with or endorsed by NASA.</sub>
+</p>

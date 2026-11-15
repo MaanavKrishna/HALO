@@ -19,7 +19,7 @@ export const TOOL_LINKS = [
 
 export const BUILD_HREF = "/build";
 export const CHALLENGE_URL = "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/";
-export const REPO_URL = "https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations";
+export const REPO_URL = "https://github.com/MaanavKrishna/HALO";
 
 export type FooterLink = { href: string; label: string; external?: boolean };
 

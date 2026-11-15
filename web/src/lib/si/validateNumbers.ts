@@ -30,7 +30,7 @@ const NUMBER_WORD =
 const ID_LIKE = [
   /\b[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*-\d[A-Za-z0-9]*\b/g,
   /\b[A-Za-z]+\d+[A-Za-z0-9]*\b/g,
-  /\b(?:Test|Method|Sample|Run)\s+\d+\b/g,
+  /\b(?:Test|Method|Sample|Run)\s+\d+\b/gi,
   /\b(?:19|20)\d{2}\b/g,
 ];
 

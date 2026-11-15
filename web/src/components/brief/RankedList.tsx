@@ -1,18 +1,11 @@
 import { briefContext, RANKED_SHOWN } from "@/lib/brief/context";
+import { listWords, lowRankedSmokeEvidence, rankedFuels } from "@/lib/brief/notes";
 import { doiUrl, safeUrl } from "@/lib/brief/citations";
 import { HALO_DATA } from "@/lib/data/load";
 import { DEFAULT_WEIGHTS } from "@/lib/engine/rank";
 import type { Brief } from "@/lib/engine/types";
 import { RankedListClient, type RankedItem } from "./RankedListClient";
 import { Section } from "./parts";
-
-/** Distinct fuel / sample labels an investigation's eligible test rows record, most frequent first. */
-function fuelsFor(psiId: string, max = 3): { shown: string[]; total: number } {
-  const counts = new Map<string, number>();
-  for (const t of HALO_DATA.tests) if (t.psiId === psiId && t.fuel.trim()) counts.set(t.fuel, (counts.get(t.fuel) ?? 0) + 1);
-  const all = [...counts.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).map(([f]) => f);
-  return { shown: all.slice(0, max), total: all.length };
-}
 
 /** First sentences of an objective, cut at a word boundary. */
 function excerpt(text: string, max = 260): string {
@@ -28,7 +21,7 @@ export function RankedList({ brief }: { brief: Brief }) {
   const ctx = briefContext(brief);
   const items: RankedItem[] = brief.ranked.map((r) => {
     const s = HALO_DATA.summaries[r.inv.psiId];
-    const fuels = fuelsFor(r.inv.psiId);
+    const fuels = rankedFuels(HALO_DATA.tests, r.inv.psiId);
     // SI summaries flagged for review are never shown as SI text.
     const si = s && !s.needsReview && s.summary.trim() ? s.summary.trim() : null;
     return {
@@ -54,12 +47,24 @@ export function RankedList({ brief }: { brief: Brief }) {
     };
   });
 
+  const smoke = lowRankedSmokeEvidence(brief.ranked.slice(0, RANKED_SHOWN));
+
   return (
     <Section
       id="ranked"
       title="Most relevant investigations"
       kicker="Ranked for this habitat by a transparent weighted score: closeness to your atmosphere, fuel match, hazards covered and size of the evidence base."
     >
+      <p className="mb-5 max-w-[68ch] text-pretty text-[0.9375rem] leading-relaxed text-fg-2" data-ranking-note>
+        Ranked mainly by how close each test&rsquo;s atmosphere is to yours
+        {smoke.length > 1 ? (
+          <>; {listWords(smoke)} rank low because they only ran in ISS air, even though they hold the flight smoke-detector data.</>
+        ) : smoke.length === 1 ? (
+          <>; {smoke[0]} ranks low because it only ran in ISS air, even though it holds the flight smoke-detector data.</>
+        ) : (
+          "."
+        )}
+      </p>
       <RankedListClient items={items} shown={RANKED_SHOWN} defaults={DEFAULT_WEIGHTS} />
     </Section>
   );

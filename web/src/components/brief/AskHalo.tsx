@@ -5,28 +5,23 @@ import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { SiChip } from "@/components/ui/SiChip";
 import { cx } from "@/components/ui/cx";
-import { QUESTION_MAX, requestExplain, splitCitations, splitSentences } from "@/lib/brief/explain";
+import { QUESTION_MAX, citationChips, requestExplain, splitParagraphs, type ChipFact, type NarrativeChip } from "@/lib/brief/explain";
 import { BriefIcon } from "./icons";
 
-export interface FactRef {
-  label: string;
-  /** Numeric value with its unit; null for text facts (the chip shows the label). */
-  value: string | null;
-  /** Source number in the citation list. */
-  n: number | null;
-}
+export type FactRef = ChipFact;
 
 type State =
-  | { mode: "fallback"; notice: boolean }
+  | { mode: "fallback"; notice: boolean; open?: boolean }
   | { mode: "loading"; notice: boolean }
   | { mode: "live"; text: string };
 
 /**
- * Ask HALO. The precomputed narrative renders immediately; "Generate SI
- * narration" asks /api/explain and swaps in the live text only when the
- * route answers 200 with source "live". Any other answer, a network error or
- * a timeout keeps the precomputed text and says so. Text is rendered as text
- * (split on [fact-id] citations into chips), never as HTML.
+ * Ask HALO. The question box comes first; the precomputed narrative sits
+ * behind a native disclosure. "Generate SI narration" asks /api/explain and
+ * shows the live text only when the route answers 200 with source "live".
+ * Any other answer, a network error or a timeout opens the precomputed text
+ * and says so. Text is rendered as text (split on [fact-id] citations into
+ * compact chips), never as HTML.
  */
 export function AskHalo({ fallback, query, facts }: { fallback: string; query: string; facts: Record<string, FactRef> }) {
   const [state, setState] = useState<State>({ mode: "fallback", notice: false });
@@ -44,7 +39,6 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
   }
 
   const live = state.mode === "live";
-  const text = live ? state.text : fallback;
 
   return (
     <div
@@ -55,46 +49,15 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
     >
       <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-2.5 sm:px-6">
         <span className="type-label text-fg-3">Ask HALO</span>
-        <span className="type-label inline-flex items-center gap-2 text-fg-3">
-          {live ? (
-            <>
-              <span aria-hidden="true" className="size-1.5 rounded-full bg-accent shadow-[0_0_6px_var(--accent-glow)]" />
-              SI narration
-            </>
-          ) : (
-            "Precomputed"
-          )}
-        </span>
-      </div>
-
-      <div className="px-4 py-5 sm:px-6 sm:py-6" aria-busy={loading} data-narrative>
-        {loading ? (
-          <div className="flex flex-col gap-3" aria-hidden="true" data-skeleton>
-            {[96, 88, 92, 70, 84, 52].map((w, i) => (
-              <span
-                key={i}
-                className="block h-3.5 animate-pulse rounded-full bg-surface-2 motion-reduce:animate-none"
-                style={{ width: `${w}%`, animationDelay: `${i * 90}ms` }}
-              />
-            ))}
-          </div>
-        ) : (
-          <Narrative text={text} live={live} facts={facts} root={root} />
+        {live && (
+          <span className="type-label inline-flex items-center gap-2 text-fg-3">
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-accent shadow-[0_0_6px_var(--accent-glow)]" />
+            SI narration
+          </span>
         )}
       </div>
-      <p role="status" aria-live="polite" className="sr-only">
-        {loading ? "Generating SI narration…" : live ? "SI narration ready." : ""}
-      </p>
 
-      {state.mode !== "live" && state.notice && (
-        <div className="px-4 pb-5 sm:px-6" data-fallback-notice>
-          <Callout tone="info" live="polite" title="Showing precomputed narrative">
-            The live SI narration is unavailable right now, so this is the narrative built from the grade and flags.
-          </Callout>
-        </div>
-      )}
-
-      <form onSubmit={submit} className="no-print border-t border-line bg-surface-2/40 px-4 py-5 sm:px-6" aria-describedby={`${id}-help`}>
+      <form onSubmit={submit} className="no-print border-b border-line bg-surface-2/40 px-4 py-5 sm:px-6" aria-describedby={`${id}-help`}>
         <div className="flex items-baseline justify-between gap-3">
           <label htmlFor={`${id}-q`} className="text-sm font-medium text-fg">
             Ask about this brief
@@ -126,25 +89,61 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
         {live && (
           <button
             type="button"
-            onClick={() => setState({ mode: "fallback", notice: false })}
+            onClick={() => {
+              setState({ mode: "fallback", notice: false, open: true });
+              // The answer it replaced is gone; put focus on the opened summary's toggle.
+              requestAnimationFrame(() => root.current?.querySelector<HTMLElement>("[data-precomputed] > summary")?.focus());
+            }}
             className="mt-2 text-[0.8125rem] font-medium text-accent underline-offset-4 hover:underline"
           >
             Show the precomputed narrative
           </button>
         )}
       </form>
+
+      <div className="px-4 py-5 sm:px-6 sm:py-6" aria-busy={loading} data-narrative>
+        {loading ? (
+          <div className="flex flex-col gap-3" aria-hidden="true" data-skeleton>
+            {[96, 88, 92, 70, 84, 52].map((w, i) => (
+              <span
+                key={i}
+                className="block h-3.5 animate-pulse rounded-full bg-surface-2 motion-reduce:animate-none"
+                style={{ width: `${w}%`, animationDelay: `${i * 90}ms` }}
+              />
+            ))}
+          </div>
+        ) : live ? (
+          <Narrative text={state.text} live facts={facts} root={root} />
+        ) : (
+          <details className="group/pre" data-precomputed open={state.notice || state.open === true}>
+            <summary className="flex w-fit cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-1 rounded-[var(--radius-sm)] text-[0.9375rem] font-medium text-accent [&::-webkit-details-marker]:hidden">
+              <span className="inline-flex items-center gap-1.5">
+                <svg viewBox="0 0 20 20" className="size-4 transition-transform duration-[var(--dur-fast)] group-open/pre:rotate-90" aria-hidden="true">
+                  <path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Read the plain-words summary
+              </span>
+              <span className="type-label text-fg-3">Precomputed</span>
+            </summary>
+            <div className="pt-4">
+              <Narrative text={fallback} live={false} facts={facts} root={root} />
+            </div>
+          </details>
+        )}
+      </div>
+      <p role="status" aria-live="polite" className="sr-only">
+        {loading ? "Generating SI narration…" : live ? "SI narration ready." : ""}
+      </p>
+
+      {state.mode !== "live" && state.notice && (
+        <div className="px-4 pb-5 sm:px-6" data-fallback-notice>
+          <Callout tone="info" live="polite" title="Showing precomputed narrative">
+            The live SI narration is unavailable right now, so this is the narrative built from the grade and flags.
+          </Callout>
+        </div>
+      )}
     </div>
   );
-}
-
-/** Paragraphs break after a sentence that ends in citations (one flag per paragraph). */
-function paragraphs(text: string): string[][] {
-  const out: string[][] = [[]];
-  for (const s of splitSentences(text)) {
-    out[out.length - 1].push(s);
-    if (/\]\s*$/.test(s)) out.push([]);
-  }
-  return out.filter((p) => p.length);
 }
 
 function Narrative({
@@ -158,52 +157,24 @@ function Narrative({
   facts: Record<string, FactRef>;
   root: React.RefObject<HTMLDivElement | null>;
 }) {
-  const known = (id: string) => Object.hasOwn(facts, id);
   return (
     <div className="flex max-w-[68ch] flex-col gap-3.5 text-[1.0625rem] leading-[1.65] text-fg">
-      {/* One spoken disclosure for the whole SI narration; the per-sentence chips are visual. */}
+      {/* Every SI paragraph carries the badge; the disclosure is spoken once for the whole answer. */}
       {live && <p className="sr-only">The following narration is SI-generated from the cited facts; numbers come only from those facts.</p>}
-      {paragraphs(text).map((sentences, pi) => (
+      {splitParagraphs(text).map((para, pi) => (
         <p key={pi} className={cx("text-pretty", pi > 0 && "text-fg-2")}>
-          {sentences.map((s, si) => {
-            const parts = splitCitations(s, known);
-            const prose = parts.map((p) => (p.type === "text" ? p.value : "")).join("");
-            return (
-              <span key={si}>
-                {live && (
-                  <span aria-hidden="true" data-si-chip>
-                    <SiChip className="mr-1" />
-                  </span>
-                )}
-                {parts.map((part, k) =>
-                  part.type === "text" ? (
-                    <span key={k}>{part.value}</span>
-                  ) : (
-                    <FactButton
-                      key={k}
-                      id={part.id}
-                      fact={facts[part.id]}
-                      root={root}
-                      // The value is already in the sentence: the chip shows only its source number.
-                      compact={facts[part.id].value !== null && valueInText(prose, facts[part.id].value as string)}
-                    />
-                  ),
-                )}{" "}
-              </span>
-            );
-          })}
+          {live && (
+            <span aria-hidden="true" data-si-chip>
+              <SiChip className="mr-1.5" />
+            </span>
+          )}
+          {citationChips(para, facts).map((part, k) =>
+            part.type === "text" ? <span key={k}>{part.value}</span> : <FactButton key={k} chip={part} root={root} />,
+          )}
         </p>
       ))}
     </div>
   );
-}
-
-/** Whether a fact's value (number, with or without its unit) already appears in the sentence. */
-function valueInText(text: string, value: string): boolean {
-  const num = value.match(/^-?[\d.]+/)?.[0];
-  if (!num) return false;
-  const re = new RegExp(`(^|[^\\d.])${num.replace(/\./g, "\\.")}(?![\\d])`);
-  return re.test(text);
 }
 
 /** Find the first visible element showing this fact outside the panel, or its source entry. */
@@ -216,19 +187,16 @@ function targetFor(id: string, n: number | null, root: HTMLElement | null): HTML
   return n ? document.getElementById(`cite-${n}`) : null;
 }
 
-function FactButton({
-  id,
-  fact,
-  root,
-  compact = false,
-}: {
-  id: string;
-  fact: FactRef;
-  root: React.RefObject<HTMLDivElement | null>;
-  compact?: boolean;
-}) {
+/**
+ * A compact citation. It prints the fact's value only when the prose does not
+ * already state it, else just "[n]"; the label lives in the tooltip and the
+ * spoken name. Clicking jumps to the fact in the brief and flashes it.
+ */
+function FactButton({ chip, root }: { chip: Extract<NarrativeChip, { type: "cite" }>; root: React.RefObject<HTMLDivElement | null> }) {
+  const id = chip.ids[0];
+  const label = chip.labels.join("; ");
   function go() {
-    const el = targetFor(id, fact.n, root.current);
+    const el = targetFor(id, chip.n, root.current);
     if (!el) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
@@ -239,26 +207,33 @@ function FactButton({
     if (!el.matches("a, button, [tabindex]")) el.setAttribute("tabindex", "-1");
     el.focus({ preventScroll: true });
   }
+  const bare = chip.show === null;
   return (
     <button
       type="button"
       onClick={go}
       data-fact-chip={id}
-      title={`${fact.label}: show it in the brief`}
-      className="mx-0.5 inline-flex h-6 max-w-[16rem] translate-y-[-0.1em] items-center gap-1 whitespace-nowrap rounded-[var(--radius-pill)] border border-accent-line bg-accent-soft px-2 align-middle font-mono text-[0.75rem] text-fg transition-[background-color,border-color,scale] duration-[var(--dur-fast)] hover:border-accent active:scale-[0.97]"
+      data-chip-kind={bare ? "cite" : "value"}
+      title={`${label}: show it in the brief`}
+      className={cx(
+        "num inline-flex translate-y-[-0.08em] items-center whitespace-nowrap align-middle font-mono transition-[background-color,border-color,scale] duration-[var(--dur-fast)] active:scale-[0.97]",
+        bare
+          ? "rounded-[var(--radius-xs)] px-0.5 py-0.5 text-[0.78em] text-accent hover:bg-accent-soft"
+          : "mx-0.5 h-[1.375rem] gap-1 rounded-[var(--radius-pill)] border border-accent-line bg-accent-soft px-2 text-[0.75rem] text-fg hover:border-accent",
+      )}
     >
-      <span className="sr-only">Show fact: {fact.label}, </span>
-      {!compact && (
-        <span aria-hidden="true" className="fact-chip-value truncate">
-          {fact.value ?? fact.label}
+      <span className="sr-only">
+        Show fact: {label}
+        {chip.n ? `, source ${chip.n}` : ""}
+      </span>
+      {chip.show !== null && <span aria-hidden="true">{chip.show}</span>}
+      {chip.n ? (
+        <span aria-hidden="true" className={bare ? undefined : "text-fg-3"}>
+          [{chip.n}]
         </span>
+      ) : (
+        bare && <BriefIcon name="jump" size={11} className="chip-jump shrink-0" />
       )}
-      {fact.n && (
-        <span aria-hidden="true" className={compact ? "text-accent" : "text-fg-3"}>
-          [{fact.n}]
-        </span>
-      )}
-      <BriefIcon name="jump" size={11} className="chip-jump shrink-0 text-accent" />
     </button>
   );
 }

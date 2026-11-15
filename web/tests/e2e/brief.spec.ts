@@ -50,21 +50,53 @@ test("Ask HALO shows live SI text with clickable fact chips", async ({ page }) =
   });
   await page.goto(briefUrl("artemis"));
   const panel = page.locator("[data-ask]");
-  // The precomputed narrative is there before any request.
-  await expect(panel).toContainText("Evidence grade D.");
+  // The question box is there at once; the precomputed narrative waits behind its disclosure.
+  await expect(panel.getByLabel("Ask about this brief")).toBeVisible();
+  const pre = panel.locator("[data-precomputed]");
+  await expect(pre.getByText("Evidence grade D.")).toBeHidden();
+  await pre.getByText("Read the plain-words summary").click();
+  await expect(pre.getByText("Evidence grade D.")).toBeVisible();
+  // Precomputed chips are compact: a value or a source number, never a label, and no repeated neighbours.
+  const texts = await pre.locator("[data-fact-chip]").evaluateAll((els) =>
+    els.map((el) => [...el.querySelectorAll('[aria-hidden="true"]')].map((x) => x.textContent).join(" ")),
+  );
+  expect(texts.length).toBeGreaterThan(3);
+  for (const t of texts) expect(t).toMatch(/^(-?[\d.]+\S*( \S+)? )?\[\d+\]$/);
   await panel.getByLabel("Ask about this brief").fill("Why is the grade low?");
   await expect(panel).toContainText("21/300");
   await panel.getByRole("button", { name: "Generate SI narration" }).click();
   await expect(panel).toHaveAttribute("data-state", "live");
   await expect(panel).toContainText("Artemis Base sits far from tested solids");
   expect(body).toEqual({ query: habitatToQuery(PRESETS.artemis), question: "Why is the grade low?" });
-  // Every SI sentence carries an SI chip; citations are chips, not bracket text.
-  await expect(panel.locator("[data-narrative]").getByText("SI", { exact: true })).toHaveCount(2);
+  // Every SI paragraph carries the SI badge; citations are chips, not bracket text.
+  await expect(panel.locator("[data-narrative] p:not(.sr-only)")).toHaveCount(1);
+  await expect(panel.locator("[data-narrative]").getByText("SI", { exact: true })).toHaveCount(1);
+  await expect(panel.locator("[data-narrative] .sr-only").first()).toContainText("SI-generated from the cited facts");
   await expect(panel).not.toContainText("[cov-solid-distance]");
   const chip = panel.locator('[data-fact-chip="det-kapton-scatter-low"]');
   await chip.click();
   // The cited fact elsewhere on the page flashes.
   await expect(page.locator(".fact-flash")).toHaveCount(1);
+});
+
+test("leaving a live answer opens the precomputed summary and focuses its toggle", async ({ page }) => {
+  // Two paragraphs: a paragraph ends after a sentence that closes with its citations.
+  const two = { ...LIVE, text: "Artemis Base sits far from tested solids. [cov-solid-distance] Scatter detectors missed Kapton smoke in SAME. [det-kapton-scatter-low]" };
+  await page.route("**/api/explain", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(two) }),
+  );
+  await page.goto(briefUrl("artemis"));
+  const panel = page.locator("[data-ask]");
+  await panel.getByRole("button", { name: "Generate SI narration" }).click();
+  await expect(panel).toHaveAttribute("data-state", "live");
+  // Every SI paragraph is marked, not only the first.
+  await expect(panel.locator("[data-narrative] p:not(.sr-only)")).toHaveCount(2);
+  await expect(panel.locator("[data-narrative] [data-si-chip]")).toHaveCount(2);
+  await panel.getByRole("button", { name: "Show the precomputed narrative" }).click();
+  await expect(panel).toHaveAttribute("data-state", "fallback");
+  await expect(panel.getByText("Evidence grade D.")).toBeVisible();
+  await expect(panel.locator("[data-precomputed] > summary")).toBeFocused();
+  await expect(panel.locator("[data-fallback-notice]")).toHaveCount(0);
 });
 
 test("Ask HALO keeps the precomputed narrative on a 503", async ({ page }) => {
@@ -76,7 +108,8 @@ test("Ask HALO keeps the precomputed narrative on a 503", async ({ page }) => {
   await panel.getByRole("button", { name: "Generate SI narration" }).click();
   await expect(panel.getByText("Showing precomputed narrative")).toBeVisible();
   await expect(panel).toHaveAttribute("data-state", "fallback");
-  await expect(panel).toContainText("Evidence grade D.");
+  // The fallback opens the precomputed summary for the reader.
+  await expect(panel.getByText("Evidence grade D.")).toBeVisible();
 });
 
 test("Ask HALO keeps the precomputed narrative when the request fails", async ({ page }) => {
@@ -85,7 +118,7 @@ test("Ask HALO keeps the precomputed narrative when the request fails", async ({
   const panel = page.locator("[data-ask]");
   await panel.getByRole("button", { name: "Generate SI narration" }).click();
   await expect(panel.getByText("Showing precomputed narrative")).toBeVisible();
-  await expect(panel).toContainText("Evidence grade D.");
+  await expect(panel.getByText("Evidence grade D.")).toBeVisible();
 });
 
 test("print media hides the nav, the sticky bar and the precomputed Ask HALO panel", async ({ page }) => {
@@ -159,6 +192,9 @@ test("the grade reads in plain words first, with the rule one click away", async
   await expect(panel.locator("[data-grade-technical]")).toBeHidden();
   await panel.getByText("How the grade is set").click();
   await expect(panel.locator("[data-grade-technical]")).toContainText("ACME BRE");
+  // The lift rests on a pressure the experiment did not log; the brief says so and names the grade without it.
+  await expect(panel.locator("[data-grade-caveat]")).toContainText("inferred it from the investigation\u2019s stated objective");
+  await expect(panel.locator("[data-grade-caveat]")).toContainText("the grade would be F");
 });
 
 test("Rover (5 cm/s) and Moon (10 cm/s) briefs show different air flow in the evidence", async ({ page }) => {
@@ -207,13 +243,44 @@ test("Earth card cites the ISS water-mist extinguisher and ties each Spinoff to 
   await expect(earth.locator('[data-earth-item="earth-air-tanks"] a[href="#aftermath"]')).toBeVisible();
   // The Saffire VI CO and CO2 tie is written once, not on every aftermath item.
   await expect(earth.getByText(/24-hour crew limit/)).toHaveCount(1);
+  await expect(earth.getByText(/24-hour crew limit/)).toContainText("but stayed below the 1-hour limit");
 });
 
-test("ranked investigations show fuel or sample and SI-badged sensors", async ({ page }) => {
+test("ranked investigations open from three one-line rows to the full list", async ({ page }) => {
   await page.goto(briefUrl("artemis"));
-  const ranked = page.locator("[data-ranked]");
+  const section = page.locator("#ranked");
+  await expect(section.locator("[data-ranking-note]")).toContainText("SAME-R and SAME rank low because they only ran in ISS air, even though they hold the flight smoke-detector data");
+  const top = section.locator("[data-ranked-top] > li");
+  await expect(top).toHaveCount(3);
+  await expect(top.first()).toContainText("ACME BRE");
+  const ranked = section.locator("[data-ranked]");
+  await expect(ranked).toBeHidden();
+  await section.getByText("Show all 8 and details").click();
+  await expect(ranked.locator("> li")).toHaveCount(8);
+  await expect(section.locator("[data-ranked-top]")).toBeHidden();
   await expect(ranked.locator("[data-ranked-fuels]").first()).toBeVisible();
+  // A PSI placeholder cell is never listed as a fuel.
+  await expect(ranked).not.toContainText(/see previous row/i);
   const sensors = ranked.locator("[data-ranked-sensors]").first();
   await expect(sensors).toBeVisible();
   await expect(sensors.getByText("SI", { exact: true })).toBeVisible();
+  await section.getByText("Show only the top 3").click();
+  await expect(top).toHaveCount(3);
+  await expect(ranked).toBeHidden();
+});
+
+test("print shows the full ranked rows even when the list is collapsed on screen", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator("[data-ranked-top]")).toBeHidden();
+  await expect(page.locator("[data-ranked] > li").first()).toBeVisible();
+  await expect(page.locator("[data-ranked] [data-ranked-fuels]").first()).toBeVisible();
+});
+
+test("the header names the detector as the builder does and badges the reader's inputs", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const hero = page.locator("#brief-hero");
+  await expect(hero.getByText("ISS-style photoelectric (scatter)")).toBeVisible();
+  await expect(hero.locator("[data-your-input]")).toHaveCount(3);
+  await expect(hero.getByText("Assumed", { exact: true })).toHaveCount(0);
 });

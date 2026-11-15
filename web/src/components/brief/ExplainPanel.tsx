@@ -6,9 +6,9 @@ import { AskHalo, type FactRef } from "./AskHalo";
 import { Section, unitText } from "./parts";
 
 /**
- * "In plain words": the deterministic narrative (grade + flags, every number a
- * cited fact) shows at once; "Ask HALO" can replace it with a live SI
- * narration from POST /api/explain, which falls back to this text on any error.
+ * "In plain words": the Ask HALO box, with the deterministic narrative (grade +
+ * flags, every number a cited fact) behind a disclosure. A live SI narration
+ * comes from POST /api/explain, which falls back to that text on any error.
  */
 export function ExplainPanel({ brief }: { brief: Brief }) {
   const ctx = briefContext(brief);
@@ -25,7 +25,7 @@ export function ExplainPanel({ brief }: { brief: Brief }) {
     <Section
       id="explain"
       title="In plain words"
-      kicker="A narrative assembled from the grade and flags above. Ask HALO to explain it in its own words; the SI may only restate cited facts."
+      kicker="Ask HALO about this brief in your own words; the SI may only restate cited facts. A summary built from the grade and flags is one click away."
     >
       <AskHalo fallback={fallbackNarrative(brief)} query={habitatToQuery(brief.habitat)} facts={facts} />
     </Section>

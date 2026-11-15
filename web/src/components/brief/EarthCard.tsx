@@ -49,7 +49,8 @@ function Tie({ brief, kind, id, first }: { brief: Brief; kind: "smoke" | "afterm
       {toxic && first ? (
         <>
           in the Saffire VI burn at about <Num brief={brief} id="aftermath-toxic-oxygen" unit={false} cite={false} />% O<sub>2</sub>
-          <CiteMark n={ctx.cite("aftermath-toxic-oxygen")} />, CO exceeded the 24-hour crew limit and CO<sub>2</sub> its 1-hour limit, so{" "}
+          <CiteMark n={ctx.cite("aftermath-toxic-oxygen")} />, CO exceeded the 24-hour crew limit but stayed below the 1-hour limit, and CO<sub>2</sub> exceeded its
+          1-hour limit, so{" "}
           {AFTERMATH_POINT[id] ?? AFTERMATH_DEFAULT}
         </>
       ) : toxic ? (

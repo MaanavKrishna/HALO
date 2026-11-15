@@ -31,6 +31,8 @@ export interface RankedItem {
 
 /** Rows printed on paper; the rest are named as "more in the online brief". */
 const PRINT_SHOWN = 5;
+/** Rows shown before the reader opens the full list. */
+const TOP_SHOWN = 3;
 
 const KEYS: Array<{ k: keyof RankWeights; label: string; help: string }> = [
   { k: "proximity", label: "Closeness", help: "How near its tests sit to your atmosphere" },
@@ -41,8 +43,36 @@ const KEYS: Array<{ k: keyof RankWeights; label: string; help: string }> = [
 
 const score = (p: RankWeights, w: RankWeights) => w.proximity * p.proximity + w.fuel * p.fuel + w.hazard * p.hazard + w.richness * p.richness;
 
+/** The four weighted score parts side by side, with the same numbers spoken. */
+function Meter({ parts, w, max }: { parts: RankWeights; w: RankWeights; max: number }) {
+  return (
+    <>
+      <p className="sr-only">
+        Score parts: {KEYS.map(({ k, label }) => `${label.toLowerCase()} ${(w[k] * parts[k]).toFixed(2)}`).join(", ")}.
+      </p>
+      <div aria-hidden="true" className="relevance-meter flex h-2 w-full gap-px overflow-hidden rounded-full bg-surface-2">
+        {KEYS.map(({ k }, j) => {
+          const part = (w[k] * parts[k]) / max;
+          return part > 0 ? (
+            <span key={k} className={cx("h-full transition-[width] duration-[var(--dur-base)] ease-[var(--ease-out)]", `score-seg-${j}`)} style={{ width: `${part * 100}%` }} />
+          ) : null;
+        })}
+      </div>
+    </>
+  );
+}
+
+const Rank = ({ i }: { i: number }) => (
+  <span className="num mb-1.5 pt-0.5 font-mono text-sm text-fg-3 sm:mb-0">
+    <span className="sr-only">Rank </span>
+    {String(i + 1).padStart(2, "0")}
+  </span>
+);
+
 /**
- * Ranked investigations with an optional re-weighting. The score is a
+ * Ranked investigations with an optional re-weighting. The top few show as
+ * one-line rows; a native disclosure (no script needed) opens the full list
+ * with summaries, sensors and sources, and paper always prints the full rows. The score is a
  * weighted sum of four parts the engine already computed, so re-ranking in
  * the browser gives the same order the engine would. Each row's bar shows
  * the four weighted parts side by side.
@@ -59,7 +89,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
   const max = Math.max(1e-9, ...ranked.map((r) => r.s));
 
   return (
-    <div>
+    <div className="ranked-wrap">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.8125rem] text-fg-2" aria-hidden="true">
           <span className="type-label text-fg-3">Score parts</span>
@@ -102,7 +132,51 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
         </div>
       </details>
 
-      <ol className="flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" data-ranked>
+      <ol
+        className="ranked-top flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]"
+        data-ranked-top
+      >
+        {ranked.slice(0, TOP_SHOWN).map(({ it }, i) => (
+          <li key={it.psiId} className="grid grid-cols-1 gap-x-3 border-t border-line px-4 py-4 first:border-t-0 sm:grid-cols-[3rem_minmax(0,1fr)] sm:px-6">
+            <Rank i={i} />
+            <div className="flex min-w-0 flex-col gap-2.5 md:grid md:grid-cols-[minmax(0,1fr)_11rem] md:items-start md:gap-6">
+              <div className="min-w-0">
+                <h3 className="text-[1.0625rem] font-semibold leading-snug text-fg">{it.acronym}</h3>
+                {it.why[0] && <p className="mt-1 text-pretty text-[0.875rem] leading-snug text-fg-2">{it.why[0]}</p>}
+              </div>
+              <div className="md:pt-2">
+                <Meter parts={it.parts} w={w} max={max} />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <details className="ranked-all group/all mt-3" data-ranked-all>
+        <summary className="flex w-fit cursor-pointer list-none items-center gap-2 rounded-[var(--radius-md)] border border-line bg-surface-1 px-4 py-2.5 text-sm font-medium text-fg transition-colors duration-[var(--dur-fast)] hover:border-line-strong [&::-webkit-details-marker]:hidden">
+          <svg viewBox="0 0 20 20" className="size-4 text-fg-3 transition-transform duration-[var(--dur-fast)] group-open/all:rotate-90" aria-hidden="true">
+            <path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="group-open/all:hidden">
+            {ranked.length > TOP_SHOWN ? (
+              <>
+                Show all <span className="num">{ranked.length}</span> and details
+              </>
+            ) : (
+              "Show details"
+            )}
+          </span>
+          <span className="hidden group-open/all:inline">
+            {ranked.length > TOP_SHOWN ? (
+              <>
+                Show only the top <span className="num">{TOP_SHOWN}</span>
+              </>
+            ) : (
+              "Hide details"
+            )}
+          </span>
+        </summary>
+      <ol className="mt-3 flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" data-ranked>
         {ranked.map(({ it, s }, i) => (
           <li
             key={it.psiId}
@@ -111,10 +185,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
               i >= PRINT_SHOWN && "print-hide",
             )}
           >
-            <span className="num mb-1.5 pt-0.5 font-mono text-sm text-fg-3 sm:mb-0">
-              <span className="sr-only">Rank </span>
-              {String(i + 1).padStart(2, "0")}
-            </span>
+            <Rank i={i} />
             <div className="min-w-0">
               <div className="flex flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_11rem] md:items-start md:gap-6">
                 <h3 className="text-[1.0625rem] font-semibold leading-snug text-fg">
@@ -122,17 +193,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
                   {it.title !== it.acronym && <span className="mt-0.5 block text-[0.9375rem] font-normal text-fg-2">{it.title}</span>}
                 </h3>
                 <div className="md:pt-1.5">
-                  <p className="sr-only">
-                    Score parts: {KEYS.map(({ k, label }) => `${label.toLowerCase()} ${(w[k] * it.parts[k]).toFixed(2)}`).join(", ")}.
-                  </p>
-                  <div aria-hidden="true" className="relevance-meter flex h-2 w-full gap-px overflow-hidden rounded-full bg-surface-2">
-                    {KEYS.map(({ k }, j) => {
-                      const part = (w[k] * it.parts[k]) / max;
-                      return part > 0 ? (
-                        <span key={k} className={cx("h-full transition-[width] duration-[var(--dur-base)] ease-[var(--ease-out)]", `score-seg-${j}`)} style={{ width: `${part * 100}%` }} />
-                      ) : null;
-                    })}
-                  </div>
+                  <Meter parts={it.parts} w={w} max={max} />
                 </div>
               </div>
               {it.why.length > 0 && (
@@ -216,6 +277,7 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
           </li>
         ))}
       </ol>
+      </details>
       {ranked.length > PRINT_SHOWN && (
         <p className="print-only mt-2 hidden text-sm text-fg-2">
           <span className="num">{ranked.length - PRINT_SHOWN}</span> more in the online brief.

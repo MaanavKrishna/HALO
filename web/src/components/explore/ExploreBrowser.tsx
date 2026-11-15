@@ -7,7 +7,7 @@ import type { InvestigationRow } from "@/lib/data/schema";
 import { PRESETS } from "@/lib/engine/presets";
 import type { FuelClass, Hazard, Investigation } from "@/lib/engine/types";
 import {
-  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, HAZARD_ORDER, O2_TRACK, filterByHazards, formatRange, fromDesignMatrix, hardwareFamily,
+  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, HAZARD_ORDER, O2_TRACK, filterByHazards, formatRange, NO_CONDITIONS, NO_CONDITIONS_HELP, shownCondition, type Conditions, type ShownCondition, hardwareFamily,
   matchesSampleOrSensor, sortInvestigations, type SensorMap, type SortDir, type SortKey,
 } from "@/lib/explore";
 import { CoverageBar, FuelMark, HardwareGlyph, MissionPatch } from "./Glyphs";
@@ -86,14 +86,34 @@ export function DesignMatrixNote({ className }: { className?: string }) {
   );
 }
 
-function O2Cell({ inv }: { inv: Investigation }) {
+/** A shown range with its provenance tag (assumed / inferred) or the no-conditions text. */
+export function ConditionValue({ shown, unit, className }: { shown: ShownCondition; unit: string; className?: string }) {
+  if (!shown.range) {
+    return (
+      <span className={cx("font-mono text-[0.8125rem] text-fg-3", className)} title={NO_CONDITIONS_HELP}>
+        {NO_CONDITIONS}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+      <span className={cx("font-mono text-[0.8125rem] text-fg", className)}>{formatRange(shown.range, unit)}</span>
+      {shown.src && (
+        <span title={shown.basis === "design" ? "From the PSI design matrix; no per-test rows are published." : undefined}>
+          <ProvenanceBadge provenance={shown.src} />
+        </span>
+      )}
+    </span>
+  );
+}
+
+function O2Cell({ inv, cond }: { inv: Investigation; cond: Conditions | undefined }) {
+  const shown = shownCondition(inv, cond, "o2");
   return (
     <div className="flex flex-col gap-1.5">
-      <CoverageBar range={inv.o2Range} />
-      <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className={cx("font-mono text-[0.8125rem]", inv.o2Range ? "text-fg" : "text-fg-3")}>{formatRange(inv.o2Range, "%")}</span>
-        {fromDesignMatrix(inv) && <DesignMatrixNote />}
-      </span>
+      <CoverageBar range={shown.range} />
+      <ConditionValue shown={shown} unit="%" />
+      {shown.basis === "design" && <span className="text-xs text-fg-3">design matrix, no per-test rows</span>}
     </div>
   );
 }
@@ -141,7 +161,7 @@ function HazardInline({ inv }: { inv: Investigation }) {
   return <span className="text-[0.8125rem] leading-snug text-fg-2">{inv.hazards.map((h) => HAZARD_LABEL[h]).join(" · ")}</span>;
 }
 
-export function ExploreBrowser({ investigations, sensors = {} }: { investigations: InvestigationRow[]; sensors?: SensorMap }) {
+export function ExploreBrowser({ investigations, sensors = {}, conditions = {} }: { investigations: InvestigationRow[]; sensors?: SensorMap; conditions?: Record<string, Conditions> }) {
   const [hazards, setHazards] = useState<Hazard[]>([]);
   const [query, setQuery] = useState("");
   const [fuel, setFuel] = useState<Fuel>("all");
@@ -154,8 +174,9 @@ export function ExploreBrowser({ investigations, sensors = {} }: { investigation
         filterByHazards(investigations, hazards, fuel).filter((i) => matchesSampleOrSensor(i, sensors, query)),
         sort.key,
         sort.dir,
+        conditions,
       ) as InvestigationRow[],
-    [investigations, hazards, fuel, sort, query, sensors],
+    [investigations, hazards, fuel, sort, query, sensors, conditions],
   );
   const filtered = hazards.length > 0 || fuel !== "all" || query.trim() !== "";
 
@@ -310,10 +331,12 @@ export function ExploreBrowser({ investigations, sensors = {} }: { investigation
                         <HazardInline inv={i} />
                       </Td>
                       <Td className="py-3.5">
-                        <O2Cell inv={i} />
+                        <O2Cell inv={i} cond={conditions[i.psiId]} />
                       </Td>
-                      <Td numeric className={cx("whitespace-nowrap py-3.5 text-[0.8125rem]", !i.pRangePsia && "text-fg-3")}>
-                        {formatRange(i.pRangePsia, "psia")}
+                      <Td numeric className="py-3.5 text-[0.8125rem]">
+                        <div className="flex flex-col items-end gap-1">
+                          <ConditionValue shown={shownCondition(i, conditions[i.psiId], "pressure")} unit="psia" />
+                        </div>
                       </Td>
                       <Td numeric className="py-3.5 text-[0.8125rem]">{i.nRows}</Td>
                       <Td numeric className="py-3.5 text-[0.8125rem]">{i.publications.length}</Td>
@@ -352,19 +375,21 @@ export function ExploreBrowser({ investigations, sensors = {} }: { investigation
                   <div className="mt-auto px-5 pb-5 pt-5">
                     <div className="flex items-baseline justify-between gap-3">
                       <span className="type-label text-fg-3">O₂ coverage</span>
-                      <span className={cx("font-mono text-[0.8125rem]", i.o2Range ? "text-fg" : "text-fg-3")}>{formatRange(i.o2Range, "%")}</span>
+                      <ConditionValue shown={shownCondition(i, conditions[i.psiId], "o2")} unit="%" />
                     </div>
-                    <CoverageBar range={i.o2Range} className="mt-2" />
-                    {fromDesignMatrix(i) && <DesignMatrixNote className="mt-2" />}
+                    <CoverageBar range={shownCondition(i, conditions[i.psiId], "o2").range} className="mt-2" />
                     <dl className="mt-4 grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)] gap-3 border-t border-line pt-4">
+                      <div className="flex min-w-0 flex-col gap-1">
+                        <dt className="type-label text-fg-3">Pressure</dt>
+                        <dd><ConditionValue shown={shownCondition(i, conditions[i.psiId], "pressure")} unit="psia" /></dd>
+                      </div>
                       {[
-                        ["Pressure", formatRange(i.pRangePsia, "psia")],
                         ["Rows", String(i.nRows)],
                         ["Pubs", String(i.publications.length)],
                       ].map(([k, v]) => (
                         <div key={k} className="flex min-w-0 flex-col gap-1">
                           <dt className="type-label text-fg-3">{k}</dt>
-                          <dd className={cx("font-mono text-[0.8125rem]", v === "not tabulated" ? "text-fg-3" : "text-fg")}>{v}</dd>
+                          <dd className="font-mono text-[0.8125rem] text-fg">{v}</dd>
                         </div>
                       ))}
                     </dl>
@@ -384,13 +409,13 @@ export function ExploreBrowser({ investigations, sensors = {} }: { investigation
               const fam = hardwareFamily(i.hardware);
               return (
                 <Card as="li" key={i.psiId} interactive padding="sm" className="flex flex-col items-center gap-3 text-center">
-                  <MissionPatch family={fam} o2Range={i.o2Range} code={i.psiId} size={104} className="mt-1" />
+                  <MissionPatch family={fam} o2Range={shownCondition(i, conditions[i.psiId], "o2").range} code={i.psiId} size={104} className="mt-1" />
                   <div className="flex min-w-0 flex-col items-center gap-1">
                     <Link href={href(i)} prefetch={false} className="text-[0.9375rem] font-semibold leading-tight text-fg after:z-[1]">
                       {i.acronym}
                     </Link>
                     <span className="text-xs text-fg-3">{HARDWARE_LABEL[fam]}</span>
-                    <span className="font-mono text-xs text-fg-2">O₂ {formatRange(i.o2Range, "%")}</span>
+                    <span className="font-mono text-xs text-fg-2">O₂ {formatRange(shownCondition(i, conditions[i.psiId], "o2").range, "%")}</span>
                   </div>
                 </Card>
               );
@@ -459,7 +484,7 @@ function CoverageKey({ className }: { className?: string }) {
         <span aria-hidden="true" className="inline-block h-3 w-6 border-x border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,var(--accent-soft)_0_3px,transparent_3px_6px)]" />
         Moon envelope O₂ band (≥ {PRESETS.moon.o2Pct}%)
       </span>
-      <span>Ranges come from the PSI test rows; where an investigation publishes no per-test rows they come from its design matrix and are marked Inferred. “Not tabulated” means the record lists none.</span>
+      <span>Ranges are the min–max of each investigation’s eligible test rows. A value that was not recorded is tagged Assumed (a stated assumption, such as air at 1 atm) or Inferred; where there are no rows the design matrix is used and tagged Inferred. “No test conditions in PSI” means the dataset has no O₂ or pressure columns for it.</span>
     </p>
   );
 }

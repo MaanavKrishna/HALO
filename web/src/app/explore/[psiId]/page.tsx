@@ -10,7 +10,7 @@ import { HALO_DATA } from "@/lib/data/load";
 import { investigationRows } from "@/lib/data/schema";
 import type { Investigation } from "@/lib/engine/types";
 import {
-  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, doiUrl, fromDesignMatrix, hardwareFamily, neighbours, plotPoints, sensorMap, variableLabel,
+  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, conditionsByPsi, doiUrl, shownCondition, NO_CONDITIONS, NO_CONDITIONS_HELP, type ShownCondition, hardwareFamily, neighbours, plotPoints, sensorMap, variableLabel,
 } from "@/lib/explore";
 
 const PSI_URL = "https://psi.nasa.gov/physci/repo/";
@@ -61,14 +61,21 @@ function Section({ id, title, aside, children }: { id: string; title: string; as
   );
 }
 
-/** Range as a Stat value: "12–34" with the unit in the unit slot, or "not tabulated". */
-function RangeStat({ label, range, unit }: { label: string; range: [number, number] | null; unit: string }) {
+/** Range as a Stat value: "12–34" with the unit in the unit slot, plus its provenance tag when not measured. */
+function RangeStat({ label, shown, unit, empty = NO_CONDITIONS }: { label: string; shown: ShownCondition; unit: string; empty?: string }) {
   const r1 = (x: number) => Number(x.toFixed(1));
-  if (!range) {
-    return <Stat label={label} value={<span className="text-lg tracking-normal text-fg-3">not tabulated</span>} />;
+  if (!shown.range) {
+    return <Stat label={label} value={<span title={NO_CONDITIONS_HELP} className="text-lg tracking-normal text-fg-3">{empty}</span>} />;
   }
-  const [lo, hi] = range;
-  return <Stat label={label} value={lo === hi ? `${r1(lo)}` : `${r1(lo)}–${r1(hi)}`} unit={unit} />;
+  const [lo, hi] = shown.range;
+  return (
+    <Stat
+      label={label}
+      value={lo === hi ? `${r1(lo)}` : `${r1(lo)}–${r1(hi)}`}
+      unit={unit}
+      provenance={shown.src ? <ProvenanceBadge provenance={shown.src} /> : undefined}
+    />
+  );
 }
 
 const PUB_FIRST = 10;
@@ -131,6 +138,9 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
   const summary = HALO_DATA.summaries[inv.psiId];
   const si = summary && !summary.needsReview && summary.summary.trim() ? summary : null;
   const points = plotPoints(HALO_DATA.tests, inv.psiId);
+  const cond = conditionsByPsi(HALO_DATA.tests)[inv.psiId];
+  const o2Shown = shownCondition(inv, cond, "o2");
+  const pShown = shownCondition(inv, cond, "pressure");
   const eligible = points.reduce((s, p) => s + p.count, 0);
   const notVaried = VARIABLE_KEYS.filter((k) => !inv.varied.includes(k));
   const dataset = doiUrl(inv.datasetDoi);
@@ -198,7 +208,7 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
           <div className="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)]">
             <Panel label="Spec sheet" meta={inv.psiId} bodyClassName="flex flex-col gap-6 p-5">
               <div className="flex items-center gap-4">
-                <MissionPatch family={fam} o2Range={inv.o2Range} code={inv.psiId} size={88} />
+                <MissionPatch family={fam} o2Range={o2Shown.range} code={inv.psiId} size={88} />
                 <div className="min-w-0">
                   <p className="flex items-center gap-2 text-sm font-medium text-fg">
                     <HardwareGlyph family={fam} size={16} className="text-fg-2" />
@@ -208,22 +218,27 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
                 </div>
               </div>
 
-              {inv.o2Range || inv.pRangePsia || inv.flowRangeCmS ? (
+              {o2Shown.range || pShown.range || inv.flowRangeCmS ? (
                 <StatGroup className="grid-cols-1! sm:grid-cols-1! [&>div]:px-4! [&>div]:py-3.5!">
-                  <RangeStat label="O₂ range" range={inv.o2Range} unit="%" />
-                  <RangeStat label="Pressure range" range={inv.pRangePsia} unit="psia" />
-                  <RangeStat label="Flow range" range={inv.flowRangeCmS} unit="cm/s" />
+                  <RangeStat label="O₂ range" shown={o2Shown} unit="%" />
+                  <RangeStat label="Pressure range" shown={pShown} unit="psia" />
+                  <RangeStat label="Flow range" shown={{ range: inv.flowRangeCmS, src: null, basis: inv.flowRangeCmS ? "rows" : "none" }} unit="cm/s" empty="No flow in PSI" />
                 </StatGroup>
               ) : null}
-              {fromDesignMatrix(inv) && (
+              {(o2Shown.basis === "design" || pShown.basis === "design") && (
                 <p className="-mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-3">
                   <ProvenanceBadge provenance="inferred" />
                   <span>Ranges from the PSI design matrix; no per-test rows are published.</span>
                 </p>
               )}
-              {!(inv.o2Range || inv.pRangePsia || inv.flowRangeCmS) && (
-                <p className="rounded-[var(--radius-md)] border border-dashed border-line-strong px-4 py-3.5 text-sm text-fg-2">
-                  No oxygen, pressure or flow ranges are tabulated in the PSI record.
+              {(o2Shown.src === "assumed" || pShown.src === "assumed") && (
+                <p className="-mt-3 text-xs text-fg-3">
+                  Assumed: the PSI record does not log this condition; the stated assumption (see the data notes) is used for every eligible row.
+                </p>
+              )}
+              {!(o2Shown.range || pShown.range || inv.flowRangeCmS) && (
+                <p className="rounded-[var(--radius-md)] border border-dashed border-line-strong px-4 py-3.5 text-sm text-fg-2" title={NO_CONDITIONS_HELP}>
+                  {NO_CONDITIONS}: the dataset has no oxygen, pressure or flow columns for this investigation (for example a model or a smoke table).
                 </p>
               )}
 

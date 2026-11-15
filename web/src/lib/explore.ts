@@ -1,4 +1,4 @@
-import type { FuelClass, Hazard, Investigation, TestPoint } from '@/lib/engine/types';
+import type { ConditionSource, FuelClass, Hazard, Investigation, TestPoint } from '@/lib/engine/types';
 
 /** Helpers for the Explore table: labels, formatting, filtering and sorting. */
 
@@ -27,11 +27,53 @@ export interface Filters { hazard: Hazard | 'all'; fuel: FuelClass | 'all' }
 
 const r1 = (x: number) => Number(x.toFixed(1));
 
-/** "21–40 %" style range; null ranges are not in the tabulated data. */
+export const NO_CONDITIONS = 'No test conditions in PSI';
+export const NO_CONDITIONS_HELP =
+  'PSI publishes no oxygen or pressure columns for this investigation (for example a model or a smoke table), so no test conditions can be shown.';
+
+/** "21–40%" style range; a null range means PSI records no test conditions. Pressure keeps a space before its unit. */
 export function formatRange(range: [number, number] | null, unit: string): string {
-  if (!range) return 'not tabulated';
+  if (!range) return NO_CONDITIONS;
   const [lo, hi] = range;
-  return lo === hi ? `${r1(lo)} ${unit}` : `${r1(lo)}–${r1(hi)} ${unit}`;
+  const sep = unit === '%' ? '' : ' ';
+  return lo === hi ? `${r1(lo)}${sep}${unit}` : `${r1(lo)}–${r1(hi)}${sep}${unit}`;
+}
+
+/** Range of one condition across an investigation's eligible rows, with its weakest provenance. */
+export interface ConditionRange { range: [number, number]; src: ConditionSource }
+export interface Conditions { n: number; o2: ConditionRange | null; pressure: ConditionRange | null }
+
+const STRENGTH: Record<ConditionSource, number> = { assumed: 0, inferred: 1, measured: 2 };
+const weakest = (a: ConditionSource, b: ConditionSource): ConditionSource => (STRENGTH[a] <= STRENGTH[b] ? a : b);
+
+/** Per-investigation O2 and pressure ranges computed from the eligible rows (min-max, weakest provenance). */
+export function conditionsByPsi(tests: TestPoint[]): Record<string, Conditions> {
+  const out: Record<string, Conditions> = {};
+  for (const t of tests) {
+    const c = (out[t.psiId] ??= { n: 0, o2: null, pressure: null });
+    c.n++;
+    const add = (cur: ConditionRange | null, v: number, src: ConditionSource): ConditionRange =>
+      cur ? { range: [Math.min(cur.range[0], v), Math.max(cur.range[1], v)], src: weakest(cur.src, src) } : { range: [v, v], src };
+    c.o2 = add(c.o2, t.o2Pct, t.o2Src);
+    c.pressure = add(c.pressure, t.pressurePsia, t.pSrc);
+  }
+  return out;
+}
+
+export interface ShownCondition {
+  range: [number, number] | null;
+  /** null for a measured range and when there is no range. 'design' = PSI design matrix (no rows), shown as inferred. */
+  src: 'assumed' | 'inferred' | null;
+  basis: 'rows' | 'design' | 'none';
+}
+
+/** What the Explore list and dossier show for O2 or pressure: the eligible rows' range, else the design matrix, else nothing. */
+export function shownCondition(inv: Investigation, cond: Conditions | undefined, which: 'o2' | 'pressure'): ShownCondition {
+  const fromRows = cond?.n ? cond[which] : null;
+  if (fromRows) return { range: fromRows.range, src: fromRows.src === 'measured' ? null : fromRows.src, basis: 'rows' };
+  const design = which === 'o2' ? inv.o2Range : inv.pRangePsia;
+  if (design) return { range: design, src: 'inferred', basis: 'design' };
+  return { range: null, src: null, basis: 'none' };
 }
 
 export function filterInvestigations(list: Investigation[], f: Filters): Investigation[] {
@@ -40,22 +82,22 @@ export function filterInvestigations(list: Investigation[], f: Filters): Investi
   );
 }
 
-function sortValue(i: Investigation, key: SortKey): string | number | null {
+function sortValue(i: Investigation, key: SortKey, conds: Record<string, Conditions>): string | number | null {
   switch (key) {
     case 'acronym': return i.acronym.toLowerCase();
     case 'hardware': return i.hardware.toLowerCase();
-    case 'o2': return i.o2Range ? i.o2Range[0] : null;
-    case 'pressure': return i.pRangePsia ? i.pRangePsia[0] : null;
+    case 'o2': return shownCondition(i, conds[i.psiId], 'o2').range?.[0] ?? null;
+    case 'pressure': return shownCondition(i, conds[i.psiId], 'pressure').range?.[0] ?? null;
     case 'rows': return i.nRows;
     case 'pubs': return i.publications.length;
   }
 }
 
 /** Stable sort. Missing values (null ranges) always sort last, in either direction. */
-export function sortInvestigations(list: Investigation[], key: SortKey, dir: SortDir): Investigation[] {
+export function sortInvestigations(list: Investigation[], key: SortKey, dir: SortDir, conds: Record<string, Conditions> = {}): Investigation[] {
   const sign = dir === 'asc' ? 1 : -1;
   return list
-    .map((inv, idx) => ({ inv, idx, v: sortValue(inv, key) }))
+    .map((inv, idx) => ({ inv, idx, v: sortValue(inv, key, conds) }))
     .sort((a, b) => {
       if (a.v === null && b.v === null) return a.idx - b.idx;
       if (a.v === null) return 1;

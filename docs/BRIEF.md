@@ -8,7 +8,7 @@
 |---|---|---|
 | `grade` | Overall readiness grade and the reason for it | `grade.ts` |
 | `byClass` | Nearest eligible test per fuel class (`solid`, `solid_surrogate`, `droplet`, `gas`) | `distance.ts` |
-| `flags` | Ordered critical, then warning, then info (rules below) | `flags.ts` |
+| `flags` | Ordered critical, then caution, then info (rules below) | `flags.ts` |
 | `ranked` | Investigations ranked for this habitat | `rank.ts` |
 | `detection` | SAME smoke-detector evidence per listed material (`[]` when there are no materials) | `detection.ts` |
 | `extinction` | Droplet self-extinction probability with a 95% band and a curve | `extinction.ts` |
@@ -21,13 +21,15 @@
 
 ## Flag rules
 
+The interface labels the middle severity "Caution"; in code its key is `warning` (`Flag.severity`).
+
 | Severity | Title | When |
 |---|---|---|
 | critical | No real cabin material in the PSI data tested at this atmosphere | The nearest `solid` test has d > 1.0, or there is none. The detail is scoped to PSI and, when `literature.json` holds solids burned in the Moon envelope (O2 ≥ Moon preset, recorded pressure ≤ Moon preset), adds one sentence built from those rows (`lit-window-*` facts): they are stated, never graded on |
 | critical | Your detector would likely miss `<material>` smoke | One per material where the selected detectors catch under 50% of SAME runs. A material with no runs (for example PMMA, which has no SAME analog) has no data and is never treated as 0% |
-| warning | Smoke data only exists at ISS air | Habitat O2 > 23% or pressure < 13 psia |
-| warning | Droplet-fuel pressure outside tested range | `liquids` is true and the droplet extinction model had to clamp pressure (`extrapolatedPressure`); the model covers droplet fuels only |
-| warning | Droplet flames unlikely to self-extinguish | `liquids` is true and the median extinction probability is below 0.1 |
+| caution | Smoke data only exists at ISS air | Habitat O2 > 23% or pressure < 13 psia |
+| caution | Droplet-fuel pressure outside tested range | `liquids` is true and the droplet extinction model had to clamp pressure (`extrapolatedPressure`); the model covers droplet fuels only |
+| caution | Droplet flames unlikely to self-extinguish | `liquids` is true and the median extinction probability is below 0.1 |
 | info | No partial-gravity data in PSI | Always |
 
 Each flag lists `factIds`. Each id resolves in `brief.facts`, and each number in the flag's title or detail equals `String(value)` of one of those facts.

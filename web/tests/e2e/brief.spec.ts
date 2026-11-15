@@ -54,6 +54,8 @@ test("Ask HALO shows live SI text with clickable fact chips", async ({ page }) =
   await expect(panel.getByLabel("Ask about this brief")).toBeVisible();
   const pre = panel.locator("[data-precomputed]");
   await expect(pre.getByText("Evidence grade D.")).toBeHidden();
+  // Suggestion chips render only after hydration; wait so the click is not undone by React taking over.
+  await expect(panel.locator("[data-suggestion]").first()).toBeVisible();
   await pre.getByText("Read the plain-words summary").click();
   await expect(pre.getByText("Evidence grade D.")).toBeVisible();
   // Precomputed chips are compact: a value or a source number, never a label, and no repeated neighbours.

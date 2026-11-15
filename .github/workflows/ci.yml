@@ -37,12 +37,37 @@ jobs:
         run: |
           python -m halo_pipeline.cli all
           git -C .. status --short -- web/src/data
-          git -C .. diff --exit-code -- web/src/data ':(exclude)web/src/data/manifest.json'
+          # Every file must rebuild byte for byte, except the bootstrap model fit (floats differ across
+          # BLAS builds) and the manifest that hashes it; those two are compared below.
+          git -C .. diff --exit-code -- web/src/data ':(exclude)web/src/data/manifest.json' ':(exclude)web/src/data/extinction.json'
           python - <<'PY'
-          import json, subprocess
+          import json, math, subprocess
+
+          def committed(name):
+              return json.loads(subprocess.check_output(["git", "-C", "..", "show", f"HEAD:web/src/data/{name}"]))
+
+          def close(a, b, path="extinction"):
+              if isinstance(a, dict) and isinstance(b, dict):
+                  assert a.keys() == b.keys(), f"{path}: keys differ"
+                  for k in a:
+                      close(a[k], b[k], f"{path}.{k}")
+              elif isinstance(a, list) and isinstance(b, list):
+                  assert len(a) == len(b), f"{path}: lengths differ"
+                  for i, (x, y) in enumerate(zip(a, b)):
+                      close(x, y, f"{path}[{i}]")
+              elif isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool):
+                  assert math.isclose(a, b, rel_tol=1e-3, abs_tol=1e-6), f"{path}: {a} vs {b}"
+              else:
+                  assert a == b, f"{path}: {a!r} vs {b!r}"
+
+          close(json.load(open("../web/src/data/extinction.json")), committed("extinction.json"))
+          print("extinction.json matches within tolerance")
+
           new = json.load(open("../web/src/data/manifest.json"))
-          old = json.loads(subprocess.check_output(["git", "-C", "..", "show", "HEAD:web/src/data/manifest.json"]))
-          new.pop("builtAt", None); old.pop("builtAt", None)
+          old = committed("manifest.json")
+          for m in (new, old):
+              m.pop("builtAt", None)
+              m["files"].pop("extinction.json", None)
           for k in sorted(set(new) | set(old)):
               if new.get(k) != old.get(k):
                   print(f"manifest[{k}]: committed={old.get(k)!r} rebuilt={new.get(k)!r}")

@@ -3,12 +3,14 @@ export const NAV_LINKS = [
   { href: "/findings", label: "Findings" },
   { href: "/explore", label: "Explore" },
   { href: "/compare", label: "Compare" },
+  { href: "/materials", label: "Materials" },
+  { href: "/gravity", label: "Gravity" },
   { href: "/method", label: "Method" },
   { href: "/data", label: "Data" },
   { href: "/about", label: "About" },
 ] as const;
 
-/** Tool views reached from the footer and from Explore, kept out of the top bar so it stays at six links. */
+/** Tool views by their full names, for the footer, Explore and the sitemap. */
 export const TOOL_LINKS = [
   { href: "/investigations/compare", label: "Compare investigations" },
   { href: "/materials", label: "Material screener" },

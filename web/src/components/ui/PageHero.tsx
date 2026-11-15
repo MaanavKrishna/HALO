@@ -77,8 +77,8 @@ export function PageHero({
         className={cx(
           "container-wide relative flex flex-col",
           cinematic
-            ? "min-h-[min(calc(100svh-var(--nav-h)),56rem)] justify-center gap-[clamp(1.25rem,3svh,1.75rem)] py-[clamp(3rem,9svh,6rem)]"
-            : "gap-6 pb-16 pt-[clamp(3.5rem,12svh,7rem)] sm:pb-20",
+            ? "min-h-[min(calc(100svh-var(--nav-h)),56rem)] justify-center gap-[clamp(1.25rem,3svh,1.75rem)] py-[clamp(2rem,7svh,6rem)]"
+            : "gap-4 pb-8 pt-[clamp(1.5rem,4svh,2.5rem)] sm:gap-5 sm:pb-10",
         )}
       >
         {eyebrow && (
@@ -90,7 +90,7 @@ export function PageHero({
           {title}
         </h1>
         {lede && (
-          <p className="hero-settle type-body-l max-w-[46ch] text-fg-2" style={settle(820)}>
+          <p className={cx("hero-settle type-body-l text-fg-2", cinematic ? "max-w-[58ch]" : "max-w-[46ch]")} style={settle(820)}>
             {lede}
           </p>
         )}
@@ -100,7 +100,7 @@ export function PageHero({
           </div>
         )}
         {meta && (
-          <div className="hero-settle pt-6" style={settle(1000)}>
+          <div className={cx("hero-settle", cinematic ? "pt-6" : "pt-2")} style={settle(1000)}>
             {meta}
           </div>
         )}

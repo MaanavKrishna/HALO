@@ -69,3 +69,25 @@ test("the mini-brief speaks plainly: no ppO2, no bare d, no grade-cap jargon", a
   await mini.getByRole("button", { name: "What “away” means" }).click();
   await expect(mini.getByRole("tooltip").filter({ hasText: "Evidence distance" })).toBeVisible();
 });
+
+test("the hero states the gap from the data, and the top nav reaches Materials and Gravity", async ({ page }) => {
+  await page.goto("/");
+  const hero = page.locator("section", { has: page.getByRole("heading", { level: 1 }) });
+  await expect(hero).toContainText(`${PRESETS.artemis.o2Pct}% O2 at ${PRESETS.artemis.pressurePsia} psia`);
+  await expect(hero).toContainText("HALO shows what that gap means for your habitat.");
+  await expect(page.getByText("one-page")).toHaveCount(0);
+  const nav = page.getByRole("navigation", { name: "Main" });
+  await expect(nav.getByRole("link", { name: "Materials" })).toHaveAttribute("href", "/materials");
+  await expect(nav.getByRole("link", { name: "Gravity" })).toHaveAttribute("href", "/gravity");
+  const pillars = page.locator("section", { has: page.getByRole("heading", { name: LANDING_HEADINGS.pillars }) });
+  await expect(pillars.getByRole("link", { name: /Material screener/ })).toHaveAttribute("href", "/materials");
+  await expect(pillars.getByRole("link", { name: /Partial-gravity bounds/ })).toHaveAttribute("href", "/gravity");
+});
+
+test("/investigations redirects to /explore, and a brief is titled with its habitat", async ({ page, request }) => {
+  const res = await request.get("/investigations", { maxRedirects: 0 });
+  expect(res.status()).toBe(308);
+  expect(res.headers()["location"]).toBe("/explore");
+  await page.goto(`/brief?${habitatToQuery(PRESETS.artemis)}`);
+  await expect(page).toHaveTitle(`${PRESETS.artemis.name} Fire Brief · HALO`);
+});

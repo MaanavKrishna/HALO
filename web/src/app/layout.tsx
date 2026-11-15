@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: `${SITE_NAME}: ${SITE_EXPANSION}`,
     description: TAGLINE,
+    url: "/",
   },
   twitter: { card: "summary_large_image", title: `${SITE_NAME}: ${SITE_EXPANSION}`, description: TAGLINE },
   appleWebApp: { title: SITE_NAME, statusBarStyle: "black-translucent" },

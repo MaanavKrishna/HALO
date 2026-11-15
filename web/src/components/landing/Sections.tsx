@@ -291,6 +291,12 @@ export function BriefSection() {
 
 // ---------------------------------------------------------------- 4. Pillars
 
+/** The two tool views that sit beside the brief. */
+const TOOLS = [
+  { href: "/materials", title: "Material screener", body: "Pick a cabin material and an atmosphere, and see every NASA test of it and how close the nearest one came." },
+  { href: "/gravity", title: "Partial-gravity bounds", body: "PSI holds no Moon or Mars gravity fire data. See what exists in microgravity and at 1 g for each material, and the untested band between." },
+] as const;
+
 export function PillarsSection() {
   const k = pillars.kapton;
   const n = pillars.nextTest;
@@ -432,6 +438,23 @@ export function PillarsSection() {
             <Link href={it.href} className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline">
               {it.cta}
               <Icon name="arrowRight" size={16} />
+            </Link>
+          </Reveal>
+        ))}
+      </ul>
+
+      <ul className="mt-12 grid gap-4 sm:grid-cols-2">
+        {TOOLS.map((t, i) => (
+          <Reveal as="li" key={t.href} delay={i * 70}>
+            <Link
+              href={t.href}
+              className="group flex h-full items-start justify-between gap-6 rounded-[var(--radius-lg)] border border-line bg-surface-1 p-5 transition-colors duration-[var(--dur-fast)] hover:border-line-strong sm:p-6"
+            >
+              <span className="flex flex-col gap-1.5">
+                <span className="type-title text-fg">{t.title}</span>
+                <span className="type-body-s text-fg-2">{t.body}</span>
+              </span>
+              <Icon name="arrowRight" size={18} className="mt-1 shrink-0 text-accent transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5" />
             </Link>
           </Reveal>
         ))}

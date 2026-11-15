@@ -2,7 +2,7 @@
 
 **Habitat Assessment from Low-gravity Observations**
 
-In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire data into a one-page fire brief for your habitat.
+In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire data into a cited fire brief for your habitat.
 
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![NASA Space Apps 2026](https://img.shields.io/badge/NASA%20Space%20Apps-2026-0b3d91.svg)](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)
@@ -10,7 +10,7 @@ In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire dat
 
 Pick a habitat atmosphere, cabin materials and smoke detectors. HALO shows which NASA tests are closest, how much evidence covers them, where the evidence stops, what your detector would likely miss, and which test should fly next. Every number is cited to its source.
 
-**Live demo:** https://halo-fire-brief-maanavkrishnas-projects.vercel.app
+**Live demo:** https://halo-fire-brief.vercel.app
 
 ---
 
@@ -129,7 +129,7 @@ Then open http://localhost:3000.
 |---|---|---|
 | Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 309 tests in 27 files |
 | Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` | 84 tests |
-| End-to-end (Playwright, production build on port 3100) | `cd web && pnpm test:e2e` | 103 tests in 9 specs |
+| End-to-end (Playwright, production build on port 3100) | `cd web && pnpm test:e2e` | 105 tests in 9 specs |
 | Type check | `cd web && pnpm exec next typegen && pnpm exec tsc --noEmit` | |
 
 **Environment.** Copy [`.env.example`](.env.example) to `.env` (gitignored). It holds the server-only LLM API key and `SI_LIVE` (set to `false` to serve precomputed text only). The data pipeline and the engine need no keys.

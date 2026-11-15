@@ -1,8 +1,12 @@
 import type { FuelClass, Habitat, Nearest, TestPoint } from './types';
 
+/** One unit of evidence distance: 10 O2 percentage points, or 3 psia. */
+export const O2_UNIT = 10;
+export const P_UNIT = 3;
+
 /** Evidence distance: 10 O2 percentage points are treated as equivalent to 3 psia. */
 export function scaledDistance(o2a: number, pa: number, o2b: number, pb: number): number {
-  return Math.hypot((o2a - o2b) / 10, (pa - pb) / 3);
+  return Math.hypot((o2a - o2b) / O2_UNIT, (pa - pb) / P_UNIT);
 }
 
 const CLASSES: FuelClass[] = ['solid', 'solid_surrogate', 'droplet', 'gas'];

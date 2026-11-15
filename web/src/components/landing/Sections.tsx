@@ -16,6 +16,7 @@ import {
 } from "@/components/ui";
 import { CHALLENGE_URL } from "@/components/ui/site";
 import type { Provenance } from "@/lib/engine/types";
+import { CoverageMap } from "@/components/views/CoverageMap";
 import { MiniBrief } from "./MiniBrief";
 import { LANDING_HEADINGS } from "./headings";
 import { dataset, doiUrl, pillars, presets, problem, sourceUrl } from "./data";
@@ -251,6 +252,29 @@ export function ProblemSection() {
             className="col-span-2 sm:col-span-1"
           />
         </StatGroup>
+      </Reveal>
+    </Section>
+  );
+}
+
+// ---------------------------------------------------------------- 2b. Where the tests stop
+
+export function CoverageSection() {
+  return (
+    <Section id="coverage">
+      <div className="grid gap-x-16 gap-y-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-end">
+        <Reveal>
+          <H2 id="coverage" />
+        </Reveal>
+        <Reveal delay={80}>
+          <p className="type-body-l max-w-[52ch] text-fg-2">
+            A fire test only speaks for atmospheres close to it. HALO draws its grading rings around every PSI test; where
+            the rings end, the evidence ends. Switch the fuel class to see how far each kind of test reaches.
+          </p>
+        </Reveal>
+      </div>
+      <Reveal className="mt-12 sm:mt-16">
+        <CoverageMap id="landing-cov" />
       </Reveal>
     </Section>
   );

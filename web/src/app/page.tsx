@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ButtonLink, Icon, PageHero } from "@/components/ui";
 import { BriefSection, CloseSection, CoverageSection, DataSection, PillarsSection, PresetsSection, ProblemSection, WhySection } from "@/components/landing/Sections";
+import { ProofBand } from "@/components/landing/ProofBand";
 import { problem } from "@/components/landing/data";
 import { TAGLINE } from "@/lib/site";
 import "@/components/landing/landing.css";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   description: TAGLINE,
 };
 
-const { artemis, richestSolid, moonWindow } = problem;
+const { artemis, richestSolid } = problem;
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
         size="cinematic"
         visual="orb"
         titleId="hero-title"
-        eyebrow="Habitat Assessment from Low-gravity Observations"
+        eyebrow="Fire safety evidence for Moon habitats"
         title="Where the evidence runs out."
         lede={
           <>
@@ -39,15 +40,11 @@ export default function Home() {
             </ButtonLink>
           </>
         }
-        meta={
-          <p className="font-mono text-[0.8125rem] text-fg-2 tabular-nums">
-            {artemis.o2Pct}% planned · {richestSolid.o2}% tested · {moonWindow.solids} real-solid tests in the Moon window
-          </p>
-        }
       />
-      <WhySection />
+      <ProofBand />
       <ProblemSection />
       <CoverageSection />
+      <WhySection />
       <BriefSection />
       <PillarsSection />
       <DataSection />

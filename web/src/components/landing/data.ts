@@ -65,12 +65,12 @@ const artemisBrief = buildBrief(PRESETS.artemis, D);
 const solidNear = artemisBrief.byClass.solid;
 const ARTEMIS_PP = r2((PRESETS.artemis.o2Pct / 100) * PRESETS.artemis.pressurePsia);
 
-/** Mini halo chart geometry: O2 on x (10-45%), pressure on y (0-20 psia). */
+/** Mini halo chart geometry: O2 on x (10-55%, wide enough that the D ring fits whole), pressure on y (0-20 psia). */
 const X0 = 10;
-const X1 = 45;
+const X1 = 55;
 const Y1 = 20;
 const W = 320;
-const H = 220;
+const H = 345;
 const sx = (o2: number) => ((o2 - X0) / (X1 - X0)) * W;
 const sy = (p: number) => H - (p / Y1) * H;
 const CLASS_IDX: Record<FuelClass, number> = { solid: 0, solid_surrogate: 1, droplet: 2, gas: 3 };
@@ -109,7 +109,7 @@ export const mini = {
       solidNear.test && solidNear.d !== null
         ? { x: sx(solidNear.test.o2Pct), y: sy(solidNear.test.pressurePsia), acronym: solidNear.test.acronym, d: r2(solidNear.d) }
         : null,
-    xTicks: [10, 20, 30, 40].map((v) => ({ v, x: sx(v) })),
+    xTicks: [10, 20, 30, 40, 50].map((v) => ({ v, x: sx(v) })),
     yTicks: [0, 10, 20].map((v) => ({ v, y: sy(v) })),
   },
 };
@@ -170,3 +170,14 @@ export const presets = PRESET_ORDER.map((k) => {
     href: briefHref(k),
   };
 });
+
+// ---- "HALO in 60 seconds" band: every figure reuses the sections' own computations ----
+const artemisBriefHref = briefHref("artemis");
+export const band = {
+  moon: { solids: problem.moonWindow.solids, tests: problem.moonWindow.tests, href: "/findings" },
+  kapton: { missed: pillars.kapton.missed, runs: pillars.kapton.runs, href: `${artemisBriefHref}#detection` },
+  nextTest: pillars.nextTest && pillars.nextTest.before !== null && pillars.nextTest.after !== null
+    ? { before: pillars.nextTest.before, after: pillars.nextTest.after, o2: pillars.nextTest.o2, p: pillars.nextTest.p, href: `${artemisBriefHref}#next-test` }
+    : null,
+  data: { investigations: dataset.investigations, eligibleRows: dataset.eligibleRows, href: "/data" },
+};

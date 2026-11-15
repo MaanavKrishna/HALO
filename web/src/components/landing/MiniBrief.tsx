@@ -53,11 +53,11 @@ function MiniHalo() {
           <ellipse cx={c.habitat.x} cy={c.habitat.y} rx={c.rings[2].rx * 1.15} ry={c.rings[2].ry * 1.15} fill="url(#mini-glow)" />
           {c.points.map(([x, y, k]) =>
             k === 0 ? (
-              <rect key={`${x}-${y}-${k}`} x={x - 2.2} y={y - 2.2} width="4.4" height="4.4" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1" />
+              <rect key={`${x}-${y}-${k}`} x={x - 3.5} y={y - 3.5} width="7" height="7" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1.4" />
             ) : k === 1 ? (
-              <path key={`${x}-${y}-${k}`} d={`M${x} ${y - 3}l3 3-3 3-3-3z`} fill="var(--accent)" />
+              <path key={`${x}-${y}-${k}`} d={`M${x} ${y - 5}l5 5-5 5-5-5z`} fill="var(--accent)" />
             ) : (
-              <circle key={`${x}-${y}-${k}`} cx={x} cy={y} r={k === 2 ? 1.6 : 1.2} fill="var(--text-3)" fillOpacity={k === 2 ? 0.45 : 0.3} />
+              <circle key={`${x}-${y}-${k}`} cx={x} cy={y} r={k === 2 ? 2.6 : 2} fill="var(--text-2)" fillOpacity={k === 2 ? 0.7 : 0.5} />
             ),
           )}
           {c.rings.map((r, i) => (
@@ -87,7 +87,7 @@ function MiniHalo() {
               stroke="var(--text-2)"
               strokeDasharray="2 3"
             />
-            <rect x={c.nearestSolid.x - 3.5} y={c.nearestSolid.y - 3.5} width="7" height="7" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1.5" />
+            <rect x={c.nearestSolid.x - 5} y={c.nearestSolid.y - 5} width="10" height="10" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="2" />
             <text x={c.nearestSolid.x - 6} y={c.nearestSolid.y - 8} textAnchor="end" fill="var(--text-2)">
               {c.nearestSolid.acronym}
             </text>
@@ -100,8 +100,20 @@ function MiniHalo() {
             </text>
           </g>
         )}
-        <circle cx={c.habitat.x} cy={c.habitat.y} r="4" fill="var(--accent)" style={{ filter: "drop-shadow(0 0 4px var(--accent-glow))" }} />
-        <circle cx={c.habitat.x} cy={c.habitat.y} r="7.5" fill="none" stroke="var(--accent)" strokeOpacity="0.6" />
+        <circle cx={c.habitat.x} cy={c.habitat.y} r="6" fill="var(--accent)" style={{ filter: "drop-shadow(0 0 5px var(--accent-glow))" }} />
+        <circle cx={c.habitat.x} cy={c.habitat.y} r="11" fill="none" stroke="var(--accent)" strokeOpacity="0.6" />
+        <text
+          x={c.habitat.x}
+          y={c.habitat.y + 26}
+          textAnchor="middle"
+          fill="var(--text-1)"
+          fontWeight="600"
+          stroke="var(--surface-2)"
+          strokeWidth="3"
+          paintOrder="stroke"
+        >
+          {mini.name}
+        </text>
       </g>
     </svg>
   );
@@ -169,13 +181,13 @@ export function MiniBrief() {
           <MiniHalo />
           <figcaption className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[0.6875rem] text-fg-3">
             <span className="inline-flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block size-2 border border-fg bg-surface-1" /> Real solid
+              <span aria-hidden="true" className="inline-block size-2.5 border-[1.5px] border-fg bg-surface-1" /> Real solid
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block size-2 rotate-45 bg-accent" /> Surrogate
+              <span aria-hidden="true" className="inline-block size-2.5 rotate-45 bg-accent" /> Surrogate
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block size-1.5 rounded-full bg-fg-3" /> Droplet, gas
+              <span aria-hidden="true" className="inline-block size-2 rounded-full bg-fg-2" /> Droplet, gas
             </span>
             <span>Oxygen % × pressure</span>
             <Tooltip

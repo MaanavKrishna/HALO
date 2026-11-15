@@ -40,6 +40,23 @@ test("every landing section heading is present, in order", async ({ page }) => {
   expect(names.filter((n) => (expected as readonly string[]).includes(n))).toEqual(expected);
 });
 
+test("the 60-second band sits under the hero with four linked tiles from the data", async ({ page }) => {
+  await page.goto("/");
+  const band = page.locator("#sixty");
+  await expect(band.getByRole("heading", { level: 2, name: LANDING_HEADINGS.sixty })).toBeVisible();
+  const links = band.getByRole("link");
+  await expect(links).toHaveCount(4);
+  await expect(links.nth(0)).toContainText(/^0 of \d+/);
+  await expect(links.nth(0)).toHaveAttribute("href", "/findings");
+  await expect(links.nth(1)).toHaveAttribute("href", /#detection$/);
+  await expect(links.nth(2)).toHaveAttribute("href", /#next-test$/);
+  await expect(links.nth(2)).toContainText("→");
+  await expect(links.nth(3)).toHaveAttribute("href", "/data");
+  const hero = await page.locator("section", { has: page.getByRole("heading", { level: 1 }) }).boundingBox();
+  const b = await band.boundingBox();
+  expect(b!.y).toBeGreaterThanOrEqual(hero!.y + hero!.height - 2);
+});
+
 test("the landing page loads without console errors", async ({ page }) => {
   const problems = watchConsole(page);
   await page.goto("/");

@@ -4,7 +4,7 @@ import { briefContext } from "@/lib/brief/context";
 import { factText, type Brief, type Provenance } from "@/lib/engine/types";
 import { Section, unitText } from "./parts";
 
-const PROVENANCE_ORDER: Provenance[] = ["measured", "inferred", "assumed", "literature", "model", "si"];
+const PROVENANCE_ORDER: Provenance[] = ["measured", "inferred", "assumed", "literature", "computed", "model", "si"];
 
 /** Numbered sources, in first-use order, plus every fact the brief can show. */
 export function CitationList({ brief }: { brief: Brief }) {

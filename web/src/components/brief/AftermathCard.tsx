@@ -46,18 +46,25 @@ export function AftermathCard({ brief }: { brief: Brief }) {
             {tox && (
               <Stat
                 size="lg"
-                label="Toxic gases over crew limits"
+                label="CO and CO₂ past crew limits"
                 value={<span className="num" data-fact={tox.id}>~{String(tox.value)}</span>}
                 unit={
                   <>
-                    {tox.unit}
+                    {tox.unit === "% O2" ? (
+                      <>
+                        % O<sub>2</sub>
+                      </>
+                    ) : (
+                      tox.unit
+                    )}
                     <CiteMark n={ctx.cite(tox.id)} />
                   </>
                 }
                 provenance={<ProvenanceBadge provenance={tox.provenance} />}
                 detail={
                   <>
-                    In the Saffire VI burn at this oxygen level, CO and CO<sub>2</sub> rose past crew exposure limits.
+                    In the Saffire VI burn at this oxygen level, CO exceeded the 24-hour crew limit (SMAC 100 ppm) and approached the 1-hour limit;
+                    CO<sub>2</sub> exceeded its 1-hour limit (NASA-STD-3001).
                   </>
                 }
               />

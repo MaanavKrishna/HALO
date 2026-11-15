@@ -201,4 +201,11 @@
   .brief-disclaimer {
     break-inside: avoid;
   }
+  /* The grade rule prints open, without its disclosure arrow. */
+  .grade-rule::details-content {
+    content-visibility: visible;
+  }
+  .grade-rule > summary {
+    display: none;
+  }
 }

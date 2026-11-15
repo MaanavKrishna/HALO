@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { extractNumbers, validateNumbers } from '@/lib/si/validateNumbers';
+import { extractNumbers, factNumbers, factTextTokens, numberMatches, validateNumbers } from '@/lib/si/validateNumbers';
+import { HALO_DATA } from '@/lib/data/load';
+import { PRESETS } from '@/lib/engine/presets';
+import { buildBrief } from '@/lib/engine/brief';
+import { allFacts } from '@/lib/brief/pageFacts';
 import type { Fact } from '@/lib/engine/types';
 
 const fact = (id: string, value: number | string, unit?: string): Fact => ({
@@ -96,5 +100,36 @@ describe('fixed-decimal display values', () => {
     ];
     expect(validateNumbers('The scatter proxy is 2.0 V and Saffire VI burned at 31.0% O2.', facts).ok).toBe(true);
     expect(validateNumbers('The scatter proxy is 2.1 V.', facts).ok).toBe(false);
+  });
+});
+
+describe('allowlist ignores ids, standard numbers and years in fact text', () => {
+  it('sample ids, standard numbers, letter-glued names and years never vouch for a number', () => {
+    const fs: Fact[] = [
+      { ...fact('lit-flow-low', 20), label: 'Saffire II SIBAL sample II-5: air flow' },
+      { ...fact('aftermath-toxic-oxygen', 31), label: 'O2 where CO exceeded the limit (NASA-STD-3001)' },
+      { ...fact('vehicle-fm', 'Flammability of Materials on the Moon (FM2), flown in 2025'), label: 'FM2' },
+      { ...fact('bass-test-one', 'NASA-STD-6001 Test 1 is not conservative') },
+    ];
+    for (const n of ['5', '3001', '2', '2025', '6001', '1']) expect(validateNumbers(`${n} cm/s`, fs).ok, n).toBe(false);
+    expect(validateNumbers('20 cm/s at 31% O2', fs).ok).toBe(true);
+    expect(factNumbers(fs).sort((a, b) => a - b)).toEqual([20, 31]);
+  });
+  it('keeps real quantities in labels ("95% bound", "24-hour limit")', () => {
+    expect(factTextTokens('Upper 95% bound; the 24-hour crew limit').map((t) => t.value)).toEqual([95, 24]);
+  });
+});
+
+describe('regression: text-valued facts hold no number that is not a numeric fact', () => {
+  it('every number in a text fact’s text equals some numeric fact value, for every preset', () => {
+    for (const k of Object.keys(PRESETS) as (keyof typeof PRESETS)[]) {
+      const fs = allFacts(buildBrief(PRESETS[k], HALO_DATA), HALO_DATA);
+      const nums = fs.filter((f) => typeof f.value === 'number').map((f) => f.value as number);
+      for (const f of fs) {
+        if (typeof f.value !== 'string') continue;
+        const bad = factTextTokens(f.value).filter((t) => !nums.some((v) => numberMatches(t, v)));
+        expect(bad.map((t) => t.value), `${k} ${f.id}: ${f.value}`).toEqual([]);
+      }
+    }
   });
 });

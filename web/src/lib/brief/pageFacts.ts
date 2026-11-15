@@ -2,8 +2,8 @@ import { sensorWhatIf } from '@/lib/engine/detection';
 import { detectorSource, scatterThresholdFact } from '@/lib/engine/flags';
 import { HABITAT_SOURCE, habitatFacts } from '@/lib/engine/brief';
 import { classGrade } from '@/lib/engine/grade';
-import { literatureInWindow } from '@/lib/engine/literatureWindow';
-import { scaledDistance } from '@/lib/engine/distance';
+import { literatureInWindow, missionInPsi, missionSpan } from '@/lib/engine/literatureWindow';
+import { archivableLiterature, nearestArchivable, nearestLiterature } from '@/lib/engine/nextTest';
 import { MATERIALS } from '@/lib/engine/materials';
 import { PRESETS } from '@/lib/engine/presets';
 import type { Brief, Fact, FuelClass, Grade, HaloData, MaterialId, Source, TestPoint } from '@/lib/engine/types';
@@ -55,7 +55,7 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     ...habitatFacts(h),
     {
       id: 'habitat-oxygen-partial-pressure', label: 'Habitat O2 partial pressure (O2 fraction × total pressure)',
-      value: r2((h.o2Pct / 100) * h.pressurePsia), unit: 'psia', provenance: 'model', source: HABITAT,
+      value: r2((h.o2Pct / 100) * h.pressurePsia), unit: 'psia', provenance: 'computed', source: HABITAT,
     },
   ];
 
@@ -65,10 +65,10 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     if (!n.test || n.d === null) continue;
     const src = testSource(data, n.test);
     out.push(
-      { id: nearId(c, 'distance'), label: `Evidence distance to the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: r2(n.d), provenance: 'model', source: src },
+      { id: nearId(c, 'distance'), label: `Evidence distance to the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: r2(n.d), provenance: 'computed', source: src },
       { id: nearId(c, 'oxygen'), label: `O2 of the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: n.test.o2Pct, unit: '%', provenance: n.test.o2Src, source: src },
       { id: nearId(c, 'pressure'), label: `Pressure of the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: n.test.pressurePsia, unit: 'psia', provenance: n.test.pSrc, source: src },
-      { id: nearId(c, 'gap'), label: `O2 gap between the habitat and the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: r1(Math.abs(n.o2Gap ?? 0)), unit: 'O2-points', provenance: 'model', source: src },
+      { id: nearId(c, 'gap'), label: `O2 gap between the habitat and the nearest ${CLASS_LABEL[c].toLowerCase()} test`, value: r1(Math.abs(n.o2Gap ?? 0)), unit: 'O2-points', provenance: 'computed', source: src },
     );
   }
 
@@ -88,8 +88,8 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
       if (w.runs === 0) continue; // no SAME data: never shown as 0%
       const label = `${MATERIALS[m].label} runs`;
       out.push(
-        { id: whatIfId(m, w.combo, 'caught'), label: `${label} caught by ${w.combo.join(' + ')}`, value: w.caught, provenance: w.combo.length > 1 ? 'inferred' : 'measured', source: detSrc },
-        { id: whatIfId(m, w.combo, 'runs'), label: `${label} with every channel of ${w.combo.join(' + ')} recorded`, value: w.runs, provenance: 'measured', source: detSrc },
+        { id: whatIfId(m, w.combo, 'caught'), label: `${label} caught by ${w.combo.join(' + ')}`, value: w.caught, provenance: w.combo.length > 1 ? 'inferred' : 'computed', source: detSrc },
+        { id: whatIfId(m, w.combo, 'runs'), label: `${label} with every channel of ${w.combo.join(' + ')} recorded`, value: w.runs, provenance: 'computed', source: detSrc },
       );
     }
   }
@@ -108,36 +108,68 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
   );
 
   // Next tests: the computed point and the per-preset gain.
-  const nextSrc: Source = { note: 'HALO next-test search over the eligible PSI test rows (model)' };
+  const nextSrc: Source = { note: 'HALO next-test search over the eligible PSI test rows (computed)' };
   b.nextTests.forEach((t, i) => {
     out.push(
-      { id: nextId(i, 'oxygen'), label: `Suggested test ${i + 1}: O2`, value: t.o2Pct, unit: '%', provenance: 'model', source: nextSrc },
-      { id: nextId(i, 'pressure'), label: `Suggested test ${i + 1}: pressure`, value: t.pressurePsia, unit: 'psia', provenance: 'model', source: nextSrc },
+      { id: nextId(i, 'oxygen'), label: `Suggested test ${i + 1}: O2`, value: t.o2Pct, unit: '%', provenance: 'computed', source: nextSrc },
+      { id: nextId(i, 'pressure'), label: `Suggested test ${i + 1}: pressure`, value: t.pressurePsia, unit: 'psia', provenance: 'computed', source: nextSrc },
     );
     for (const g of t.gains) {
       out.push(
-        { id: gainId(i, g.preset, 'before'), label: `${presetName(g.preset)}: evidence distance today`, value: r2(g.before), provenance: 'model', source: nextSrc },
-        { id: gainId(i, g.preset, 'after'), label: `${presetName(g.preset)}: evidence distance after suggested test ${i + 1}`, value: r2(g.after), provenance: 'model', source: nextSrc },
+        { id: gainId(i, g.preset, 'before'), label: `${presetName(g.preset)}: evidence distance today`, value: r2(g.before), provenance: 'computed', source: nextSrc },
+        { id: gainId(i, g.preset, 'after'), label: `${presetName(g.preset)}: evidence distance after suggested test ${i + 1}`, value: r2(g.after), provenance: 'computed', source: nextSrc },
       );
     }
   });
 
-  // The top suggestion sits near the Saffire VI runs (NASA reports, not PSI): its distance to the nearest one.
+  // The top suggestion against the Saffire runs (NASA reports): its distance to the nearest one,
+  // and what archiving those runs in PSI would do for real-solid coverage.
   const best = b.nextTests[0];
-  const lit = best ? literatureInWindow(data) : null;
-  if (best && lit) {
-    const d = Math.min(...lit.rows.map((r) => scaledDistance(best.o2Pct, best.pressurePsia, r.o2Pct as number, r.pressurePsia as number)));
-    out.push(...lit.facts, {
+  const lit = literatureInWindow(data);
+  if (lit) out.push(...lit.facts);
+  const near = best ? nearestLiterature(best, data.literature) : null;
+  if (best && near) {
+    const mission = near.row.mission.replace(/-/g, ' ');
+    const scope = missionInPsi(near.row.mission, data.tests) ? 'NASA report' : 'NASA report, mission not in PSI';
+    out.push({
       id: NEXT_LITERATURE_DISTANCE,
-      label: `Evidence distance from suggested test 1 to the nearest ${lit.missions.join(', ')} run (literature, not PSI)`,
-      value: r2(d), provenance: 'model', source: lit.facts[0].source,
+      label: `Evidence distance from suggested test 1 to the nearest Saffire run (${mission}, ${scope})`,
+      value: r2(near.d), provenance: 'computed', source: { url: near.row.sourceUrl, note: `${mission} sample ${near.row.sampleId}: ${near.row.material}` },
     });
+  }
+  // "If archived": only literature missions not already in PSI count (Saffire I–III are PSI rows already).
+  const archMissions = archiveMissionLabel(data);
+  const archNote = `${archMissions} runs from NASA reports (literature.json), not yet in PSI, counted as if archived there; real-solid evidence distance per reference habitat (computed)`;
+  const archSrc = (p: { o2Pct: number; pressurePsia: number }): Source => {
+    const row = nearestArchivable(p, data);
+    return { note: row ? `${archNote}; nearest run ${row.mission.replace(/-/g, ' ')} sample ${row.sampleId}` : archNote, ...(row ? { url: row.sourceUrl } : {}) };
+  };
+  for (const g of b.archiveGains) {
+    const src = archSrc(PRESETS[g.preset as keyof typeof PRESETS]);
+    out.push(
+      { id: archiveId(g.preset, 'before'), label: `${presetName(g.preset)}: real-solid evidence distance, PSI rows only`, value: r2(g.before), provenance: 'computed', source: src },
+      { id: archiveId(g.preset, 'after'), label: `${presetName(g.preset)}: real-solid evidence distance if the ${archMissions} runs not yet in PSI were archived there`, value: r2(g.after), provenance: 'computed', source: src },
+    );
+  }
+  const archivedSolid = b.nextTestsIfArchived.find((t) => t.fuelClass === 'solid');
+  if (archivedSolid) {
+    const src = archSrc(archivedSolid);
+    out.push(
+      { id: 'next-archived-oxygen', label: `Best real-solid test once the ${archMissions} runs count as coverage: O2`, value: archivedSolid.o2Pct, unit: '%', provenance: 'computed', source: src },
+      { id: 'next-archived-pressure', label: `Best real-solid test once the ${archMissions} runs count as coverage: pressure`, value: archivedSolid.pressurePsia, unit: 'psia', provenance: 'computed', source: src },
+    );
   }
 
   return out;
 }
 
+/** The literature missions that "if archived" counts, as a span from the data ("Saffire IV–VI"). */
+export function archiveMissionLabel(data: Pick<HaloData, 'literature' | 'tests'>): string {
+  return missionSpan(archivableLiterature(data.literature, data.tests).map((r) => r.mission));
+}
+
 export const NEXT_LITERATURE_DISTANCE = 'next-first-literature-distance';
+export const archiveId = (preset: string, when: 'before' | 'after') => `archive-${preset}-${when}`;
 
 /** Engine facts first, then page facts not already present. */
 export function allFacts(b: Brief, data: HaloData): Fact[] {

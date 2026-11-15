@@ -150,3 +150,70 @@ test("EVA suit brief renders with its off-axis habitat column", async ({ page })
   await expect(page.getByRole("img", { name: /Evidence halo for EVA Suit/ })).toBeVisible();
   expect(problems).toEqual([]);
 });
+
+test("the grade reads in plain words first, with the rule one click away", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const panel = page.locator(".grade-panel");
+  await expect(panel.locator("[data-grade-reason]")).toContainText("would grade F");
+  await expect(panel.locator("[data-grade-reason]")).not.toContainText(/evidence distance|capped/);
+  await expect(panel.locator("[data-grade-technical]")).toBeHidden();
+  await panel.getByText("How the grade is set").click();
+  await expect(panel.locator("[data-grade-technical]")).toContainText("ACME BRE");
+});
+
+test("Rover (5 cm/s) and Moon (10 cm/s) briefs show different air flow in the evidence", async ({ page }) => {
+  const problems = watchConsole(page);
+  const flowText = async (id: "rover" | "moon") => {
+    await page.goto(briefUrl(id));
+    const line = page.locator('[data-nearest] [data-flow="solid"]');
+    await expect(line).toBeVisible();
+    await expect(page.locator("[data-flow-callout]")).toContainText("Your cabin runs at");
+    return { line: await line.innerText(), callout: await page.locator("[data-flow-callout]").innerText() };
+  };
+  const rover = await flowText("rover");
+  const moon = await flowText("moon");
+  expect(rover.line).toContain("yours 5 cm/s");
+  expect(moon.line).toContain("yours 10 cm/s");
+  expect(rover.line).not.toEqual(moon.line);
+  expect(rover.callout).not.toEqual(moon.callout);
+  // Droplet tests ran in still air, so a ventilated cabin is outside their flow range.
+  await expect(page.locator('[data-flow="droplet"]')).toHaveAttribute("data-flow-inside", "false");
+  expect(problems).toEqual([]);
+});
+
+test("Next test is read against Saffire and names LUCI and FM2", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const card = page.locator("[data-next-test]");
+  await expect(card.locator("[data-next-literature]")).toContainText("This is not a first burn.");
+  await expect(card.locator("[data-next-literature]")).toContainText("Saffire V and Saffire VI");
+  await expect(card.locator("[data-next-literature]")).toContainText("The gap is the archive");
+  await expect(card.locator("[data-next-archive]")).toContainText("If the Saffire IV–VI runs were archived in PSI");
+  const vehicles = card.locator("[data-next-vehicles]");
+  await expect(vehicles).toContainText("Lunar-g Combustion Investigation (LUCI)");
+  await expect(vehicles).toContainText("Flammability of Materials on the Moon (FM2)");
+  await expect(vehicles.getByRole("link", { name: /NASA page/ }).nth(1)).toHaveAttribute("href", /flammability-of-materials-on-the-moon-fm2/);
+  // The panel badge is "Computed" (arithmetic on data), not "Model" (a fitted model).
+  await expect(page.locator('#next-test [title^="Arithmetic on the data"]').first()).toContainText("Computed");
+});
+
+test("Earth card cites the ISS water-mist extinguisher and ties each Spinoff to a finding", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const earth = page.locator("[data-earth]");
+  await expect(earth.locator("li")).toHaveCount(4);
+  const mist = earth.locator('[data-earth-item="earth-water-mist"]');
+  await expect(mist).toContainText("fine-water-mist");
+  await expect(mist.getByRole("link", { name: /Zero-Leak Valve/ })).toHaveAttribute("href", "https://spinoff.nasa.gov/node/11065");
+  await expect(earth.locator('[data-earth-item="earth-fire-detector"] a[href="#detection"]')).toBeVisible();
+  await expect(earth.locator('[data-earth-item="earth-air-tanks"] a[href="#aftermath"]')).toBeVisible();
+  // The Saffire VI CO and CO2 tie is written once, not on every aftermath item.
+  await expect(earth.getByText(/24-hour crew limit/)).toHaveCount(1);
+});
+
+test("ranked investigations show fuel or sample and SI-badged sensors", async ({ page }) => {
+  await page.goto(briefUrl("artemis"));
+  const ranked = page.locator("[data-ranked]");
+  await expect(ranked.locator("[data-ranked-fuels]").first()).toBeVisible();
+  const sensors = ranked.locator("[data-ranked-sensors]").first();
+  await expect(sensors).toBeVisible();
+  await expect(sensors.getByText("SI", { exact: true })).toBeVisible();
+});

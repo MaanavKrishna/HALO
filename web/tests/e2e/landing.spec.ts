@@ -56,3 +56,16 @@ test("the landing page does not scroll sideways on a phone", async ({ page }) =>
   const sw = await page.evaluate(() => document.documentElement.scrollWidth);
   expect(sw).toBeLessThanOrEqual(390);
 });
+
+test("the mini-brief speaks plainly: no ppO2, no bare d, no grade-cap jargon", async ({ page }) => {
+  await page.goto("/");
+  const mini = page.locator("[data-mini-brief]");
+  await mini.scrollIntoViewIfNeeded();
+  await expect(mini).not.toContainText("ppO");
+  await expect(mini).not.toContainText(/capped/);
+  await expect(mini).not.toContainText(/\bd \d/);
+  await expect(mini).toContainText("psia of it oxygen");
+  await expect(mini.locator("svg text").filter({ hasText: /away$/ })).toHaveCount(1);
+  await mini.getByRole("button", { name: "What “away” means" }).click();
+  await expect(mini.getByRole("tooltip").filter({ hasText: "Evidence distance" })).toBeVisible();
+});

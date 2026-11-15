@@ -22,6 +22,11 @@ export interface RankedItem {
   cite: number | null;
   papers: Array<{ title: string; year: number | null; url: string | null }>;
   paperCount: number;
+  /** Sensors and measurement types (SI-extracted). */
+  sensors: string[];
+  /** Fuel and sample labels from the PSI test rows. */
+  fuels: string[];
+  fuelTotal: number;
 }
 
 /** Rows printed on paper; the rest are named as "more in the online brief". */
@@ -145,6 +150,33 @@ export function RankedListClient({ items, shown, defaults }: { items: RankedItem
                 {it.textIsSi && <SiChip className="mr-1.5" />}
                 {it.text}
               </p>
+              {(it.fuels.length > 0 || it.sensors.length > 0) && (
+                <dl className="mt-3 grid max-w-[68ch] gap-x-3 gap-y-1.5 text-[0.8125rem] leading-snug sm:grid-cols-[7.5rem_minmax(0,1fr)]" data-ranked-meta>
+                  {it.fuels.length > 0 && (
+                    <>
+                      <dt className="type-label pt-px text-fg-3">Fuel · sample</dt>
+                      <dd className="text-fg-2" data-ranked-fuels>
+                        {it.fuels.join("; ")}
+                        {it.fuelTotal > it.fuels.length && (
+                          <span className="text-fg-3">
+                            {" "}
+                            and <span className="num">{it.fuelTotal - it.fuels.length}</span> more
+                          </span>
+                        )}
+                      </dd>
+                    </>
+                  )}
+                  {it.sensors.length > 0 && (
+                    <>
+                      <dt className="type-label pt-px text-fg-3">Sensors</dt>
+                      <dd className="text-fg-2" data-ranked-sensors>
+                        <SiChip className="mr-1.5" />
+                        {it.sensors.join(", ")}
+                      </dd>
+                    </>
+                  )}
+                </dl>
+              )}
               <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.8125rem]">
                 {it.datasetUrl ? (
                   <a

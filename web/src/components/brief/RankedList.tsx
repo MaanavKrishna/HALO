@@ -6,6 +6,14 @@ import type { Brief } from "@/lib/engine/types";
 import { RankedListClient, type RankedItem } from "./RankedListClient";
 import { Section } from "./parts";
 
+/** Distinct fuel / sample labels an investigation's eligible test rows record, most frequent first. */
+function fuelsFor(psiId: string, max = 3): { shown: string[]; total: number } {
+  const counts = new Map<string, number>();
+  for (const t of HALO_DATA.tests) if (t.psiId === psiId && t.fuel.trim()) counts.set(t.fuel, (counts.get(t.fuel) ?? 0) + 1);
+  const all = [...counts.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).map(([f]) => f);
+  return { shown: all.slice(0, max), total: all.length };
+}
+
 /** First sentences of an objective, cut at a word boundary. */
 function excerpt(text: string, max = 260): string {
   const t = text.replace(/\s+/g, " ").trim();
@@ -20,6 +28,7 @@ export function RankedList({ brief }: { brief: Brief }) {
   const ctx = briefContext(brief);
   const items: RankedItem[] = brief.ranked.map((r) => {
     const s = HALO_DATA.summaries[r.inv.psiId];
+    const fuels = fuelsFor(r.inv.psiId);
     // SI summaries flagged for review are never shown as SI text.
     const si = s && !s.needsReview && s.summary.trim() ? s.summary.trim() : null;
     return {
@@ -38,6 +47,10 @@ export function RankedList({ brief }: { brief: Brief }) {
         .slice(0, 3)
         .map((p) => ({ title: p.title, year: p.year, url: safeUrl(doiUrl(p.doi as string)) })),
       paperCount: r.inv.publications.length,
+      // Sensors are SI-extracted from the PSI record; a summary flagged for review hides them too.
+      sensors: s && !s.needsReview ? s.sensors.filter((x) => x.trim()) : [],
+      fuels: fuels.shown,
+      fuelTotal: fuels.total,
     };
   });
 

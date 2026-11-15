@@ -94,7 +94,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
       title="The test that would help most"
       kicker="Computed by searching candidate conditions for the single new test that shrinks the evidence distance most across the reference habitats, then read against flights that already burned real materials nearby."
     >
-      <Panel label="Run next" meta={<ProvenanceBadge provenance="computed" />} data-next-test data-print-keep="" bodyClassName="p-5 sm:p-7">
+      <Panel label="Run next" meta={<ProvenanceBadge provenance="computed" />} data-next-test bodyClassName="p-5 sm:p-7">
         <p className="type-headline text-balance tabular-nums text-fg">
           {CLASS_LABEL[best.fuelClass]} at <Num brief={brief} id={nextId(0, "oxygen")} cite={false} /> O<sub>2</sub>,{" "}
           <Num brief={brief} id={nextId(0, "pressure")} />

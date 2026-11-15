@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Button, Card, Chip, Icon, ProvenanceBadge, Segmented, TBody, Td, Th, ToggleChip, Tr, cx } from "@/components/ui";
+import { Button, Card, Chip, Icon, ProvenanceBadge, Segmented, SiChip, TBody, Td, Th, ToggleChip, Tr, cx } from "@/components/ui";
+import type { InvestigationRow } from "@/lib/data/schema";
 import { PRESETS } from "@/lib/engine/presets";
 import type { FuelClass, Hazard, Investigation } from "@/lib/engine/types";
 import {
   FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, HAZARD_ORDER, O2_TRACK, filterByHazards, formatRange, fromDesignMatrix, hardwareFamily,
-  sortInvestigations, type SortDir, type SortKey,
+  matchesSampleOrSensor, sortInvestigations, type SensorMap, type SortDir, type SortKey,
 } from "@/lib/explore";
 import { CoverageBar, FuelMark, HardwareGlyph, MissionPatch } from "./Glyphs";
 
@@ -15,11 +16,12 @@ type View = "list" | "patches";
 type Fuel = FuelClass | "all";
 
 const COLUMNS: Array<{ key: SortKey | null; label: string; numeric?: boolean; className?: string }> = [
-  { key: "acronym", label: "Investigation", className: "w-[17%]" },
-  { key: null, label: "Fuel", className: "w-[11%]" },
-  { key: "hardware", label: "Hardware", className: "w-[19%]" },
-  { key: null, label: "Hazards", className: "w-[15%]" },
-  { key: "o2", label: "O₂ coverage", className: "w-[19%]" },
+  { key: "acronym", label: "Investigation", className: "w-[13%]" },
+  { key: null, label: "Fuel", className: "w-[9%]" },
+  { key: "hardware", label: "Hardware", className: "w-[15%]" },
+  { key: null, label: "Sample · sensors", className: "w-[20%]" },
+  { key: null, label: "Hazards", className: "w-[11%]" },
+  { key: "o2", label: "O₂ coverage", className: "w-[14%]" },
   { key: "pressure", label: "Pressure", numeric: true },
   { key: "rows", label: "Rows", numeric: true },
   { key: "pubs", label: "Pubs", numeric: true },
@@ -96,6 +98,30 @@ function O2Cell({ inv }: { inv: Investigation }) {
   );
 }
 
+/** Sample geometry (from the PSI tables/text) and the SI-written sensor list, SI-badged. */
+function SampleSensors({ inv, sensors, compact = false }: { inv: InvestigationRow; sensors: string[] | undefined; compact?: boolean }) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1.5">
+      {inv.geometry ? (
+        <span className={cx("text-[0.8125rem] leading-snug text-fg-2", !compact && "line-clamp-2")} title={inv.geometry}>
+          {inv.geometry}
+        </span>
+      ) : (
+        <span className="text-xs text-fg-3">sample not tabulated</span>
+      )}
+      {sensors?.length ? (
+        <span className="text-xs leading-snug text-fg-3">
+          <span className="sr-only">Sensors: </span>
+          <span className={cx(!compact && "line-clamp-1")} title={sensors.join(", ")}>
+            {sensors.join(" · ")}
+          </span>{" "}
+          <SiChip />
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 function FuelInline({ inv }: { inv: Investigation }) {
   if (inv.fuelClasses.length === 0) return <span className="text-xs text-fg-3">not tabulated</span>;
   return (
@@ -115,17 +141,23 @@ function HazardInline({ inv }: { inv: Investigation }) {
   return <span className="text-[0.8125rem] leading-snug text-fg-2">{inv.hazards.map((h) => HAZARD_LABEL[h]).join(" · ")}</span>;
 }
 
-export function ExploreBrowser({ investigations }: { investigations: Investigation[] }) {
+export function ExploreBrowser({ investigations, sensors = {} }: { investigations: InvestigationRow[]; sensors?: SensorMap }) {
   const [hazards, setHazards] = useState<Hazard[]>([]);
+  const [query, setQuery] = useState("");
   const [fuel, setFuel] = useState<Fuel>("all");
   const [view, setView] = useState<View>("list");
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({ key: "acronym", dir: "asc" });
 
   const rows = useMemo(
-    () => sortInvestigations(filterByHazards(investigations, hazards, fuel), sort.key, sort.dir),
-    [investigations, hazards, fuel, sort],
+    () =>
+      sortInvestigations(
+        filterByHazards(investigations, hazards, fuel).filter((i) => matchesSampleOrSensor(i, sensors, query)),
+        sort.key,
+        sort.dir,
+      ) as InvestigationRow[],
+    [investigations, hazards, fuel, sort, query, sensors],
   );
-  const filtered = hazards.length > 0 || fuel !== "all";
+  const filtered = hazards.length > 0 || fuel !== "all" || query.trim() !== "";
 
   const toggleHazard = (h: Hazard) =>
     setHazards((hs) => (hs.includes(h) ? hs.filter((x) => x !== h) : HAZARD_ORDER.filter((x) => x === h || hs.includes(x))));
@@ -148,6 +180,16 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
         </fieldset>
 
         <div className="flex flex-wrap items-end gap-x-8 gap-y-5">
+          <label className="flex w-full min-w-0 flex-col gap-2.5 sm:w-64">
+            <span className="type-label text-fg-3">Sample or sensor</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="PMMA, droplet, radiometer"
+              className="field-input h-8! min-h-0! rounded-[var(--radius-pill)]! py-0! pl-3.5! text-[0.8125rem]!"
+            />
+          </label>
           <div className="flex min-w-0 flex-col gap-2.5">
             <span aria-hidden="true" className="type-label text-fg-3">Fuel class</span>
             <Segmented label="Fuel class" size="sm" options={FUEL_OPTIONS} value={fuel} onChange={setFuel} />
@@ -199,6 +241,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                 onClick={() => {
                   setHazards([]);
                   setFuel("all");
+                  setQuery("");
                 }}
               >
                 Clear filters
@@ -211,7 +254,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
       {rows.length === 0 && (
         <div className="flex flex-col items-start gap-3 rounded-[var(--radius-lg)] border border-dashed border-line-strong px-6 py-10">
           <p className="type-title text-fg">No investigation matches these filters.</p>
-          <p className="text-fg-2">Hazards match any selected; the fuel class must match exactly. Clear a filter to see more.</p>
+          <p className="text-fg-2">Hazards match any selected; the fuel class must match exactly; every word of the sample or sensor search must appear. Clear a filter to see more.</p>
         </div>
       )}
 
@@ -261,6 +304,9 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                         </div>
                       </Td>
                       <Td className="py-3.5">
+                        <SampleSensors inv={i} sensors={sensors[i.psiId]} />
+                      </Td>
+                      <Td className="py-3.5">
                         <HazardInline inv={i} />
                       </Td>
                       <Td className="py-3.5">
@@ -301,6 +347,7 @@ export function ExploreBrowser({ investigations }: { investigations: Investigati
                   <div className="flex flex-col gap-2 px-5 pt-4">
                     <FuelChips inv={i} />
                     <HazardChips inv={i} />
+                    <SampleSensors inv={i} sensors={sensors[i.psiId]} compact />
                   </div>
                   <div className="mt-auto px-5 pb-5 pt-5">
                     <div className="flex items-baseline justify-between gap-3">

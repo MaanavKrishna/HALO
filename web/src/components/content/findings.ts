@@ -396,7 +396,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     stat: { value: "0", unit: `of ${invs}`, label: "Investigations at partial gravity" },
     second: { value: String(invs), label: "Microgravity or ground investigations" },
     provenance: ["computed", "literature"],
-    body: "Every test HALO uses ran in microgravity (or on the ground). A Moon or Mars habitat has some buoyancy, so flames there will behave between the two; that regime is untested here, and the challenge statement says the same. The statement names two planned experiments that will begin to fill it: LUCI and FM2 (Flammability of Materials on the Moon), which NASA describes as the first combustion experiment on another planetary body.",
+    body: "Every test HALO uses ran in microgravity (or on the ground). A Moon or Mars habitat has some buoyancy, so flames there will behave between the two; that regime is untested here, and the challenge statement says the same. The statement names two experiments that begin to fill it: LUCI, which burned samples in simulated lunar gravity on a 2025 suborbital flight (results outside PSI), and the planned FM2 (Flammability of Materials on the Moon), which NASA describes as the first combustion experiment on another planetary body.",
     viz: { kind: "gravity", tested: 0, total: invs },
     sources: [
       { label: "NASA Space Apps 2026: Flame in Freefall challenge", href: CHALLENGE_URL, detail: "States that PSI holds no partial-gravity combustion data; names LUCI and FM2" },

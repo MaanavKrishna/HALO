@@ -72,7 +72,7 @@ export const LUCI_URL = 'https://www.nasa.gov/centers-and-facilities/glenn/nasa-
 export const PARTIAL_GRAVITY_FACTS: Fact[] = [
   {
     id: 'vehicle-luci',
-    label: 'Lunar-g Combustion Investigation (LUCI)',
+    label: 'Lunar Combustion Investigation (LUCI)',
     value: 'NASA Glenn and Voyager Technologies burned a plastic rod and a cotton-fiberglass fabric in simulated lunar gravity on a spinning suborbital flight in 2025',
     provenance: 'literature',
     source: { url: LUCI_URL, note: 'NASA: NASA Fire Safety Test Took on Reduced Gravity (2025); results in NTRS 20250010653' },

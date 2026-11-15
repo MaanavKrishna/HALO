@@ -230,14 +230,15 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
               label="Nearest PSI test"
               value={s.nearestPsi ? s.nearestPsi.d.toFixed(2) : "none"}
               detail={s.nearestPsi ? s.nearestPsi.label : "No PSI row for this material"}
+              provenance={s.nearestPsi ? <ProvenanceBadge provenance="computed" /> : undefined}
             />
             <Stat label="O₂ gap" value={s.nearestPsi ? signed(s.nearestPsi.o2Gap) : "—"} unit={s.nearestPsi ? "points" : undefined} detail="Test minus your atmosphere" />
             <Stat label="Pressure gap" value={s.nearestPsi ? signed(s.nearestPsi.pGap) : "—"} unit={s.nearestPsi ? "psia" : undefined} detail="Test minus your atmosphere" />
             <Stat
               label="Nearest Saffire point"
               value={s.nearestLit ? s.nearestLit.d.toFixed(2) : "none"}
-              detail={s.nearestLit ? s.nearestLit.label : "No flight point with both O₂ and pressure"}
-              provenance={s.nearestLit ? <ProvenanceBadge provenance="literature" /> : undefined}
+              detail={s.nearestLit ? `${s.nearestLit.label} (literature)` : "No flight point with both O₂ and pressure"}
+              provenance={s.nearestLit ? <ProvenanceBadge provenance="computed" /> : undefined}
             />
           </StatGroup>
           {s.nearestPsi && (
@@ -247,7 +248,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
               {s.nearestLit && (
                 <>
                   {" "}
-                  The nearest Saffire flight point (literature, outside PSI) sits at <span className="font-mono text-fg">{s.nearestLit.d.toFixed(2)}</span>,{" "}
+                  The nearest Saffire flight point ({s.nearestLit.inPsi ? "literature; this mission is also in PSI" : "literature, outside PSI"}) sits at <span className="font-mono text-fg">{s.nearestLit.d.toFixed(2)}</span>,{" "}
                   {ringText(s.nearestLit.d)}.
                 </>
               )}

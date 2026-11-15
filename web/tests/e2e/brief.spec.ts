@@ -189,7 +189,7 @@ test("Next test is read against Saffire and names LUCI and FM2", async ({ page }
   await expect(card.locator("[data-next-literature]")).toContainText("The gap is the archive");
   await expect(card.locator("[data-next-archive]")).toContainText("If the Saffire IV–VI runs were archived in PSI");
   const vehicles = card.locator("[data-next-vehicles]");
-  await expect(vehicles).toContainText("Lunar-g Combustion Investigation (LUCI)");
+  await expect(vehicles).toContainText("Lunar Combustion Investigation (LUCI)");
   await expect(vehicles).toContainText("Flammability of Materials on the Moon (FM2)");
   await expect(vehicles.getByRole("link", { name: /NASA page/ }).nth(1)).toHaveAttribute("href", /flammability-of-materials-on-the-moon-fm2/);
   // The panel badge is "Computed" (arithmetic on data), not "Model" (a fitted model).

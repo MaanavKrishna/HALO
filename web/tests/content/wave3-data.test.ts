@@ -71,7 +71,7 @@ describe.skipIf(!real)('findings from the real data', () => {
   });
 
   it('cites FM2, SoFIE, FLARE and ASE', () => {
-    expect(by('partial-gravity').body).toMatch(/LUCI and FM2/);
+    expect(by('partial-gravity').body).toMatch(/LUCI, which burned samples.*planned FM2/);
     expect(by('partial-gravity').sources.some((s) => s.href?.includes('flammability-of-materials-on-the-moon-fm2'))).toBe(true);
     const solid = by('solid-ceiling');
     expect(solid.sources.some((s) => s.href?.includes('sofie'))).toBe(true);

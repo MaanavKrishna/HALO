@@ -185,7 +185,7 @@ All in `web/src/components/ui/`, exported from `@/components/ui`. Typed props, n
 | `Navbar` | Sticky glass bar: Findings, Explore, Compare, Method, Data, About, plus the "Build a brief" CTA (`/build`). Below 1024px a glass sheet (modal: rest of page inert, Tab cycles inside, Escape closes, focus returns to the button) with theme toggle. | Adding links without updating `site.ts`. |
 | `Footer` | Product / Science / Project columns, theme toggle, the required NASA disclaimer. No decorative wordmark. | Removing the disclaimer. |
 | `ThemeToggle`, `setTheme` | System / Light / Dark radio group (arrow keys, 40px targets, selected thumb outlined >= 3:1). | Reading `localStorage` elsewhere. |
-| `ProvenanceBadge({ provenance })` | Measured (green filled dot), inferred (half), assumed (hollow), literature (square), model (dashed diamond), `si` renders `SiChip`. Help text in the accessible name. | Colour without the label. |
+| `ProvenanceBadge({ provenance })` | Measured (green filled dot), inferred (half), assumed (hollow), literature (square), model (dashed diamond), computed (solid-border diamond), `si` renders `SiChip`. Help text in the accessible name. | Colour without the label. |
 | `SiChip()` | Dashed "SI" chip on every SI-written sentence; accessible name "SI-generated from the cited facts; …". | Omitting it from any SI sentence. |
 | `GradeBadge({ grade, size })` | Grade letter in a ring whose closure shrinks A → F; A/B flame blue with glow, C neutral, D/F warn. | Calling a grade a safety verdict. |
 

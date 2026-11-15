@@ -129,6 +129,15 @@ describe('material screener', () => {
     expect(screenMaterial(pmma, at, HALO_DATA).psi.map((e) => e.test.id)).not.toContain('PSI-99:2-6');
   });
 
+  it('says whether the nearest Saffire point comes from a mission that is also in PSI', () => {
+    const cotton = SCREEN_MATERIALS.find((m) => m.id === 'cotton')!;
+    const iss = screenMaterial(cotton, { name: 'ISS', o2Pct: 21, pressurePsia: 14.5, presetKey: null }, HALO_DATA).nearestLit!;
+    expect(iss.label).toMatch(/^Saffire-I{1,2} /);
+    expect(iss.inPsi).toBe(true);
+    const artemis = screenMaterial(cotton, { name: 'Artemis', o2Pct: 34, pressurePsia: 8.2, presetKey: null }, HALO_DATA).nearestLit!;
+    expect(artemis.inPsi).toBe(false);
+  });
+
   it('pins PMMA attribution: named PMMA rows are direct, BASS-II shape-only rows inferred, PMMA & Nomex counts for both', () => {
     const at = parseScreenParams({}).atmosphere;
     const s = screenMaterial(pmma, at, HALO_DATA);

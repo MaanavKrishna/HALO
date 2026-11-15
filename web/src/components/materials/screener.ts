@@ -1,5 +1,6 @@
 import { scaledDistance } from '@/lib/engine/distance';
 import { detectionFor, sensorWhatIf } from '@/lib/engine/detection';
+import { missionInPsi } from '@/lib/engine/literatureWindow';
 import { MATERIALS } from '@/lib/engine/materials';
 import { PRESETS } from '@/lib/engine/presets';
 import type { DetectionResult, HaloData, LiteratureRow, MaterialId, TestPoint } from '@/lib/engine/types';
@@ -165,7 +166,14 @@ export function resolvedFuels(tests: TestPoint[]): Map<string, { fuel: string; f
 }
 export interface LitEvidence { row: LiteratureRow; d: number | null }
 
-export interface Nearest { d: number; o2Gap: number; pGap: number; label: string }
+export interface Nearest {
+  d: number;
+  o2Gap: number;
+  pGap: number;
+  label: string;
+  /** Literature only: the mission also has PSI rows (Saffire I-III are PSI-98 to PSI-100). */
+  inPsi?: boolean;
+}
 
 export interface Screen {
   psi: PsiEvidence[];
@@ -215,7 +223,7 @@ export function screenMaterial(m: MaterialDef, a: Atmosphere, data: HaloData): S
     : null;
   const nearestLit: Nearest | null =
     nl && nl.d !== null
-      ? { d: nl.d, o2Gap: (nl.row.o2Pct as number) - a.o2Pct, pGap: (nl.row.pressurePsia as number) - a.pressurePsia, label: `${nl.row.mission} ${nl.row.sampleId}` }
+      ? { d: nl.d, o2Gap: (nl.row.o2Pct as number) - a.o2Pct, pGap: (nl.row.pressurePsia as number) - a.pressurePsia, label: `${nl.row.mission} ${nl.row.sampleId}`, inPsi: missionInPsi(nl.row.mission, data.tests) }
       : null;
 
   let smoke: Screen['smoke'] = null;

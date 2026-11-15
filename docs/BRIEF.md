@@ -1,6 +1,6 @@
 # The Fire Brief
 
-`buildBrief(habitat, data, notices?)` in `web/src/lib/engine/brief.ts` assembles a one-page Fire Brief. Each number it displays is a `Fact` with a provenance (`measured`, `assumed`, `inferred`, `literature`, `model`, `si`) and a source (PSI id, DOI or URL). Flags refer to facts by id, and text never states a number that is not a Fact value.
+`buildBrief(habitat, data, notices?)` in `web/src/lib/engine/brief.ts` assembles a one-page Fire Brief. Each number it displays is a `Fact` with a provenance (`measured`, `assumed`, `inferred`, `literature`, `computed`, `model`, `si`) and a source (PSI id, DOI or URL). Flags refer to facts by id, and text never states a number that is not a Fact value.
 
 ## Sections
 

@@ -43,7 +43,7 @@ Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atm
 
 | Section | What it shows |
 |---|---|
-| **Readiness grade (A–F)** | How well tested evidence covers your atmosphere, overall and per fuel class. Grades describe evidence coverage, not safety. On the full dataset: ISS **B**, Moon envelope **C**, Artemis base **D**, EVA suit **F**. |
+| **Readiness grade (A–F)** | How well tested evidence covers your atmosphere, overall and per fuel class. Grades describe evidence coverage, not safety. On the full dataset: ISS **B**, Moon envelope **C**, Rover **C**, Artemis base **D**, EVA suit **F**. |
 | **Evidence distance** | Distance from your habitat to the nearest eligible test in each fuel class (solid, solid surrogate, droplet, gas), and whether that test's O2 and pressure were measured, assumed or inferred. |
 | **Ranked investigations** | All 24 PSI investigations ordered by proximity, fuel relevance, hazard coverage and data richness, with short "why" notes. |
 | **Detector blind spot + sensor what-if** | For each listed material with a SAME analog: how many flight runs the scatter detector would have missed, smoke particle size, and how many runs scatter plus ionization would have flagged. Shown as "x of y runs". |
@@ -51,7 +51,7 @@ Moon-base and exploration habitats plan to run oxygen-enriched, low-pressure atm
 | **Aftermath (Saffire VI)** | Literature results from Saffire VI (NASA reports, not PSI test rows): flame power and toxic-gas load from PMMA burns in an oxygen-enriched, low-pressure atmosphere inside the Moon envelope. Per [NTRS 20260001992](https://ntrs.nasa.gov/citations/20260001992), CO exceeded the 24-hour Spacecraft Maximum Allowable Concentration ([JSC 20584](https://ntrs.nasa.gov/citations/20240007713), 100 ppm) and approached, but did not exceed, the 1-hour SMAC (425 ppm); CO2 exceeded the NASA-STD-3001 Vol 2 1-hour limit (3 mmHg). Stated with a `literature` badge; not used for the grade. |
 | **Cool-flame note** | When liquids are present: FLEX heptane droplets kept burning on an invisible ~500–800 K cool flame after the visible flame went out. |
 | **Next test to fly** | A computed (not hand-written) candidate test, plus diverse runners-up, chosen to reduce evidence distance most across the habitat presets. |
-| **Earth relevance** | Three NASA Spinoff facts linking the findings to fire safety on Earth. |
+| **Earth relevance** | Four NASA Spinoff facts (air tanks, fire detector, firefighter gear, ISS water-mist extinguisher), each tied to the finding it answers. |
 | **Citations** | Every number is a fact with a provenance and a source: PSI id, dataset DOI or NTRS/Spinoff URL. |
 | **Print/PDF and shareable URL** | The full habitat is encoded in the query string, for example `/brief?o2=34&p=8.2&f=10&m=kapton,teflon,cotton&d=scatter&l=0&n=Artemis%20Base`. |
 
@@ -97,7 +97,7 @@ Method details: [docs/METHOD.md](docs/METHOD.md). Brief structure and flag rules
 
 - **Source.** The NASA Physical Sciences Informatics (PSI) combustion repository: 24 investigations, released under CC0 1.0. HALO cites each investigation by its PSI dataset DOI (`https://doi.org/<doi>`). The full list is in [docs/DATA.md](docs/DATA.md) and in `manifest.json`.
 - **Literature.** Saffire IV, V and VI results (and Saffire I and II points) come from NASA technical reports on NTRS, with a URL on every row.
-- **Challenge resources.** The [PSI combustion repository](https://psi.nasa.gov/physci/repo/search?q=combustion), the [NASA Glenn Combustion Science](https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/) page and its investigation fact sheets, the [ScienceCast video](https://www.youtube.com/watch?v=W1oXykoz9zg), the [Researcher's Guide](https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/), the Apollo 1, Apollo 13 and Mir pages above, and the three NASA Spinoffs are all cited on the site (`/about` lists them with where each is used).
+- **Challenge resources.** The [PSI combustion repository](https://psi.nasa.gov/physci/repo/search?q=combustion), the [NASA Glenn Combustion Science](https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/) page and its investigation fact sheets, the [ScienceCast video](https://www.youtube.com/watch?v=W1oXykoz9zg), the [Researcher's Guide](https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/), the Apollo 1, Apollo 13 and Mir pages above, and the four NASA Spinoffs are all cited on the site (`/about` lists them with where each is used).
 - **Adjacent record.** [PSI-179 ASE](https://doi.org/10.60555/pdgr-c961) (Aerosol Sampling Experiment, Complex Fluids) sampled ISS cabin dust, the background a smoke detector must reject. It is cited as context on `/data`; HALO computes nothing from it.
 - **Partner agency research.** The [FLARE](https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/flammability-limits-at-reduced-g-experiment-flare/) project, JAXA-led and joined by NASA, ESA and universities in Japan, the USA and France, aims to predict microgravity flammability limits from ground tests. Its results are not in PSI, so HALO cites it and does not grade on it.
 - **CSV export.** Every test row with its provenance, flow, outcome, diluent, per-row geometry and dataset DOI, for modelers, at `/data/files/tests.csv` (one file per investigation at `/data/files/tests-PSI-n.csv`).
@@ -127,7 +127,7 @@ Then open http://localhost:3000.
 
 | Suite | Command | Count |
 |---|---|---|
-| Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 307 tests in 27 files |
+| Engine, page-fact and SI unit tests (Vitest) | `cd web && pnpm test` | 308 tests in 27 files |
 | Pipeline tests (pytest) | `cd pipeline && .venv/bin/pytest -q` | 84 tests |
 | End-to-end (Playwright, production build on port 3100) | `cd web && pnpm test:e2e` | 103 tests in 9 specs |
 | Type check | `cd web && pnpm exec next typegen && pnpm exec tsc --noEmit` | |
@@ -180,6 +180,9 @@ Then open http://localhost:3000.
 | [docs/DATA-CONTRACT.md](docs/DATA-CONTRACT.md) | Shape of every generated JSON file and the provenance vocabulary. |
 | [docs/METHOD.md](docs/METHOD.md) | Evidence distance, grades, detector blind spot, ranking, extinction model, next test. |
 | [docs/BRIEF.md](docs/BRIEF.md) | Fire Brief sections, flag rules, fact ids and URL parameters. |
+| [docs/SI.md](docs/SI.md) | SI features: build-time summaries, Ask HALO, validators, evaluation and disclosure. |
+| [docs/PAGES.md](docs/PAGES.md) | Every route, what it shows and the data it reads. |
+| [docs/DESIGN.md](docs/DESIGN.md) | Design system: tokens, type, components, motion and provenance markers. |
 | [docs/FETCH.md](docs/FETCH.md) | How to re-fetch full PSI detail records. |
 | [pipeline/README.md](pipeline/README.md) | Pipeline setup, modules and tests. |
 

@@ -11,7 +11,7 @@ data/literature/    saffire_literature.csv (Saffire I, II, IV, V, VI points from
         |  cd pipeline && make data
         v
 web/src/data/       tests.json, investigations.json, detector.json, extinction.json,
-                    literature.json, manifest.json   (summaries.json is written by `make si` only)
+                    literature.json, tests.csv, manifest.json   (summaries.json is written by `make si` only)
 ```
 
 The experimental tables in `data/raw/et/` and the SAME workbook are unmodified copies of what PSI serves. Every fix below is applied in code, so it can be reviewed and reverted.
@@ -70,6 +70,18 @@ Each free-text source string maps onto `measured | assumed | inferred`. The chec
 4. contains "INFERRED" or "not tabulated": `inferred`.
 
 Any other string is an error, so a new source cannot slip through unclassified.
+
+### Flow and outcome (tests.json, tests.csv)
+
+- **`flowSrc`** has its own mapping: a `table…` source (SPICE coflow, Saffire air flow) is `measured`; `quiescent…` (FLEX and CFI droplets, the BRE burner) is `assumed`, because 0 cm/s is the documented setup, not a reading; BASS-II's `'Air display'` initial value is `inferred` (free text, units assumed cm/s), read by `air_display_flow` in `ingest.py`: a number followed by "cm/s" wins (O5b "49 5 cm/s" → 5); when the leading numbers are fan counts (≥ 40) the first number in parentheses is used (O13a → 5) or the value is null if there is none; a cell that starts with a ramp ("incr to 28", O21) or an upper bound ("<1") is null; otherwise the first number is the initial speed (O22 "4 incr to 26.5" → 4). Rows without a flow value have `flowCmS` and `flowSrc` null.
+- **`outcome`** maps only what a PSI table states: FLEX `Test end` (Extinction → `extinguished`, Completion → `burned-out`, Disruption → `disrupted`); CFI-G `Self-ext or flow term` (SE → `extinguished`, meaning the hot flame went out on its own; FT → `flow-stopped`; "-" → `no-hot-ignition`, or `cool-flame` when Comments say "direct cool", as for 21106 F2 and F5; the SE/FT column wins over "Hot ignition", so 21106 F4, logged "Hot ignition: no" with FT and a burn time, is `flow-stopped`); BASS-II rows whose notes say "no ign" (`no-ignition`, O12) or mark an extinction (`extinguished`); Saffire rows with a tabulated spread length (`spread`). Everything else is `unknown`.
+- **`diluent`** is set for FLEX only (from the He and CO2 composition columns, else N2); other tables do not log it per test.
+- **`tests.csv`** holds the same rows and columns plus a per-row `geometry` (FLEX droplet d0, SPICE nozzle, BRE burner, Saffire thickness written "as logged", with a note where the table value looks mistyped, such as "037 mm", else blank) and the dataset DOI. `/data/files/tests-PSI-n.csv` serves the rows of one investigation.
+
+### Investigation fields
+
+- **`geometry`** is a short sample description per investigation (`GEOMETRY` in `catalog.py`), read from the table size/material columns or, where none exist, from the PSI objective or hardware text. FLEX and SPICE are computed from the rows.
+- **`acronymSource`** is `halo` for PSI-60, PSI-62, PSI-115, PSI-117 and PSI-142, whose PSI acronym is blank; HALO's label must not be presented as a PSI acronym.
 
 `investigations.json` ranges (`o2Range`, `pRangePsia`) use only measured or inferred values. When every value for an investigation is assumed (for example SPICE's cabin air), the range is `null` rather than a fake "21–21%".
 
@@ -138,7 +150,7 @@ Source: the "Material Sort" sheet of the PSI-101 SAME/SAME-R analyzed results wo
 `data/literature/saffire_literature.csv` holds Saffire I, II, IV, V and VI points transcribed from NTRS reports (URLs in each row).
 
 - **Excluded row.** V-1 is dropped: it never ignited, and the sources give neither its material nor its atmosphere.
-- **Source URL.** When a row cites several reports, `sourceUrl` is the first one listed.
+- **Source URL.** When a row cites several reports, `sourceUrl` is the first one listed, which is the report that carries the row's numbers (V-4: Eigenbrod, NTRS 20210017785, the spread-rate source). `sources` keeps every report, labelled by the paper's own title (`NTRS_LABELS` in `literature.py`), so NTRS 20260001992 reads as the Saffire VI paper rather than taking the mission of the first row that cites it.
 
 ## Hazard tags
 

@@ -8,7 +8,7 @@ from halo_pipeline.catalog import HAZARDS, build_investigations
 VOCAB = {"ignition", "spread", "extinction", "smoke_detection", "suppression", "toxicity"}
 KEYS = {"psiId", "acronym", "title", "hardware", "fuelClasses", "hazards", "objective", "researchImpacts", "nRows",
         "o2Range", "pRangePsia", "flowRangeCmS", "varied", "publications", "datasetDoi", "license", "startDate",
-        "endDate", "dateNote"}
+        "endDate", "dateNote", "acronymSource", "geometry"}
 
 
 @pytest.fixture(scope="module")

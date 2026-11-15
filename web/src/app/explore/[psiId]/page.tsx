@@ -5,10 +5,12 @@ import type { ReactNode } from "react";
 import { ButtonLink, Chip, Icon, PageHero, Panel, ProvenanceBadge, SiChip, Stat, StatGroup, buttonClass, cx } from "@/components/ui";
 import { AtmospherePlot } from "@/components/explore/AtmospherePlot";
 import { FuelMark, HardwareGlyph, MissionPatch } from "@/components/explore/Glyphs";
+import { downloadHref, investigationCsvRows, testsCsvFile } from "@/components/content/downloads";
 import { HALO_DATA } from "@/lib/data/load";
+import { investigationRows } from "@/lib/data/schema";
 import type { Investigation } from "@/lib/engine/types";
 import {
-  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, doiUrl, fromDesignMatrix, hardwareFamily, neighbours, plotPoints, variableLabel,
+  FUEL_LABEL, HARDWARE_LABEL, HAZARD_LABEL, VARIABLE_KEYS, doiUrl, fromDesignMatrix, hardwareFamily, neighbours, plotPoints, sensorMap, variableLabel,
 } from "@/lib/explore";
 
 const PSI_URL = "https://psi.nasa.gov/physci/repo/";
@@ -18,7 +20,7 @@ export function generateStaticParams() {
 }
 
 function find(psiId: string) {
-  return HALO_DATA.investigations.find((i) => i.psiId === psiId);
+  return investigationRows(HALO_DATA).find((i) => i.psiId === psiId);
 }
 
 export async function generateMetadata({ params }: PageProps<"/explore/[psiId]">): Promise<Metadata> {
@@ -135,6 +137,9 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
   const fam = hardwareFamily(inv.hardware);
   const { prev, next } = neighbours(HALO_DATA.investigations, inv.psiId);
   const dates = [inv.startDate, inv.endDate].filter(Boolean).join(" to ");
+  const sensors = sensorMap(HALO_DATA.summaries)[inv.psiId] ?? [];
+  const csvRows = investigationCsvRows(inv.psiId);
+  const csvFile = testsCsvFile(inv.psiId);
 
   return (
     <main>
@@ -235,6 +240,29 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
                 ))}
               </dl>
 
+              <div className="flex flex-col gap-2">
+                <p className="type-label text-fg-3">Sample geometry</p>
+                <p className="text-sm leading-snug text-fg">{inv.geometry ?? "Not tabulated in the PSI record."}</p>
+              </div>
+
+              <div className="flex flex-col gap-2.5">
+                <p className="type-label flex items-center gap-2 text-fg-3">
+                  Sensors <SiChip />
+                </p>
+                {sensors.length ? (
+                  <ul className="flex flex-wrap gap-1.5" aria-label="Sensors listed in the summary">
+                    {sensors.map((x) => (
+                      <li key={x}>
+                        <Chip>{x}</Chip>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-fg-3">No sensors are listed in the summary.</p>
+                )}
+                <p className="text-xs text-fg-3">Read from the PSI record by the summary step; check the record for the full instrument list.</p>
+              </div>
+
               <div className="flex flex-col gap-2.5">
                 <p className="type-label text-fg-3">Hazards studied</p>
                 {inv.hazards.length ? (
@@ -251,6 +279,15 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
               </div>
 
               <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-t border-line pt-5 text-sm">
+                {inv.acronymSource === "halo" && (
+                  <>
+                    <dt className="text-fg-3">Label</dt>
+                    <dd className="text-fg">
+                      HALO label
+                      <span className="block text-xs text-fg-3">The PSI record leaves the acronym blank; HALO names it for display.</span>
+                    </dd>
+                  </>
+                )}
                 <dt className="text-fg-3">License</dt>
                 <dd className="font-mono text-fg">{inv.license}</dd>
                 {dates && (
@@ -263,6 +300,18 @@ export default async function InvestigationPage({ params }: PageProps<"/explore/
                   </>
                 )}
               </dl>
+
+              {csvRows > 0 && (
+                <div className="flex flex-col gap-2">
+                  <a href={downloadHref(csvFile)} download={csvFile} className={buttonClass("secondary", "md", "w-full")}>
+                    <Icon name="arrowRight" size={16} className="rotate-90" />
+                    Download {csvRows} rows (CSV)
+                  </a>
+                  <p className="text-xs text-fg-3">
+                    This investigation&apos;s eligible rows from <span className="font-mono">tests.csv</span>: fuel, geometry, O₂, pressure, flow, outcome and provenance.
+                  </p>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 <a href={PSI_URL} target="_blank" rel="noopener noreferrer" className={buttonClass("primary", "md", "w-full")}>

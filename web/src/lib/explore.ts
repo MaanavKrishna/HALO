@@ -152,3 +152,23 @@ export function neighbours(list: Investigation[], psiId: string): { prev: Invest
 
 /** The O2 track the coverage bars draw on (percent of atmosphere). */
 export const O2_TRACK: [number, number] = [0, 40];
+
+/** SI-written sensor list of each investigation (summaries.sensors), omitted when the summary needs review. */
+export type SensorMap = Record<string, string[]>;
+
+export function sensorMap(summaries: Record<string, { sensors: string[]; needsReview?: boolean }>): SensorMap {
+  const out: SensorMap = {};
+  for (const [id, s] of Object.entries(summaries)) {
+    const list = s.needsReview ? [] : s.sensors.map((x) => x.trim()).filter(Boolean);
+    if (list.length) out[id] = list;
+  }
+  return out;
+}
+
+/** Free-text match on sample geometry and sensors ("PMMA", "radiometer"). Case-insensitive; empty query matches all. */
+export function matchesSampleOrSensor(inv: Investigation & { geometry?: string }, sensors: SensorMap, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const hay = [inv.geometry ?? '', ...(sensors[inv.psiId] ?? [])].join(' \u0000 ').toLowerCase();
+  return q.split(/\s+/).every((w) => hay.includes(w));
+}

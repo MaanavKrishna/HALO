@@ -7,6 +7,7 @@ import { fallbackFactIds, fallbackNarrative } from './fallback';
 import { buildPrompt, SI_MAX_TOKENS, SI_MODEL, SI_TIMEOUT_MS, SYSTEM_PROMPT } from './prompt';
 import { numberMatches, numberTokens, validateNumbers } from './validateNumbers';
 import { splitSentences } from '@/lib/brief/explain';
+import { allFacts } from '@/lib/brief/pageFacts';
 
 export type ExplainSource = 'live' | 'fallback';
 export interface ExplainResult { text: string; factIds: string[]; source: ExplainSource }
@@ -18,10 +19,17 @@ export interface SiClient {
   };
 }
 
-/** Rebuild the brief from the habitat query string. Client-sent facts are never used. */
+/**
+ * Rebuild the brief from the habitat query string. Client-sent facts are never used.
+ * The facts are every fact the page shows (engine facts plus page facts such as the
+ * next test, its gains and the archive what-if), so an answer can cite what the reader sees.
+ */
 export function briefFromQuery(query: string): Brief {
   const { habitat, notices } = queryToHabitat(new URLSearchParams(query.replace(/^\?/, '')));
-  return buildBrief(habitat, HALO_DATA, notices);
+  const brief = buildBrief(habitat, HALO_DATA, notices);
+  // Runner-up tests (2nd to 4th) stay off: their numbers are easy to confuse with the first pick's.
+  const facts = allFacts(brief, HALO_DATA).filter((f) => !/^next-(second|third|fourth|fifth)-/.test(f.id));
+  return { ...brief, facts };
 }
 
 /**
@@ -70,21 +78,27 @@ export function citationFits(sentence: string, fact: Fact): boolean {
  * citations of ids the brief does not have, and citations that pin a number
  * to the wrong fact (for example "34%" cited to the SAME ambient O2).
  */
-export function resolveCitations(text: string, facts: Fact[]): { text: string; factIds: string[] } {
+export function resolveCitations(text: string, facts: Fact[]): { text: string; factIds: string[]; misfit: boolean } {
   const byId = new Map(facts.map((f) => [f.id, f]));
   const factIds: string[] = [];
+  let misfit = false;
   const sentences = splitSentences(text).map((sentence) =>
     sentence.replace(CITE, (_, group: string) => {
       const ids = group
         .split(',')
         .map((s) => s.trim())
-        .filter((id) => byId.has(id) && citationFits(sentence, byId.get(id) as Fact));
+        .filter((id) => {
+          if (!byId.has(id)) return false;
+          if (citationFits(sentence, byId.get(id) as Fact)) return true;
+          misfit = true; // a number pinned to the wrong fact
+          return false;
+        });
       for (const id of ids) if (!factIds.includes(id)) factIds.push(id);
       return ids.map((id) => `[${id}]`).join(' ');
     }),
   );
   const out = sentences.join(' ');
-  return { text: out.replace(/[ \t]+([.,;:])/g, '$1').replace(/[ \t]{2,}/g, ' ').trim(), factIds };
+  return { text: out.replace(/[ \t]+([.,;:])/g, '$1').replace(/[ \t]{2,}/g, ' ').trim(), factIds, misfit };
 }
 
 /**
@@ -123,7 +137,8 @@ export async function explainCore(query: string, question: string | undefined, c
   if (VERDICT.test(raw) || leaksPrompt(raw)) return fallback;
   if (!validateNumbers(raw, groundingFacts(brief)).ok) return fallback;
 
-  const { text, factIds } = resolveCitations(raw, brief.facts);
-  if (!text) return fallback;
+  const { text, factIds, misfit } = resolveCitations(raw, brief.facts);
+  // A cited number that is not the cited fact's value means the model mixed facts up: never ship it.
+  if (!text || misfit) return fallback;
   return { text, factIds, source: 'live' };
 }

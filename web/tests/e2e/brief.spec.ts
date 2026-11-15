@@ -284,3 +284,24 @@ test("the header names the detector as the builder does and badges the reader's 
   await expect(hero.locator("[data-your-input]")).toHaveCount(3);
   await expect(hero.getByText("Assumed", { exact: true })).toHaveCount(0);
 });
+
+test("Ask HALO suggestion chips are tailored to the brief and submit on click", async ({ page }) => {
+  let body = null as { question?: string } | null;
+  await page.route("**/api/explain", async (route) => {
+    body = route.request().postDataJSON();
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(LIVE) });
+  });
+  await page.goto(briefUrl("artemis"));
+  const panel = page.locator("[data-ask]");
+  const chips = panel.locator("[data-suggestion]");
+  await expect(chips).toHaveCount(4);
+  await expect(chips.nth(0)).toHaveText("Why is the grade D?");
+  await expect(panel.getByRole("button", { name: "Would my smoke detector catch a Kapton fire?" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "What test would help most?" })).toBeVisible();
+  // Keyboard: a chip is a real button reached by Tab and pressed with Enter.
+  await panel.getByRole("button", { name: "What test would help most?" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(panel).toHaveAttribute("data-state", "live");
+  expect(body?.question).toBe("What test would help most?");
+  await expect(panel.getByLabel("Ask about this brief")).toHaveValue("What test would help most?");
+});

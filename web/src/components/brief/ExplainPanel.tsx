@@ -1,6 +1,7 @@
 import { briefContext } from "@/lib/brief/context";
 import { habitatToQuery } from "@/lib/engine/url";
 import type { Brief } from "@/lib/engine/types";
+import { suggestQuestions } from "@/lib/brief/suggestions";
 import { fallbackNarrative } from "@/lib/si/fallback";
 import { AskHalo, type FactRef } from "./AskHalo";
 import { Section, unitText } from "./parts";
@@ -27,7 +28,7 @@ export function ExplainPanel({ brief }: { brief: Brief }) {
       title="In plain words"
       kicker="Ask HALO about this brief in your own words; the SI may only restate cited facts. A summary built from the grade and flags is one click away."
     >
-      <AskHalo fallback={fallbackNarrative(brief)} query={habitatToQuery(brief.habitat)} facts={facts} />
+      <AskHalo fallback={fallbackNarrative(brief)} query={habitatToQuery(brief.habitat)} facts={facts} suggestions={suggestQuestions(brief)} />
     </Section>
   );
 }

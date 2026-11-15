@@ -42,13 +42,18 @@ describe('explainCore', () => {
     expect(r.factIds).toEqual(['habitat-oxygen', 'habitat-pressure', 'cov-solid-oxygen']);
   });
 
-  it('strips a citation whose fact value is not a number in its sentence (habitat 34% cited to the SAME ambient O2)', async () => {
+  it('falls back when a number is cited to the wrong fact (habitat 34% cited to the SAME ambient O2)', async () => {
     const { client } = mockClient('Your habitat runs at 34% O2 [det-ambient-oxygen]. SAME ran at 21% O2 [det-ambient-oxygen].');
     const r = await explainCore(QUERY, undefined, client);
+    // Both 34 and 21 are fact values, but 34 is pinned to a fact whose value is 21: never ship it uncited.
+    expect(r.source).toBe('fallback');
+  });
+
+  it('keeps a live answer whose citations all fit', async () => {
+    const { client } = mockClient('Your habitat runs at 34% O2 [habitat-oxygen]. SAME ran at 21% O2 [det-ambient-oxygen].');
+    const r = await explainCore(QUERY, undefined, client);
     expect(r.source).toBe('live');
-    // Numbers are still validated: both 34 and 21 are fact values.
-    expect(r.text).toBe('Your habitat runs at 34% O2. SAME ran at 21% O2 [det-ambient-oxygen].');
-    expect(r.factIds).toEqual(['det-ambient-oxygen']);
+    expect(r.factIds).toEqual(['habitat-oxygen', 'det-ambient-oxygen']);
   });
 
   it('the prompt lists the habitat-* facts and tells the model to cite them for the habitat', async () => {

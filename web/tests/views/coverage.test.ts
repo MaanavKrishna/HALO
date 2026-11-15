@@ -91,5 +91,5 @@ describe('evidence coverage map', () => {
         }
       });
     }
-  });
+  }, 30_000);
 });

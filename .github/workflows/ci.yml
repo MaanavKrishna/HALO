@@ -36,12 +36,16 @@ jobs:
       - name: Web data rebuilds from the raw NASA files
         run: |
           python -m halo_pipeline.cli all
+          git -C .. status --short -- web/src/data
           git -C .. diff --exit-code -- web/src/data ':(exclude)web/src/data/manifest.json'
           python - <<'PY'
           import json, subprocess
           new = json.load(open("../web/src/data/manifest.json"))
           old = json.loads(subprocess.check_output(["git", "-C", "..", "show", "HEAD:web/src/data/manifest.json"]))
           new.pop("builtAt", None); old.pop("builtAt", None)
+          for k in sorted(set(new) | set(old)):
+              if new.get(k) != old.get(k):
+                  print(f"manifest[{k}]: committed={old.get(k)!r} rebuilt={new.get(k)!r}")
           assert new == old, "manifest.json differs from a fresh rebuild"
           print("manifest matches (builtAt ignored)")
           PY

@@ -7,6 +7,7 @@ import { fallbackFactIds, fallbackNarrative } from './fallback';
 import { buildPrompt, SI_MAX_TOKENS, SI_MODEL, SI_TIMEOUT_MS, SYSTEM_PROMPT } from './prompt';
 import { numberMatches, numberTokens, validateNumbers } from './validateNumbers';
 import { splitSentences } from '@/lib/brief/explain';
+import { allFacts } from '@/lib/brief/pageFacts';
 
 export type ExplainSource = 'live' | 'fallback';
 export interface ExplainResult { text: string; factIds: string[]; source: ExplainSource }
@@ -18,10 +19,15 @@ export interface SiClient {
   };
 }
 
-/** Rebuild the brief from the habitat query string. Client-sent facts are never used. */
+/**
+ * Rebuild the brief from the habitat query string. Client-sent facts are never used.
+ * The facts are every fact the page shows (engine facts plus page facts such as the
+ * next test, its gains and the archive what-if), so an answer can cite what the reader sees.
+ */
 export function briefFromQuery(query: string): Brief {
   const { habitat, notices } = queryToHabitat(new URLSearchParams(query.replace(/^\?/, '')));
-  return buildBrief(habitat, HALO_DATA, notices);
+  const brief = buildBrief(habitat, HALO_DATA, notices);
+  return { ...brief, facts: allFacts(brief, HALO_DATA) };
 }
 
 /**

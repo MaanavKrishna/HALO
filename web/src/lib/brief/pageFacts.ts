@@ -182,8 +182,10 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
 }
 
 /** The preset whose atmosphere this habitat matches (its next-test and archive facts apply), or null. */
-export function ladderPreset(h: { o2Pct: number; pressurePsia: number }): PresetKey | null {
-  return PRESET_ORDER.find((k) => PRESETS[k].o2Pct === h.o2Pct && PRESETS[k].pressurePsia === h.pressurePsia) ?? null;
+export function ladderPreset(h: { o2Pct: number; pressurePsia: number; name?: string }): PresetKey | null {
+  const same = (k: PresetKey) => PRESETS[k].o2Pct === h.o2Pct && PRESETS[k].pressurePsia === h.pressurePsia;
+  // Moon Envelope and Pressurized Rover share an atmosphere: prefer the preset the habitat is named after.
+  return PRESET_ORDER.find((k) => same(k) && PRESETS[k].name === h.name) ?? PRESET_ORDER.find(same) ?? null;
 }
 
 /**

@@ -36,7 +36,7 @@ describe('explore helpers', () => {
     expect(list).toEqual(copy);
   });
   it('formats ranges', () => {
-    expect(formatRange(null, '%')).toBe('No test conditions in PSI');
+    expect(formatRange(null, '%')).toBe('No usable O₂/pressure in PSI rows');
     expect(formatRange([21, 40], '%')).toBe('21–40%');
     expect(formatRange([14.696, 14.696], 'psia')).toBe('14.7 psia');
   });
@@ -69,7 +69,7 @@ describe('shown O2 and pressure conditions (real data)', () => {
   });
   it('SAME (PSI-102) has no test conditions', () => {
     expect(shownCondition(find('PSI-102'), conds['PSI-102'], 'o2').basis).toBe('none');
-    expect(text('PSI-102', 'o2').text).toBe('No test conditions in PSI');
+    expect(text('PSI-102', 'o2').text).toBe('No usable O₂/pressure in PSI rows');
   });
   it('FLEX (PSI-69) shows its measured range, untagged', () => {
     expect(text('PSI-69', 'o2')).toEqual({ text: '12–34%', src: null });

@@ -27,7 +27,7 @@ export interface Filters { hazard: Hazard | 'all'; fuel: FuelClass | 'all' }
 
 const r1 = (x: number) => Number(x.toFixed(1));
 
-export const NO_CONDITIONS = 'No test conditions in PSI';
+export const NO_CONDITIONS = 'No usable O₂/pressure in PSI rows';
 export const NO_CONDITIONS_HELP =
   'PSI publishes no oxygen or pressure columns for this investigation (for example a model or a smoke table), so no test conditions can be shown.';
 

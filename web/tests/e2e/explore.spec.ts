@@ -71,9 +71,9 @@ test("/explore/PSI-21 shows the assumed air conditions, PSI-102 none", async ({ 
   await page.goto("/explore/PSI-21");
   const spec = page.getByRole("complementary", { name: "Spec sheet" });
   await expect(spec).toContainText("Assumed");
-  await expect(spec).not.toContainText("No test conditions in PSI");
+  await expect(spec).not.toContainText("No usable O₂/pressure in PSI rows");
   await page.goto("/explore/PSI-102");
-  await expect(page.getByRole("complementary", { name: "Spec sheet" }).first()).toContainText("No test conditions in PSI");
+  await expect(page.getByRole("complementary", { name: "Spec sheet" }).first()).toContainText("No usable O₂/pressure in PSI rows");
   await page.goto("/explore");
   const cld = page.locator("tbody tr", { hasText: "ACME CLD Flame" });
   await expect(cld).toContainText("21%");

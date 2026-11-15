@@ -484,7 +484,7 @@ function CoverageKey({ className }: { className?: string }) {
         <span aria-hidden="true" className="inline-block h-3 w-6 border-x border-dashed border-line-strong bg-[repeating-linear-gradient(135deg,var(--accent-soft)_0_3px,transparent_3px_6px)]" />
         Moon envelope O₂ band (≥ {PRESETS.moon.o2Pct}%)
       </span>
-      <span>Ranges are the min–max of each investigation’s eligible test rows. A value that was not recorded is tagged Assumed (a stated assumption, such as air at 1 atm) or Inferred; where there are no rows the design matrix is used and tagged Inferred. “No test conditions in PSI” means the dataset has no O₂ or pressure columns for it.</span>
+      <span>Ranges are the min–max of each investigation’s eligible test rows. A value that was not recorded is tagged Assumed (a stated assumption, such as air at 1 atm) or Inferred; where there are no rows the design matrix is used and tagged Inferred. “No usable O₂/pressure in PSI rows” means the dataset has no O₂ or pressure columns for it.</span>
     </p>
   );
 }

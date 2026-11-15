@@ -30,7 +30,10 @@ const RANK: Record<'none' | 'partial' | 'complete', number> = { none: 0, partial
 
 export interface SaffirePair {
   sample: string;
+  /** The material: PSI's cell, or the row above's when PSI left the cell blank (see materialFromPrevious). */
   material: string;
+  /** PSI's material cell is blank; HALO carried the material from the row above (an inference, not PSI text). */
+  materialFromPrevious: boolean;
   thickness: string;
   flowDirection: string;
   o2: string;
@@ -87,6 +90,7 @@ export function parseSaffireII(csv: string = PSI99_CSV): SaffirePair[] {
   for (const line of lines.slice(1)) {
     const c = splitCsvLine(line);
     if (!/^\d+-\d+$/.test(c[0] ?? '')) continue;
+    const materialFromPrevious = !c[1] && !!lastMaterial;
     const material = c[1] || lastMaterial;
     lastMaterial = material;
     const micro = classifyBurn(c[11] ?? '', c[3] ?? '');
@@ -100,6 +104,7 @@ export function parseSaffireII(csv: string = PSI99_CSV): SaffirePair[] {
     out.push({
       sample: c[0],
       material,
+      materialFromPrevious,
       thickness: c[2] ?? '',
       sampleLength: c[3] ?? '',
       flow: c[5] ?? '',

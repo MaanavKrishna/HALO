@@ -201,6 +201,11 @@ describe('partial-gravity bounds', () => {
     expect(pairs.map((p) => p.sample)).toEqual(['2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7', '2-8', '2-9']);
     expect(pairs.find((p) => p.sample === '2-6')!.material).toMatch(/SIBAL/);
     expect(pairs.find((p) => p.sample === '2-9')!.material).toBe('PMMA');
+    // Blank PSI material cells are filled from the row above, and flagged as such.
+    expect(pairs.filter((p) => p.materialFromPrevious).map((p) => p.sample)).toEqual(['2-6', '2-9']);
+    const cottonBound = materialBounds(HALO_DATA, pairs).find((b) => b.id === 'cotton')!;
+    expect(cottonBound.oneG.find((p) => p.sample === '2-6')!.materialFromPrevious).toBe(true);
+    expect(cottonBound.oneG.find((p) => p.sample === '2-5')!.materialFromPrevious).toBe(false);
     const t = pairTally(pairs);
     expect(t.oneGFurther + t.same + t.microFurther).toBe(t.comparable);
     expect(t.comparable).toBeLessThan(t.total);

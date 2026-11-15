@@ -84,10 +84,9 @@ export default function GravityPage() {
             <ul>
               {bounds.map((b) => {
                 const micro = b.psiRows > 0 ? "psi" : b.litPoints > 0 ? "lit" : "none";
-                const oneGText = b.oneG.length
-                  ? b.oneG.map((p) => `${p.sample}: ${BURN_LABEL[p.oneG].toLowerCase()}`).join("; ")
-                  : null;
-                const label = `${b.label}: microgravity ${micro === "none" ? "no evidence" : `${b.psiRows} PSI rows and ${b.litPoints} Saffire points`}; Moon and Mars untested in PSI${b.luci ? "; LUCI burned it in simulated lunar gravity, results outside PSI" : ""}; 1 g ${b.oneG.length ? `${b.oneG.length} Saffire-II pairs` : "no paired test in PSI"}.`;
+                const oneGText = b.oneG.length > 0;
+                const inheritedOneG = b.oneG.filter((p) => p.materialFromPrevious).map((p) => p.sample);
+                const label = `${b.label}: microgravity ${micro === "none" ? "no evidence" : `${b.psiRows} PSI rows and ${b.litPoints} Saffire points`}; Moon and Mars untested in PSI${b.luci ? "; LUCI burned it in simulated lunar gravity, results outside PSI" : ""}; 1 g ${b.oneG.length ? `${b.oneG.length} Saffire-II pairs${inheritedOneG.length ? ` (material of ${inheritedOneG.join(", ")} inferred: blank in PSI)` : ""}` : "no paired test in PSI"}.`;
                 return (
                   <li key={b.id} className="grid gap-4 border-b border-line px-5 py-5 last:border-b-0 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)_minmax(0,13rem)] md:items-center md:gap-6">
                     <div className="flex flex-col gap-1">
@@ -121,7 +120,21 @@ export default function GravityPage() {
                           <p className="text-sm text-fg">
                             <span className="font-mono">{b.oneG.length}</span> Saffire-II 1 g {b.oneG.length === 1 ? "burn" : "burns"}
                           </p>
-                          <p className="text-xs leading-relaxed text-fg-3">{oneGText}</p>
+                          <ul className="flex flex-col gap-0.5 text-xs leading-relaxed text-fg-3 md:items-end">
+                            {b.oneG.map((p) => (
+                              <li key={p.sample} className="flex flex-wrap items-center gap-x-2 md:justify-end">
+                                <span>
+                                  {p.sample}: {BURN_LABEL[p.oneG].toLowerCase()}
+                                </span>
+                                {p.materialFromPrevious && (
+                                  <span className="inline-flex items-center gap-1">
+                                    <ProvenanceBadge provenance="inferred" className="text-[0.6875rem]" />
+                                    <span className="sr-only">material blank in PSI, carried from the row above</span>
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
                         </>
                       ) : (
                         <p className="text-sm text-fg-3">No paired 1 g burn in PSI</p>
@@ -135,6 +148,7 @@ export default function GravityPage() {
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="psi" /> PSI rows tested in microgravity</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="lit" /> Saffire literature only</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="oneg" /> Paired 1 g test (PSI-99)</span>
+              <span className="inline-flex items-center gap-1.5"><ProvenanceBadge provenance="inferred" /> 1 g sample whose material cell is blank in PSI; carried from the row above</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="none" /> Nothing at this end</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="luci" /> LUCI, simulated lunar gravity (outside PSI)</span>
             </div>
@@ -155,7 +169,7 @@ export default function GravityPage() {
           />
           <div className="relative overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" tabIndex={0} role="region" aria-label="Saffire-II microgravity and 1 g burns">
             <table className="w-full min-w-[52rem] border-collapse text-sm">
-              <caption className="sr-only">Saffire-II samples: microgravity burn and spread next to the 1 g burn and spread, verbatim from the PSI-99 table</caption>
+              <caption className="sr-only">Saffire-II samples: microgravity burn and spread next to the 1 g burn and spread, verbatim from the PSI-99 table except materials marked inferred</caption>
               <thead>
                 <tr className="border-b border-line">
                   {["Sample", "Material", "Thickness", "Flow", "O₂ (%)", "Microgravity burn", "Microgravity spread", "1 g burn", "1 g spread", "Further at"].map((h) => (
@@ -169,7 +183,15 @@ export default function GravityPage() {
                 {pairs.map((p) => (
                   <tr key={p.sample} className="border-b border-line align-top last:border-b-0">
                     <td className="px-4 py-2.5 font-mono text-fg">{p.sample}</td>
-                    <td className="px-4 py-2.5 text-fg">{p.material}</td>
+                    <td className="px-4 py-2.5 text-fg">
+                      {p.material}
+                      {p.materialFromPrevious && (
+                        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-fg-3">
+                          <ProvenanceBadge provenance="inferred" />
+                          blank in PSI; carried from row above
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-2.5 font-mono text-fg-2">
                       {p.thickness}
                       {/^0\d/.test(p.thickness) && <span className="font-sans text-xs text-fg-3"> [sic]</span>}
@@ -197,7 +219,7 @@ export default function GravityPage() {
             </table>
           </div>
           <p className="max-w-[72ch] text-xs text-fg-3">
-            Values are PSI&apos;s text, verbatim ({PSI99_SOURCE_FILE}). The table does not state the 1 g test atmosphere or flow. Thicknesses marked [sic] are printed that way in PSI. A burn length equal to
+            Values are PSI&apos;s text, verbatim ({PSI99_SOURCE_FILE}), except materials marked inferred: PSI leaves those cells blank and HALO carries the material from the row above. The table does not state the 1 g test atmosphere or flow. Thicknesses marked [sic] are printed that way in PSI. A burn length equal to
             the sample length counts as a full burn; &ldquo;~ 0&rdquo; as no sustained burn.{" "}
             {saffire2 && doiUrl(saffire2.datasetDoi) && <ExternalLink href={doiUrl(saffire2.datasetDoi)!}>Saffire-II dataset (DOI {saffire2.datasetDoi})</ExternalLink>}
           </p>

@@ -139,7 +139,7 @@ function Outcomes({ o }: { o: NonNullable<Extract<Viz, { kind: "breakdown" }>["o
 
 /** Self-extinction share per diluent: solid bar at the shared O2 levels, outline tick for all runs. */
 function Diluent({ v, W, compact }: { v: Extract<Viz, { kind: "diluent" }>; W: number; compact: boolean }) {
-  const rowH = 46;
+  const rowH = compact ? 60 : 46;
   const top = 6;
   const H = top + v.rows.length * rowH + 24;
   const x0 = compact ? 0 : 150;
@@ -148,7 +148,7 @@ function Diluent({ v, W, compact }: { v: Extract<Viz, { kind: "diluent" }>; W: n
   return (
     <Figure
       W={W}
-      height={H + (compact ? v.rows.length * 14 : 0)}
+      height={H}
       label={`Share of FLEX droplet runs whose flame went out on its own, by inert gas. At the O2 levels all gases share (${v.levels}): ${v.rows
         .map((r) => `${r.label} ${Math.round(share(r.matched))} percent, ${r.matched.ext} of ${r.matched.n}`)
         .join("; ")}. All runs: ${v.rows.map((r) => `${r.label} ${Math.round(share(r.all))} percent`).join("; ")}.`}
@@ -172,7 +172,7 @@ function Diluent({ v, W, compact }: { v: Extract<Viz, { kind: "diluent" }>; W: n
         </g>
       ))}
       {v.rows.map((r, i) => {
-        const yy = top + i * (rowH + (compact ? 14 : 0));
+        const yy = top + i * rowH;
         const by = compact ? yy + 18 : yy + 8;
         const m = share(r.matched);
         const a = share(r.all);

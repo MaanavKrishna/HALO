@@ -4,6 +4,8 @@
 
 In microgravity, a flame becomes a halo. HALO turns NASA's microgravity fire data into a cited fire brief for your habitat.
 
+[![CI](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/ci.yml/badge.svg)](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/codeql.yml/badge.svg)](https://github.com/MaanavKrishna/HALO-Habitat-Assessment-from-Low-Gravity-Observations/actions/workflows/codeql.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![NASA Space Apps 2026](https://img.shields.io/badge/NASA%20Space%20Apps-2026-0b3d91.svg)](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)
 [![Data: NASA PSI CC0](https://img.shields.io/badge/data-NASA%20PSI%20%C2%B7%20CC0-lightgrey.svg)](docs/DATA.md)
@@ -193,6 +195,8 @@ Then open http://localhost:3000.
 - **Server-only key.** The LLM API key lives only in server environment variables, never in client code. `.env` is gitignored.
 - **Pre-commit secret hook.** [`.githooks/pre-commit`](.githooks/pre-commit) rejects staged `.env` files and key-like strings. Enable it with `git config core.hooksPath .githooks`.
 - **Rate and spend limits.** A monthly spend limit at the LLM provider, a Vercel Firewall rate limit on the explanation endpoint, a best-effort in-memory per-IP limit in the route and a kill switch (`SI_LIVE=false`).
+
+- **GitHub.** CI runs the pipeline tests, checks that the web data rebuilds exactly from the raw NASA files, then type-checks, unit-tests, builds and end-to-end tests the app; it also scans the full history for secrets. CodeQL analyses the code and workflows, Dependabot watches dependencies, and every action is pinned to a commit SHA. Report vulnerabilities privately: [SECURITY.md](SECURITY.md).
 
 Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

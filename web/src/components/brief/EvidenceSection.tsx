@@ -199,14 +199,17 @@ function FlowCallout({ brief }: { brief: Brief }) {
   const pair = ctx.fact("lit-flow-low") && ctx.fact("lit-flow-high-spread");
   const nearPoint = ctx.fact(nearFlowId("solid", "flow-count"));
   if (!min) return null;
-  const pairLabel = ctx.fact("lit-flow-low")?.label.split(":")[0].replace(/ sample .*/, "");
+  // Label is "<Mission> <MATERIAL> sample <id>: air flow".
+  const pairHead = ctx.fact("lit-flow-low")?.label.split(":")[0].replace(/ sample .*/, "") ?? "";
+  const pairMaterial = pairHead.split(" ").pop() ?? "";
+  const pairMission = pairHead.slice(0, pairHead.length - pairMaterial.length).trim();
   return (
     <div className="mt-6" data-flow-callout="">
     <Callout tone="info" title="Air flow changes how a fire behaves in microgravity">
       <span className="block">
         With no buoyant plume, the cabin&rsquo;s forced air flow feeds the flame. NASA&rsquo;s Researcher&rsquo;s Guide puts the flow at which solids burn at the
-        lowest oxygen, and spread fastest, on the order of <Num brief={brief} id="flow-guide-minimum" />, typical of spacecraft ventilation. Your cabin
-        runs at <Num brief={brief} id="habitat-flow" />. <ProvenanceBadge provenance="literature" className="ml-1 align-middle" />
+        lowest oxygen, and spread fastest, on the order of <Num brief={brief} id="flow-guide-minimum" />, typical of spacecraft ventilation{" "}
+        <ProvenanceBadge provenance="literature" className="align-middle" />. Your cabin runs at <Num brief={brief} id="habitat-flow" cite={false} />.
       </span>
       {up && (
         <span className="mt-2 block">
@@ -216,8 +219,9 @@ function FlowCallout({ brief }: { brief: Brief }) {
       )}
       {pair && (
         <span className="mt-2 block">
-          In {pairLabel}, the same material spread at <Num brief={brief} id="lit-flow-low-spread" /> in <Num brief={brief} id="lit-flow-low" /> of
-          flow and <Num brief={brief} id="lit-flow-high-spread" /> in <Num brief={brief} id="lit-flow-high" /> (NASA report, not PSI).
+          In {pairMission}, the same {pairMaterial} material spread at <Num brief={brief} id="lit-flow-low-spread" cite={false} /> in{" "}
+          <Num brief={brief} id="lit-flow-low" cite={false} /> of flow and at <Num brief={brief} id="lit-flow-high-spread" cite={false} /> in{" "}
+          <Num brief={brief} id="lit-flow-high" /> (NASA report, not PSI).
         </span>
       )}
       {nearPoint && (

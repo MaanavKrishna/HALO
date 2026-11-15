@@ -96,7 +96,7 @@ function powersW(text: string): number[] {
   return out;
 }
 
-/** True when an outcome reports CO over a crew limit, ignoring negations such as "did not exceed". */
+/** True when an outcome reports CO over a crew limit (the 24-hour SMAC in the Saffire VI rows), ignoring negations such as "did not exceed". */
 export function reportsCoOverLimit(outcome: string): boolean {
   if (!/\bCO\b/.test(outcome)) return false;
   if (/\b(did\s+not|does\s+not|didn['’]t|doesn['’]t|never|not|no|without)\s+(\w+\s+)?exceed/i.test(outcome)) return false;
@@ -105,7 +105,7 @@ export function reportsCoOverLimit(outcome: string): boolean {
 
 const round1 = (x: number) => Number(x.toFixed(1));
 
-/** Saffire VI aftermath: PMMA fire power range and the O2 level at which CO and CO2 exceeded crew limits. */
+/** Saffire VI aftermath: PMMA fire power range and the O2 level of the burn where CO passed its 24-hour crew limit and CO2 its 1-hour limit. */
 export function aftermathFacts(data: HaloData): Fact[] {
   const rows = data.literature.filter(isSaffireVI);
   const facts: Fact[] = [];
@@ -125,7 +125,7 @@ export function aftermathFacts(data: HaloData): Fact[] {
   if (toxic) {
     facts.push({
       id: 'aftermath-toxic-oxygen',
-      label: 'O2 level of the Saffire VI burn where CO and CO2 exceeded crew exposure limits',
+      label: 'O2 level of the Saffire VI burn where CO exceeded the 24-hour crew limit (SMAC 100 ppm) and approached the 1-hour limit; CO2 exceeded its 1-hour limit (NASA-STD-3001)',
       value: Math.round(toxic.o2Pct as number),
       unit: '% O2',
       provenance: 'literature',

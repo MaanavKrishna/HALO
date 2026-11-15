@@ -7,7 +7,14 @@ import { BriefIcon } from "./icons";
 import { CiteMark, Num, Section } from "./parts";
 
 /** The brief finding each Earth technology answers, in one line with its numbers cited. */
-function Tie({ brief, kind }: { brief: Brief; kind: "smoke" | "aftermath" }) {
+/** What each aftermath technology does about the finding. */
+const AFTERMATH_POINT: Record<string, string> = {
+  "earth-air-tanks": "so firefighters, like crews, need their own clean breathing air.",
+  "earth-fire-attire": "so protective gear has to guard against smoke and gas as well as heat.",
+  "earth-water-mist": "so an extinguisher that adds no CO₂ matters as much as putting the fire out.",
+};
+
+function Tie({ brief, kind, id }: { brief: Brief; kind: "smoke" | "aftermath"; id: string }) {
   const ctx = briefContext(brief);
   if (kind === "smoke") {
     const miss = brief.flags.find((f) => f.id.startsWith("detector-miss-"));
@@ -40,11 +47,11 @@ function Tie({ brief, kind }: { brief: Brief; kind: "smoke" | "aftermath" }) {
       {": "}
       {toxic ? (
         <>
-          in Saffire VI, CO and CO<sub>2</sub> from a burning sample crossed crew exposure limits (at about <Num brief={brief} id="aftermath-toxic-oxygen" /> O<sub>2</sub>),
-          so clean breathing air and suppression that adds no CO<sub>2</sub> matter as much as putting the fire out.
+          in the Saffire VI burn at about <Num brief={brief} id="aftermath-toxic-oxygen" />, CO exceeded the 24-hour crew limit and CO<sub>2</sub> its 1-hour
+          limit, {AFTERMATH_POINT[id] ?? "so clean air after a fire matters as much as putting it out."}
         </>
       ) : (
-        <>the aftermath of a fire is smoke and toxic gas, so clean breathing air matters as much as putting the fire out.</>
+        <>a fire leaves smoke and toxic gas behind, {AFTERMATH_POINT[id] ?? "so clean air after a fire matters as much as putting it out."}</>
       )}
     </p>
   );
@@ -72,7 +79,7 @@ export function EarthCard({ brief }: { brief: Brief }) {
               </p>
               {tie && (
                 <div className="mt-1 border-t border-line pt-3">
-                  <Tie brief={brief} kind={tie} />
+                  <Tie brief={brief} kind={tie} id={f.id} />
                 </div>
               )}
               {url && (

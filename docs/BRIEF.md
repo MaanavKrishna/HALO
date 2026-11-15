@@ -38,7 +38,7 @@ Each flag lists `factIds`. Each id resolves in `brief.facts`, and each number in
 
 - **Grade reason.** Every brief states the grade in plain words first (for example, "No real cabin material in PSI was tested anywhere near this atmosphere, so real materials alone would grade F. A stand-in ... lifts the grade one step to D."), then the rule ("How the grade is set").
 - **Air flow.** Each fuel class shows the tested air-flow range against the cabin flow. HALO grades on oxygen and pressure only, and reports flow beside the grade. When the cabin flow is outside every tested solid flow, a caution is raised. The nearest test is chosen by flow when several tests share the nearest condition.
-- **Next test.** The pick is measured against every Saffire run (NASA reports, not PSI). The card shows what archiving those runs in PSI would cover, and names LUCI and FM2 as the partial-gravity vehicles.
+- **Next test.** The pick is measured against every Saffire run in the literature (Saffire I–III are also PSI-98 to PSI-100; IV–VI exist only as NASA reports). The card shows what archiving the runs not yet in PSI would cover, and names LUCI and FM2 as the partial-gravity vehicles.
 - **Earth.** Four NASA Spinoffs (air tanks, fire detector, firefighter gear, ISS water-mist extinguisher), each tied to the finding it answers.
 - **Provenance.** `computed` = arithmetic on data (counts, distances, partial pressure); `model` = the fitted FLEX extinction model.
 

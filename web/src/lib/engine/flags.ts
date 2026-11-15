@@ -1,7 +1,9 @@
+import { PARTIAL_GRAVITY_FACTS } from './facts';
+import { flowId } from './flow';
 import { literatureInWindow, literatureWindowSentence } from './literatureWindow';
 import { MATERIALS } from './materials';
 import { factText } from './types';
-import type { DetectionResult, ExtinctionResult, Fact, Flag, FuelClass, Habitat, HaloData, Nearest, Source } from './types';
+import type { DetectionResult, ExtinctionResult, Fact, Flag, FlowCoverage, FuelClass, Habitat, HaloData, Nearest, Source } from './types';
 
 /**
  * Flag rules. Every number a flag renders is read from a Fact it lists in
@@ -55,15 +57,15 @@ export function detectionFacts(det: DetectionResult[], detectors: string[], data
     const label = MATERIALS[d.material].label;
     if (d.scatterRuns > 0) {
       out.push(
-        { id: `det-${d.material}-scatter-low`, label: `${label} runs below the scatter alarm level`, value: d.scatterLow, provenance: 'measured', source: src },
-        { id: `det-${d.material}-scatter-runs`, label: `${label} runs with a scatter reading`, value: d.scatterRuns, provenance: 'measured', source: src },
+        { id: `det-${d.material}-scatter-low`, label: `${label} runs below the scatter alarm level`, value: d.scatterLow, provenance: 'computed', source: src },
+        { id: `det-${d.material}-scatter-runs`, label: `${label} runs with a scatter reading`, value: d.scatterRuns, provenance: 'computed', source: src },
       );
     }
     if (key !== 'scatter' && d.caughtPct !== null && d.caughtRuns > 0) {
       const caught = Math.round((d.caughtPct / 100) * d.caughtRuns);
       out.push(
         { id: `det-${d.material}-${key}-low`, label: `${label} runs missed by ${comboLabel(detectors)}`, value: d.caughtRuns - caught, provenance: 'inferred', source: src },
-        { id: `det-${d.material}-${key}-runs`, label: `${label} runs with every selected channel recorded`, value: d.caughtRuns, provenance: 'measured', source: src },
+        { id: `det-${d.material}-${key}-runs`, label: `${label} runs with every selected channel recorded`, value: d.caughtRuns, provenance: 'computed', source: src },
       );
     }
   }
@@ -77,6 +79,8 @@ export function buildFlags(
   detection: DetectionResult[],
   extinction: ExtinctionResult,
   detFacts: Fact[],
+  flow?: Record<FuelClass, FlowCoverage>,
+  flowFacts: Fact[] = [],
 ): FlagResult {
   const flags: Flag[] = [];
   const facts: Fact[] = [];
@@ -90,7 +94,7 @@ export function buildFlags(
     const litIds = lit ? lit.facts.map((f) => f.id) : [];
     if (lit) facts.push(...lit.facts);
     const count: Fact = {
-      id: 'cov-solid-count', label: 'Eligible solid-fuel tests', provenance: 'measured',
+      id: 'cov-solid-count', label: 'Eligible solid-fuel tests', provenance: 'computed',
       value: data.tests.filter((t) => t.fuelClass === 'solid').length,
       source: { note: `Eligible PSI test rows searched: ${[...new Set(data.tests.map((t) => t.psiId))].sort().join(', ')}` },
     };
@@ -98,7 +102,7 @@ export function buildFlags(
       const t = solid.test;
       const src = testSource(data, t.psiId);
       const near: Fact[] = [
-        { id: 'cov-solid-distance', label: 'Evidence distance to the nearest solid-fuel test', value: r2(solid.d), provenance: 'model', source: src },
+        { id: 'cov-solid-distance', label: 'Evidence distance to the nearest solid-fuel test', value: r2(solid.d), provenance: 'computed', source: src },
         { id: 'cov-solid-oxygen', label: 'O2 of the nearest solid-fuel test', value: t.o2Pct, unit: '%', provenance: t.o2Src, source: src },
         { id: 'cov-solid-pressure', label: 'Pressure of the nearest solid-fuel test', value: t.pressurePsia, unit: 'psia', provenance: t.pSrc, source: src },
       ];
@@ -156,6 +160,19 @@ export function buildFlags(
     });
   }
 
+  // warning: cabin air flow outside every tested solid-fuel flow
+  const sf = flow?.solid;
+  const fmin = flowFacts.find((f) => f.id === flowId('solid', 'min'));
+  const fmax = flowFacts.find((f) => f.id === flowId('solid', 'max'));
+  if (sf && sf.inside === false && fmin && fmax) {
+    flags.push({
+      id: 'flow-outside-tested', severity: 'warning',
+      title: 'Cabin air flow outside every tested solid-fuel flow',
+      detail: `PSI real-material tests ran at ${factText(fmin)} to ${factText(fmax)} cm/s of air flow; your cabin flow of ${h.flowCmS} cm/s is outside that range. In microgravity the air flow sets how a flame spreads and goes out, so flame behavior at your flow is untested in PSI.`,
+      factIds: [fmin.id, fmax.id, 'habitat-flow'],
+    });
+  }
+
   // warning: pressure outside the extinction model's tested range
   const extSrc: Source = { psiId: data.extinction.source.psiId, doi: data.extinction.source.doi };
   // The extinction model covers droplet fuels only.
@@ -195,18 +212,18 @@ export function buildFlags(
   const ids = [...new Set(data.investigations.map((i) => i.psiId))].sort();
   const invCount: Fact = {
     id: 'psi-investigations', label: 'PSI investigations in the HALO dataset', value: ids.length,
-    provenance: 'measured',
+    provenance: 'computed',
     source: {
       url: PARTIAL_GRAVITY_URL,
       note: `The challenge states PSI holds no partial-gravity combustion data. Investigations counted: ${ids.join(', ')}`,
     },
   };
-  facts.push(invCount);
+  facts.push(invCount, ...PARTIAL_GRAVITY_FACTS);
   flags.push({
     id: 'no-partial-gravity', severity: 'info',
     title: 'No partial-gravity data in PSI',
-    detail: `None of the ${invCount.value} PSI investigations HALO uses ran at lunar or Martian gravity. Behavior at partial gravity is untested here.`,
-    factIds: [invCount.id],
+    detail: `None of the ${invCount.value} PSI investigations HALO uses ran at lunar or Martian gravity. Behavior at partial gravity is untested here. NASA's LUCI burned samples in simulated lunar gravity, and FM2 is planned to burn materials on the Moon; neither is in PSI yet.`,
+    factIds: [invCount.id, ...PARTIAL_GRAVITY_FACTS.map((f) => f.id)],
   });
 
   const order = { critical: 0, warning: 1, info: 2 } as const;

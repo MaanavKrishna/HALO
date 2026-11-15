@@ -1,6 +1,6 @@
 import { scaledDistance } from './distance';
 import { PRESETS } from './presets';
-import type { FuelClass, NextTestCandidate, TestPoint } from './types';
+import type { FuelClass, HaloData, LiteratureRow, NextTestCandidate, TestPoint } from './types';
 
 export const PRESET_PRIORITY = { artemis: 3, moon: 3, rover: 2, iss: 1, suit: 1 } as const;
 
@@ -66,4 +66,58 @@ export function nextTests(tests: TestPoint[], k = 4): NextTestCandidate[] {
     if (picked.every((p) => differs(c, p))) picked.push(c);
   }
   return picked;
+}
+
+/** Literature runs with a recorded O2 and pressure, as solid-fuel coverage points (Saffire burned real solids). */
+export function literaturePoints(literature: LiteratureRow[]): TestPoint[] {
+  return literature
+    .filter((r) => r.o2Pct !== null && r.pressurePsia !== null)
+    .map((r) => ({
+      id: `lit:${r.mission}:${r.sampleId}`,
+      psiId: 'PSI-0',
+      acronym: r.mission,
+      fuelClass: 'solid' as const,
+      fuel: r.material,
+      o2Pct: r.o2Pct as number,
+      pressurePsia: r.pressurePsia as number,
+      o2Src: 'measured' as const,
+      pSrc: 'measured' as const,
+      flowCmS: r.flowCmS,
+    }));
+}
+
+/**
+ * The same search, counting the Saffire literature runs as if their data were
+ * archived in PSI. Where the pick moves shows what those flights already cover.
+ */
+export function nextTestsIfArchived(data: HaloData, k = 4): NextTestCandidate[] {
+  return nextTests([...data.tests, ...literaturePoints(data.literature)], k);
+}
+
+/** Nearest literature run to a candidate (same fuel class only), or null. */
+export function nearestLiterature(c: NextTestCandidate, literature: LiteratureRow[]): { d: number; row: LiteratureRow } | null {
+  if (c.fuelClass !== 'solid') return null;
+  let best: { d: number; row: LiteratureRow } | null = null;
+  for (const r of literature) {
+    if (r.o2Pct === null || r.pressurePsia === null) continue;
+    const d = scaledDistance(c.o2Pct, c.pressurePsia, r.o2Pct, r.pressurePsia);
+    if (best === null || d < best.d) best = { d, row: r };
+  }
+  return best;
+}
+
+/**
+ * Real-solid evidence distance per preset from PSI rows alone, and with the
+ * literature runs counted as if archived in PSI (both capped like the search).
+ */
+export function archiveGains(data: HaloData): NextTestCandidate['gains'] {
+  const psi = data.tests.filter((t) => t.fuelClass === 'solid');
+  const lit = literaturePoints(data.literature);
+  const near = (h: { o2Pct: number; pressurePsia: number }, pts: TestPoint[]) =>
+    Math.min(DIST_CAP, ...pts.map((t) => scaledDistance(h.o2Pct, h.pressurePsia, t.o2Pct, t.pressurePsia)));
+  return PRESET_KEYS.map((key) => {
+    const h = PRESETS[key];
+    const before = near(h, psi);
+    return { preset: key, before, after: Math.min(before, near(h, lit)) };
+  });
 }

@@ -47,6 +47,43 @@ export const EARTH_FACTS: Fact[] = [
     provenance: 'literature',
     source: { url: 'https://spinoff.nasa.gov/node/9918', note: 'NASA Spinoff: New Technology for the Fire Attire' },
   },
+  {
+    id: 'earth-water-mist',
+    label: 'Water-mist extinguisher',
+    value: 'Because space station emergency breathing gear does not filter CO2, NASA Glenn and ADA Technologies built a fine-water-mist portable extinguisher that works in any orientation; its zero-leak valve became a commercial product.',
+    provenance: 'literature',
+    source: { url: 'https://spinoff.nasa.gov/node/11065', note: 'NASA Spinoff: Zero-Leak Valve Holds Tight in Demanding Environments' },
+  },
+];
+
+/** Which brief finding each Earth technology answers: smoke detection, or the toxic aftermath of a fire. */
+export const EARTH_TIES: Record<string, 'smoke' | 'aftermath'> = {
+  'earth-fire-detector': 'smoke',
+  'earth-water-mist': 'aftermath',
+  'earth-air-tanks': 'aftermath',
+  'earth-fire-attire': 'aftermath',
+};
+
+export const FM2_URL =
+  'https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/flammability-of-materials-on-the-moon-fm2/';
+export const LUCI_URL = 'https://www.nasa.gov/centers-and-facilities/glenn/nasa-fire-safety-test-took-on-reduced-gravity/';
+
+/** NASA's partial-gravity fire investigations: the vehicles for the tests PSI lacks. Neither is in PSI. */
+export const PARTIAL_GRAVITY_FACTS: Fact[] = [
+  {
+    id: 'vehicle-luci',
+    label: 'Lunar-g Combustion Investigation (LUCI)',
+    value: 'NASA Glenn and Voyager Technologies burned a plastic rod and a cotton-fiberglass fabric in simulated lunar gravity on a spinning suborbital flight in 2025',
+    provenance: 'literature',
+    source: { url: LUCI_URL, note: 'NASA: NASA Fire Safety Test Took on Reduced Gravity (2025); results in NTRS 20250010653' },
+  },
+  {
+    id: 'vehicle-fm',
+    label: 'Flammability of Materials on the Moon (FM2)',
+    value: 'NASA’s first combustion experiment to be performed on another planetary body, burning materials at the Moon’s reduced gravity',
+    provenance: 'literature',
+    source: { url: FM2_URL, note: 'NASA Glenn: Flammability of Materials on the Moon (FM2)' },
+  },
 ];
 
 const isSaffireVI = (r: LiteratureRow) => /^saffire[-\s]?vi$/i.test(r.mission.trim());

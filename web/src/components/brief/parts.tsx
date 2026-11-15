@@ -69,13 +69,15 @@ export function FactChip({ brief, id }: { brief: Brief; id: string }) {
   const f = ctx.fact(id);
   if (!f) return null;
   const n = ctx.cite(id);
-  const value = `${factText(f)}${unitText(f)}`;
+  // A text fact (a sentence) shows its short label; a value shows the value.
+  const isText = typeof f.value === "string" && f.value.length > 24;
+  const value = isText ? f.label : `${factText(f)}${unitText(f)}`;
   const body = (
     <>
-      <span className="sr-only">{f.label}: </span>
-      <span className="num font-mono text-fg">{value}</span>
+      {!isText && <span className="sr-only">{f.label}: </span>}
+      <span className={cx("truncate", isText ? "text-fg" : "num font-mono text-fg")}>{value}</span>
       {n && (
-        <span aria-hidden="true" className="num font-mono text-fg-3">
+        <span aria-hidden="true" className="num shrink-0 font-mono text-fg-3">
           [{n}]
         </span>
       )}

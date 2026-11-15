@@ -56,3 +56,39 @@ describe('nextTests', () => {
     expect(performance.now() - t0).toBeLessThan(1000);
   });
 });
+
+import { archiveGains, literaturePoints, nearestLiterature, nextTestsIfArchived } from '@/lib/engine/nextTest';
+import type { HaloData, LiteratureRow } from '@/lib/engine/types';
+
+describe('next test against the literature', () => {
+  const lit = (sampleId: string, o2Pct: number | null, pressurePsia: number | null): LiteratureRow => ({
+    mission: 'Saffire-VI', sampleId, material: 'Cast PMMA slab', o2Pct, pressurePsia, flowCmS: 20, spreadRateMmS: null,
+    outcome: '', sourceUrl: 'https://ntrs.nasa.gov/citations/20240002981', confidence: 'high',
+  });
+  const data: HaloData = { ...loadFixtureData(), literature: [lit('VI-3', 30.3, 7.92), lit('VI-1', 31.9, null)] };
+
+  it('literaturePoints keeps only runs with O2 and pressure, as solids', () => {
+    const pts = literaturePoints(data.literature);
+    expect(pts).toHaveLength(1);
+    expect(pts[0]).toMatchObject({ fuelClass: 'solid', o2Pct: 30.3, pressurePsia: 7.92 });
+  });
+  it('nearestLiterature measures a solid candidate to the nearest run, and skips other classes', () => {
+    const [c] = nextTests(data.tests);
+    const n = nearestLiterature({ ...c, fuelClass: 'solid', o2Pct: 30, pressurePsia: 8 }, data.literature)!;
+    expect(n.row.sampleId).toBe('VI-3');
+    expect(n.d).toBeCloseTo(Math.hypot(0.03, 0.08 / 3), 6);
+    expect(nearestLiterature({ ...c, fuelClass: 'gas' }, data.literature)).toBeNull();
+  });
+  it('archiveGains never raises a distance and lowers it where the literature run sits', () => {
+    const g = archiveGains(data);
+    expect(g.map((x) => x.preset).sort()).toEqual(Object.keys(PRESET_PRIORITY).sort());
+    for (const x of g) expect(x.after).toBeLessThanOrEqual(x.before);
+    const art = g.find((x) => x.preset === 'artemis')!;
+    expect(art.after).toBeLessThan(art.before);
+  });
+  it('nextTestsIfArchived counts the literature as coverage, so solid gains near it shrink', () => {
+    const plain = nextTests(data.tests, 50).find((c) => c.fuelClass === 'solid' && c.o2Pct === 30 && c.pressurePsia === 8)!;
+    const archived = nextTestsIfArchived(data, 400).find((c) => c.fuelClass === 'solid' && c.o2Pct === 30 && c.pressurePsia === 8);
+    expect(archived === undefined || archived.score < plain.score).toBe(true);
+  });
+});

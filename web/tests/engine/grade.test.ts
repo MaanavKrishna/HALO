@@ -44,17 +44,32 @@ describe('overallGrade', () => {
     expect(overallGrade(by(0.3, 0.1)).grade).toBe('B');
   });
   it('gives a non-empty reason, mentioning the surrogate when it applied', () => {
-    expect(overallGrade(by(3, 0.2)).reason).toMatch(/surrogate/i);
+    expect(overallGrade(by(3, 0.2)).reason).toMatch(/stand-in/i);
+    expect(overallGrade(by(3, 0.2)).technical).toMatch(/surrogate/i);
     expect(overallGrade(by(3, null)).reason.length).toBeGreaterThan(0);
+    expect(overallGrade(by(3, null)).technical.length).toBeGreaterThan(0);
+  });
+  it('puts plain language in reason and the rule in technical', () => {
+    for (const [s, u] of [[3, 0.2], [3, null], [0.3, null], [0.8, null], [1.5, null], [null, null], [null, 0.1]] as const) {
+      const g = overallGrade(by(s, u));
+      // No rule vocabulary in the plain reason.
+      expect(g.reason).not.toMatch(/evidence distance|\bring\b|capped|\d/i);
+      expect(g.technical.length).toBeGreaterThan(0);
+    }
+    const raised = overallGrade(by(3, 0.2));
+    expect(raised.reason).toContain('would grade F');
+    expect(raised.reason).toContain('one step to D');
+    expect(raised.technical).toContain('inside the B-ring (evidence distance 0.5)');
+    expect(raised.technical).toContain('C at most');
   });
 });
 
 describe('overallGrade wording', () => {
   it('says "exact conditions" instead of d = 0.00', () => {
-    const r = overallGrade(by(3, 0)).reason;
+    const r = overallGrade(by(3, 0)).technical;
     expect(r).toContain('at these exact conditions');
     expect(r).not.toContain('0.00');
-    expect(overallGrade(by(0.001, null)).reason).toContain('at these exact conditions');
-    expect(overallGrade(by(1.234, null)).reason).toContain('at evidence distance 1.23');
+    expect(overallGrade(by(0.001, null)).technical).toContain('at these exact conditions');
+    expect(overallGrade(by(1.234, null)).technical).toContain('at evidence distance 1.23');
   });
 });

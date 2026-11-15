@@ -167,7 +167,18 @@ export function BriefHeader({ brief }: { brief: Brief }) {
             <div className="flex max-w-[22rem] flex-col items-center gap-2">
               <p className="type-label text-fg-3">Evidence grade</p>
               <p className="type-title text-fg">{GRADE_WORD[g]}</p>
-              <p className="type-body-s text-pretty text-fg-2">{brief.grade.reason}</p>
+              <p className="type-body-s text-pretty text-fg-2" data-grade-reason data-fact="grade-reason">{brief.grade.reason}</p>
+              <details className="grade-rule group w-full text-left">
+                <summary className="mx-auto flex w-fit cursor-pointer list-none items-center gap-1.5 rounded-[var(--radius-sm)] text-[0.8125rem] font-medium text-accent [&::-webkit-details-marker]:hidden">
+                  <svg viewBox="0 0 20 20" className="size-3.5 transition-transform duration-[var(--dur-fast)] group-open:rotate-90" aria-hidden="true">
+                    <path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  How the grade is set
+                </summary>
+                <p className="mt-2 text-pretty text-[0.8125rem] leading-relaxed text-fg-3" data-grade-technical>
+                  {brief.grade.technical}
+                </p>
+              </details>
             </div>
             <a
               href="#flags"

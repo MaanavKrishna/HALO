@@ -5,7 +5,7 @@ import { cx } from "./cx";
 /**
  * Where a number came from. The marker shape encodes provenance so it still
  * reads in greyscale print (filled dot, half dot, hollow dot, square, dashed
- * diamond); the text label is always shown and the help text is in the
+ * diamond for a fitted model, solid diamond for computed); the text label is always shown and the help text is in the
  * accessible name (the title is a hover-only extra). Measured uses the ok
  * green: it is the one provenance that counts as "covered".
  */
@@ -18,7 +18,8 @@ const META: Record<Exclude<Provenance, "si">, { label: string; help: string; mar
   },
   assumed: { label: "Assumed", help: "Not recorded; a stated assumption", marker: "rounded-full border-fg-3" },
   literature: { label: "Literature", help: "Taken from a published paper", marker: "rounded-[1px] border-fg-2" },
-  model: { label: "Model", help: "Computed by a fitted model", marker: "rotate-45 rounded-[1px] border-dashed border-fg-2" },
+  computed: { label: "Computed", help: "Arithmetic on the data: counts, distances, partial pressure", marker: "rotate-45 rounded-[1px] border-fg-2" },
+  model: { label: "Model", help: "Estimated by a fitted statistical model", marker: "rotate-45 rounded-[1px] border-dashed border-fg-2" },
 };
 
 export function ProvenanceBadge({ provenance, className = "" }: { provenance: Provenance; className?: string }) {

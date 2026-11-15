@@ -98,8 +98,10 @@ describe('buildBrief (fixtures)', () => {
     expect(b.facts.find((f) => f.id === 'psi-investigations')?.source.url).toBe('https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/');
   });
 
-  it('has three Earth facts with Spinoff URLs and the BASS fact', () => {
-    expect(b.earth).toHaveLength(3);
+  it('has four Earth facts (water mist included) with Spinoff URLs and the BASS fact', () => {
+    expect(b.earth).toHaveLength(4);
+    expect(b.earth.map((f) => f.id)).toContain('earth-water-mist');
+    expect(String(b.earth.find((f) => f.id === 'earth-water-mist')?.value)).toMatch(/fine-water-mist/);
     for (const f of b.earth) expect(f.source.url).toMatch(/^https:\/\/spinoff\.nasa\.gov\/node\/\d+$/);
     const bass = b.facts.find((f) => f.id === 'bass-test-one');
     expect(String(bass?.value)).toMatch(/^NASA-STD-6001 Test 1 is not conservative/);
@@ -166,5 +168,43 @@ describe('buildBrief (fixtures)', () => {
 
   it('works for every preset', () => {
     for (const h of Object.values(PRESETS)) expect(() => buildBrief(h, data)).not.toThrow();
+  });
+});
+
+describe('grade, flag and partial-gravity facts', () => {
+  const b = buildBrief(PRESETS.artemis, data);
+  const v = (id: string) => b.facts.find((f) => f.id === id);
+  it('carries the grade letter, both reasons and the per-class letters as computed facts', () => {
+    expect(v('grade-overall')?.value).toBe(b.grade.grade);
+    expect(v('grade-reason')?.value).toBe(b.grade.reason);
+    expect(v('grade-reason-technical')?.value).toBe(b.grade.technical);
+    for (const id of ['grade-solid', 'grade-solid-surrogate', 'grade-droplet', 'grade-gas']) expect(String(v(id)?.value)).toMatch(/^[ABCDF]$/);
+    for (const id of ['grade-overall', 'grade-reason', 'grade-ring-b']) expect(v(id)?.provenance).toBe('computed');
+  });
+  it('every number in the technical reason is a numeric grade fact', () => {
+    const nums = new Set(b.facts.filter((f) => f.id.startsWith('grade-') && typeof f.value === 'number').map((f) => String(f.value)));
+    for (const n of numbersIn(b.grade.technical)) expect(nums.has(String(Number(n))), n).toBe(true);
+  });
+  it('restates each flag as a flag-* fact', () => {
+    for (const f of b.flags) {
+      const ff = v(`flag-${f.id}`);
+      expect(ff?.value).toBe(f.detail);
+      expect(ff?.label).toContain(f.title);
+    }
+  });
+  it('names LUCI and FM2 in the partial-gravity flag, with NASA sources', () => {
+    const pg = b.flags.find((f) => f.id === 'no-partial-gravity')!;
+    expect(pg.detail).toMatch(/LUCI/);
+    expect(pg.detail).toMatch(/FM2/);
+    expect(pg.factIds).toEqual(expect.arrayContaining(['vehicle-luci', 'vehicle-fm']));
+    expect(v('vehicle-fm')?.source.url).toMatch(/^https:\/\/www\.nasa\.gov\/glenn\/.+flammability-of-materials-on-the-moon-fm2\/$/);
+    expect(v('vehicle-luci')?.source.url).toMatch(/^https:\/\/www\.nasa\.gov\//);
+  });
+  it('labels counts and distances computed, and keeps model for the fitted extinction model', () => {
+    expect(v('cov-solid-distance')?.provenance).toBe('computed');
+    expect(v('psi-investigations')?.provenance).toBe('computed');
+    const liquid = buildBrief({ ...PRESETS.artemis, liquids: true }, data);
+    const ext = liquid.facts.find((f) => f.id === 'ext-probability');
+    if (ext) expect(ext.provenance).toBe('model');
   });
 });

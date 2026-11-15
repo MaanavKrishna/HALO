@@ -6,7 +6,7 @@ import type { Fact, HaloData, LiteratureRow } from './types';
  */
 
 export const BASS_GUIDE_URL =
-  'https://www.nasa.gov/sites/default/files/atoms/files/np-2015-10-034-jsc_combustion_in_reduced_gravity-iss-mini-book-011116-508.pdf';
+  'https://www.nasa.gov/wp-content/uploads/2016/05/np-2015-10-034-jsc_combustion_in_reduced_gravity-iss-mini-book-011116-508.pdf';
 export const FLEX_COOL_FLAME_DOI = '10.1016/j.combustflame.2012.07.012';
 
 export const COOL_FLAME_FACT: Fact = {
@@ -47,6 +47,43 @@ export const EARTH_FACTS: Fact[] = [
     provenance: 'literature',
     source: { url: 'https://spinoff.nasa.gov/node/9918', note: 'NASA Spinoff: New Technology for the Fire Attire' },
   },
+  {
+    id: 'earth-water-mist',
+    label: 'Water-mist extinguisher',
+    value: 'Because space station emergency breathing gear does not filter CO2, NASA Glenn and ADA Technologies built a fine-water-mist portable extinguisher that works in any orientation; its zero-leak valve became a commercial product.',
+    provenance: 'literature',
+    source: { url: 'https://spinoff.nasa.gov/node/11065', note: 'NASA Spinoff: Zero-Leak Valve Holds Tight in Demanding Environments' },
+  },
+];
+
+/** Which brief finding each Earth technology answers: smoke detection, or the toxic aftermath of a fire. */
+export const EARTH_TIES: Record<string, 'smoke' | 'aftermath'> = {
+  'earth-fire-detector': 'smoke',
+  'earth-water-mist': 'aftermath',
+  'earth-air-tanks': 'aftermath',
+  'earth-fire-attire': 'aftermath',
+};
+
+export const FM2_URL =
+  'https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/flammability-of-materials-on-the-moon-fm2/';
+export const LUCI_URL = 'https://www.nasa.gov/centers-and-facilities/glenn/nasa-fire-safety-test-took-on-reduced-gravity/';
+
+/** NASA's partial-gravity fire investigations: the vehicles for the tests PSI lacks. Neither is in PSI. */
+export const PARTIAL_GRAVITY_FACTS: Fact[] = [
+  {
+    id: 'vehicle-luci',
+    label: 'Lunar-g Combustion Investigation (LUCI)',
+    value: 'NASA Glenn and Voyager Technologies burned a plastic rod and a cotton-fiberglass fabric in simulated lunar gravity on a spinning suborbital flight in 2025',
+    provenance: 'literature',
+    source: { url: LUCI_URL, note: 'NASA: NASA Fire Safety Test Took on Reduced Gravity (2025); results in NTRS 20250010653' },
+  },
+  {
+    id: 'vehicle-fm',
+    label: 'Flammability of Materials on the Moon (FM2)',
+    value: 'NASA’s first combustion experiment to be performed on another planetary body, burning materials at the Moon’s reduced gravity',
+    provenance: 'literature',
+    source: { url: FM2_URL, note: 'NASA Glenn: Flammability of Materials on the Moon (FM2)' },
+  },
 ];
 
 const isSaffireVI = (r: LiteratureRow) => /^saffire[-\s]?vi$/i.test(r.mission.trim());
@@ -59,7 +96,7 @@ function powersW(text: string): number[] {
   return out;
 }
 
-/** True when an outcome reports CO over a crew limit, ignoring negations such as "did not exceed". */
+/** True when an outcome reports CO over a crew limit (the 24-hour SMAC in the Saffire VI rows), ignoring negations such as "did not exceed". */
 export function reportsCoOverLimit(outcome: string): boolean {
   if (!/\bCO\b/.test(outcome)) return false;
   if (/\b(did\s+not|does\s+not|didn['’]t|doesn['’]t|never|not|no|without)\s+(\w+\s+)?exceed/i.test(outcome)) return false;
@@ -68,7 +105,7 @@ export function reportsCoOverLimit(outcome: string): boolean {
 
 const round1 = (x: number) => Number(x.toFixed(1));
 
-/** Saffire VI aftermath: PMMA fire power range and the O2 level at which CO and CO2 exceeded crew limits. */
+/** Saffire VI aftermath: PMMA fire power range and the O2 level of the burn where CO passed its 24-hour crew limit and CO2 its 1-hour limit. */
 export function aftermathFacts(data: HaloData): Fact[] {
   const rows = data.literature.filter(isSaffireVI);
   const facts: Fact[] = [];
@@ -88,7 +125,7 @@ export function aftermathFacts(data: HaloData): Fact[] {
   if (toxic) {
     facts.push({
       id: 'aftermath-toxic-oxygen',
-      label: 'O2 level of the Saffire VI burn where CO and CO2 exceeded crew exposure limits',
+      label: 'O2 level of the Saffire VI burn where CO exceeded the 24-hour crew limit (SMAC 100 ppm) and approached the 1-hour limit; CO2 exceeded its 1-hour limit (NASA-STD-3001)',
       value: Math.round(toxic.o2Pct as number),
       unit: '% O2',
       provenance: 'literature',

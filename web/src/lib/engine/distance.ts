@@ -11,11 +11,25 @@ function dist(h: Habitat, t: TestPoint): number {
   return scaledDistance(h.o2Pct, h.pressurePsia, t.o2Pct, t.pressurePsia);
 }
 
+/** Two distances closer than this are the same test condition. */
+export const TIE_EPS = 1e-9;
+
+/** Flow mismatch with the habitat; tests without a recorded flow rank last. */
+const flowGap = (h: Habitat, t: TestPoint) =>
+  typeof t.flowCmS === 'number' ? Math.abs(t.flowCmS - h.flowCmS) : Infinity;
+
+/**
+ * Nearest test by O2 and pressure. Ties at the same condition are broken by
+ * air flow (the test whose flow is closest to the habitat's wins), then by
+ * data order, so the named test is the most comparable one.
+ */
 function closest(h: Habitat, tests: TestPoint[]): { d: number; test: TestPoint } | null {
   let best: { d: number; test: TestPoint } | null = null;
   for (const t of tests) {
     const d = dist(h, t);
-    if (best === null || d < best.d) best = { d, test: t };
+    if (best === null || d < best.d - TIE_EPS || (Math.abs(d - best.d) <= TIE_EPS && flowGap(h, t) < flowGap(h, best.test))) {
+      best = { d, test: t };
+    }
   }
   return best;
 }

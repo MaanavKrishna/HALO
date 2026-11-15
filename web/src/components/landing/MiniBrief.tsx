@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GradeBadge, Icon, StatusLight } from "@/components/ui";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { mini } from "./data";
 
 const SEVERITY = {
@@ -17,7 +18,7 @@ function MiniHalo() {
     <svg
       viewBox={`0 0 ${vw} ${vh}`}
       role="img"
-      aria-label={`Evidence halo thumbnail for ${mini.name}: NASA microgravity tests by oxygen and pressure, with evidence rings around the habitat`}
+      aria-label={`Evidence halo thumbnail for ${mini.name}: NASA microgravity tests by oxygen and pressure, with evidence rings around the habitat${c.nearestSolid ? `; the nearest real-material test (${c.nearestSolid.acronym}) is ${c.nearestSolid.d} away in evidence distance` : ""}`}
       className="block h-auto w-full overflow-visible"
     >
       <defs>
@@ -95,7 +96,7 @@ function MiniHalo() {
               y={(c.habitat.y + c.nearestSolid.y) / 2 - 6}
               fill="var(--text-1)"
             >
-              d {c.nearestSolid.d}
+              {c.nearestSolid.d} away
             </text>
           </g>
         )}
@@ -121,8 +122,18 @@ export function MiniBrief() {
     >
       <header className="flex items-center justify-between gap-4 border-b border-line px-5 py-3 sm:px-6">
         <span className="type-label text-fg-3">Fire Brief</span>
-        <span className="font-mono text-[0.75rem] text-fg-2 tabular-nums">
-          {mini.o2}% O<sub>2</sub> · {mini.p} psia · ppO<sub>2</sub> {mini.pp}
+        <span className="flex flex-wrap items-center justify-end gap-x-1.5 text-right font-mono text-[0.75rem] text-fg-2 tabular-nums">
+          <span>
+            {mini.o2}% oxygen · {mini.p} psia
+          </span>
+          <span aria-hidden="true">·</span>
+          <Tooltip
+            align="end"
+            side="bottom"
+            content="Oxygen partial pressure: the oxygen fraction times the total pressure, the share of the cabin pressure that is oxygen."
+          >
+            {mini.pp} psia of it oxygen
+          </Tooltip>
         </span>
       </header>
 
@@ -166,7 +177,13 @@ export function MiniBrief() {
             <span className="inline-flex items-center gap-1.5">
               <span aria-hidden="true" className="inline-block size-1.5 rounded-full bg-fg-3" /> Droplet, gas
             </span>
-            <span>O₂ × psia</span>
+            <span>Oxygen % × pressure</span>
+            <Tooltip
+              align="end"
+              content={`Evidence distance (${mini.chart.nearestSolid?.d ?? "n/a"} here): how far the nearest real-material test sits from this habitat in oxygen and pressure combined. Smaller is closer; the rings mark grades B, C and D.`}
+            >
+              What “away” means
+            </Tooltip>
           </figcaption>
         </figure>
       </div>

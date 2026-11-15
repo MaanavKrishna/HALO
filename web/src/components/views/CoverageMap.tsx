@@ -4,7 +4,7 @@ import { GradeBadge } from "@/components/ui";
 import { COVERAGE_CLASSES, COVERAGE_LABEL, MOON_WINDOW, VIEW, coverageMap, type ClassCoverage } from "@/lib/coverage";
 import { HALO_DATA } from "@/lib/data/load";
 import { PSI_SEARCH_URL } from "@/lib/engine/brief";
-import { GRADE_RINGS } from "@/lib/engine/grade";
+import { GRADE_RINGS, SURROGATE_CAP } from "@/lib/engine/grade";
 import { PRESETS } from "@/lib/engine/presets";
 import type { FuelClass, Grade } from "@/lib/engine/types";
 import "./coverage-map.css";
@@ -74,9 +74,11 @@ function Chart({ uid, width, height, fs, compact, className }: { uid: string; wi
   const M = { l: fs * 3.6, r: compact ? 10 : 16, t: 12, b: fs * 3.6 };
   const kx = (width - M.l - M.r) / (VIEW.o2[1] - VIEW.o2[0]);
   const ky = (height - M.t - M.b) / (VIEW.p[1] - VIEW.p[0]);
-  const x = (v: number) => M.l + (v - VIEW.o2[0]) * kx;
-  const y = (v: number) => height - M.b - (v - VIEW.p[0]) * ky;
-  const matrix = `matrix(${kx} 0 0 ${-ky} ${M.l - VIEW.o2[0] * kx} ${height - M.b + VIEW.p[0] * ky})`;
+  const r1 = (v: number) => Math.round(v * 10) / 10;
+  const r4 = (v: number) => Math.round(v * 1e4) / 1e4;
+  const x = (v: number) => r1(M.l + (v - VIEW.o2[0]) * kx);
+  const y = (v: number) => r1(height - M.b - (v - VIEW.p[0]) * ky);
+  const matrix = `matrix(${r4(kx)} 0 0 ${r4(-ky)} ${r4(M.l - VIEW.o2[0] * kx)} ${r4(height - M.b + VIEW.p[0] * ky)})`;
   const plot = { x: M.l, y: M.t, w: width - M.l - M.r, h: height - M.t - M.b };
   const clip = `${uid}-clip-${compact ? "s" : "w"}`;
   const win = { x0: x(MOON_WINDOW.o2Min), x1: x(VIEW.o2[1]), y0: y(MOON_WINDOW.pMax), y1: y(VIEW.p[0]) };
@@ -246,7 +248,7 @@ export function CoverageMap({ id = "cov", compact = false }: { id?: string; comp
         </li>
         <li className="flex items-center gap-2" data-cov="solid">
           <svg width="14" height="14" aria-hidden="true"><path d="M7 1.5L12.5 7L7 12.5L1.5 7Z" fill="var(--surface-1)" stroke="var(--text-1)" strokeWidth="1.4" /></svg>
-          NASA reports (not graded)
+          Saffire runs, NASA reports (not graded)
         </li>
         <li className="flex items-center gap-2">
           <svg width="16" height="12" aria-hidden="true"><rect x="1" y="1" width="14" height="10" fill="none" stroke="var(--text-1)" strokeWidth="1.3" strokeDasharray="3 2" /></svg>
@@ -258,7 +260,8 @@ export function CoverageMap({ id = "cov", compact = false }: { id?: string; comp
         const L = COVERAGE_LABEL[c.fuelClass];
         return (
           <div key={c.fuelClass} data-cov={c.fuelClass} className="flex flex-col gap-4">
-            <ul className="flex flex-wrap gap-2" aria-label={`Preset grades from ${L.alone}`}>
+            <p className="type-label text-fg-3">Preset grades from {L.alone}</p>
+            <ul className="-mt-2 flex flex-wrap gap-2" aria-label={`Preset grades from ${L.alone}`}>
               {c.presets.map((p) => (
                 <li key={p.key} className="flex items-center gap-2 rounded-[var(--radius-pill)] border border-line bg-surface-1 py-1 pl-1 pr-3 text-[0.8125rem] text-fg">
                   <GradeBadge grade={p.grade} size="sm" />
@@ -269,7 +272,14 @@ export function CoverageMap({ id = "cov", compact = false }: { id?: string; comp
             <p className="type-caption max-w-[72ch] text-fg-3">
               Each zone shows the evidence grade a habitat at that atmosphere would get from {L.alone}. It measures how close the
               nearest test sits (<Link href="/method#distance" className="text-accent underline-offset-4 hover:underline">evidence distance</Link>{" "}
-              rings at {b}, {cR} and {d}), not whether the atmosphere is safe. {rangeSentence(c)} Data:{" "}
+              rings at {b}, {cR} and {d}): evidence coverage, not safety.{" "}
+              {(c.fuelClass === "solid" || c.fuelClass === "solid_surrogate") && (
+                <>
+                  A Fire Brief&apos;s overall grade starts from the real-solid grade and can rise one step, to {SURROGATE_CAP} at most, when a
+                  surrogate test sits inside the first ring ({b}), so a brief can read one letter higher than this map.{" "}
+                </>
+              )}
+              {rangeSentence(c)} Data:{" "}
               <a href={PSI_SEARCH_URL} target="_blank" rel="noopener noreferrer" className="text-accent underline-offset-4 hover:underline">
                 NASA PSI
               </a>

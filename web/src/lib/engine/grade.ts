@@ -13,6 +13,8 @@ export function classGrade(n: Nearest): Grade {
 }
 
 const ORDER: Grade[] = ['F', 'D', 'C', 'B', 'A'];
+/** Highest grade a nearby surrogate-fuel test can lift the real-solid grade to. */
+export const SURROGATE_CAP: Grade = 'C';
 /** Below this, a distance prints as "at these exact conditions" rather than "0.00". */
 const EXACT = 0.005;
 
@@ -36,7 +38,7 @@ export function overallGrade(byClass: Record<FuelClass, Nearest>): GradeResult {
   const sur = byClass.solid_surrogate;
   const surrogateNear = sur.d !== null && sur.d <= B_RING;
   const idx = ORDER.indexOf(base);
-  if (surrogateNear && idx < ORDER.indexOf('C')) {
+  if (surrogateNear && idx < ORDER.indexOf(SURROGATE_CAP)) {
     const grade = ORDER[idx + 1];
     // The test is named plainly ("the nearest surrogate-fuel test, BRE,"), so no article has to guess how an acronym is read.
     const named = sur.test ? `, ${sur.test.acronym},` : '';

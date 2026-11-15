@@ -1,4 +1,4 @@
-import { nearestByClass } from "@/lib/engine/distance";
+import { nearestByClass, O2_UNIT, P_UNIT } from "@/lib/engine/distance";
 import { classGrade, GRADE_RINGS } from "@/lib/engine/grade";
 import { PRESETS } from "@/lib/engine/presets";
 import type { FuelClass, Grade, Habitat, HaloData, TestPoint } from "@/lib/engine/types";
@@ -32,9 +32,6 @@ export const GRID = { dO2: 0.5, dP: 0.25 };
 /** The Moon window from the challenge: O2 at or above, pressure at or below, the Moon preset. */
 export const MOON_WINDOW = { o2Min: PRESETS.moon.o2Pct, pMax: PRESETS.moon.pressurePsia };
 
-/** Scale behind scaledDistance: 10 O2 points and 3 psia are one unit of evidence distance. */
-const O2_UNIT = 10;
-const P_UNIT = 3;
 
 const probe = (o2Pct: number, pressurePsia: number): Habitat => ({
   name: "map",
@@ -77,8 +74,11 @@ export interface ClassCoverage {
 
 const n2 = (x: number) => Number(x.toFixed(2));
 
-function ellipse(cx: number, cy: number, rx: number, ry: number): string {
-  return `M${n2(cx - rx)} ${n2(cy)}a${n2(rx)} ${n2(ry)} 0 1 0 ${n2(2 * rx)} 0a${n2(rx)} ${n2(ry)} 0 1 0 ${n2(-2 * rx)} 0Z`;
+const n1 = (x: number) => Number(x.toFixed(1));
+
+/** One ellipse as a closed path (centre rounded to 0.1, half-axes exact: they are ring multiples of the units). */
+export function ellipse(cx: number, cy: number, rx: number, ry: number): string {
+  return `M${n1(cx - rx)} ${n1(cy)}a${rx} ${ry} 0 1 0 ${2 * rx} 0a${rx} ${ry} 0 1 0 ${-2 * rx} 0Z`;
 }
 
 const GRADES: Grade[] = ["A", "B", "C", "D", "F"];
@@ -127,6 +127,30 @@ function zoneLabels(grid: Grade[][], nx: number, ny: number, x: (i: number) => n
   return out;
 }
 
+/**
+ * Drop ellipses the rest of the same ring already covers (checked on a dense
+ * sample of each ellipse's edge and interior), so the union path stays small.
+ * Only ellipses whose every sample lies inside another kept ellipse go.
+ */
+function prune(centers: Array<[number, number]>, r: number): Array<[number, number]> {
+  const inside = (o: number, p: number, [co, cp]: [number, number]) => Math.hypot((o - co) / (r * O2_UNIT), (p - cp) / (r * P_UNIT)) <= 1 + 1e-9;
+  const samples: Array<[number, number]> = [];
+  for (let k = 0; k < 48; k++) samples.push([Math.cos((k / 48) * 2 * Math.PI), Math.sin((k / 48) * 2 * Math.PI)]);
+  for (let a = -0.9; a <= 0.9; a += 0.15) for (let b = -0.9; b <= 0.9; b += 0.15) if (a * a + b * b < 1) samples.push([a, b]);
+  const kept = [...centers];
+  for (let i = kept.length - 1; i >= 0; i--) {
+    const [co, cp] = kept[i];
+    const others = kept.filter((_, j) => j !== i);
+    const covered = samples.every(([u, v]) => {
+      const o = co + u * r * O2_UNIT;
+      const p = cp + v * r * P_UNIT;
+      return others.some((c) => inside(o, p, c));
+    });
+    if (covered) kept.splice(i, 1);
+  }
+  return kept;
+}
+
 export function classCoverage(data: HaloData, fuelClass: FuelClass): ClassCoverage {
   const rows = data.tests.filter((t) => t.fuelClass === fuelClass);
   const [, , dRing] = GRADE_RINGS;
@@ -136,7 +160,9 @@ export function classCoverage(data: HaloData, fuelClass: FuelClass): ClassCovera
   const centers = [...uniq.values()];
   // Only conditions whose outer ring reaches the window can colour it.
   const near = centers.filter(([o, p]) => o > VIEW.o2[0] - reach.o2 && o < VIEW.o2[1] + reach.o2 && p > VIEW.p[0] - reach.p && p < VIEW.p[1] + reach.p);
-  const ring = (r: number) => near.map(([o, p]) => ellipse(o, p, r * O2_UNIT, r * P_UNIT)).join("");
+  // Same-size ellipses only contain one another when their centres coincide, so dedupe centres at path precision.
+  const drawn = [...new Map(near.map(([o, p]) => [`${n1(o)},${n1(p)}`, [n1(o), n1(p)] as [number, number]])).values()];
+  const ring = (r: number) => prune(drawn, r).map(([o, p]) => ellipse(o, p, r * O2_UNIT, r * P_UNIT)).join("");
   const [bR, cR, dR] = GRADE_RINGS;
   const visible = near.filter(([o, p]) => o >= VIEW.o2[0] && o <= VIEW.o2[1] && p >= VIEW.p[0] && p <= VIEW.p[1]);
 
@@ -157,11 +183,15 @@ export function classCoverage(data: HaloData, fuelClass: FuelClass): ClassCovera
   }
   const total = nx * ny;
   const keys = ["iss", "moon", "rover", "artemis", "suit"] as const;
-  const avoid = keys.map((k) => [PRESETS[k].o2Pct, PRESETS[k].pressurePsia] as [number, number]);
+  // Markers and the label space beside them (labels sit about 2-4 O2 points to the side).
+  const avoid = keys.flatMap((k) => {
+    const [o, p] = [PRESETS[k].o2Pct, PRESETS[k].pressurePsia];
+    return [[o, p], [o + 2, p + 0.6], [o + 4, p + 0.6]] as Array<[number, number]>;
+  });
   return {
     fuelClass,
     rings: { d: ring(dR), c: ring(cR), b: ring(bR) },
-    dots: visible.map(([o, p]) => `M${n2(o)} ${n2(p)}h0`).join(""),
+    dots: [...new Set(visible.map(([o, p]) => `M${n1(o)} ${n1(p)}h0`))].join(""),
     tests: rows.length,
     conditions: centers.length,
     o2Range: rows.length ? [Math.min(...rows.map((t) => t.o2Pct)), Math.max(...rows.map((t) => t.o2Pct))] : null,

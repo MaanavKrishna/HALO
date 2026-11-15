@@ -11,7 +11,7 @@ import { BriefIcon } from "./icons";
 export type FactRef = ChipFact;
 
 type State =
-  | { mode: "fallback"; notice: boolean }
+  | { mode: "fallback"; notice: boolean; open?: boolean }
   | { mode: "loading"; notice: boolean }
   | { mode: "live"; text: string };
 
@@ -89,7 +89,11 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
         {live && (
           <button
             type="button"
-            onClick={() => setState({ mode: "fallback", notice: false })}
+            onClick={() => {
+              setState({ mode: "fallback", notice: false, open: true });
+              // The answer it replaced is gone; put focus on the opened summary's toggle.
+              requestAnimationFrame(() => root.current?.querySelector<HTMLElement>("[data-precomputed] > summary")?.focus());
+            }}
             className="mt-2 text-[0.8125rem] font-medium text-accent underline-offset-4 hover:underline"
           >
             Show the precomputed narrative
@@ -111,7 +115,7 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
         ) : live ? (
           <Narrative text={state.text} live facts={facts} root={root} />
         ) : (
-          <details className="group/pre" data-precomputed open={state.notice}>
+          <details className="group/pre" data-precomputed open={state.notice || state.open === true}>
             <summary className="flex w-fit cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-1 rounded-[var(--radius-sm)] text-[0.9375rem] font-medium text-accent [&::-webkit-details-marker]:hidden">
               <span className="inline-flex items-center gap-1.5">
                 <svg viewBox="0 0 20 20" className="size-4 transition-transform duration-[var(--dur-fast)] group-open/pre:rotate-90" aria-hidden="true">
@@ -155,11 +159,11 @@ function Narrative({
 }) {
   return (
     <div className="flex max-w-[68ch] flex-col gap-3.5 text-[1.0625rem] leading-[1.65] text-fg">
-      {/* One disclosure for the whole SI answer: spoken here, shown as a single badge on the first paragraph. */}
+      {/* Every SI paragraph carries the badge; the disclosure is spoken once for the whole answer. */}
       {live && <p className="sr-only">The following narration is SI-generated from the cited facts; numbers come only from those facts.</p>}
       {splitParagraphs(text).map((para, pi) => (
         <p key={pi} className={cx("text-pretty", pi > 0 && "text-fg-2")}>
-          {live && pi === 0 && (
+          {live && (
             <span aria-hidden="true" data-si-chip>
               <SiChip className="mr-1.5" />
             </span>
@@ -214,7 +218,7 @@ function FactButton({ chip, root }: { chip: Extract<NarrativeChip, { type: "cite
       className={cx(
         "num inline-flex translate-y-[-0.08em] items-center whitespace-nowrap align-middle font-mono transition-[background-color,border-color,scale] duration-[var(--dur-fast)] active:scale-[0.97]",
         bare
-          ? "mx-px rounded-[var(--radius-xs)] px-1 py-0.5 text-[0.78em] text-accent hover:bg-accent-soft"
+          ? "rounded-[var(--radius-xs)] px-0.5 py-0.5 text-[0.78em] text-accent hover:bg-accent-soft"
           : "mx-0.5 h-[1.375rem] gap-1 rounded-[var(--radius-pill)] border border-accent-line bg-accent-soft px-2 text-[0.75rem] text-fg hover:border-accent",
       )}
     >

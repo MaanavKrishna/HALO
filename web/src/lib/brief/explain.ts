@@ -148,7 +148,8 @@ export function citationChips(paragraph: string, facts: Record<string, ChipFact>
     let k = out.length - 1;
     while (k >= 0 && out[k].type === "text" && !(out[k] as { value: string }).value.trim()) k--;
     const prev = k >= 0 ? out[k] : null;
-    if (prev && prev.type === "cite" && prev.n === f.n && prev.show === show) {
+    // Two chips with neither a source number nor a value have nothing in common to merge on.
+    if (prev && prev.type === "cite" && prev.n === f.n && prev.show === show && (f.n !== null || show !== null)) {
       out.length = k + 1;
       if (!prev.ids.includes(part.id)) {
         prev.ids.push(part.id);

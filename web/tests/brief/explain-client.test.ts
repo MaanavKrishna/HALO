@@ -143,6 +143,11 @@ describe('citationChips', () => {
     expect(cites('Unstated [a-distance] [a-oxygen].').map((c) => (c as { show: string }).show)).toEqual(['2.47', '22.2%']);
   });
 
+  it('keeps chips apart when neither has a source number or a value', () => {
+    const bare = { 'c-plain': facts['c-plain'], 'c-other': { label: 'Another unsourced text fact', value: null, n: null } };
+    expect(citationChips('Untested [c-plain] [c-other].', bare).filter((c) => c.type === 'cite')).toHaveLength(2);
+  });
+
   it('never uses a label as the printed text, and leaves unknown ids as prose', () => {
     const out = citationChips('Gravity is untested [a-note] [c-plain] [nope].', facts);
     for (const c of out) if (c.type === 'cite') expect(c.show).toBeNull();

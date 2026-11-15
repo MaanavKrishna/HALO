@@ -186,7 +186,7 @@ All in `web/src/components/ui/`, exported from `@/components/ui`. Typed props, n
 | `Footer` | Product / Science / Project columns, theme toggle, the required NASA disclaimer. No decorative wordmark. | Removing the disclaimer. |
 | `ThemeToggle`, `setTheme` | System / Light / Dark radio group (arrow keys, 40px targets, selected thumb outlined >= 3:1). | Reading `localStorage` elsewhere. |
 | `ProvenanceBadge({ provenance })` | Measured (green filled dot), inferred (half), assumed (hollow), literature (square), model (dashed diamond), computed (solid-border diamond), `si` renders `SiChip`. Help text in the accessible name. | Colour without the label. |
-| `SiChip()` | Dashed "SI" chip on every SI-written sentence; accessible name "SI-generated from the cited facts; …". | Omitting it from any SI sentence. |
+| `SiChip()` | Dashed "SI" chip on every SI-written paragraph and summary; accessible name "SI-generated from the cited facts; …". | Omitting it from any SI sentence. |
 | `GradeBadge({ grade, size })` | Grade letter in a ring whose closure shrinks A → F; A/B flame blue with glow, C neutral, D/F warn. | Calling a grade a safety verdict. |
 
 Navigation data (links, footer groups, external URLs, disclaimer) lives in `components/ui/site.ts`.

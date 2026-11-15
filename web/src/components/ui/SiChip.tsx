@@ -3,7 +3,7 @@ import { cx } from "./cx";
 const SI_HELP = "SI-generated from the cited facts; numbers come only from those facts";
 
 /**
- * Marks a sentence written by the SI layer. Every SI sentence shows one.
+ * Marks text written by the SI layer. Every SI-written paragraph and summary carries the chip.
  * The explanation is part of the accessible name, so screen readers get it
  * without relying on the hover-only title. Dashed edge = generated, not measured.
  */

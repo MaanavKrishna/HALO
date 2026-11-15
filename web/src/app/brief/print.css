@@ -36,9 +36,14 @@
     content-visibility: visible;
     display: block;
   }
-  .brief details.ranked-all > summary,
-  .brief .ranked-top {
+  .brief details.ranked-all > summary {
     display: none !important;
+  }
+  /* The one-line rows go only where the full rows can be forced open, so paper never loses the list. */
+  @supports selector(::details-content) {
+    .brief .ranked-top {
+      display: none !important;
+    }
   }
   .print-only {
     display: block !important;

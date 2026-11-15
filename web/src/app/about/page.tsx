@@ -206,7 +206,7 @@ export default function AboutPage() {
 
         <h2 id="si">Use of SI</h2>
         <p>
-          Numbers come from code; SI only writes words over facts that code has already computed. Every SI-written sentence in
+          Numbers come from code; SI only writes words over facts that code has already computed. Every SI-written paragraph and summary in
           HALO carries the <SiChip /> chip.
         </p>
         <h3>At build time</h3>

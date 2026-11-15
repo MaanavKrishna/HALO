@@ -1,5 +1,5 @@
 import { briefContext, RANKED_SHOWN } from "@/lib/brief/context";
-import { lowRankedSmokeEvidence, rankedFuels } from "@/lib/brief/notes";
+import { listWords, lowRankedSmokeEvidence, rankedFuels } from "@/lib/brief/notes";
 import { doiUrl, safeUrl } from "@/lib/brief/citations";
 import { HALO_DATA } from "@/lib/data/load";
 import { DEFAULT_WEIGHTS } from "@/lib/engine/rank";
@@ -57,7 +57,13 @@ export function RankedList({ brief }: { brief: Brief }) {
     >
       <p className="mb-5 max-w-[68ch] text-pretty text-[0.9375rem] leading-relaxed text-fg-2" data-ranking-note>
         Ranked mainly by how close each test&rsquo;s atmosphere is to yours
-        {smoke ? <>; {smoke} ranks low because it only ran in ISS air, even though it is the only smoke-detector evidence.</> : "."}
+        {smoke.length > 1 ? (
+          <>; {listWords(smoke)} rank low because they only ran in ISS air, even though they hold the flight smoke-detector data.</>
+        ) : smoke.length === 1 ? (
+          <>; {smoke[0]} ranks low because it only ran in ISS air, even though it holds the flight smoke-detector data.</>
+        ) : (
+          "."
+        )}
       </p>
       <RankedListClient items={items} shown={RANKED_SHOWN} defaults={DEFAULT_WEIGHTS} />
     </Section>

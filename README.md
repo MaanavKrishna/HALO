@@ -200,7 +200,7 @@ Rationale: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 **In the product.**
 - *Build-time summaries (see [docs/SI.md](docs/SI.md)).* An LLM writes a short summary and habitat relevance note for each of the 24 investigations from its PSI record. Output is validated: hazard tags from a closed vocabulary, quotes must appear in the source text, no number the source lacks. All 24 pass the automatic checks; the author's manual read-through against PSI is in progress, so every summary stays labelled as SI output.
 - *Live explanations ("Ask HALO" on `/brief`, via `/api/explain`).* An LLM writes a short narrative over the brief's computed facts. Every number it writes must match a fact value, or the brief uses a template instead; a citation whose fact value is not a number in its sentence is dropped, and values describing the habitat cite the `habitat-*` facts.
-- Every SI sentence carries an `si` badge. All numbers, grades, rankings and models come from deterministic code.
+- Every SI-written paragraph and summary carries the `si` badge. All numbers, grades, rankings and models come from deterministic code.
 
 **In development.** An LLM coding assistant helped write code. All data processing, models and copy were reviewed by the author.
 

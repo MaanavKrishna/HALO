@@ -26,15 +26,21 @@ export function rankedFuels(tests: TestPoint[], psiId: string, max = 3): { shown
 }
 
 /**
- * The smoke-detector investigation the ranking note names: SAME, when the
- * shown list holds it in its lower half and it sits further from the habitat
- * atmosphere than the top-ranked investigation does. Null otherwise.
+ * The smoke-detection investigations the ranking note names: every shown row
+ * tagged smoke_detection that sits in the lower half of the list and further
+ * from the habitat atmosphere than the top-ranked investigation, in rank order.
  */
-export function lowRankedSmokeEvidence(ranked: RankedInvestigation[]): string | null {
-  const i = ranked.findIndex((r) => r.inv.acronym === 'SAME' && r.inv.hazards.includes('smoke_detection'));
-  if (i < 0 || ranked.length < 2) return null;
-  const low = i >= ranked.length / 2 && ranked[i].parts.proximity < ranked[0].parts.proximity;
-  return low ? ranked[i].inv.acronym : null;
+export function lowRankedSmokeEvidence(ranked: RankedInvestigation[]): string[] {
+  if (ranked.length < 2) return [];
+  return ranked
+    .filter((r, i) => r.inv.hazards.includes('smoke_detection') && i >= ranked.length / 2 && r.parts.proximity < ranked[0].parts.proximity)
+    .map((r) => r.inv.acronym);
+}
+
+/** "A", "A and B", "A, B and C". */
+export function listWords(items: string[]): string {
+  if (items.length <= 1) return items.join('');
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 }
 
 export interface SurrogateCaveat {

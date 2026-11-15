@@ -17,7 +17,8 @@ describe('grade ladder', () => {
     });
     it(`${key}: each hypothetical grade is overallGrade at that step's distance, never closer-but-worse`, () => {
       for (const s of steps.slice(1)) {
-        expect(s.grade).toBe(overallGrade({ ...b.byClass, solid: { ...b.byClass.solid, d: s.d, measuredBoth: s.grade === 'A' } }).grade);
+        expect(s.grade).toBe(overallGrade({ ...b.byClass, solid: { ...b.byClass.solid, d: s.d, measuredBoth: false } }).grade);
+        expect(s.grade).not.toBe('A');
         if (s.d !== null && b.byClass.solid.d !== null) expect(s.d).toBeLessThanOrEqual(b.byClass.solid.d + 1e-9);
       }
     });

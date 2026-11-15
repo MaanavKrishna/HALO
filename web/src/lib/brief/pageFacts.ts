@@ -218,7 +218,8 @@ export function gradeLadder(b: Brief, data: HaloData): LadderStep[] {
   const today = b.byClass.solid;
   const step = (kind: 'archive' | 'next', extra: TestPoint[], factId: string, href: string): LadderStep => {
     const n = nearestByClass(h, [...solid, ...extra]).solid;
-    return { kind, grade: gradeIfSolidDistance(b, n.d, n.measuredBoth), d: n.d, factId, href, closer: n.d !== null && (today.d === null || n.d < today.d - 1e-9) };
+    // A hypothetical step is never graded as measured-in-PSI: it tops out at B until the data is actually archived.
+    return { kind, grade: gradeIfSolidDistance(b, n.d, false), d: n.d, factId, href, closer: n.d !== null && (today.d === null || n.d < today.d - 1e-9) };
   };
   const best = b.nextTests[0];
   const planned: TestPoint[] = best && best.fuelClass === 'solid'

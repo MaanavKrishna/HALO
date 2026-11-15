@@ -356,8 +356,9 @@ export default function MethodPage() {
             gravity.
           </li>
           <li>
-            <strong>Data HALO cannot use yet.</strong> These investigations will fill the gaps above, but none has data in PSI, so
-            HALO names them and grades on none of them:
+            <strong>Data HALO cannot use yet.</strong> These investigations could help close the gaps above, but none has data in
+            PSI, so HALO names them and grades on none of them. LUCI and FM2 study partial gravity; SoFIE and FLARE study
+            microgravity flammability:
             <ul>
               <li>
                 <ExtLink href={REFS.luci.url}>LUCI</ExtLink>, the Lunar Combustion Investigation: cotton-fiberglass fabric and
@@ -372,7 +373,7 @@ export default function MethodPage() {
                 materials ignite, spread and go out.
               </li>
               <li>
-                <ExtLink href={REFS.flare.url}>FLARE</ExtLink>, Flammability Limits at Reduced-g, led with JAXA: a method to
+                <ExtLink href={REFS.flare.url}>FLARE</ExtLink>, Flammability Limits at Reduced-g, JAXA-led: a method to
                 predict microgravity flammability limits from ground tests.
               </li>
             </ul>
@@ -380,17 +381,16 @@ export default function MethodPage() {
           <li>
             <strong>The standard screening test may not be conservative.</strong> Spacecraft materials are screened with{" "}
             <ExtLink href={REFS.std6001.url}>NASA-STD-6001B</ExtLink> Test 1, an upward flame-spread test run in normal gravity.
-            The BASS experiments found that “{BASS_FACT.value}” (
+            BASS results indicate that “{BASS_FACT.value}” (
             <ExtLink href={REFS.researchersGuide.url}>A Researcher’s Guide to Combustion Science, 2015</ExtLink>). HALO’s grades
             say where microgravity tests exist near a habitat; they do not replace Test 1 or settle that question.
           </li>
           <li>
-            <strong>Crew exposure limits come from the report.</strong> The Saffire VI aftermath says CO and CO2 exceeded crew
-            limits. Those limits are NASA’s{" "}
-            <ExtLink href={REFS.smac.url}>Spacecraft Maximum Allowable Concentrations</ExtLink> for CO (100 ppm over 24 hours,
-            425 ppm over 1 hour) and NASA-STD-3001 Volume 2 for CO2 (3 mmHg averaged over 1 hour), as stated in the{" "}
-            <ExtLink href={REFS.saffireLimits.url}>Saffire VI heat and smoke report</ExtLink>. HALO quotes the comparison; it
-            does not recompute it.
+            <strong>Crew exposure limits come from the report.</strong> Per the{" "}
+            <ExtLink href={REFS.saffireLimits.url}>Saffire VI heat and smoke report</ExtLink>, CO exceeded the 24-hour{" "}
+            <ExtLink href={REFS.smac.url}>Spacecraft Maximum Allowable Concentration</ExtLink> (100 ppm) and approached, but did
+            not exceed, the 1-hour SMAC (425 ppm); CO2 exceeded the NASA-STD-3001 Volume 2 1-hour limit (3 mmHg). HALO quotes
+            the report&apos;s comparison; it does not recompute it.
           </li>
           <li>
             <strong>Smoke data only at ISS air.</strong> SAME ran at {det.ambient.o2Pct}% O2 and {samePAtm} atm.

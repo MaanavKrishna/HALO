@@ -162,8 +162,8 @@ export default function DataPage() {
 
         <H2 id="partners">Partner agency research</H2>
         <p>
-          <strong>JAXA: FLARE.</strong> The <ExtLink href={REFS.flare.url}>Flammability Limits at Reduced-g Experiment</ExtLink>{" "}
-          is an international project led with the Japan Aerospace Exploration Agency, with NASA, ESA and universities in Japan,
+          <strong>JAXA-led FLARE.</strong> The <ExtLink href={REFS.flare.url}>Flammability Limits at Reduced-g Experiment</ExtLink>{" "}
+          is a JAXA-led international project (Japan Aerospace Exploration Agency), with NASA, ESA and universities in Japan,
           the USA and France. It develops a way to estimate a material&apos;s microgravity flammability limit from ground tests,
           with flight runs in the ISS Kibo module to verify it. HALO cannot use the results yet: none are in PSI, and HALO grades
           only on PSI test rows. When they are published, they are the natural bridge between NASA-STD-6001 ground screening and

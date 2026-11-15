@@ -115,7 +115,7 @@ export default function AboutPage() {
         </p>
 
         <h2 id="why-fire">Why fire safety matters</h2>
-        <p>Three spacecraft fires shaped NASA&apos;s approach of prevention, detection and suppression:</p>
+        <p>NASA&apos;s fire-safety work focuses on prevention, detection and suppression; three spacecraft emergencies show why:</p>
         <ul>
           {FIRE_HISTORY.map((f) => (
             <li key={f.name}>
@@ -191,9 +191,9 @@ export default function AboutPage() {
 
         <h2 id="partners">Partner agency research</h2>
         <p>
-          <strong>JAXA, with NASA and ESA: FLARE.</strong> The{" "}
-          <ExtLink href={REFS.flare.url}>Flammability Limits at Reduced-g Experiment</ExtLink> is an international effort led
-          with the Japan Aerospace Exploration Agency, with NASA, ESA and universities in Japan, the USA and France. It aims to
+          <strong>JAXA-led FLARE.</strong> The{" "}
+          <ExtLink href={REFS.flare.url}>Flammability Limits at Reduced-g Experiment</ExtLink> is a JAXA-led international effort
+          (Japan Aerospace Exploration Agency), with NASA, ESA and universities in Japan, the USA and France. It aims to
           predict a material&apos;s flammability limit in microgravity from ground tests, which is exactly the bridge HALO&apos;s
           grades lack. HALO cannot use its results yet: no FLARE data is in the PSI repository, so nothing from it is graded on.
         </p>

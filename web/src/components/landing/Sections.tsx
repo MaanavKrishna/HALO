@@ -72,8 +72,8 @@ export function WhySection() {
           </Reveal>
           <Reveal delay={80}>
             <p className="type-body-l max-w-[52ch] text-fg-2">
-              Three spacecraft fires shaped how NASA thinks about fire: prevent it, detect it, put it out. Each left a lesson
-              that HALO&apos;s questions start from.
+              NASA&apos;s fire-safety work focuses on prevention, detection and suppression; three spacecraft emergencies show
+              why. Each left a lesson that HALO&apos;s questions start from.
             </p>
           </Reveal>
         </div>

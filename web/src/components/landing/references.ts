@@ -55,7 +55,7 @@ export const REFS = {
     url: "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/solid-fuel-ignition-and-extinction-sofie/",
   },
   flare: {
-    label: "NASA Glenn: Flammability Limits at Reduced-g Experiment (FLARE), led with JAXA",
+    label: "NASA Glenn: Flammability Limits at Reduced-g Experiment (FLARE), JAXA-led",
     url: "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/flammability-limits-at-reduced-g-experiment-flare/",
   },
 
@@ -75,7 +75,7 @@ export const GLENN_FACT_SHEETS: Ref[] = [
   { label: "SPICE", url: "https://www.nasa.gov/wp-content/uploads/2025/07/smoke-point-in-co-flow-experiment-spice.pdf" },
 ];
 
-/** Three spacecraft fires, one lesson each. Facts are from the linked NASA pages. */
+/** Three spacecraft emergencies (two fires, one oxygen-tank explosion), one lesson each. Facts are from the linked NASA pages. */
 export const FIRE_HISTORY: Array<{ year: string; name: string; what: string; lesson: string; ref: Ref }> = [
   {
     year: "1967",
@@ -87,7 +87,7 @@ export const FIRE_HISTORY: Array<{ year: string; name: string; what: string; les
   {
     year: "1970",
     name: "Apollo 13",
-    what: "Heaters left on during ground testing degraded the Teflon wire insulation inside an oxygen tank, which exploded on the way to the Moon.",
+    what: "Heaters left on during ground testing degraded the Teflon wire insulation inside an oxygen tank. On the way to the Moon the tank failed and exploded, crippling the spacecraft's power and oxygen supply.",
     lesson: "Oxygen hardware and its wire insulation are fire hazards in their own right.",
     ref: REFS.apollo13,
   },

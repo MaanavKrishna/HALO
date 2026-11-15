@@ -138,7 +138,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
         </p>
 
         {archive.length > 0 && (
-          <div className="mt-8 border-t border-line pt-6" data-next-archive>
+          <div id="next-archive" className="mt-8 scroll-mt-24 border-t border-line pt-6" data-next-archive>
             <h3 className="type-label text-fg-3">If the {archMissions} runs were archived in PSI</h3>
             <p className="mt-2 max-w-[64ch] text-sm text-pretty text-fg-2">
               Counting the {archMissions} runs not yet in PSI as real-solid coverage shows what archiving them would already buy, before any new flight:

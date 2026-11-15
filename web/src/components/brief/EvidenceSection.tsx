@@ -110,7 +110,7 @@ export function EvidenceSection({ brief }: { brief: Brief }) {
                       </p>
                       <p className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1.5">
                         <span className="font-mono text-[1.375rem] leading-none tracking-[-0.03em] text-fg">
-                          <span className="mr-1 text-sm text-fg-3">d</span>
+                          <span className="mr-1.5 text-sm text-fg-3">d =</span>
                           <Num brief={brief} id={nearId(c, "distance")} />
                         </span>
                         <span className="font-mono text-[0.8125rem] text-fg-2">

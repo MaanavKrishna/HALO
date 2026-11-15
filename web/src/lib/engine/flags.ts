@@ -18,6 +18,7 @@ const MISS_PCT = 50;
 const SELF_EXTINGUISH_P = 0.1;
 const PARTIAL_GRAVITY_URL = 'https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/';
 
+const r1 = (x: number) => Number(x.toFixed(1));
 const r2 = (x: number) => Number(x.toFixed(2));
 const pct = (x: number) => Math.round(x * 100);
 
@@ -104,13 +105,15 @@ export function buildFlags(
       const near: Fact[] = [
         { id: 'cov-solid-distance', label: 'Evidence distance to the nearest solid-fuel test', value: r2(solid.d), provenance: 'computed', source: src },
         { id: 'cov-solid-oxygen', label: 'O2 of the nearest solid-fuel test', value: t.o2Pct, unit: '%', provenance: t.o2Src, source: src },
-        { id: 'cov-solid-pressure', label: 'Pressure of the nearest solid-fuel test', value: t.pressurePsia, unit: 'psia', provenance: t.pSrc, source: src },
+        { id: 'cov-solid-pressure', label: 'Pressure of the nearest solid-fuel test', value: t.pressurePsia, unit: 'psia', decimals: 1, provenance: t.pSrc, source: src },
+        { id: 'cov-solid-oxygen-gap', label: 'O2 gap between the habitat and the nearest solid-fuel test', value: r1(Math.abs(t.o2Pct - h.o2Pct)), unit: 'O2-points', decimals: 1, provenance: 'computed', source: src },
+        { id: 'cov-solid-pressure-gap', label: 'Pressure gap between the habitat and the nearest solid-fuel test', value: r1(Math.abs(t.pressurePsia - h.pressurePsia)), unit: 'psia', decimals: 1, provenance: 'computed', source: src },
       ];
       facts.push(...near);
       flags.push({
         id: 'no-solid-evidence', severity: 'critical',
         title: 'No real cabin material in the PSI data tested at this atmosphere',
-        detail: `The nearest real-material test in PSI (${t.acronym}) ran at ${near[1].value}% O2 and ${near[2].value} psia, an evidence distance of ${near[0].value} from your habitat. Material behavior at your atmosphere is untested in PSI, so any estimate here is an extrapolation.${litText}`,
+        detail: `The nearest real-material test in PSI (${t.acronym}) ran at ${factText(near[1])}% O2 and ${factText(near[2])} psia: ${factText(near[3])} O2 points and ${factText(near[4])} psia away from your habitat (evidence distance ${near[0].value}). Material behavior at your atmosphere is untested in PSI, so any estimate here is an extrapolation.${litText}`,
         factIds: [...near.map((f) => f.id), ...litIds],
       });
     } else {

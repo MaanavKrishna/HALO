@@ -14,6 +14,7 @@ import { HALO_DATA } from "@/lib/data/load";
 import { MATERIALS } from "@/lib/engine/materials";
 import type { Brief, Grade } from "@/lib/engine/types";
 import { BriefActions, BriefActionsProvider, BriefStickyBar } from "./BriefActions";
+import { GradeLadder } from "./GradeLadder";
 import { BriefIcon } from "./icons";
 import { Num } from "./parts";
 
@@ -174,7 +175,7 @@ export function BriefHeader({ brief }: { brief: Brief }) {
           </div>
 
           {/* The grade at the centre of the halo dial. */}
-          <div className="grade-panel order-4 flex flex-col items-center gap-5 py-2 text-center lg:order-none lg:py-0 lg:pt-2" data-grade={g}>
+          <div id="grade" className="grade-panel order-4 scroll-mt-24 flex flex-col items-center gap-5 py-2 text-center lg:order-none lg:py-0 lg:pt-2" data-grade={g}>
             <div className="relative grid w-full max-w-[13rem] place-items-center sm:max-w-[17rem] lg:max-w-[19rem]">
               <RingsGraphic rings={5} active={GRADE_RING[g]} drawIn maskInner={0.3} className="col-start-1 row-start-1" />
               <div className="brief-grade-glow col-start-1 row-start-1 grid place-items-center" style={{ zoom: 1.55 }}>
@@ -204,6 +205,7 @@ export function BriefHeader({ brief }: { brief: Brief }) {
                 )}
               </details>
             </div>
+            <GradeLadder brief={brief} />
             <a
               href="#flags"
               className="no-print inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-[var(--radius-pill)] border border-line bg-surface-1 px-4 py-2 transition-colors duration-[var(--dur-fast)] hover:border-line-strong"

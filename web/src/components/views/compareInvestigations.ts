@@ -44,8 +44,14 @@ export function parseIds(
     ids.length = MAX_IDS;
   }
   if (ids.length < MIN_IDS) {
-    if (parts.some((p) => p.trim())) notices.push(`Pick at least ${MIN_IDS} investigations; showing the default set.`);
-    return { ids: [...DEFAULT_IDS], notices, usedDefault: true };
+    if (ids.length === 0) {
+      if (parts.some((p) => p.trim())) notices.push(`Pick at least ${MIN_IDS} investigations; showing the default set.`);
+      return { ids: [...DEFAULT_IDS], notices, usedDefault: true };
+    }
+    // Keep what was asked for and pad with defaults up to the minimum.
+    const pad = DEFAULT_IDS.filter((d) => !ids.includes(d)).slice(0, MIN_IDS - ids.length);
+    notices.push(`Pick at least ${MIN_IDS} investigations; added ${pad.join(', ')} to compare against.`);
+    return { ids: [...ids, ...pad], notices, usedDefault: false };
   }
   return { ids, notices, usedDefault: false };
 }
@@ -110,15 +116,18 @@ function setRow(key: string, label: string, sets: (string[] | null)[], missingTe
     key,
     label,
     cells: sets.map((s) => (s === null || s.length === 0 ? { kind: 'set', items: [], missing: missingText } : { kind: 'set', items: s })),
-    same: sets.every((s) => norm(s) === norm(sets[0])),
+    same: sets.every((s) => s !== null && s.length > 0) && sets.every((s) => norm(s) === norm(sets[0])),
     shared,
     ...extra,
   };
 }
 
+/** A cell with no tabulated value: two gaps are not a similarity. */
+export const isMissing = (c: Cell) => (c.kind === 'text' ? !!c.missing : c.items.length === 0);
+
 function textRow(key: string, label: string, cells: Cell[], extra: Partial<MatrixRow> = {}): MatrixRow {
   const v = (c: Cell) => (c.kind === 'text' ? c.text : c.items.join('|'));
-  return { key, label, cells, same: cells.every((c) => v(c) === v(cells[0])), shared: [], ...extra };
+  return { key, label, cells, same: !cells.some(isMissing) && cells.every((c) => v(c) === v(cells[0])), shared: [], ...extra };
 }
 
 export function compareMatrix(invs: Investigation[], data: HaloData): MatrixRow[] {
@@ -167,12 +176,19 @@ export function compareMatrix(invs: Investigation[], data: HaloData): MatrixRow[
 }
 
 /** Plain-language similarities and differences, all derived from the matrix. */
-export function compareSummary(rows: MatrixRow[]): { same: string[]; differ: string[]; sharedItems: Array<{ label: string; items: string[] }> } {
+export function compareSummary(rows: MatrixRow[]): {
+  same: string[];
+  differ: string[];
+  untabulated: string[];
+  sharedItems: Array<{ label: string; items: string[] }>;
+} {
   const skip = new Set(['doi', 'rows', 'pubs']);
   const considered = rows.filter((r) => !skip.has(r.key));
+  const allMissing = (r: MatrixRow) => r.cells.every(isMissing);
   return {
     same: considered.filter((r) => r.same).map((r) => r.label),
-    differ: considered.filter((r) => !r.same).map((r) => r.label),
+    differ: considered.filter((r) => !r.same && !allMissing(r)).map((r) => r.label),
+    untabulated: considered.filter(allMissing).map((r) => r.label),
     sharedItems: considered
       .filter((r) => !r.same && r.shared.length > 0 && r.key !== 'fixed')
       .map((r) => ({ label: r.label, items: r.shared })),

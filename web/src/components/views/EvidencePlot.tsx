@@ -228,25 +228,44 @@ function Chart({
           const cx = x(r.o2Pct);
           const cy = y(r.pressurePsia);
           const arm = r.primary ? 9 : 6;
-          const right = cx < width * 0.72;
+          const lfs = fs - 1;
+          const w = r.label.length * lfs * 0.58;
+          // Place the label in the corner whose box covers the fewest data marks and stays inside the plot.
+          const marks = series.flatMap((s) => s.points.map((p) => ({ px: x(p.o2Pct), py: y(p.pressurePsia), pr: radius(p.count) * (fs / 11.5) + 2 })));
+          const options = [
+            { dx: arm + 6, dy: -arm - 2, anchor: "start" as const },
+            { dx: -arm - 6, dy: -arm - 2, anchor: "end" as const },
+            { dx: arm + 6, dy: arm + lfs + 2, anchor: "start" as const },
+            { dx: -arm - 6, dy: arm + lfs + 2, anchor: "end" as const },
+            { dx: 0, dy: -arm - lfs - 6, anchor: "middle" as const },
+            { dx: 0, dy: arm + lfs * 2 + 6, anchor: "middle" as const },
+          ].map((o) => {
+            const lx = cx + o.dx;
+            const ly = cy + o.dy;
+            const x0 = o.anchor === "start" ? lx : o.anchor === "end" ? lx - w : lx - w / 2;
+            const box = { x0: x0 - 2, y0: ly - lfs, x1: x0 + w + 2, y1: ly + 3 };
+            const out = box.x0 < M.l || box.x1 > width - M.r || box.y0 < M.t || box.y1 > height - M.b;
+            const cost =
+              marks.reduce((n, m) => n + (m.px + m.pr > box.x0 && m.px - m.pr < box.x1 && m.py + m.pr > box.y0 && m.py - m.pr < box.y1 ? 1 : 0), 0) +
+              (out ? 100 : 0);
+            return { lx, ly, anchor: o.anchor, cost };
+          });
+          const best = options.reduce((a, b) => (b.cost < a.cost ? b : a));
+          const d = `M${cx - arm} ${cy}H${cx + arm}M${cx} ${cy - arm}V${cy + arm}`;
           return (
             <g key={r.label}>
               {r.primary && <circle cx={cx} cy={cy} r={arm + 3} fill="none" stroke="var(--accent)" strokeWidth={1.25} />}
-              <path
-                d={`M${cx - arm} ${cy}H${cx + arm}M${cx} ${cy - arm}V${cy + arm}`}
-                stroke={r.primary ? "var(--accent)" : "var(--text-2)"}
-                strokeWidth={r.primary ? 1.75 : 1.25}
-                strokeLinecap="round"
-              />
+              <path d={d} stroke="var(--surface-1)" strokeWidth={4.5} strokeLinecap="round" />
+              <path d={d} stroke={r.primary ? "var(--accent)" : "var(--text-1)"} strokeWidth={r.primary ? 1.75 : 1.5} strokeLinecap="round" />
               <text
-                x={cx + (right ? arm + 6 : -arm - 6)}
-                y={cy - arm - 2}
-                textAnchor={right ? "start" : "end"}
-                fontSize={fs - 1}
+                x={best.lx}
+                y={best.ly}
+                textAnchor={best.anchor}
+                fontSize={lfs}
                 fontWeight={r.primary ? 600 : 500}
-                fill={r.primary ? "var(--accent)" : "var(--text-2)"}
+                fill={r.primary ? "var(--accent)" : "var(--text-1)"}
                 stroke="var(--surface-1)"
-                strokeWidth={3}
+                strokeWidth={3.5}
                 paintOrder="stroke"
               >
                 {r.label}

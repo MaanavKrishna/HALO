@@ -4,7 +4,7 @@ import type { InvestigationRow } from "@/lib/data/schema";
 import type { Investigation } from "@/lib/engine/types";
 import { doiUrl } from "@/lib/explore";
 import { SeriesSwatch, SERIES_STYLES } from "./EvidencePlot";
-import type { Cell, MatrixRow } from "./compareInvestigations";
+import { isMissing, type Cell, type MatrixRow } from "./compareInvestigations";
 
 function CellBody({ cell, row }: { cell: Cell; row: MatrixRow }) {
   if (cell.kind === "set") {
@@ -87,18 +87,27 @@ export function CompareMatrix({ invs, rows }: { invs: Investigation[]; rows: Mat
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.key} className={cx("border-b border-line last:border-b-0", !row.same && "bg-[color-mix(in_oklab,var(--accent-soft)_35%,transparent)]")}>
+            <tr key={row.key} className={cx("border-b border-line last:border-b-0", !row.same && !row.cells.every(isMissing) && "bg-[color-mix(in_oklab,var(--accent-soft)_35%,transparent)]")}>
               <th scope="row" className="px-4 py-3.5 text-left align-top font-normal">
                 <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span className="font-medium text-fg">{row.label}</span>
                   {row.si && <SiChip />}
                 </span>
-                <span className={cx("mt-1 inline-flex items-center gap-1.5 text-xs", row.same ? "text-fg-3" : "text-accent")}>
-                  <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
-                    {row.same ? <rect x="0.75" y="3.25" width="6.5" height="1.5" fill="currentColor" /> : <path d="M4 0.5L7.5 4L4 7.5L0.5 4Z" fill="currentColor" />}
-                  </svg>
-                  {row.same ? "Same" : "Differs"}
-                </span>
+                {row.cells.every(isMissing) ? (
+                  <span className="mt-1 inline-flex items-center gap-1.5 text-xs text-fg-3">
+                    <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+                      <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 1.2" />
+                    </svg>
+                    Not tabulated
+                  </span>
+                ) : (
+                  <span className={cx("mt-1 inline-flex items-center gap-1.5 text-xs", row.same ? "text-fg-3" : "text-accent")}>
+                    <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+                      {row.same ? <rect x="0.75" y="3.25" width="6.5" height="1.5" fill="currentColor" /> : <path d="M4 0.5L7.5 4L4 7.5L0.5 4Z" fill="currentColor" />}
+                    </svg>
+                    {row.same ? "Same" : "Differs"}
+                  </span>
+                )}
               </th>
               {row.cells.map((cell, i) => (
                 <td key={invs[i].psiId} className="px-4 py-3.5 align-top text-fg-2">

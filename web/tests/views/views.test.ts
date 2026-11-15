@@ -6,7 +6,7 @@ import { PRESETS } from '@/lib/engine/presets';
 import {
   DEFAULT_IDS, compareMatrix, compareSummary, normalizeId, parseIds, toggleHref,
 } from '@/components/views/compareInvestigations';
-import { SCREEN_MATERIALS, parseScreenParams, screenMaterial } from '@/components/materials/screener';
+import { SCREEN_MATERIALS, outcomeLabel, parseScreenParams, resolvedFuels, screenMaterial } from '@/components/materials/screener';
 import { LEVELS, classifyBurn, materialBounds, pairTally, parseSaffireII } from '@/components/gravity/gravity';
 import { PSI99_CSV, PSI99_SOURCE_FILE } from '@/components/gravity/psi99Table';
 import { STATIC_ROUTES } from '@/lib/site';
@@ -33,9 +33,13 @@ describe('compare investigations: URL selection', () => {
 
   it('keeps at most four and falls back below two', () => {
     expect(parseIds('10,20,21,22,23', KNOWN).ids).toEqual(['PSI-10', 'PSI-20', 'PSI-21', 'PSI-22']);
-    const one = parseIds('PSI-25', KNOWN);
-    expect(one.usedDefault).toBe(true);
+    const one = parseIds('PSI-26', KNOWN);
+    expect(one.ids[0]).toBe('PSI-26');
+    expect(one.ids).toHaveLength(2);
     expect(one.notices.join(' ')).toMatch(/at least 2/);
+    // An id that is already a default is kept, and the pad skips it.
+    expect(parseIds('PSI-25', KNOWN).ids).toEqual(['PSI-25', 'PSI-99']);
+    expect(parseIds('nope', KNOWN).usedDefault).toBe(true);
   });
 
   it('toggle links add up to four and remove down to two', () => {
@@ -65,6 +69,17 @@ describe('compare investigations: matrix', () => {
   it('a self-comparison has no differences', () => {
     const same = compareMatrix([invs[0], invs[0]], HALO_DATA);
     expect(compareSummary(same).differ).toEqual([]);
+  });
+
+  it('a gap in every column is not a similarity', () => {
+    const noRanges = HALO_DATA.investigations.filter((i) => !i.o2Range).slice(0, 2);
+    expect(noRanges).toHaveLength(2);
+    const r = compareMatrix(noRanges, HALO_DATA);
+    expect(r.find((x) => x.key === 'o2')!.same).toBe(false);
+    const sum = compareSummary(r);
+    expect(sum.same).not.toContain('O₂ range');
+    expect(sum.differ).not.toContain('O₂ range');
+    expect(sum.untabulated).toContain('O₂ range');
   });
 
   it('never shows sensors from a summary awaiting review', () => {
@@ -101,11 +116,57 @@ describe('material screener', () => {
     expect(s.psi.filter((e) => /pmma/i.test(e.test.fuel)).every((e) => !e.inferredMaterial)).toBe(true);
   });
 
+  it('carries "(see previous row)" forward within an investigation', () => {
+    const fuels = resolvedFuels(HALO_DATA.tests);
+    expect(fuels.get('PSI-99:2-6')).toEqual({ fuel: 'Cotton-Fiberglass (SIBAL)', fromPrevious: true });
+    expect(fuels.get('PSI-99:2-9')).toEqual({ fuel: 'PMMA', fromPrevious: true });
+    const at = parseScreenParams({}).atmosphere;
+    const pm = screenMaterial(pmma, at, HALO_DATA).psi.find((e) => e.test.id === 'PSI-99:2-9')!;
+    expect(pm.fuelFromPreviousRow).toBe(true);
+    expect(pm.inferredMaterial).toBe(true);
+    const cotton = SCREEN_MATERIALS.find((m) => m.id === 'cotton')!;
+    expect(screenMaterial(cotton, at, HALO_DATA).psi.map((e) => e.test.id)).toContain('PSI-99:2-6');
+    expect(screenMaterial(pmma, at, HALO_DATA).psi.map((e) => e.test.id)).not.toContain('PSI-99:2-6');
+  });
+
+  it('pins PMMA attribution: named PMMA rows are direct, BASS-II shape-only rows inferred, PMMA & Nomex counts for both', () => {
+    const at = parseScreenParams({}).atmosphere;
+    const s = screenMaterial(pmma, at, HALO_DATA);
+    const byId = new Map(s.psi.map((e) => [e.test.id, e]));
+    for (const e of s.psi) {
+      if (/pmma/i.test(e.fuel)) expect(e.inferredMaterial).toBe(e.fuelFromPreviousRow);
+      else expect(e.test.psiId).toBe('PSI-25');
+    }
+    expect(s.psi.some((e) => e.fuel === '1/4" clear rod' && e.inferredMaterial)).toBe(true);
+    expect(s.psi.some((e) => /wax|sibal|nomex natural/i.test(e.fuel))).toBe(false);
+    const nomex = SCREEN_MATERIALS.find((m) => m.id === 'nomex')!;
+    const both = HALO_DATA.tests.find((t) => t.fuel === 'PMMA & Nomex')!;
+    expect(byId.has(both.id)).toBe(true);
+    expect(screenMaterial(nomex, at, HALO_DATA).psi.map((e) => e.test.id)).toContain(both.id);
+  });
+
+  it('pins the Lampwick smoke counts: none below the scatter proxy, every run caught', () => {
+    const cotton = SCREEN_MATERIALS.find((m) => m.id === 'cotton')!;
+    const smoke = screenMaterial(cotton, parseScreenParams({}).atmosphere, HALO_DATA).smoke!;
+    expect(smoke.sameClass).toBe('Lampwick');
+    expect([smoke.result.scatterLow, smoke.result.scatterRuns]).toEqual([0, 26]);
+    const alone = smoke.whatIf.find((w) => w.combo.length === 1)!;
+    expect([alone.caught, alone.runs]).toEqual([26, 26]);
+  });
+
+  it('labels the outcome enum, including the CFI-G values', () => {
+    expect(outcomeLabel('unknown')).toBeNull();
+    expect(outcomeLabel(undefined)).toBeNull();
+    expect(outcomeLabel('no-hot-ignition')).toBe('No hot-flame ignition');
+    expect(outcomeLabel('cool-flame')).toBe('Cool flame');
+  });
+
   it('only matches solid rows and literature by material', () => {
     for (const m of SCREEN_MATERIALS) {
       const s = screenMaterial(m, parseScreenParams({}).atmosphere, HALO_DATA);
       expect(s.psi.every((e) => e.test.fuelClass === 'solid')).toBe(true);
       expect(s.literature.every((l) => m.match.test(l.row.material))).toBe(true);
+      expect(s.psi.every((e) => m.match.test(e.fuel) || (m.inferMatch?.test(e.fuel) ?? false))).toBe(true);
     }
   });
 
@@ -151,6 +212,8 @@ describe('partial-gravity bounds', () => {
     const b = materialBounds(HALO_DATA);
     expect(b.map((x) => x.id)).toEqual(expect.arrayContaining(['pmma', 'cotton', 'silicone', 'nomex']));
     expect(b.find((x) => x.id === 'kapton')).toBeUndefined();
+    expect(b.filter((x) => x.luci).map((x) => x.id).sort()).toEqual(['cotton', 'pmma']);
+    expect(b.every((x) => !('fm2' in x))).toBe(true);
   });
 });
 

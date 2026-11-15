@@ -403,7 +403,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
             title="Smoke-detector runs"
             lede={
               s.smoke
-                ? `SAME and SAME-R heated ${s.smoke.sameClass} samples in orbit and logged what each detector read. Counts compare each run's reading with HALO's alarm proxies: forward scatter at ${thr.scatterV.toFixed(1)} V, ionization at ${thr.ionizationDV.toFixed(3)} ΔV.`
+                ? `SAME and SAME-R heated ${s.smoke.sameClass} samples in orbit and logged what each detector read. Counts compare each run's reading with HALO's alarm proxies: forward scatter at ${thr.scatterV.toFixed(1)}\u00a0V, ionization at ${thr.ionizationDV.toFixed(3)}\u00a0ΔV.`
                 : `SAME and SAME-R did not test ${material.label}, so there is no smoke-detector evidence for it.`
             }
           />
@@ -428,7 +428,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
               </StatGroup>
               <p className="max-w-[70ch] text-sm text-fg-2">
                 The detector readings are measured; the alarm thresholds are HALO proxies, not certified alarm points. The ionization proxy is
-                calibrated on the Lampwick (cotton) runs, so Lampwick passes it by construction.{" "}
+                calibrated on the Lampwick (cotton) runs, so nearly every Lampwick run passes it by construction.{" "}
                 <Link href="/method#detector" prefetch={false} className="text-accent underline decoration-accent-line underline-offset-4 hover:decoration-current">
                   How the proxies are set
                 </Link>
@@ -463,9 +463,11 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
           <ButtonLink href="/gravity" variant="secondary" prefetch={false}>
             Partial-gravity bounds
           </ButtonLink>
-          <ButtonLink href={`/investigations/compare?ids=${(s.investigations.length >= 2 ? s.investigations : ["PSI-25", "PSI-99"]).slice(0, 4).join(",")}`} variant="ghost" prefetch={false}>
-            Compare its investigations
-          </ButtonLink>
+          {s.investigations.length >= 2 && (
+            <ButtonLink href={`/investigations/compare?ids=${s.investigations.slice(0, 4).join(",")}`} variant="ghost" prefetch={false}>
+              Compare its investigations
+            </ButtonLink>
+          )}
         </nav>
       </div>
     </>

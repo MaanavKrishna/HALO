@@ -156,6 +156,11 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/investig
             ) : (
               <p className="mt-3 text-fg-2">No attribute differs.</p>
             )}
+            {summary.untabulated.length > 0 && (
+              <p className="mt-4 text-sm text-fg-2">
+                Not tabulated for any of them: {summary.untabulated.join(", ")}. A shared gap is not counted as a similarity.
+              </p>
+            )}
             <p className="mt-4 text-xs text-fg-3">Shared items stay grey in the matrix; items only some have are marked with a diamond.</p>
           </div>
         </section>

@@ -120,6 +120,8 @@ const OUTCOME_LABEL: Record<string, string> = {
   'burned-out': 'Burned out',
   'flow-stopped': 'Flow stopped',
   'no-ignition': 'No ignition',
+  'no-hot-ignition': 'No hot-flame ignition',
+  'cool-flame': 'Cool flame',
   disrupted: 'Disrupted',
   spread: 'Spread',
 };

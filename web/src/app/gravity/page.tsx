@@ -170,7 +170,10 @@ export default function GravityPage() {
                   <tr key={p.sample} className="border-b border-line align-top last:border-b-0">
                     <td className="px-4 py-2.5 font-mono text-fg">{p.sample}</td>
                     <td className="px-4 py-2.5 text-fg">{p.material}</td>
-                    <td className="px-4 py-2.5 font-mono text-fg-2">{p.thickness}</td>
+                    <td className="px-4 py-2.5 font-mono text-fg-2">
+                      {p.thickness}
+                      {/^0\d/.test(p.thickness) && <span className="font-sans text-xs text-fg-3"> [sic]</span>}
+                    </td>
                     <td className="px-4 py-2.5 text-fg-2">
                       <span className="font-mono">{p.flow}</span> <span className="text-fg-3">{p.flowDirection.toLowerCase()}</span>
                     </td>
@@ -194,7 +197,7 @@ export default function GravityPage() {
             </table>
           </div>
           <p className="max-w-[72ch] text-xs text-fg-3">
-            Values are PSI&apos;s text, verbatim ({PSI99_SOURCE_FILE}). The table does not state the 1 g test atmosphere or flow. A burn length equal to
+            Values are PSI&apos;s text, verbatim ({PSI99_SOURCE_FILE}). The table does not state the 1 g test atmosphere or flow. Thicknesses marked [sic] are printed that way in PSI. A burn length equal to
             the sample length counts as a full burn; &ldquo;~ 0&rdquo; as no sustained burn.{" "}
             {saffire2 && doiUrl(saffire2.datasetDoi) && <ExternalLink href={doiUrl(saffire2.datasetDoi)!}>Saffire-II dataset (DOI {saffire2.datasetDoi})</ExternalLink>}
           </p>

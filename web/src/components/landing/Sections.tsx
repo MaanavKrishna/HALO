@@ -59,7 +59,7 @@ function ExtLink({ href, children }: { href: string; children: ReactNode }) {
 
 // ---------------------------------------------------------------- 1b. Why it matters
 
-export const WHY_HEADING = "Why fire safety in space matters.";
+export const WHY_HEADING = LANDING_HEADINGS.why;
 
 export function WhySection() {
   return (

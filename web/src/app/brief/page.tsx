@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";
 import { AftermathCard } from "@/components/brief/AftermathCard";
 import { BriefHeader } from "@/components/brief/BriefHeader";
@@ -16,16 +16,27 @@ import { SectionBoundary } from "@/components/brief/SectionBoundary";
 import { HALO_DATA } from "@/lib/data/load";
 import { buildBrief } from "@/lib/engine/brief";
 import { queryToHabitat } from "@/lib/engine/url";
+import { pageMetadata } from "@/lib/site";
 import "./brief.css";
 import "./print.css";
 
-export const metadata: Metadata = {
-  title: "Fire Brief",
-  description: "A cited fire-safety evidence brief for a habitat atmosphere, from NASA microgravity combustion data.",
-  alternates: { canonical: "/brief" },
-};
-
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+/** Title and share text name the habitat in the link (the name is sanitised by queryToHabitat); the image stays the root card. */
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }, parent: ResolvingMetadata): Promise<Metadata> {
+  const { habitat } = queryToHabitat(toQuery(await searchParams));
+  const root = await parent;
+  const meta = pageMetadata({
+    title: `${habitat.name} Fire Brief`,
+    description: `A cited fire-safety evidence brief for ${habitat.name}, from NASA microgravity combustion data.`,
+    path: "/brief",
+  });
+  return {
+    ...meta,
+    openGraph: { ...meta.openGraph, images: root.openGraph?.images },
+    twitter: { ...meta.twitter, images: root.twitter?.images },
+  };
+}
 
 export default function BriefPage({ searchParams }: { searchParams: SearchParams }) {
   return (

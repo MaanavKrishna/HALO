@@ -143,7 +143,7 @@ export function renderOgImage({ eyebrow, title, lede, footer }: { eyebrow: strin
             <HaloMark size={44} tile={false} />
             <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: "0.04em" }}>HALO</div>
             <div style={{ display: "flex", width: 1, height: 26, background: INK.lineStrong, marginLeft: 6, marginRight: 6 }} />
-            <div style={{ display: "flex", fontSize: 19, color: INK.text3, letterSpacing: "0.01em" }}>{footer}</div>
+            <div style={{ display: "flex", fontSize: 18, color: INK.text3, letterSpacing: "0.01em", whiteSpace: "nowrap" }}>{footer}</div>
           </div>
         </div>
       </div>

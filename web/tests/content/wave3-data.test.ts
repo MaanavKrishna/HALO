@@ -56,7 +56,7 @@ describe.skipIf(!real)('findings from the real data', () => {
     expect(f.stat.value).toBe('90');
     expect(f.body).toMatch(/not tests of an extinguisher or a suppression system/);
     expect(f.sources.map((s) => s.href)).toContain('https://doi.org/10.60555/mbq8-0451');
-    expect(f.body).toMatch(/The order holds for each fuel .*most of the nitrogen gap comes from the heptane runs/);
+    expect(f.body).toMatch(/The same direction shows for each fuel, on small counts .*most of the nitrogen gap comes from the heptane runs/);
     expect(f.viz.byFuel?.map((x) => x.fuel)).toEqual(['Methanol', 'Heptane']);
     expect(f.brief.href).toMatch(/[?&]l=1(&|$)/);
   });

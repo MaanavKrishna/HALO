@@ -98,7 +98,7 @@ That leaves 1,225 eligible rows. Fuel classes:
 
 | Class | Investigations |
 |---|---|
-| `solid` | BASS, BASS-II, Saffire-I/II/III |
+| `solid` | BASS-II, Saffire-I/II/III (BASS has no O2 column, so none of its rows are eligible) |
 | `solid_surrogate` | ACME BRE (gas burner emulating condensed-fuel burning) |
 | `droplet` | FLEX, FLEX-2, CFI |
 | `gas` | ACME CFI-G (normal), CLD, s-Flame, E-FIELD, SPICE, SLICE |

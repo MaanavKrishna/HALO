@@ -33,6 +33,9 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [{ source: "/investigations", destination: "/explore", permanent: true }];
+  },
   async rewrites() {
     return {
       beforeFiles: [

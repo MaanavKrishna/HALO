@@ -31,22 +31,22 @@ export default function FindingsPage() {
             <ButtonLink href="#solid-ceiling" iconEnd={<Icon name="arrowRight" size={16} />}>
               Read the findings
             </ButtonLink>
-            <ButtonLink href="/method" variant="secondary">
+            <ButtonLink href="/method" variant="secondary" className="max-sm:hidden">
               How it is measured
             </ButtonLink>
           </>
         }
         meta={
-          <StatGroup className="max-w-3xl">
+          <StatGroup className="max-w-4xl">
             <Stat label="PSI investigations" value={investigations.length} />
             <Stat label="Eligible test rows" value={fmt.format(manifest.eligibleRows)} />
-            {ceiling && <Stat label="Real-solid O2 ceiling, PSI rows" value={ceiling.stat.value} unit="%" />}
+            {ceiling && <Stat label="Highest O2 any real material was burned at (PSI rows)" value={ceiling.stat.value} unit="%" />}
             {win && <Stat label="Real solids, Moon window" value={win.stat.value} />}
           </StatGroup>
         }
       />
       <Article
-        className="content-wide"
+        className="content-wide py-6! sm:py-10! lg:py-14!"
         toc={findings.map((f) => ({ id: f.id, label: f.topic }))}
       >
         <div className="content-block flex flex-col gap-8 sm:gap-10">

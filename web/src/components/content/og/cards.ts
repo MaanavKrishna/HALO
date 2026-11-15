@@ -6,7 +6,7 @@ export const OG_CARDS = {
   root: {
     eyebrow: "Fire evidence for habitats",
     title: "In microgravity, a flame becomes a halo.",
-    lede: "HALO turns NASA's microgravity fire data into a one-page, cited fire brief for your habitat.",
+    lede: "HALO turns NASA's microgravity fire data into a cited fire brief for your habitat.",
     alt: "HALO: a halo-shaped microgravity flame beside the line “In microgravity, a flame becomes a halo.”",
   },
   findings: {

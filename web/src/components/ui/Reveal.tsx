@@ -3,7 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 /**
- * Scroll reveal: content rises 24px and sharpens from a soft blur as it
+ * Scroll reveal: content rises 24px and fades in as it
  * enters the viewport, once. Hidden state applies only when scripting is on
  * and motion is allowed (CSS in globals.css), so no-JS and reduced-motion
  * users always see the content. Use for narrative moments, not every block.

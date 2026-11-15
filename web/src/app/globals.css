@@ -323,7 +323,6 @@
   [data-reveal]:not([data-revealed]) {
     opacity: 0;
     translate: 0 24px;
-    filter: blur(8px);
     animation: reveal-failsafe 1ms linear 2.5s forwards;
   }
 }
@@ -331,14 +330,12 @@
   to {
     opacity: 1;
     translate: 0 0;
-    filter: none;
   }
 }
 [data-reveal] {
   transition:
     opacity var(--dur-reveal) var(--ease-out),
-    translate var(--dur-reveal) var(--ease-out),
-    filter var(--dur-reveal) var(--ease-out);
+    translate var(--dur-reveal) var(--ease-out);
   transition-delay: var(--reveal-delay, 0ms);
 }
 

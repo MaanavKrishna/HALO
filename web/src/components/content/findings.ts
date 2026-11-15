@@ -140,6 +140,7 @@ function saffireSpread(lit: LiteratureRow[]) {
     .filter((r) => r.spreadRateMmS !== null && r.o2Pct !== null)
     .map((r) => ({
       id: r.sampleId, o2: r.o2Pct as number, p: r.pressurePsia, rate: r.spreadRateMmS as number, mission: r.mission, material: r.material,
+      opposed: /opposed/i.test(r.outcome ?? ""),
       sources: r.sources ?? [{ url: r.sourceUrl, label: `NASA Technical Reports Server ${r.sourceUrl.split("/").pop()}` }],
     }));
 }
@@ -252,6 +253,11 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       kapton?.cmdUm != null && lamp?.cmdUm != null && kapton.cmdUm < lamp.cmdUm
         ? `Kapton smoke was the finest, a median particle size of ${um(kapton.cmdUm)} µm against ${um(lamp.cmdUm)} µm for Lampwick${lamp.scatterLow === 0 ? `, which reached the proxy in all ${lamp.scatterRuns} runs` : ""}.`
         : "";
+    const teflon = issBrief.detection.find((d) => d.material === "teflon");
+    const sizeNote =
+      finest && teflon?.cmdUm != null && kapton?.cmdUm != null && teflon.cmdUm > kapton.cmdUm && teflon.scatterLow > 0
+        ? ` Teflon smoke, at a median of ${um(teflon.cmdUm)} µm, is close to Lampwick's size yet also read low (${teflon.scatterLow} of ${teflon.scatterRuns} runs), so particle size alone does not explain the low readings.`
+        : "";
     const phr = blind.map((d) => `${d.scatterLow} of ${d.scatterRuns} ${MATERIALS[d.material as MaterialId].label}`).join(" and ");
     out.push({
       id: "detector-blind-spot",
@@ -260,7 +266,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       stat: { value: `${first.scatterLow}/${first.scatterRuns}`, label: `${MATERIALS[first.material as MaterialId].label} runs below the ${volts} V proxy` },
       second: blind[1] ? { value: `${blind[1].scatterLow}/${blind[1].scatterRuns}`, label: `${MATERIALS[blind[1].material as MaterialId].label} runs below the ${volts} V proxy` } : undefined,
       provenance: ["measured", "computed"],
-      body: `The ISS detector is certified in obscuration, not volts, so HALO treats a ${volts} V forward-scatter reading as the alarm point. ${finest} Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${Number((data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1))} atm); smoke behavior at habitat atmosphere is untested. Cabin air also carries dust a detector must not mistake for smoke: PSI's Aerosol Sampling Experiment (ASE) collected ISS cabin particles, but it has no experiment table to test a detector against.`,
+      body: `The ISS detector is certified in obscuration, not volts, so HALO treats a ${volts} V forward-scatter reading as the alarm point. ${finest}${sizeNote} Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${Number((data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1))} atm); smoke behavior at habitat atmosphere is untested. Cabin air also carries dust a detector must not mistake for smoke: PSI's Aerosol Sampling Experiment (ASE) collected ISS cabin particles, but it has no experiment table to test a detector against.`,
       viz: { kind: "runs", rows: blind.map((d) => ({ label: MATERIALS[d.material as MaterialId].label, low: d.scatterLow, runs: d.scatterRuns })), threshold: data.detector.thresholds.scatterV.toFixed(1) },
       sources: [
         det.doi ? { label: `${det.note ?? "SAME"}: smoke aerosol measurement experiment`, href: doiHref(det.doi), detail: `NASA PSI ${det.psiId} dataset, doi:${det.doi}` } : { label: "SAME smoke detector runs", href: null },
@@ -275,6 +281,10 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   const sea: Habitat = { ...iss, liquids: true };
   const curve = extinctionAt(sea, ext).curve.filter((p) => p.o2 >= 12 && p.o2 <= 40);
   const extInv = data.investigations.find((i) => i.psiId === ext.source.psiId);
+  // Fuels in the fitted runs (the model's features carry no fuel term).
+  const extFuels = ext.features.some((f) => /fuel/i.test(f))
+    ? []
+    : uniq(testRows(data).filter((t) => t.psiId === ext.source.psiId && t.diluent === ext.diluent && !!t.outcome).map((t) => t.fuel.toLowerCase())).sort();
   out.push({
     id: "droplet-extinction",
     topic: "Liquid droplet fuels",
@@ -282,7 +292,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     stat: { value: fmt1(ext.o2At50.median), unit: "%", label: "50% self-extinction point", detail: `95% interval ${fmt1(ext.o2At50.lo)}–${fmt1(ext.o2At50.hi)}%` },
     second: { value: ext.cvAuc.toFixed(2), label: "Cross-validated AUC" },
     provenance: ["model"],
-    body: `A logistic model fitted to ${ext.n} ${extInv?.acronym ?? "FLEX"} droplet tests (${ext.nExt} self-extinctions, ${ext.diluent} diluent, ${ext.coefs.length} bootstrap refits) puts the even-odds point near sea-level pressure. ${artemis.name} at ${artemis.o2Pct}% O2 is ${artemis.o2Pct > ext.o2At50.hi ? "above the whole interval" : "inside the interval"}, and its pressure is outside the fitted ${ext.pRangeAtm[0]}–${ext.pRangeAtm[1]} atm range.`,
+    body: `A logistic model fitted to ${ext.n} ${extInv?.acronym ?? "FLEX"} droplet tests (${ext.nExt} self-extinctions, ${ext.diluent} diluent, ${ext.coefs.length} bootstrap refits)${extFuels.length > 1 ? `, ${extFuels.join(" and ")} pooled with no fuel term,` : ""} puts the even-odds point near sea-level pressure. ${artemis.name} at ${artemis.o2Pct}% O2 is ${artemis.o2Pct > ext.o2At50.hi ? "above the whole interval" : "inside the interval"}, and its pressure is outside the fitted ${ext.pRangeAtm[0]}–${ext.pRangeAtm[1]} atm range. 'Went out' means the visible hot flame; FLEX heptane droplets went on burning as cool flames after it.`,
     viz: { kind: "curve", points: curve, at50: ext.o2At50, marker: { label: artemis.name, o2: artemis.o2Pct } },
     sources: [datasetSource(data, ext.source.psiId)],
     brief: briefLink({ ...artemis, liquids: true }, data, "with liquid fuels"),
@@ -326,7 +336,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       .map((f) => `${f.fuel.toLowerCase()}: ${f.cells.map((c) => `${DILUENT_TEXT[c.d]} ${share(c)}% of ${c.n}`).join(", ")}`)
       .join("; ");
     const fuelSentence = allHold
-      ? ` The order holds for each fuel (${fuelText}); most of the nitrogen gap comes from the ${widest.fuel.toLowerCase()} runs.`
+      ? ` The same direction shows for each fuel, on small counts (${fuelText}); most of the nitrogen gap comes from the ${widest.fuel.toLowerCase()} runs.`
       : ` By fuel: ${fuelText}.`;
     out.push({
       id: "diluent-suppression",
@@ -340,7 +350,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       provenance: ["measured", "computed"],
       body: `FLEX burned ${fuels.join(" and ").toLowerCase()} droplets in microgravity with nitrogen, carbon dioxide or helium as the inert gas. A run counts here when the flame went out before the droplet burned away or broke up. Over all ${flex.length} eligible runs that is ${rows
         .map((r) => `${share(r.all)}% for ${DILUENT_TEXT[r.d]} (${r.all.ext} of ${r.all.n})`)
-        .join(", ")}, but the nitrogen runs go up to ${fmt1(n2Max)}% O2 and the others stop at ${fmt1(otherMax)}%, so the fair comparison keeps only the ${shared.length} O2 levels all ${dils.length} gases were run at (${levels}).${fuelSentence} Pressure (${fmt1(Math.min(...ps))}–${fmt1(Math.max(...ps))} atm) and the fuel mix still differ between the groups. These are flames going out on their own in a diluted atmosphere, not tests of an extinguisher or a suppression system, and HALO's extinction model uses the nitrogen runs only.`,
+        .join(", ")}, but the nitrogen runs go up to ${fmt1(n2Max)}% O2 and the others stop at ${fmt1(otherMax)}%, so a closer comparison keeps only the ${shared.length} O2 levels all ${dils.length} gases were run at (${levels}).${fuelSentence} Pressure (${fmt1(Math.min(...ps))}–${fmt1(Math.max(...ps))} atm), droplet size and the fuel mix still differ between the groups, and within a single fuel the gaps are within run-to-run chance, so read this as an association, not a controlled effect. These are flames going out on their own in a diluted atmosphere, not tests of an extinguisher or a suppression system, and HALO's extinction model uses the nitrogen runs only.`,
       viz: {
         kind: "diluent",
         rows: rows.map(({ label, matched, all }) => ({ label, matched, all })),
@@ -366,6 +376,15 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   if (fastest && baseRows.length) {
     const lo = Math.min(...baseRows.map((r) => r.rate));
     const hi = Math.max(...baseRows.map((r) => r.rate));
+    // Hedges: how many points are opposed-flow, and whether the burns between the fastest near-air burn and the top one were any faster.
+    const opposed = spread.filter((r) => r.opposed).length;
+    const baseTop = baseRows.reduce((a, b) => (b.rate > a.rate ? b : a));
+    const between = spread.filter((r) => r.o2 > ELEVATED_O2 && r.o2 < fastest.o2);
+    const betweenO2 = between.map((r) => r.o2);
+    const notFaster =
+      between.length > 1 && between.every((r) => r.rate <= baseTop.rate)
+        ? `, and the ${fmt1(Math.min(...betweenO2))}–${fmt1(Math.max(...betweenO2))}% O2 burns were not faster than the ${fmt1(baseTop.o2)}% one`
+        : "";
     out.push({
       id: "saffire-spread",
       topic: "Large-scale fires",
@@ -376,7 +395,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       stat: { value: String(fastest.rate), unit: "mm/s", label: `${fastest.mission} ${fastest.id} at ${fmt1(fastest.o2)}% O2` },
       second: { value: `${lo}–${hi}`, unit: "mm/s", label: `${baseRows.length} burns at ${fmt1(Math.min(...baseRows.map((r) => r.o2)))}–${fmt1(Math.max(...baseRows.map((r) => r.o2)))}% O2` },
       provenance: ["literature"],
-      body: `Saffire burned large samples inside uncrewed cargo vehicles after they left the station. Of the ${spread.length} spread rates in NASA technical reports, the fastest came at the highest oxygen: ${fastest.mission} ${fastest.id}, ${shortMaterial(fastest.material)}${fastest.p !== null ? ` at ${fastest.p} psia` : ""}. Material, sample size, flow and pressure changed between missions too (${pressureSpan(spread)}), so this is a few points, not a fit.`,
+      body: `Saffire burned large samples inside uncrewed cargo vehicles after they left the station. Of the ${spread.length} spread rates in NASA technical reports, the fastest came at the highest oxygen: ${fastest.mission} ${fastest.id}, ${shortMaterial(fastest.material)}${fastest.p !== null ? ` at ${fastest.p} psia` : ""}. Material, sample size, flow, pressure and spread direction${opposed ? ` (${opposed} of the points ${opposed === 1 ? "is" : "are"} opposed-flow)` : ""} changed between missions too${notFaster} (${pressureSpan(spread)}), so this is a few points, not a fit.`,
       viz: { kind: "spread", rows: spread.map((r) => ({ id: r.id, o2: r.o2, rate: r.rate, mission: r.mission, elevated: r.o2 > ELEVATED_O2 })) },
       sources: [...new Map(spread.flatMap((r) => r.sources).map((s) => [s.url, s.label])).entries()].map(([u, label]) => ({
         label,

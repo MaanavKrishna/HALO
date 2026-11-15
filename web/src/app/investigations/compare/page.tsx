@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { ButtonLink, Callout, Icon, PageHero, Panel } from "@/components/ui";
+import { ButtonLink, Callout, Icon, PageHero, Panel, ProvenanceBadge } from "@/components/ui";
 import { CompareMatrix } from "@/components/views/CompareMatrix";
 import { EvidencePlot, SERIES_STYLES, SeriesSwatch, type PlotSeries } from "@/components/views/EvidencePlot";
 import { LinkChips } from "@/components/views/LinkChips";
@@ -38,7 +38,7 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/investig
     key: inv.psiId,
     label: inv.acronym,
     ...SERIES_STYLES[i],
-    points: plotPoints(HALO_DATA.tests, inv.psiId).map((p) => ({ o2Pct: p.o2Pct, pressurePsia: p.pressurePsia, count: p.count })),
+    points: plotPoints(HALO_DATA.tests, inv.psiId).map((p) => ({ o2Pct: p.o2Pct, pressurePsia: p.pressurePsia, count: p.count, unmeasured: !p.measured })),
   }));
   const plotted = series.filter((s) => s.points.length > 0);
   const unplotted = series.filter((s) => s.points.length === 0);
@@ -198,6 +198,10 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/investig
                       </svg>
                       Reference habitat
                     </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <SeriesSwatch shape="circle" tone="ink" dashed />
+                      Dashed outline: oxygen or pressure inferred or assumed
+                    </span>
                     <span>Larger marks merge more tests.</span>
                   </>
                 }
@@ -229,6 +233,7 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/investig
                       <th scope="col" className="type-label px-4 py-3 text-right font-medium text-fg-3">O₂ (%)</th>
                       <th scope="col" className="type-label px-4 py-3 text-right font-medium text-fg-3">Pressure (psia)</th>
                       <th scope="col" className="type-label px-4 py-3 text-right font-medium text-fg-3">Tests</th>
+                      <th scope="col" className="type-label px-4 py-3 text-left font-medium text-fg-3">Conditions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -239,6 +244,16 @@ async function Comparison({ searchParams }: { searchParams: PageProps<"/investig
                           <td className="px-4 py-2 text-right font-mono text-fg">{r1(p.o2Pct)}</td>
                           <td className="px-4 py-2 text-right font-mono text-fg">{r1(p.pressurePsia)}</td>
                           <td className="px-4 py-2 text-right font-mono text-fg">{p.count}</td>
+                          <td className="px-4 py-2">
+                            {p.unmeasured ? (
+                              <span className="inline-flex items-center gap-1.5 text-xs text-fg-2">
+                                <SeriesSwatch shape="circle" tone="ink" dashed />
+                                Inferred or assumed
+                              </span>
+                            ) : (
+                              <ProvenanceBadge provenance="measured" />
+                            )}
+                          </td>
                         </tr>
                       )),
                     )}

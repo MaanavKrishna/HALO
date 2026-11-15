@@ -1,7 +1,12 @@
 // Shared types for HALO. Every engine module imports from this file.
 
 export type FuelClass = 'solid' | 'solid_surrogate' | 'droplet' | 'gas';
-export type Provenance = 'measured' | 'assumed' | 'inferred' | 'literature' | 'model' | 'si';
+/**
+ * Where a value came from. `computed` is arithmetic on data (counts, ratios,
+ * partial pressure, evidence distance); `model` is a fitted statistical model
+ * (the FLEX extinction fit) and what it is evaluated at.
+ */
+export type Provenance = 'measured' | 'assumed' | 'inferred' | 'literature' | 'computed' | 'model' | 'si';
 export type MaterialId = 'kapton' | 'teflon' | 'silicone' | 'cotton' | 'pyrell' | 'dbp' | 'pmma' | 'nomex';
 export type DetectorId = 'scatter' | 'ionization';
 export type Grade = 'A' | 'B' | 'C' | 'D' | 'F';

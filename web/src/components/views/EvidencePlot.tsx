@@ -19,6 +19,8 @@ export interface PlotSeriesPoint {
   count?: number;
   /** Hollow mark: at least one condition inferred or assumed. */
   hollow?: boolean;
+  /** Dashed hollow outline: at least one condition inferred or assumed (for series whose fill already encodes the series). */
+  unmeasured?: boolean;
 }
 
 export interface PlotSeries {
@@ -76,6 +78,7 @@ export function Mark({
   cy,
   r,
   hollow,
+  dashed,
 }: {
   shape: SeriesShape;
   tone: SeriesTone;
@@ -83,11 +86,14 @@ export function Mark({
   cy: number;
   r: number;
   hollow?: boolean;
+  dashed?: boolean;
 }) {
   const c = color(tone);
-  const paint = hollow
-    ? { fill: "var(--surface-1)", stroke: c, strokeWidth: 1.6 }
-    : { fill: c, fillOpacity: 0.85, stroke: "var(--surface-1)", strokeWidth: 1 };
+  const paint = dashed
+    ? { fill: "var(--surface-1)", fillOpacity: 0.6, stroke: c, strokeWidth: 1.4, strokeDasharray: "2.2 1.8" }
+    : hollow
+      ? { fill: "var(--surface-1)", stroke: c, strokeWidth: 1.6 }
+      : { fill: c, fillOpacity: 0.85, stroke: "var(--surface-1)", strokeWidth: 1 };
   switch (shape) {
     case "circle":
       return <circle cx={cx} cy={cy} r={r} {...paint} />;
@@ -107,10 +113,10 @@ export function Mark({
 }
 
 /** A 12px legend swatch for a series. */
-export function SeriesSwatch({ shape, tone, hollow }: { shape: SeriesShape; tone: SeriesTone; hollow?: boolean }) {
+export function SeriesSwatch({ shape, tone, hollow, dashed }: { shape: SeriesShape; tone: SeriesTone; hollow?: boolean; dashed?: boolean }) {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" className="shrink-0">
-      <Mark shape={shape} tone={tone} cx={7} cy={7.5} r={4.4} hollow={hollow} />
+      <Mark shape={shape} tone={tone} cx={7} cy={7.5} r={4.4} hollow={hollow} dashed={dashed} />
     </svg>
   );
 }
@@ -214,6 +220,7 @@ function Chart({
               cy={y(p.pressurePsia)}
               r={radius(p.count) * (fs / 11.5)}
               hollow={s.hollow ?? p.hollow}
+              dashed={p.unmeasured}
             />
           )),
         )}

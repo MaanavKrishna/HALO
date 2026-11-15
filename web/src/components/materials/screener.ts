@@ -130,7 +130,37 @@ export function outcomeLabel(o: string | null | undefined): string | null {
   return OUTCOME_LABEL[o] ?? o;
 }
 
-export interface PsiEvidence { test: TestPoint & RowExtra; d: number; inferredMaterial: boolean }
+export interface PsiEvidence {
+  test: TestPoint & RowExtra;
+  d: number;
+  inferredMaterial: boolean;
+  /** The fuel text used for matching: the row's own, or the previous row's when PSI wrote "(see previous row)". */
+  fuel: string;
+  /** True when `fuel` was carried forward from the previous row of the same investigation. */
+  fuelFromPreviousRow: boolean;
+}
+
+const SEE_PREVIOUS = /see previous row/i;
+
+/**
+ * Each test's fuel text, with PSI's "(see previous row)" replaced by the
+ * previous row's fuel in the same investigation (rows keep PSI table order).
+ */
+export function resolvedFuels(tests: TestPoint[]): Map<string, { fuel: string; fromPrevious: boolean }> {
+  const out = new Map<string, { fuel: string; fromPrevious: boolean }>();
+  const last = new Map<string, string>();
+  for (const t of tests) {
+    const own = t.fuel.trim();
+    if (SEE_PREVIOUS.test(own) || !own) {
+      const prev = last.get(t.psiId);
+      out.set(t.id, prev ? { fuel: prev, fromPrevious: true } : { fuel: own, fromPrevious: false });
+    } else {
+      last.set(t.psiId, own);
+      out.set(t.id, { fuel: own, fromPrevious: false });
+    }
+  }
+  return out;
+}
 export interface LitEvidence { row: LiteratureRow; d: number | null }
 
 export interface Nearest { d: number; o2Gap: number; pGap: number; label: string }
@@ -152,11 +182,19 @@ function matchesPsi(m: MaterialDef, fuel: string): { hit: boolean; inferred: boo
 
 export function screenMaterial(m: MaterialDef, a: Atmosphere, data: HaloData): Screen {
   const psi: PsiEvidence[] = [];
+  const fuels = resolvedFuels(data.tests);
   for (const t of data.tests) {
     if (t.fuelClass !== 'solid') continue;
-    const { hit, inferred } = matchesPsi(m, t.fuel);
+    const r = fuels.get(t.id) ?? { fuel: t.fuel, fromPrevious: false };
+    const { hit, inferred } = matchesPsi(m, r.fuel);
     if (!hit) continue;
-    psi.push({ test: t, d: scaledDistance(a.o2Pct, a.pressurePsia, t.o2Pct, t.pressurePsia), inferredMaterial: inferred });
+    psi.push({
+      test: t,
+      d: scaledDistance(a.o2Pct, a.pressurePsia, t.o2Pct, t.pressurePsia),
+      inferredMaterial: inferred || r.fromPrevious,
+      fuel: r.fuel,
+      fuelFromPreviousRow: r.fromPrevious,
+    });
   }
   psi.sort((x, y) => x.d - y.d || x.test.id.localeCompare(y.test.id));
 
@@ -171,7 +209,7 @@ export function screenMaterial(m: MaterialDef, a: Atmosphere, data: HaloData): S
   const np = psi[0];
   const nl = literature.find((l) => l.d !== null);
   const nearestPsi: Nearest | null = np
-    ? { d: np.d, o2Gap: np.test.o2Pct - a.o2Pct, pGap: np.test.pressurePsia - a.pressurePsia, label: `${np.test.acronym} · ${np.test.fuel}` }
+    ? { d: np.d, o2Gap: np.test.o2Pct - a.o2Pct, pGap: np.test.pressurePsia - a.pressurePsia, label: `${np.test.acronym} · ${np.fuel}` }
     : null;
   const nearestLit: Nearest | null =
     nl && nl.d !== null

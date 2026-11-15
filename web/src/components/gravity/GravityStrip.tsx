@@ -21,19 +21,17 @@ export function StripMarker({ kind, className }: { kind: "psi" | "oneg" | "lit" 
 /**
  * One material's line across the gravity axis: an end mark at microgravity and
  * at 1 g where evidence exists, the untested span between them hatched, the
- * Moon and Mars ticks, and LUCI / FM2 markers at lunar gravity.
+ * Moon and Mars ticks, and a LUCI marker at lunar gravity.
  */
 export function GravityStrip({
   micro,
   oneG,
   luci,
-  fm2,
   label,
 }: {
   micro: "psi" | "lit" | "none";
   oneG: boolean;
   luci: boolean;
-  fm2: boolean;
   label: string;
 }) {
   return (
@@ -58,14 +56,13 @@ export function GravityStrip({
           style={{ left: `calc(0.5rem + (100% - 1rem) * ${l.g})` }}
         />
       ))}
-      {(luci || fm2) && (
+      {luci && (
         <span
           aria-hidden="true"
           className="absolute top-0 flex -translate-x-1/2 gap-0.5"
           style={{ left: `calc(0.5rem + (100% - 1rem) * ${moon.g})` }}
         >
-          {luci && <StripMarker kind="luci" />}
-          {fm2 && <StripMarker kind="fm2" />}
+          <StripMarker kind="luci" />
         </span>
       )}
       <span aria-hidden="true" className="absolute left-2 top-1/2 -translate-x-1/2 -translate-y-1/2">

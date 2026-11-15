@@ -73,7 +73,7 @@ export default function GravityPage() {
           <SectionHead
             id="bounds"
             title="Each material, from orbit to the ground"
-            lede="A filled end means NASA has burned the material at that gravity. The hatched span between has no PSI data; the tinted part is the Moon-to-Mars range habitats will live in."
+            lede="A filled end means NASA has tested the material at that gravity. The hatched span between has no PSI data; the tinted part is the Moon-to-Mars range habitats will live in."
           />
           <div className="overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]">
             <div className="hidden grid-cols-[minmax(0,13rem)_minmax(0,1fr)_minmax(0,13rem)] gap-6 border-b border-line px-5 py-3 md:grid">
@@ -87,7 +87,7 @@ export default function GravityPage() {
                 const oneGText = b.oneG.length
                   ? b.oneG.map((p) => `${p.sample}: ${BURN_LABEL[p.oneG].toLowerCase()}`).join("; ")
                   : null;
-                const label = `${b.label}: microgravity ${micro === "none" ? "no evidence" : `${b.psiRows} PSI rows and ${b.litPoints} Saffire points`}; Moon and Mars untested in PSI${b.luci ? "; LUCI burned it in simulated lunar gravity; FM2 plans it on the Moon" : ""}; 1 g ${b.oneG.length ? `${b.oneG.length} Saffire-II pairs` : "no paired test in PSI"}.`;
+                const label = `${b.label}: microgravity ${micro === "none" ? "no evidence" : `${b.psiRows} PSI rows and ${b.litPoints} Saffire points`}; Moon and Mars untested in PSI${b.luci ? "; LUCI burned it in simulated lunar gravity, results outside PSI" : ""}; 1 g ${b.oneG.length ? `${b.oneG.length} Saffire-II pairs` : "no paired test in PSI"}.`;
                 return (
                   <li key={b.id} className="grid gap-4 border-b border-line px-5 py-5 last:border-b-0 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)_minmax(0,13rem)] md:items-center md:gap-6">
                     <div className="flex flex-col gap-1">
@@ -113,7 +113,7 @@ export default function GravityPage() {
                       <div className="md:hidden">
                         <GravityAxis />
                       </div>
-                      <GravityStrip micro={micro} oneG={b.oneG.length > 0} luci={b.luci} fm2={b.fm2} label={label} />
+                      <GravityStrip micro={micro} oneG={b.oneG.length > 0} luci={b.luci} label={label} />
                     </div>
                     <div className="flex flex-col gap-1 md:text-right">
                       {oneGText ? (
@@ -132,12 +132,11 @@ export default function GravityPage() {
               })}
             </ul>
             <div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-line bg-surface-2/40 px-5 py-3 text-xs text-fg-3">
-              <span className="inline-flex items-center gap-1.5"><StripMarker kind="psi" /> PSI rows in microgravity</span>
+              <span className="inline-flex items-center gap-1.5"><StripMarker kind="psi" /> PSI rows tested in microgravity</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="lit" /> Saffire literature only</span>
-              <span className="inline-flex items-center gap-1.5"><StripMarker kind="oneg" /> Paired 1 g burn (PSI-99)</span>
+              <span className="inline-flex items-center gap-1.5"><StripMarker kind="oneg" /> Paired 1 g test (PSI-99)</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="none" /> Nothing at this end</span>
               <span className="inline-flex items-center gap-1.5"><StripMarker kind="luci" /> LUCI, simulated lunar gravity (outside PSI)</span>
-              <span className="inline-flex items-center gap-1.5"><StripMarker kind="fm2" /> FM2, planned on the Moon</span>
             </div>
           </div>
           <p className="max-w-[72ch] text-xs text-fg-3">
@@ -245,7 +244,7 @@ export default function GravityPage() {
           <SectionHead
             id="vehicles"
             title="What will fill the middle"
-            lede="Two NASA efforts burn the same two materials HALO's bounds lean on most: cotton-fiberglass fabric and acrylic. Neither is in PSI yet."
+            lede="Two NASA efforts aim at lunar gravity. Neither has data in PSI yet."
           />
           <ol className="grid gap-5 md:grid-cols-2">
             <li className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-line bg-surface-1 p-6 shadow-[var(--inner-highlight),var(--elev-1)]">
@@ -269,8 +268,9 @@ export default function GravityPage() {
                 <span className="type-label text-fg-3">Planned · on the Moon</span>
               </p>
               <p className="text-fg-2">
-                Flammability of Materials on the Moon is a sealed, self-operating burn chamber for a lunar lander: NASA calls it the first
-                combustion experiment on another planetary body. It is built to burn fabric and acrylic samples in habitat-like air mixtures.
+                Flammability of Materials on the Moon is a sealed, self-operating burn chamber: NASA calls it the first combustion experiment
+                on another planetary body. It burns its fuel samples one at a time in atmospheres planned for future lunar habitats or
+                vehicles. NASA&apos;s page does not list which materials, so HALO does not attach it to any material above.
               </p>
               <ExternalLink href={FM2_URL} className="self-start text-sm">
                 NASA Glenn: FM2

@@ -142,12 +142,10 @@ export interface MaterialBound {
   oneG: SaffirePair[];
   /** NTRS reports LUCI burned this material in simulated lunar gravity (results outside PSI). */
   luci: boolean;
-  /** NASA lists this material among FM2's planned samples on the Moon. */
-  fm2: boolean;
 }
 
-/** LUCI burned a cotton-fiberglass fabric and an acrylic rod; FM2 plans SIBAL fabric and acrylic rods (NTRS 20250010653; Glenn FM2 page). */
-const LUNAR_VEHICLE_MATERIALS = new Set(['cotton', 'pmma']);
+/** LUCI burned a cotton-fiberglass composite fabric and an acrylic (PMMA) rod (NTRS 20250010653). */
+const LUCI_MATERIALS = new Set(['cotton', 'pmma']);
 
 const range = (xs: number[]): [number, number] | null => (xs.length ? [Math.min(...xs), Math.max(...xs)] : null);
 
@@ -167,8 +165,7 @@ export function materialBounds(data: HaloData, pairs: SaffirePair[] = parseSaffi
         litPoints: s.literature.length,
         litO2: range(lit),
         oneG,
-        luci: LUNAR_VEHICLE_MATERIALS.has(m.id),
-        fm2: LUNAR_VEHICLE_MATERIALS.has(m.id),
+        luci: LUCI_MATERIALS.has(m.id),
       },
     ];
   });

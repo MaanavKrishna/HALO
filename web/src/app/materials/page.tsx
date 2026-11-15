@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { Suspense } from "react";
-import { Button, ButtonLink, Callout, Icon, NumberField, PageHero, Panel, ProvenanceBadge, Stat, StatGroup } from "@/components/ui";
+import { Button, ButtonLink, buttonClass, Callout, Icon, NumberField, PageHero, Panel, ProvenanceBadge, Stat, StatGroup } from "@/components/ui";
 import { Cond, ExternalLink, SectionHead, ringText, signed } from "@/components/materials/parts";
 import {
-  ATMOSPHERE_PRESETS, SCREEN_MATERIALS, clusterPsi, outcomeLabel, evidenceCounts, parseScreenParams, screenHref, screenMaterial,
+  ATMOSPHERE_PRESETS, SCREEN_MATERIALS, clusterPsi, outcomeLabel, type PsiEvidence, evidenceCounts, parseScreenParams, screenHref, screenMaterial,
 } from "@/components/materials/screener";
 import { EvidencePlot, SeriesSwatch } from "@/components/views/EvidencePlot";
 import { LinkChips } from "@/components/views/LinkChips";
@@ -32,6 +33,76 @@ export const metadata = pageMetadata({
 const ATM_SHORT: Record<string, string> = { iss: "ISS", artemis: "Artemis", moon: "Moon", suit: "EVA suit" };
 const atm = (x: number) => Number((x / 14.696).toFixed(1));
 
+const FIRST_ROWS = 20;
+const SAFFIRE_PSI = new Set(["PSI-98", "PSI-99", "PSI-100"]);
+
+function PsiTable({ rows, caption }: { rows: PsiEvidence[]; caption: string }) {
+  const byPsi = new Map(HALO_DATA.investigations.map((i) => [i.psiId, i]));
+  return (
+    <div className="relative max-h-[36rem] overflow-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" tabIndex={0} role="region" aria-label={caption}>
+      <table className="w-full min-w-[46rem] border-collapse text-sm">
+        <caption className="sr-only">{caption}</caption>
+        <thead className="glass-chrome sticky top-0 z-[1]">
+          <tr>
+            {["Investigation", "Sample", "O₂ (%)", "Pressure (psia)", "Flow (cm/s)", "Outcome", "Distance"].map((h, i) => (
+              <th key={h} scope="col" className={`type-label px-4 py-3 font-medium text-fg-3 ${i >= 2 && i !== 5 ? "text-right" : "text-left"}`}>
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ test: t, d, inferredMaterial, fuel, fuelFromPreviousRow }) => {
+            const inv = byPsi.get(t.psiId);
+            const doi = inv ? doiUrl(inv.datasetDoi) : null;
+            return (
+              <tr key={t.id} className="border-t border-line align-top">
+                <td className="px-4 py-2.5">
+                  <span className="block text-fg">{t.acronym}</span>
+                  {doi ? (
+                    <ExternalLink href={doi} className="font-mono text-xs">
+                      {t.psiId} dataset
+                    </ExternalLink>
+                  ) : (
+                    <span className="font-mono text-xs text-fg-3">{t.psiId}</span>
+                  )}
+                </td>
+                <td className="max-w-[16rem] px-4 py-2.5 text-fg-2">
+                  {fuel}
+                  {fuelFromPreviousRow ? (
+                    <span className="mt-0.5 block text-xs text-fg-3">PSI: &ldquo;{t.fuel}&rdquo;; carried from the row above</span>
+                  ) : (
+                    inferredMaterial && <span className="mt-0.5 block text-xs text-fg-3">material inferred from the sample name</span>
+                  )}
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  <Cond value={t.o2Pct} src={t.o2Src} />
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  <Cond value={t.pressurePsia} src={t.pSrc} />
+                </td>
+                <td className="px-4 py-2.5 text-right font-mono">
+                  {t.flowCmS != null ? (
+                    t.flowSrc && t.flowSrc !== "measured" ? (
+                      <Cond value={t.flowCmS} src={t.flowSrc} />
+                    ) : (
+                      <span className="text-fg">{t.flowCmS}</span>
+                    )
+                  ) : (
+                    <span className="font-sans text-xs text-fg-3">not tabulated</span>
+                  )}
+                </td>
+                <td className="max-w-[14rem] px-4 py-2.5 text-fg-2">{outcomeLabel(t.outcome) ?? <span className="text-xs text-fg-3">not tabulated</span>}</td>
+                <td className="px-4 py-2.5 text-right font-mono text-fg">{d.toFixed(2)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 async function Screener({ searchParams }: { searchParams: PageProps<"/materials">["searchParams"] }) {
   const sp = await searchParams;
   const { material, atmosphere: a, notices } = parseScreenParams(sp);
@@ -42,7 +113,9 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
   const thr = HALO_DATA.detector.thresholds;
   const litPlot = s.literature.filter((l) => l.row.o2Pct !== null && l.row.pressurePsia !== null);
   const litNoP = s.literature.length - litPlot.length;
-  const inferredRows = s.psi.filter((e) => e.inferredMaterial).length;
+  const fromPrevious = s.psi.filter((e) => e.fuelFromPreviousRow).length;
+  const shapeInferred = s.psi.filter((e) => e.inferredMaterial && !e.fuelFromPreviousRow).length;
+  const overlap = s.investigations.filter((id) => SAFFIRE_PSI.has(id)).length > 0 && s.literature.some((l) => /^saffire-i{1,2}$/i.test(l.row.mission));
   const anyFlow = s.psi.some((e) => e.test.flowCmS != null);
   const anyOutcome = s.psi.some((e) => outcomeLabel(e.test.outcome) !== null);
 
@@ -235,72 +308,34 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
                 : `No PSI row with a known atmosphere names ${material.label}.${s.smoke ? " Its only microgravity evidence is the smoke-detector runs below." : ""}`
             }
           />
-          {inferredRows > 0 && material.inferNote && (
+          {shapeInferred > 0 && material.inferNote && (
             <p className="flex max-w-[70ch] flex-wrap items-center gap-2 text-sm text-fg-2">
               <ProvenanceBadge provenance="inferred" />
               <span>
-                {inferredRows} of {s.psi.length} rows. {material.inferNote}
+                {shapeInferred} of {s.psi.length} rows. {material.inferNote}
               </span>
             </p>
           )}
-          {s.psi.length > 0 && (
-            <div className="relative max-h-[32rem] overflow-auto rounded-[var(--radius-lg)] border border-line bg-surface-1 shadow-[var(--inner-highlight),var(--elev-1)]" tabIndex={0} role="region" aria-label="PSI test rows table">
-              <table className="w-full min-w-[46rem] border-collapse text-sm">
-                <caption className="sr-only">PSI test rows for {material.label}, nearest to your atmosphere first</caption>
-                <thead className="glass-chrome sticky top-0 z-[1]">
-                  <tr>
-                    {["Investigation", "Sample", "O₂ (%)", "Pressure (psia)", "Flow (cm/s)", "Outcome", "Distance"].map((h, i) => (
-                      <th key={h} scope="col" className={`type-label px-4 py-3 font-medium text-fg-3 ${i >= 2 && i !== 5 ? "text-right" : "text-left"}`}>
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {s.psi.map(({ test: t, d, inferredMaterial }) => {
-                    const inv = byPsi.get(t.psiId);
-                    const doi = inv ? doiUrl(inv.datasetDoi) : null;
-                    return (
-                      <tr key={t.id} className="border-t border-line align-top">
-                        <td className="px-4 py-2.5">
-                          <span className="block text-fg">{t.acronym}</span>
-                          {doi ? (
-                            <ExternalLink href={doi} className="font-mono text-xs">
-                              {t.psiId} dataset
-                            </ExternalLink>
-                          ) : (
-                            <span className="font-mono text-xs text-fg-3">{t.psiId}</span>
-                          )}
-                        </td>
-                        <td className="max-w-[16rem] px-4 py-2.5 text-fg-2">
-                          {t.fuel}
-                          {inferredMaterial && <span className="mt-0.5 block text-xs text-fg-3">material inferred from the sample name</span>}
-                        </td>
-                        <td className="px-4 py-2.5 text-right">
-                          <Cond value={t.o2Pct} src={t.o2Src} />
-                        </td>
-                        <td className="px-4 py-2.5 text-right">
-                          <Cond value={t.pressurePsia} src={t.pSrc} />
-                        </td>
-                        <td className="px-4 py-2.5 text-right font-mono">
-                          {t.flowCmS != null ? (
-                            t.flowSrc && t.flowSrc !== "measured" ? (
-                              <Cond value={t.flowCmS} src={t.flowSrc} />
-                            ) : (
-                              <span className="text-fg">{t.flowCmS}</span>
-                            )
-                          ) : (
-                            <span className="font-sans text-xs text-fg-3">not tabulated</span>
-                          )}
-                        </td>
-                        <td className="max-w-[14rem] px-4 py-2.5 text-fg-2">{outcomeLabel(t.outcome) ?? <span className="text-xs text-fg-3">not tabulated</span>}</td>
-                        <td className="px-4 py-2.5 text-right font-mono text-fg">{d.toFixed(2)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+          {fromPrevious > 0 && (
+            <p className="flex max-w-[70ch] flex-wrap items-center gap-2 text-sm text-fg-2">
+              <ProvenanceBadge provenance="inferred" />
+              <span>
+                {fromPrevious} {fromPrevious === 1 ? "row reads" : "rows read"} &ldquo;(see previous row)&rdquo; in PSI; HALO carries the material
+                forward from the row above in the same table.
+              </span>
+            </p>
+          )}
+          {s.psi.length > 0 && <PsiTable rows={s.psi.slice(0, FIRST_ROWS)} caption={`The ${Math.min(FIRST_ROWS, s.psi.length)} PSI test rows for ${material.label} nearest your atmosphere`} />}
+          {s.psi.length > FIRST_ROWS && (
+            <details className="group">
+              <summary className={buttonClass("secondary", "sm", "cursor-pointer list-none [&::-webkit-details-marker]:hidden")}>
+                <span className="group-open:hidden">Show the other {s.psi.length - FIRST_ROWS} rows</span>
+                <span className="hidden group-open:inline">Hide the other rows</span>
+              </summary>
+              <div className="mt-4">
+                <PsiTable rows={s.psi.slice(FIRST_ROWS)} caption={`The remaining ${s.psi.length - FIRST_ROWS} PSI test rows for ${material.label}`} />
+              </div>
+            </details>
           )}
           {s.psi.length > 0 && (!anyFlow || s.psi.some((e) => outcomeLabel(e.test.outcome) === null)) && (
             <p className="max-w-[70ch] text-xs text-fg-3">
@@ -319,7 +354,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
             aside={<span className="inline-flex items-center gap-2">{s.literature.length} points <ProvenanceBadge provenance="literature" /></span>}
             lede={
               s.literature.length
-                ? "Large-scale burns on Cygnus cargo vehicles, read from NASA technical reports. These are literature values, not PSI rows, and do not count toward a brief's coverage grade."
+                ? `Large-scale burns on Cygnus cargo vehicles, read from NASA technical reports. These are literature values, not PSI rows, and do not count toward a brief's coverage grade.${overlap ? " Saffire-I and II also appear above as PSI rows: the same burns, reported in two sources." : ""}`
                 : `No Saffire report in HALO's literature table names ${material.label}.`
             }
           />
@@ -368,18 +403,18 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
             title="Smoke-detector runs"
             lede={
               s.smoke
-                ? `SAME and SAME-R heated ${s.smoke.sameClass} samples in orbit and logged what each detector read. Alarm proxies: forward scatter at ${thr.scatterV} V, ionization at ${thr.ionizationDV.toFixed(3)} ΔV.`
+                ? `SAME and SAME-R heated ${s.smoke.sameClass} samples in orbit and logged what each detector read. Counts compare each run's reading with HALO's alarm proxies: forward scatter at ${thr.scatterV.toFixed(1)} V, ionization at ${thr.ionizationDV.toFixed(3)} ΔV.`
                 : `SAME and SAME-R did not test ${material.label}, so there is no smoke-detector evidence for it.`
             }
           />
           {s.smoke && (
             <>
-              <StatGroup>
+              <StatGroup className="max-sm:grid-cols-1">
                 <Stat
-                  label="Below the scatter alarm"
+                  label={`Below the ${thr.scatterV.toFixed(1)} V scatter proxy`}
                   value={`${s.smoke.result.scatterLow}/${s.smoke.result.scatterRuns}`}
                   detail={s.smoke.result.scatterLowPct !== null ? `${Math.round(s.smoke.result.scatterLowPct)}% of runs with a scatter reading` : undefined}
-                  provenance={<ProvenanceBadge provenance="measured" />}
+                  provenance={<ProvenanceBadge provenance="computed" />}
                 />
                 {s.smoke.whatIf.map((w) => (
                   <Stat
@@ -387,10 +422,17 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
                     label={w.combo.length === 1 ? "Caught by scatter alone" : "Caught by scatter + ionization"}
                     value={`${w.caught}/${w.runs}`}
                     detail={`${Math.round(w.caughtPct)}% of runs with every channel read`}
-                    provenance={<ProvenanceBadge provenance="measured" />}
+                    provenance={<ProvenanceBadge provenance="computed" />}
                   />
                 ))}
               </StatGroup>
+              <p className="max-w-[70ch] text-sm text-fg-2">
+                The detector readings are measured; the alarm thresholds are HALO proxies, not certified alarm points. The ionization proxy is
+                calibrated on the Lampwick (cotton) runs, so Lampwick passes it by construction.{" "}
+                <Link href="/method#detector" prefetch={false} className="text-accent underline decoration-accent-line underline-offset-4 hover:decoration-current">
+                  How the proxies are set
+                </Link>
+              </p>
               <Callout tone="info" title="Smoke data is from ISS air only">
                 SAME ran at ISS air ({amb.o2Pct}% O₂, {atm(amb.pressurePsia)} atm); smoke behavior at habitat atmosphere is untested.
               </Callout>
@@ -398,8 +440,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
           )}
         </section>
 
-        {(
-          <section aria-labelledby="standard" className="flex flex-col gap-4">
+        <section aria-labelledby="standard" className="flex flex-col gap-4">
             <SectionHead id="standard" title="The standard flammability test" />
             <Callout tone="info" title="NASA-STD-6001 Test 1 screens materials at Earth gravity">
               <p>
@@ -411,8 +452,7 @@ async function Screener({ searchParams }: { searchParams: PageProps<"/materials"
                 {BASS_FACT.source.url && <ExternalLink href={BASS_FACT.source.url}>{BASS_FACT.source.note}</ExternalLink>}
               </p>
             </Callout>
-          </section>
-        )}
+        </section>
 
         <nav aria-label="Related tools" className="flex flex-wrap gap-3 border-t border-line pt-8">
           {briefHref && (

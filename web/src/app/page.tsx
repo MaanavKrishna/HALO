@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ButtonLink, Icon, PageHero } from "@/components/ui";
-import { BriefSection, CloseSection, DataSection, PillarsSection, PresetsSection, ProblemSection } from "@/components/landing/Sections";
+import { BriefSection, CloseSection, DataSection, PillarsSection, PresetsSection, ProblemSection, WhySection } from "@/components/landing/Sections";
 import { dataset } from "@/components/landing/data";
 import "@/components/landing/landing.css";
 
@@ -39,6 +39,7 @@ export default function Home() {
           </p>
         }
       />
+      <WhySection />
       <ProblemSection />
       <BriefSection />
       <PillarsSection />

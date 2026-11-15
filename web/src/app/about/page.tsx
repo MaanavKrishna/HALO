@@ -3,7 +3,9 @@ import "@/components/content/content.css";
 import { Article, Callout, PageHero, SiChip, Stat, StatGroup, TBody, THead, TableFrame, Td, Th, Tr } from "@/components/ui";
 import evalResult from "@/data/eval.json";
 import { HALO_DATA } from "@/lib/data/load";
+import { EARTH_FACTS } from "@/lib/engine/facts";
 import { SI_MODEL } from "@/lib/si/prompt";
+import { FIRE_HISTORY, REFS } from "@/components/landing/references";
 import { CHALLENGE_URL, DISCLAIMER, REPO_URL, SITE_EXPANSION, TAGLINE, pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata({
@@ -15,7 +17,12 @@ export const metadata = pageMetadata({
 
 const TOC = [
   { id: "what", label: "What HALO is" },
+  { id: "who", label: "Who it is for" },
+  { id: "why-built", label: "Why I built this" },
+  { id: "why-fire", label: "Why fire safety matters" },
   { id: "challenge", label: "The challenge" },
+  { id: "resources", label: "Challenge resources" },
+  { id: "partners", label: "Partner agency research" },
   { id: "team", label: "Team" },
   { id: "si", label: "Use of SI" },
   { id: "license", label: "Licence" },
@@ -36,6 +43,7 @@ export default function AboutPage() {
   const buildModels = [...new Set(Object.values(summaries).map((s) => s.model))];
   const nSummaries = Object.keys(summaries).length;
   const humanEdited = Object.values(summaries).filter((s) => s.model === "human-edited").length;
+  const flagged = Object.values(summaries).filter((s) => s.needsReview).length;
   const evalPct = evalResult.total ? Math.round((evalResult.passed / evalResult.total) * 100) : 0;
   const evalDate = evalResult.runAt.slice(0, 10);
 
@@ -91,6 +99,40 @@ export default function AboutPage() {
           safety: HALO summarizes published NASA test evidence and is not a safety certification.
         </p>
 
+        <h2 id="who">Who it is for</h2>
+        <p>
+          <strong>Habitat designers and material screeners.</strong> The decision HALO informs comes before a cabin atmosphere or
+          a material list is fixed: where NASA&apos;s microgravity fire evidence is strong for that air, where it stops, and which
+          test would close the gap. It feeds a test plan; it does not sign one off.
+        </p>
+
+        <h2 id="why-built">Why I built this</h2>
+        <p>
+          The challenge pointed at a question I kept circling: has anyone actually burned this material in this air? Answering it
+          meant reading {investigations.length} separate PSI records, and doing that showed the gap the challenge hints at:
+          Moon-base air sits beyond every real cabin material NASA has burned in PSI. I built HALO so that gap, and the evidence
+          around it, fits on one cited page.
+        </p>
+
+        <h2 id="why-fire">Why fire safety matters</h2>
+        <p>Three spacecraft fires shaped NASA&apos;s approach of prevention, detection and suppression:</p>
+        <ul>
+          {FIRE_HISTORY.map((f) => (
+            <li key={f.name}>
+              <strong>
+                {f.name} ({f.year}).
+              </strong>{" "}
+              {f.what} <em>{f.lesson}</em> <ExtLink href={f.ref.url}>Source</ExtLink>
+            </li>
+          ))}
+        </ul>
+        <p>
+          For the science behind those lessons, NASA&apos;s 2018 ScienceCast{" "}
+          <ExtLink href={REFS.scienceCast.url}>The Power of Studying Combustion on the ISS</ExtLink> is a short video
+          introduction, and the <ExtLink href={REFS.glennCombustion.url}>NASA Glenn Combustion Science</ExtLink> page describes
+          the investigations HALO reads.
+        </p>
+
         <h2 id="challenge">The challenge</h2>
         <p>
           HALO is an entry to the NASA Space Apps Challenge 2026,{" "}
@@ -116,6 +158,46 @@ export default function AboutPage() {
           </TBody>
         </TableFrame>
 
+        <h2 id="resources">Challenge resources</h2>
+        <p>Every resource the challenge lists, and where HALO uses it:</p>
+        <ul>
+          <li>
+            <ExtLink href={REFS.psiCombustion.url}>{REFS.psiCombustion.label}</ExtLink>: the data behind every grade, cited by
+            dataset DOI on the <a href="/data#sources">data page</a>.
+          </li>
+          <li>
+            <ExtLink href={REFS.glennCombustion.url}>{REFS.glennCombustion.label}</ExtLink>: investigation fact sheets, linked
+            from the <a href="/data#source">data page</a>.
+          </li>
+          <li>
+            <ExtLink href={REFS.scienceCast.url}>{REFS.scienceCast.label}</ExtLink>.
+          </li>
+          <li>
+            <ExtLink href={REFS.researchersGuide.url}>{REFS.researchersGuide.label}</ExtLink>: the BASS finding on NASA-STD-6001
+            Test 1, cited in briefs and on the <a href="/method#limits">method page</a>.
+          </li>
+          <li>
+            <ExtLink href={REFS.apollo1.url}>Apollo 1</ExtLink>, <ExtLink href={REFS.apollo13.url}>Apollo 13</ExtLink> and{" "}
+            <ExtLink href={REFS.mir.url}>the Mir fire</ExtLink>: the lessons above and on the home page.
+          </li>
+          {EARTH_FACTS.map((f) =>
+            f.source.url ? (
+              <li key={f.id}>
+                <ExtLink href={f.source.url}>{f.source.note ?? f.label}</ExtLink>: the Earth-relevance card in every brief.
+              </li>
+            ) : null,
+          )}
+        </ul>
+
+        <h2 id="partners">Partner agency research</h2>
+        <p>
+          <strong>JAXA, with NASA and ESA: FLARE.</strong> The{" "}
+          <ExtLink href={REFS.flare.url}>Flammability Limits at Reduced-g Experiment</ExtLink> is an international effort led
+          with the Japan Aerospace Exploration Agency, with NASA, ESA and universities in Japan, the USA and France. It aims to
+          predict a material&apos;s flammability limit in microgravity from ground tests, which is exactly the bridge HALO&apos;s
+          grades lack. HALO cannot use its results yet: no FLARE data is in the PSI repository, so nothing from it is graded on.
+        </p>
+
         <h2 id="team">Team</h2>
         <p>
           <strong>Maanav Krishna</strong>: data pipeline, engine, models, interface and writing. Source on{" "}
@@ -132,13 +214,13 @@ export default function AboutPage() {
           An LLM (<code>{buildModels.filter((m) => m !== "human-edited").join(", ")}</code>) wrote a short summary and habitat note for each of the {nSummaries}{" "}
           investigations from its PSI record only. A validator checks every answer: hazard tags from a closed vocabulary, quotes
           that must appear word for word in the source, no number that the source does not contain, and no “safe” or “unsafe”.
-          Each summary passes these automatic checks and stays labelled as SI output, not author copy; the author spot-checks
-          them against PSI{humanEdited > 0 ? ` (${humanEdited} of ${nSummaries} hand-edited)` : ""}. An entry flagged for review
-          is never shown as SI.
+          All {nSummaries} summaries passed these automatic checks ({flagged} flagged for review). The author&apos;s read-through
+          against PSI is in progress{humanEdited > 0 ? ` (${humanEdited} of ${nSummaries} hand-edited so far)` : ""}, so every
+          summary stays labelled as SI output, not author copy. An entry flagged for review is never shown as SI.
         </p>
         <h3>At run time</h3>
         <p>
-          The brief’s optional “Explain” panel asks <code>{SI_MODEL}</code> to restate the brief in plain words. The server
+          The brief’s optional “Ask HALO” panel asks <code>{SI_MODEL}</code> to restate the brief in plain words. The server
           rebuilds the brief itself, sends only its facts, and replaces the answer with a code-written fallback if it contains any
           number that is not a fact value, a verdict word, or a trace of its instructions. Live calls are rate-limited and can be
           switched off.
@@ -146,7 +228,7 @@ export default function AboutPage() {
         <StatGroup className="content-list">
           <Stat
             size="lg"
-            label="Explain eval pass rate"
+            label="Ask HALO eval pass rate"
             value={evalPct}
             unit="%"
             detail={`${evalResult.passed} of ${evalResult.total} questions, ${evalDate}`}
@@ -167,8 +249,8 @@ export default function AboutPage() {
         <p>
           HALO’s code is released under the <ExtLink href={`${REPO_URL}/blob/main/LICENSE`}>Apache License 2.0</ExtLink>, with
           attribution in <ExtLink href={`${REPO_URL}/blob/main/NOTICE`}>NOTICE</ExtLink>. The NASA PSI data is CC0 1.0 and is
-          cited by dataset DOI on the <a href="/data#sources">data page</a>. The Inter typeface is used under the SIL Open Font
-          License 1.1.
+          cited by dataset DOI on the <a href="/data#sources">data page</a>. The Inter and Geist Mono typefaces are used under the
+          SIL Open Font License 1.1.
         </p>
 
         <h2 id="acknowledgements">Acknowledgements</h2>

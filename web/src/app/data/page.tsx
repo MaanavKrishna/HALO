@@ -9,6 +9,7 @@ import { PRESETS } from "@/lib/engine/presets";
 import type { ConditionSource, FuelClass, Provenance } from "@/lib/engine/types";
 import { psiNumber } from "@/lib/explore";
 import { CHALLENGE_URL, pageMetadata } from "@/lib/site";
+import { GLENN_FACT_SHEETS, REFS } from "@/components/landing/references";
 
 export const metadata = pageMetadata({
   title: "Data",
@@ -19,6 +20,7 @@ export const metadata = pageMetadata({
 
 const TOC = [
   { id: "source", label: "Source" },
+  { id: "partners", label: "Partner agency research" },
   { id: "provenance", label: "Provenance" },
   { id: "eligibility", label: "Eligibility" },
   { id: "fixes", label: "Data-quality fixes" },
@@ -65,6 +67,16 @@ function ExtLink({ href, children, className }: { href: string; children: ReactN
   );
 }
 
+/**
+ * PSI leaves the acronym blank for these records, so the label HALO shows is its own.
+ * Used only until investigations.json carries `acronymSource`.
+ */
+const HALO_LABELLED = new Set(["PSI-60", "PSI-62", "PSI-115", "PSI-117", "PSI-142"]);
+const isHaloLabel = (i: { psiId: string }) => {
+  const src = (i as { acronymSource?: string }).acronymSource;
+  return src ? src.toLowerCase() !== "psi" : HALO_LABELLED.has(i.psiId);
+};
+
 const bytes = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`);
 
 export default function DataPage() {
@@ -76,6 +88,8 @@ export default function DataPage() {
   const srcCount = (field: "o2Src" | "pSrc", v: ConditionSource) => tests.filter((t) => t[field] === v).length;
   const classes: FuelClass[] = ["solid", "solid_surrogate", "droplet", "gas"];
   const pubCount = investigations.reduce((s, i) => s + i.publications.filter((p) => p.doi).length, 0);
+  const uniqueDois = new Set(investigations.flatMap((i) => i.publications.map((p) => p.doi?.toLowerCase())).filter(Boolean)).size;
+  const haloLabelled = invs.filter(isHaloLabel);
 
   // Every other source a brief can cite (NASA reports, guides, Spinoff, the challenge).
   const factSources = buildBrief({ ...PRESETS.artemis, liquids: true }, HALO_DATA).facts.map((f) => f.source);
@@ -85,9 +99,17 @@ export default function DataPage() {
     const href = s.doi ? doiUrl(s.doi) : safeUrl(s.url);
     if (href && !others.has(href)) others.set(href, href === CHALLENGE_URL ? "NASA Space Apps 2026: Flame in Freefall challenge" : s.note && s.note.length < 90 ? s.note : s.doi ? `doi:${s.doi}` : href);
   }
+  // Label each NTRS report by every Saffire mission that cites it, not only the first row's.
+  const reportMissions = new Map<string, string[]>();
   for (const r of literature) {
     const href = safeUrl(r.sourceUrl);
-    if (href && !others.has(href)) others.set(href, `NASA Technical Reports Server ${href.split("/").pop()} (${r.mission})`);
+    if (!href) continue;
+    const m = reportMissions.get(href) ?? [];
+    if (!m.includes(r.mission)) m.push(r.mission);
+    reportMissions.set(href, m);
+  }
+  for (const [href, missions] of reportMissions) {
+    if (!others.has(href)) others.set(href, `NASA Technical Reports Server ${href.split("/").pop()} (${missions.join(", ")})`);
   }
 
   return (
@@ -116,6 +138,36 @@ export default function DataPage() {
         <p>
           A short list of Saffire results comes from NASA technical reports, because PSI does not carry the later Saffire flights.
           Those rows are marked <ProvenanceBadge provenance="literature" /> everywhere they appear.
+        </p>
+        <p>
+          Search the same records in the <ExtLink href={REFS.psiCombustion.url}>{REFS.psiCombustion.label}</ExtLink>. For plain
+          descriptions of the investigations, the <ExtLink href={REFS.glennCombustion.url}>{REFS.glennCombustion.label}</ExtLink>{" "}
+          page links a fact sheet for each family:{" "}
+          {GLENN_FACT_SHEETS.map((f, i) => (
+            <span key={f.label}>
+              {i > 0 && ", "}
+              <ExtLink href={f.url}>{f.label}</ExtLink>
+            </span>
+          ))}{" "}
+          (PDF). NASA&apos;s 2018 ScienceCast <ExtLink href={REFS.scienceCast.url}>The Power of Studying Combustion on the ISS</ExtLink>{" "}
+          is a short video introduction.
+        </p>
+        <p>
+          <strong>One adjacent record, cited but not used.</strong>{" "}
+          <ExtLink href={REFS.ase.url}>PSI-179 ASE, the Aerosol Sampling Experiment</ExtLink>, sits outside the combustion facet
+          (Complex Fluids). Its passive samplers collected airborne particles from the ISS cabin: the dust background a smoke
+          detector has to tell apart from smoke. It has no experiment table, so HALO cites it as context for the detector
+          findings and computes nothing from it.
+        </p>
+
+        <H2 id="partners">Partner agency research</H2>
+        <p>
+          <strong>JAXA: FLARE.</strong> The <ExtLink href={REFS.flare.url}>Flammability Limits at Reduced-g Experiment</ExtLink>{" "}
+          is an international project led with the Japan Aerospace Exploration Agency, with NASA, ESA and universities in Japan,
+          the USA and France. It develops a way to estimate a material&apos;s microgravity flammability limit from ground tests,
+          with flight runs in the ISS Kibo module to verify it. HALO cannot use the results yet: none are in PSI, and HALO grades
+          only on PSI test rows. When they are published, they are the natural bridge between NASA-STD-6001 ground screening and
+          HALO&apos;s microgravity evidence.
         </p>
 
         <H2 id="provenance">Provenance</H2>
@@ -264,8 +316,16 @@ export default function DataPage() {
 
         <H2 id="sources">Sources and DOIs</H2>
         <p>
-          HALO cites each investigation by its PSI dataset DOI. The {fmt.format(pubCount)} publication DOIs PSI lists for them
-          follow, grouped by investigation.
+          HALO cites each investigation by its PSI dataset DOI. PSI lists {fmt.format(uniqueDois)} unique publication DOIs for
+          them ({fmt.format(pubCount)} entries; some papers are listed more than once, mostly under several investigations), grouped by investigation
+          below.
+          {haloLabelled.length > 0 && (
+            <>
+              {" "}
+              PSI leaves the acronym blank for {haloLabelled.length} records ({haloLabelled.map((i) => i.psiId).join(", ")}); the
+              names HALO shows for them are its own labels, marked <em>HALO label</em>.
+            </>
+          )}
         </p>
         <TableFrame caption="PSI dataset DOIs">
           <THead>
@@ -284,6 +344,7 @@ export default function DataPage() {
                   <Td className="whitespace-nowrap font-mono text-[0.8125rem]">{i.psiId}</Td>
                   <Td className="min-w-[10rem]">
                     <a href={`/explore/${i.psiId}`}>{i.acronym}</a>
+                    {isHaloLabel(i) && <span className="ml-2 whitespace-nowrap text-[0.75rem] text-fg-3">HALO label</span>}
                   </Td>
                   <Td className="whitespace-nowrap font-mono text-[0.8125rem]">
                     <ExtLink href={doiUrl(doi)}>{doi}</ExtLink>

@@ -205,6 +205,47 @@ NASA's fire-safety work focuses on prevention, detection and suppression; three 
 
 <img src="docs/readme/h-hood.svg" alt="Under the hood" width="100%" />
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-3A66FF?style=for-the-badge&labelColor=05080F&logo=nextdotjs&logoColor=white" alt="Next.js 16" />
+  <img src="https://img.shields.io/badge/React-19-3A66FF?style=for-the-badge&labelColor=05080F&logo=react&logoColor=white" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3A66FF?style=for-the-badge&labelColor=05080F&logo=typescript&logoColor=white" alt="TypeScript 5" />
+  <img src="https://img.shields.io/badge/Tailwind-4-3A66FF?style=for-the-badge&labelColor=05080F&logo=tailwindcss&logoColor=white" alt="Tailwind 4" />
+  <img src="https://img.shields.io/badge/zod-4-3A66FF?style=for-the-badge&labelColor=05080F&logo=zod&logoColor=white" alt="zod 4" />
+  <img src="https://img.shields.io/badge/Vercel-hosting-3A66FF?style=for-the-badge&labelColor=05080F&logo=vercel&logoColor=white" alt="Vercel hosting" />
+  <img src="https://img.shields.io/badge/Python-3.14-4FD4A4?style=for-the-badge&labelColor=05080F&logo=python&logoColor=white" alt="Python 3.14" />
+  <img src="https://img.shields.io/badge/pandas-3.1-4FD4A4?style=for-the-badge&labelColor=05080F&logo=pandas&logoColor=white" alt="pandas 3.1" />
+  <img src="https://img.shields.io/badge/scikit--learn-1.9-4FD4A4?style=for-the-badge&labelColor=05080F&logo=scikitlearn&logoColor=white" alt="scikit-learn 1.9" />
+  <img src="https://img.shields.io/badge/Vitest-5-7EA6FF?style=for-the-badge&labelColor=05080F&logo=vitest&logoColor=white" alt="Vitest 5" />
+  <img src="https://img.shields.io/badge/Playwright-1.65-7EA6FF?style=for-the-badge&labelColor=05080F&logo=playwright&logoColor=white" alt="Playwright 1.65" />
+  <img src="https://img.shields.io/badge/GitHub_Actions-CI-7EA6FF?style=for-the-badge&labelColor=05080F&logo=githubactions&logoColor=white" alt="GitHub Actions CI" />
+</p>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hood-arch-dark.svg" />
+  <img src="docs/readme/hood-arch-light.svg" alt="Architecture: NASA PSI (24 investigations, 22 tables plus the SAME workbook, CC0) to a Python pipeline (pandas, scikit-learn, 84 pytest tests) to a versioned JSON contract (1,967 rows in, 1,225 eligible, manifest sha256, zod-validated) to a pure TypeScript engine to facts with provenance, to the Fire Brief. Ask HALO branch: the LLM writes words only; a number validator passes the answer or a code-built fallback replaces it." width="100%" />
+</picture>
+
+1. **Pipeline** (`pipeline/`, Python). Reads the vendored PSI tables, detail records and the SAME workbook; normalizes units, records where each value came from, applies documented data-quality fixes and fits the extinction model.
+2. **Contract** (`web/src/data/`). Static JSON plus a `manifest.json` with build time, row counts, each file's sha256 and every PSI dataset DOI, validated once with zod at build.
+3. **Engine** (`web/src/lib/engine/`, TypeScript). Pure functions turn a habitat and the data into a `Brief`: no randomness, no network at run time.
+4. **SI layer.** Numbers come from code; words come from SI. The LLM writes narrative over the frozen facts; a validator rejects any number that is not a fact value and the brief falls back to a template. The build-time summaries of all 24 investigations follow the same rule (closed tag vocabulary, quotes checked against the source).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hood-grade-dark.svg" />
+  <img src="docs/readme/hood-grade-light.svg" alt="How a grade is computed: evidence distance d = sqrt((dO2/10)^2 + (dp/3)^2); rings at 0.5 (A or B), 1 (C) and 2 (D), F beyond. Artemis Base (34% O2, 8.2 psia): nearest real solid BASS-II at 22.2% O2, 14.7 psia, d = 2.47, so F; the ACME BRE surrogate at d = 0 lifts it one step to D. A surrogate lifts a grade to C at most." width="100%" />
+</picture>
+
+<p align="center"><sub>Full rules, ranking and the extinction model: <a href="docs/METHOD.md">docs/METHOD.md</a>.</sub></p>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hood-trust-dark.svg" />
+  <img src="docs/readme/hood-trust-light.svg" alt="Trust layers: 7 provenance badge kinds on every fact; SI number validator with misfit-citation removal and code fallback; web data rebuilt in CI from NASA's 22 raw tables and the SAME workbook; live NASA check of all 24 datasets with raw files byte-identical to psi.nasa.gov and all 1,225 rows rechecked; 577 tests (pytest 84, Vitest 377, Playwright 116); CodeQL, secret scanning and SHA-pinned actions." width="100%" />
+</picture>
+
+<details>
+<summary><sub><b>SAME FLOW AS A TEXT DIAGRAM</b></sub></summary>
+<br>
+
 ```mermaid
 flowchart TD
     A["NASA PSI mirror<br/>24 investigations, CC0"] --> C["Python pipeline<br/>ingest, clean, provenance, models"]
@@ -220,14 +261,16 @@ flowchart TD
     T --> G
 ```
 
-1. **Pipeline** (`pipeline/`, Python). Reads the vendored PSI experimental tables, detail records and the SAME workbook. Normalizes units, records where each value came from, applies documented data-quality fixes, and fits the extinction model. 1,967 rows in, 1,225 eligible for habitat coverage.
-2. **Versioned JSON** (`web/src/data/`). Static files with a `manifest.json` that records build time, row counts, the sha256 of each file and every PSI dataset DOI. The app imports them at build time and validates them once with zod.
-3. **Engine** (`web/src/lib/engine/`, TypeScript). Pure functions that turn a habitat and the data into a `Brief`. No randomness at run time, no network.
-4. **SI layer.** Numbers come from code; words come from SI. The SI only writes narrative over the frozen facts object. A validator rejects any sentence containing a number that is not a fact value, and the brief falls back to a template. Build-time summaries of all 24 investigations (in `web/src/data/summaries.json`) follow the same rule: tags from a closed vocabulary, quotes checked against the source text.
+</details>
 
 <details>
 <summary><sub><b>PROVENANCE BADGES</b></sub></summary>
 <br>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/hood-prov-dark.svg" />
+  <img src="docs/readme/hood-prov-light.svg" alt="Provenance badges: measured (filled dot), inferred (half dot), assumed (hollow dot), literature (square), computed (diamond), model (dashed diamond), SI (dashed chip)." width="100%" />
+</picture>
 
 Every number in a brief carries one of these badges.
 

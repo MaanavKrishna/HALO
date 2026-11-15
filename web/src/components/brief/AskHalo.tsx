@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useId, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { SiChip } from "@/components/ui/SiChip";
@@ -23,19 +23,39 @@ type State =
  * and says so. Text is rendered as text (split on [fact-id] citations into
  * compact chips), never as HTML.
  */
-export function AskHalo({ fallback, query, facts }: { fallback: string; query: string; facts: Record<string, FactRef> }) {
+export function AskHalo({
+  fallback,
+  query,
+  facts,
+  suggestions = [],
+}: {
+  fallback: string;
+  query: string;
+  facts: Record<string, FactRef>;
+  suggestions?: string[];
+}) {
   const [state, setState] = useState<State>({ mode: "fallback", notice: false });
   const [question, setQuestion] = useState("");
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
   const loading = state.mode === "loading";
+  // Chips need JS to do anything, so they render only once hydrated; the form works without them.
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
-  async function submit(e: FormEvent) {
-    e.preventDefault();
+  async function ask(text: string) {
     if (loading) return;
     setState((s) => ({ mode: "loading", notice: s.mode !== "live" && s.notice }));
-    const out = await requestExplain(query, question);
+    const out = await requestExplain(query, text);
     setState(out.kind === "live" ? { mode: "live", text: out.text } : { mode: "fallback", notice: true });
+  }
+
+  function submit(e: FormEvent) {
+    e.preventDefault();
+    void ask(question);
   }
 
   const live = state.mode === "live";
@@ -83,6 +103,30 @@ export function AskHalo({ fallback, query, facts }: { fallback: string; query: s
             Generate SI narration
           </Button>
         </div>
+        {hydrated && suggestions.length > 0 && (
+          <div
+            data-suggestions
+            role="group"
+            aria-label="Suggested questions"
+            className={cx("mt-3 flex flex-wrap gap-2 transition-opacity duration-[var(--dur-fast)]", loading && "pointer-events-none opacity-50")}
+          >
+            {suggestions.map((q) => (
+              <button
+                key={q}
+                type="button"
+                data-suggestion
+                disabled={loading}
+                onClick={() => {
+                  setQuestion(q);
+                  void ask(q);
+                }}
+                className="inline-flex min-h-8 items-center rounded-[var(--radius-pill)] border border-line bg-surface-2 px-3 py-1 text-left text-[0.8125rem] font-medium text-fg-2 transition-[background-color,border-color,color,scale] duration-[var(--dur-fast)] hover:border-accent-line hover:bg-accent-soft hover:text-fg active:scale-[0.97] disabled:cursor-default pointer-coarse:min-h-10"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
         <p id={`${id}-help`} className="type-caption mt-2.5 text-fg-3">
           HALO checks every number in the answer against this brief&rsquo;s facts before showing it. SI text carries an <SiChip /> chip.
         </p>

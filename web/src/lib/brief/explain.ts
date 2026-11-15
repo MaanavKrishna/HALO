@@ -135,15 +135,36 @@ export type NarrativeChip =
  */
 export function citationChips(paragraph: string, facts: Record<string, ChipFact>): NarrativeChip[] {
   const parts = splitCitations(paragraph, (id) => Object.hasOwn(facts, id));
-  const prose = parts.map((p) => (p.type === "text" ? p.value : " ")).join("");
-  const out: NarrativeChip[] = [];
+  // Sentence index of every part: a break is ". " before a capital, so a citation
+  // that follows a full stop's sentence stays with it. The value rule is per sentence.
+  const sentenceOf: number[] = [];
+  const sentenceProse: string[] = [""];
+  let sentence = 0;
   for (const part of parts) {
+    if (part.type === "fact") {
+      sentenceOf.push(sentence);
+      sentenceProse[sentence] += " ";
+      continue;
+    }
+    let last = 0;
+    for (const m of part.value.matchAll(/[.!?]\s+(?=[A-Z])/g)) {
+      const end = (m.index ?? 0) + 1;
+      sentenceProse[sentence] += part.value.slice(last, end);
+      last = end;
+      sentence++;
+      sentenceProse[sentence] = "";
+    }
+    sentenceProse[sentence] += part.value.slice(last);
+    sentenceOf.push(sentence);
+  }
+  const out: NarrativeChip[] = [];
+  for (const [pi, part] of parts.entries()) {
     if (part.type === "text") {
       out.push({ type: "text", value: part.value });
       continue;
     }
     const f = facts[part.id];
-    const show = f.value !== null && !valueInText(prose, f.value) ? f.value : null;
+    const show = f.value !== null && !valueInText(sentenceProse[sentenceOf[pi]], f.value) ? f.value : null;
     // The chip before this one, looking past the space between them.
     let k = out.length - 1;
     while (k >= 0 && out[k].type === "text" && !(out[k] as { value: string }).value.trim()) k--;

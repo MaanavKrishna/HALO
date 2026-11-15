@@ -128,6 +128,17 @@ describe('citationChips', () => {
     expect(cites('It took 135 s at 3.5 V [b-runs].')[0]).toMatchObject({ show: '35' });
   });
 
+  it('decides whether to print a value per sentence, not per paragraph', () => {
+    const f: Record<string, ChipFact> = {
+      'k-alarm': { label: 'Kapton runs below alarm', value: '20', n: 3 },
+      'k-total': { label: 'Kapton runs', value: '35', n: 3 },
+    };
+    const text =
+      'In SAME, the scatter channel stayed below its alarm threshold in 20 of 35 Kapton runs [k-alarm] [k-total]. The Kapton counts are [k-alarm] and [k-total].';
+    const chips = citationChips(text, f).filter((c) => c.type === 'cite');
+    expect(chips.map((c) => (c as { show: string | null }).show)).toEqual([null, '20', '35']);
+  });
+
   it('merges neighbouring chips with the same source number and the same printed value', () => {
     const out = citationChips('Far from tests: 2.47 away at 22.2% O2. [a-distance] [a-oxygen] [a-note] [b-runs]', facts);
     expect(out.filter((c) => c.type === 'cite')).toEqual([

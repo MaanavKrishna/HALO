@@ -35,7 +35,13 @@ export type FindingViz =
       /** Recorded burn outcomes of the window rows that log one (CFI-G gas flames). */
       outcomes?: { label: string; total: number; parts: Array<{ outcome: Outcome; label: string; count: number }> };
     }
-  | { kind: "diluent"; rows: Array<{ label: string; matched: { ext: number; n: number }; all: { ext: number; n: number } }>; levels: string }
+  | {
+      kind: "diluent";
+      rows: Array<{ label: string; matched: { ext: number; n: number }; all: { ext: number; n: number } }>;
+      levels: string;
+      /** The same shared-O2 comparison split by fuel (shown in the caption). */
+      byFuel?: Array<{ fuel: string; cells: Array<{ label: string; ext: number; n: number }> }>;
+    }
   | { kind: "runs"; rows: Array<{ label: string; low: number; runs: number }>; threshold: string }
   | { kind: "curve"; points: Array<{ o2: number; p50: number; lo: number; hi: number }>; at50: { median: number; lo: number; hi: number }; marker: { label: string; o2: number } }
   | { kind: "spread"; rows: Array<{ id: string; o2: number; rate: number; mission: string; elevated: boolean }> }
@@ -85,16 +91,12 @@ export const ASE_SOURCE: FindingSource = {
 /** FLEX papers in the PSI publication list that study CO2 and helium (diluent) atmospheres. */
 const FLEX_DILUENT_DOIS = ["10.1155/2012/587987", "10.1016/j.icheatmasstransfer.2009.10.006"];
 
-const OUTCOME_LABEL: Partial<Record<Outcome, string>> = {
-  extinguished: "went out on their own",
-  "flow-stopped": "burned until the fuel flow was stopped",
-  "no-ignition": "did not ignite",
-};
-const OUTCOME_SHORT: Partial<Record<Outcome, string>> = {
-  extinguished: "Self-extinguished",
-  "flow-stopped": "Flow stopped",
-  "no-ignition": "No ignition",
-};
+/** CFI-G test ends. "no-hot-ignition" also groups "cool-flame" rows: neither reached a hot flame. */
+const CFIG_GROUPS: Array<{ key: Outcome; members: Outcome[]; label: string; short: string }> = [
+  { key: "extinguished", members: ["extinguished"], label: "the hot flame went out on its own", short: "Hot flame went out" },
+  { key: "flow-stopped", members: ["flow-stopped"], label: "burned until the fuel flow was stopped", short: "Flow stopped" },
+  { key: "no-hot-ignition", members: ["no-hot-ignition", "cool-flame"], label: "did not reach a hot flame", short: "No hot flame" },
+];
 const DILUENT_LABEL: Record<string, string> = { N2: "Nitrogen (N₂)", CO2: "Carbon dioxide (CO₂)", He: "Helium (He)" };
 const DILUENT_TEXT: Record<string, string> = { N2: "nitrogen", CO2: "CO2", He: "helium" };
 
@@ -165,7 +167,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       title: `No real cabin solid in the PSI test rows was burned above ${fmt1(top.o2Pct)}% oxygen.`,
       stat: { value: fmt1(top.o2Pct), unit: "%", label: "Highest O2 any real solid burned at", detail: `${top.acronym}, ${top.fuel}` },
       second: { value: fmt1(artemis.o2Pct), unit: "%", label: `${artemis.name} atmosphere` },
-      provenance: uniq<Provenance>([top.o2Src, ...solids.map((t) => t.pSrc), ...(litTop ? (["literature"] as const) : [])]),
+      provenance: uniq<Provenance>([top.o2Src, ...solids.map((t) => t.pSrc), "computed", ...(litTop ? (["literature"] as const) : [])]),
       body: `Across ${solids.length} eligible solid-fuel test rows, oxygen spans ${fmt1(minSolid)} to ${fmt1(top.o2Pct)}%, ${seaLevel ? `all at ${solids.every((t) => t.pSrc === "assumed") ? "an assumed " : ""}sea-level cabin pressure` : `at ${fmt1(minSolidP)} psia and up`}. ${artemis.name} (${artemis.o2Pct}% O2, ${artemis.pressurePsia} psia) sits at evidence distance ${solidNear.d === null ? "n/a" : fmt2(solidNear.d)} from the nearest one${solidNear.d !== null && solidNear.d > GRADE_RINGS[GRADE_RINGS.length - 1] ? ", past the outermost grade ring" : ""}.${litTop ? ` Outside PSI, NASA reports describe Saffire burns up to ${fmt1(litTop.o2Pct as number)}% O2 (literature).` : ""} NASA's SoFIE solid-fuel series and the JAXA-led FLARE project study solid flammability limits in microgravity; neither has a PSI combustion record yet.`,
       viz: {
         kind: "o2-range",
@@ -196,15 +198,17 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
   const winRows = testRows({ tests: win });
   const burned = winRows.filter((t) => t.outcome && t.outcome !== "unknown");
   const burnAcr = uniq(burned.map((t) => t.acronym));
-  const outcomeParts = (["extinguished", "flow-stopped", "no-ignition"] as Outcome[])
-    .map((o) => ({ outcome: o, label: OUTCOME_SHORT[o] as string, count: burned.filter((t) => t.outcome === o).length }))
-    .filter((x) => x.count > 0);
+  const coolOnly = burned.filter((t) => t.outcome === "cool-flame").length;
+  const outcomeGroups = CFIG_GROUPS.map((g) => ({ ...g, count: burned.filter((t) => g.members.includes(t.outcome as Outcome)).length })).filter(
+    (g) => g.count > 0,
+  );
+  const outcomeParts = outcomeGroups.map((g) => ({ outcome: g.key, label: g.short, count: g.count }));
   const burnedO2 = burned.map((t) => t.o2Pct);
   const burnedP = uniq(burned.map((t) => fmt2(t.pressurePsia)));
   const allMeasured = burned.every((t) => t.o2Src === "measured" && t.pSrc === "measured");
   const outcomeSentence = burned.length
-    ? ` The ${burned.length} ${burnAcr.join(", ")} gas flames are the only measured burn outcomes in the window (${fmt1(Math.min(...burnedO2))}–${fmt1(Math.max(...burnedO2))}% O2 at ${burnedP.join(", ")} psia${allMeasured ? ", both measured" : ""}): ${outcomeParts
-        .map((x) => `${x.count} ${OUTCOME_LABEL[x.outcome]}`)
+    ? ` The ${burned.length} ${burnAcr.join(", ")} gas flames are the only measured burn outcomes in the window (${fmt1(Math.min(...burnedO2))}–${fmt1(Math.max(...burnedO2))}% O2 at ${burnedP.join(", ")} psia${allMeasured ? ", both measured" : ""}): ${outcomeGroups
+        .map((g) => `${g.key === "extinguished" ? `in ${g.count}` : g.count} ${g.label}${g.key === "no-hot-ignition" && coolOnly ? ` (${coolOnly === g.count ? (coolOnly === 2 ? "both" : "all") : coolOnly} logged as direct cool flames)` : ""}`)
         .join(", ")
         .replace(/, ([^,]*)$/, " and $1")}.`
     : "";
@@ -216,7 +220,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     title: `Inside the Moon window, ${realSolids === 0 ? "not one" : realSolids} of the ${win.length} eligible PSI test rows ${realSolids === 0 || realSolids === 1 ? "is" : "are"} a real cabin solid.`,
     stat: { value: String(realSolids), label: "PSI real-solid tests in the window" },
     second: { value: String(win.length), unit: "rows", label: `O2 ≥ ${moon.o2Pct}%, ≤ ${moon.pressurePsia} psia` },
-    provenance: uniq<Provenance>([...shown.filter((p) => p.count > 0).map((p) => p.provenance), ...(lit ? (["literature"] as const) : [])]),
+    provenance: uniq<Provenance>([...shown.filter((p) => p.count > 0).map((p) => p.provenance), "computed", ...(lit ? (["literature"] as const) : [])]),
     body: `In the PSI test rows, the challenge's Moon envelope (at least ${moon.o2Pct}% O2 at no more than ${moon.pressurePsia} psia) holds ${shown
       .filter((p) => p.count > 0)
       .map((p) => `${p.count} ${p.label.charAt(0).toLowerCase()}${p.label.slice(1)}`)
@@ -255,7 +259,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       title: `An ISS-style scatter detector read below HALO's ${volts} V scatter alarm proxy in ${phr} smoke runs.`,
       stat: { value: `${first.scatterLow}/${first.scatterRuns}`, label: `${MATERIALS[first.material as MaterialId].label} runs below the ${volts} V proxy` },
       second: blind[1] ? { value: `${blind[1].scatterLow}/${blind[1].scatterRuns}`, label: `${MATERIALS[blind[1].material as MaterialId].label} runs below the ${volts} V proxy` } : undefined,
-      provenance: ["measured"],
+      provenance: ["measured", "computed"],
       body: `The ISS detector is certified in obscuration, not volts, so HALO treats a ${volts} V forward-scatter reading as the alarm point. ${finest} Counts use only runs with a scatter reading. SAME ran at ISS air (${data.detector.ambient.o2Pct}% O2, ${Number((data.detector.ambient.pressurePsia / PSI_PER_ATM).toFixed(1))} atm); smoke behavior at habitat atmosphere is untested. Cabin air also carries dust a detector must not mistake for smoke: PSI's Aerosol Sampling Experiment (ASE) collected ISS cabin particles, but it has no experiment table to test a detector against.`,
       viz: { kind: "runs", rows: blind.map((d) => ({ label: MATERIALS[d.material as MaterialId].label, low: d.scatterLow, runs: d.scatterRuns })), threshold: data.detector.thresholds.scatterV.toFixed(1) },
       sources: [
@@ -307,6 +311,23 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     const fuels = uniq(flex.map((t) => t.fuel));
     const top = [...others].sort((a, b) => share(b.matched) - share(a.matched))[0];
     const flexInv = data.investigations.find((i) => i.psiId === ext.source.psiId);
+    // Per fuel, at the same shared O2 levels: does the order (each other gas above N2) hold, and where is the gap?
+    const byFuel = fuels.map((fuel) => {
+      const cells = dils.map((d) => ({ d, ...count(flex.filter((t) => t.fuel === fuel && t.diluent === d && shared.includes(r1(t.o2Pct)))) }));
+      const nN2 = cells.find((c) => c.d === "N2")!;
+      const rest = cells.filter((c) => c.d !== "N2" && c.n > 0);
+      const holds = nN2.n > 0 && rest.length > 0 && rest.every((c) => share(c) > share(nN2));
+      const gap = rest.length && nN2.n ? rest.reduce((a, c) => a + share(c), 0) / rest.length - share(nN2) : 0;
+      return { fuel, cells, holds, gap };
+    });
+    const allHold = byFuel.length > 1 && byFuel.every((f) => f.holds);
+    const widest = [...byFuel].sort((a, b) => b.gap - a.gap)[0];
+    const fuelText = byFuel
+      .map((f) => `${f.fuel.toLowerCase()}: ${f.cells.map((c) => `${DILUENT_TEXT[c.d]} ${share(c)}% of ${c.n}`).join(", ")}`)
+      .join("; ");
+    const fuelSentence = allHold
+      ? ` The order holds for each fuel (${fuelText}); most of the nitrogen gap comes from the ${widest.fuel.toLowerCase()} runs.`
+      : ` By fuel: ${fuelText}.`;
     out.push({
       id: "diluent-suppression",
       topic: "Suppression",
@@ -316,11 +337,16 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
           : `In FLEX droplet burns, the inert gas changed how often a flame went out on its own.`,
       stat: { value: String(share(top.matched)), unit: "%", label: `${DILUENT_TEXT[top.d] === "CO2" ? "CO2" : cap(DILUENT_TEXT[top.d])} runs that self-extinguished`, detail: `${top.matched.ext} of ${top.matched.n} at ${levels} O2` },
       second: { value: String(share(n2.matched)), unit: "%", label: `Nitrogen runs at the same O2 levels (${n2.matched.ext} of ${n2.matched.n})` },
-      provenance: ["measured"],
+      provenance: ["measured", "computed"],
       body: `FLEX burned ${fuels.join(" and ").toLowerCase()} droplets in microgravity with nitrogen, carbon dioxide or helium as the inert gas. A run counts here when the flame went out before the droplet burned away or broke up. Over all ${flex.length} eligible runs that is ${rows
         .map((r) => `${share(r.all)}% for ${DILUENT_TEXT[r.d]} (${r.all.ext} of ${r.all.n})`)
-        .join(", ")}, but the nitrogen runs go up to ${fmt1(n2Max)}% O2 and the others stop at ${fmt1(otherMax)}%, so the fair comparison keeps only the ${shared.length} O2 levels all ${dils.length} gases were run at (${levels}). Pressure (${fmt1(Math.min(...ps))}–${fmt1(Math.max(...ps))} atm) and the fuel mix still differ between the groups. These are flames going out on their own in a diluted atmosphere, not tests of an extinguisher or a suppression system, and HALO's extinction model uses the nitrogen runs only.`,
-      viz: { kind: "diluent", rows: rows.map(({ label, matched, all }) => ({ label, matched, all })), levels },
+        .join(", ")}, but the nitrogen runs go up to ${fmt1(n2Max)}% O2 and the others stop at ${fmt1(otherMax)}%, so the fair comparison keeps only the ${shared.length} O2 levels all ${dils.length} gases were run at (${levels}).${fuelSentence} Pressure (${fmt1(Math.min(...ps))}–${fmt1(Math.max(...ps))} atm) and the fuel mix still differ between the groups. These are flames going out on their own in a diluted atmosphere, not tests of an extinguisher or a suppression system, and HALO's extinction model uses the nitrogen runs only.`,
+      viz: {
+        kind: "diluent",
+        rows: rows.map(({ label, matched, all }) => ({ label, matched, all })),
+        levels,
+        byFuel: byFuel.map((f) => ({ fuel: f.fuel, cells: f.cells.map((c) => ({ label: DILUENT_TEXT[c.d], ext: c.ext, n: c.n })) })),
+      },
       sources: [
         datasetSource(data, ext.source.psiId),
         ...FLEX_DILUENT_DOIS.map((doi) => {
@@ -369,7 +395,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     title: `None of the ${invs} PSI combustion investigations ran at lunar or Martian gravity.`,
     stat: { value: "0", unit: `of ${invs}`, label: "Investigations at partial gravity" },
     second: { value: String(invs), label: "Microgravity or ground investigations" },
-    provenance: ["literature"],
+    provenance: ["computed", "literature"],
     body: "Every test HALO uses ran in microgravity (or on the ground). A Moon or Mars habitat has some buoyancy, so flames there will behave between the two; that regime is untested here, and the challenge statement says the same. The statement names two planned experiments that will begin to fill it: LUCI and FM2 (Flammability of Materials on the Moon), which NASA describes as the first combustion experiment on another planetary body.",
     viz: { kind: "gravity", tested: 0, total: invs },
     sources: [
@@ -394,7 +420,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
     title: `No eligible test of any fuel kind sits within evidence distance ${dRing} of a ${suit.o2Pct}% oxygen suit.`,
     stat: { value: String(near), label: `Tests within distance ${dRing}` },
     second: { value: fmt2(maxO2), unit: "%", label: "Highest O2 in any eligible test" },
-    provenance: ["model", "measured"],
+    provenance: ["computed", "measured"],
     body: `The ${suit.name} preset (${suit.o2Pct}% O2, ${suit.pressurePsia} psia) is the farthest point HALO grades. Its nearest test of any kind, ${nearestAll.n.test?.acronym ?? "n/a"}, is ${fmt2(nearestAll.n.d as number)} away${classRows.every((x) => classGrade(x.n) === "F") ? "; every fuel class grades F" : ""}.`,
     viz: { kind: "distance", rows: classRows.map((x) => ({ label: x.n.test ? `${x.n.test.acronym}` : x.c, d: x.n.d as number })), rings: GRADE_RINGS },
     sources: uniq(classRows.map((x) => x.n.test?.psiId).filter((x): x is string => !!x)).map((id) => datasetSource(data, id)),
@@ -424,7 +450,7 @@ export function computeFindings(data: HaloData = HALO_DATA): Finding[] {
       title: `The single test that would close the most evidence gap: a new real-solid test at ${pick.o2Pct}% oxygen and ${pick.pressurePsia} psia, archived in PSI${litNear ? ", near the Saffire VI conditions" : ""}.`,
       stat: { value: `${pick.o2Pct}`, unit: `% · ${pick.pressurePsia} psia`, label: "Suggested solid-fuel test" },
       second: helped[0] ? { value: fmt2(helped[0].after), unit: `from ${fmt2(helped[0].before)}`, label: `${pname(helped[0].preset)} evidence distance after` } : undefined,
-      provenance: litNear ? ["model", "literature"] : ["model"],
+      provenance: litNear ? ["computed", "literature"] : ["computed"],
       body: `HALO scores every solid, droplet and gas test on a grid of atmospheres by how far it would pull the presets' nearest evidence in, weighted toward the lunar habitats and toward real solids. ${helped
         .map((g) => `${pname(g.preset)} ${fmt2(g.before)} → ${fmt2(g.after)}`)
         .join("; ")}.${litNear ? ` ${litNear.missions.join(", ")} burned ${litNear.materials.join(" and ")} at evidence distance ${fmt2(litNear.d)} from this point (literature), but those runs are not in PSI, so HALO cannot grade on them; a new test with its data archived in PSI would close that gap.` : ""}`,

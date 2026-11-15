@@ -7,7 +7,9 @@ const range = z.tuple([finite, finite]);
 export const FuelClassZ = z.enum(['solid', 'solid_surrogate', 'droplet', 'gas']);
 export const ConditionSourceZ = z.enum(['measured', 'assumed', 'inferred']);
 /** Normalized test end (tests.json `outcome`); only values a PSI table states are mapped, the rest are "unknown". */
-export const OutcomeZ = z.enum(['extinguished', 'burned-out', 'flow-stopped', 'no-ignition', 'disrupted', 'spread', 'unknown']);
+export const OutcomeZ = z.enum([
+  'extinguished', 'burned-out', 'flow-stopped', 'no-ignition', 'no-hot-ignition', 'cool-flame', 'disrupted', 'spread', 'unknown',
+]);
 export const DiluentZ = z.enum(['N2', 'CO2', 'He']);
 export const HazardZ = z.enum(['ignition', 'spread', 'extinction', 'smoke_detection', 'suppression', 'toxicity']);
 

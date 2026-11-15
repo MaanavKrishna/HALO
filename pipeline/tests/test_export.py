@@ -63,3 +63,11 @@ def test_investigation_fields(out):
     flex = next(i for i in invs if i["psiId"] == "PSI-69")
     assert flex["geometry"] == "Free droplets, 1.1 to 4.67 mm initial diameter"
     assert "suppression" in flex["hazards"]
+
+
+def test_saffire_thickness_as_logged(out):
+    import csv
+
+    rows = {r["id"]: r for r in csv.DictReader((out / "tests.csv").read_text().splitlines())}
+    assert rows["PSI-99:2-4"]["geometry"] == "thickness 037 mm (as logged; likely 0.37 mm)"
+    assert rows["PSI-98:S1"]["geometry"] == "thickness 0.37 cm (as logged)"

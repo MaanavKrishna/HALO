@@ -52,6 +52,35 @@ def nums(s) -> list[float]:
     return [float(x) for x in re.findall(r"\d*\.?\d+", str(s))]
 
 
+# BASS-II "Fan display" counts sit around 40-120; air speeds in "Air display" are mostly below 40 cm/s.
+FAN_COUNT_MIN = 40.0
+
+
+def air_display_flow(text: str) -> float:
+    """Initial forced-flow speed (cm/s) from BASS-II's free-text "Air display" cell, NaN when ambiguous.
+
+    1. A number followed by "cm/s" wins ("49   5 cm/s" -> 5).
+    2. A cell that starts by ramping ("incr to 28") or with an upper bound ("<1") has no initial value -> NaN.
+    3. When the leading number looks like a fan count (>= FAN_COUNT_MIN), use the first number in
+       parentheses ("49  44 ... (5   2   0)" -> 5); with no parenthesised value the cell is ambiguous -> NaN.
+    4. Otherwise the first number is the initial air speed ("4 incr to 26.5" -> 4).
+    """
+    t = str(text).strip()
+    m = re.search(r"(\d*\.?\d+)\s*cm/s", t)
+    if m:
+        return float(m.group(1))
+    if re.match(r"(incr|decr|down|up)\b", t, re.I) or t.startswith("<"):
+        return np.nan  # a ramp with no start value, or only an upper bound ("<1")
+    vals = nums(t.split("(")[0])
+    if not vals:
+        return np.nan
+    if vals[0] >= FAN_COUNT_MIN:
+        inner = re.search(r"\(([^)]*)", t)
+        par = nums(inner.group(1)) if inner else []
+        return par[0] if par else np.nan
+    return vals[0]
+
+
 def load_unified(raw_et: Path | None = None) -> pd.DataFrame:
     raw_et = raw_et or paths.RAW_ET
     QA_NOTES.clear()
@@ -108,6 +137,7 @@ def load_unified(raw_et: Path | None = None) -> pd.DataFrame:
                 flow_cm_s=np.nan, diluent="N2",
                 ignited={"yes": 1, "no": 0}.get(r["Hot ignition"].strip().lower(), np.nan),
                 burn_time_s=num(r["burn time (sec)"]), outcome=r[sec].strip(), flame_type=r["Flame Type"],
+                comments=r.get("Comments", "").strip(),
                 o2_src="table", p_src="table (bar)", flow_src="none")
 
     # ACME BRE PSI-20: one row per (test day, listed O2)
@@ -176,13 +206,15 @@ def load_unified(raw_et: Path | None = None) -> pd.DataFrame:
         m = r["Fuel Sample Material"]
         fc = "solid thin" if re.search(r"micron|film|SIBAL|0\.1 mm|nomex|cotton", m, re.I) else "solid thick"
         air = nums(r["Air display"])
+        flow0 = air_display_flow(r["Air display"])
         txt = (r["Fan display"] + " " + r["Air display"]).lower()
-        ext = 1 if re.search(r"ext|blowoff|blow off|out\b|would not", txt) else 0
+        no_ign = 1 if re.search(r"no ign", txt) else 0
+        ext = 0 if no_ign else (1 if re.search(r"ext|blowoff|blow off|out\b|would not", txt) else 0)
         add(psi_id="PSI-25", acronym="BASS-II", test_id=r["Test #"], date=r["Date"], fuel=m, fuel_class=fc,
             o2_pct=num(r["Calibrated  initial O2 % by vol"]), o2_final_pct=num(r["Calibrated final O2 % by vol"]),
-            pressure_atm=1.0, flow_cm_s=air[0] if air else np.nan, flow_min_cm_s=min(air) if air else np.nan,
-            ext_flag_text=ext, o2_src="table (calibrated initial)", p_src="ASSUMED MSG 1 atm",
-            flow_src="'Air display' first value (free text; units assumed cm/s)")
+            pressure_atm=1.0, flow_cm_s=flow0, flow_min_cm_s=min(air) if air else np.nan,
+            ext_flag_text=ext, no_ignition_text=no_ign, o2_src="table (calibrated initial)", p_src="ASSUMED MSG 1 atm",
+            flow_src="'Air display' initial value (free text; units assumed cm/s; see air_display_flow)")
 
     # Saffire I-III
     for pid, ac, name in [("PSI-98", "Saffire-I", "PSI-98"), ("PSI-99", "Saffire-II", "PSI-99"),
@@ -192,13 +224,16 @@ def load_unified(raw_et: Path | None = None) -> pd.DataFrame:
         d = d[d[d.columns[0]].str.match(r"^(S\d|2-\d)")]
         o2c = [c for c in d.columns if c.startswith("Percent O2")]
         for _, r in d.iterrows():
-            thk = r[[c for c in d.columns if "hick" in c][0]]
+            thk_col = [c for c in d.columns if "hick" in c][0]
+            thk = r[thk_col]
+            thk_unit = "cm" if "(cm)" in thk_col else ""
             spread = r.get("?-g Spread Length", "")
             add(psi_id=pid, acronym=ac, test_id=r[d.columns[0]], fuel=r["Material"] or "(see previous row)",
                 fuel_class=("solid thin" if re.search("SIBAL|Silicone|Fabric", r["Material"] or "SIBAL", re.I)
                             and "1 cm" not in thk else "solid thick"),
                 o2_pct=np.mean(nums(r[o2c[0]])) if o2c else 21.0, pressure_atm=1.0,
                 flow_cm_s=num(r[[c for c in d.columns if c.startswith("Air Flow")][0]]), thickness=thk,
+                thickness_unit=thk_unit,
                 outcome=r.get("Burn Time (s)", ""),
                 spread_rate_mm_s=num(spread) if "mm/s" in spread else np.nan,
                 o2_src="table" if o2c else "ASSUMED", p_src="ASSUMED Cygnus cabin ~1 atm", flow_src="table")

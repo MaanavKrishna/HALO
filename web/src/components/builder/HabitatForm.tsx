@@ -178,7 +178,7 @@ export function HabitatForm() {
                 <p className="type-label text-fg-3">
                   O<sub>2</sub> partial pressure
                 </p>
-                <ProvenanceBadge provenance="model" />
+                <ProvenanceBadge provenance="computed" />
               </div>
               <p className="mt-2 flex items-baseline gap-1.5 text-fg">
                 <output aria-live="off" className="font-mono text-[1.75rem] leading-none tracking-[-0.04em]">

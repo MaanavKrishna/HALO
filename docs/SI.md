@@ -1,6 +1,6 @@
 # Build-time SI summaries
 
-Each of HALO's 24 PSI investigations has a short summary in `web/src/data/summaries.json`. An LLM writes them once, at build time, from the investigation's PSI record. Code then checks every answer, and the author reads all of them against PSI before they ship. The web app marks each sentence from this file with an "SI" chip.
+Each of HALO's 24 PSI investigations has a short summary in `web/src/data/summaries.json`. An LLM writes them once, at build time, from the investigation's PSI record. Code then checks every answer; all 24 current entries pass, with none flagged for review. The author's manual read-through against PSI is in progress, so every summary ships labelled as SI output, not author copy. The web app marks each sentence from this file with an "SI" chip.
 
 The first part of this page covers those build-time summaries. [Runtime SI (explain route)](#runtime-si-explain-route) covers the live explanations.
 
@@ -59,7 +59,9 @@ If an answer fails validation, it is sent back once with the list of failed chec
 
 ## Human review
 
-After `make si`, the author:
+**Status (2026-11-15):** automatic validation passed for all 24 entries and none is flagged `needsReview`. The manual read-through below is in progress; no entry is `human-edited` yet. The site says the same on `/about`.
+
+The intended process after `make si` is that the author:
 
 1. Runs `make si-check` to list every entry that fails a check or is flagged.
 2. Reads all 24 summaries against their PSI records, not only the flagged ones.

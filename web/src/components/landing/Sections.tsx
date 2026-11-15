@@ -19,6 +19,7 @@ import type { Provenance } from "@/lib/engine/types";
 import { MiniBrief } from "./MiniBrief";
 import { LANDING_HEADINGS } from "./headings";
 import { dataset, doiUrl, pillars, presets, problem, sourceUrl } from "./data";
+import { FIRE_HISTORY } from "./references";
 
 const fmt = new Intl.NumberFormat("en-US");
 
@@ -52,6 +53,45 @@ function ExtLink({ href, children }: { href: string; children: ReactNode }) {
     <a href={href} target="_blank" rel="noopener noreferrer" className="text-accent underline-offset-4 hover:underline">
       {children}
     </a>
+  );
+}
+
+// ---------------------------------------------------------------- 1b. Why it matters
+
+export const WHY_HEADING = "Why fire safety in space matters.";
+
+export function WhySection() {
+  return (
+    <section id="why" aria-labelledby="why-title" className="section-y border-t border-line">
+      <div className="container-wide">
+        <div className="grid gap-x-16 gap-y-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-end">
+          <Reveal>
+            <h2 id="why-title" className="type-display-m max-w-[20ch] text-fg">
+              {WHY_HEADING}
+            </h2>
+          </Reveal>
+          <Reveal delay={80}>
+            <p className="type-body-l max-w-[52ch] text-fg-2">
+              NASA&apos;s fire-safety work focuses on prevention, detection and suppression; three spacecraft emergencies show
+              why. Each left a lesson that HALO&apos;s questions start from.
+            </p>
+          </Reveal>
+        </div>
+        <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
+          {FIRE_HISTORY.map((f, i) => (
+            <Reveal as="li" key={f.name} delay={i * 70} className="flex flex-col gap-3 border-t border-line-strong pt-6">
+              <p className="font-mono text-[0.8125rem] text-fg-3 tabular-nums">{f.year}</p>
+              <h3 className="type-title text-fg">{f.name}</h3>
+              <p className="type-body-s text-fg-2">{f.what}</p>
+              <p className="type-body-s border-l-2 border-accent-line pl-3 text-fg">{f.lesson}</p>
+              <p className="type-caption mt-auto text-fg-3">
+                Source: <ExtLink href={f.ref.url}>{f.ref.label}</ExtLink>
+              </p>
+            </Reveal>
+          ))}
+        </ol>
+      </div>
+    </section>
   );
 }
 
@@ -168,7 +208,7 @@ export function ProblemSection() {
         <StatGroup className="sm:!grid-cols-3">
           <Stat
             size="lg"
-            label="Richest real-solid test"
+            label="Most O₂ any real cabin material burned in"
             value={r.o2}
             unit="% O₂"
             provenance={<ProvenanceBadge provenance={r.o2Src} />}
@@ -194,13 +234,13 @@ export function ProblemSection() {
           />
           <Stat
             size="lg"
-            label="PSI real-solid tests in the Moon envelope"
+            label="Real cabin materials tested in Moon-base air"
             value={problem.moonWindow.solids}
             unit={`of ${problem.moonWindow.tests} tests`}
-            provenance={<ProvenanceBadge provenance="model" />}
+            provenance={<ProvenanceBadge provenance="computed" />}
             detail={
               <>
-                ≥{problem.moonWindow.o2}% O₂, ≤{problem.moonWindow.p} psia
+                PSI real-solid tests at ≥{problem.moonWindow.o2}% O₂, ≤{problem.moonWindow.p} psia
                 {problem.literature && (
                   <>
                     . {problem.literature.missions} burned {problem.literature.runs} real solids there, outside PSI (literature)
@@ -275,8 +315,10 @@ export function PillarsSection() {
           Suggested next test: a {n.fuel} at <span className="font-mono text-fg">{n.o2}% O₂, {n.p} psia</span>
           {n.before !== null && n.after !== null && (
             <>
-              , moving Artemis Base from evidence distance <span className="font-mono text-fg">{n.before}</span> to{" "}
-              <span className="font-mono text-fg">{n.after}</span>
+              , bringing Artemis Base&apos;s nearest {n.fuel} test closer{" "}
+              <span className="text-fg-3">
+                (evidence distance <span className="font-mono">{n.before}</span> to <span className="font-mono">{n.after}</span>)
+              </span>
             </>
           )}
           .
@@ -289,11 +331,15 @@ export function PillarsSection() {
     },
     {
       title: "Point next-generation equipment",
-      body: "Smoke detector runs from SAME show which materials stayed below an ISS-style detector's alarm proxy, and what a second channel adds.",
+      body: "Smoke detector runs from SAME show which cabin materials an ISS-style smoke detector would likely miss, and what a second kind of detector adds.",
       proof: (
         <>
-          With an ionization channel added, <span className="font-mono text-fg">{k.ionCaught} of {k.ionRuns}</span> Kapton
-          runs reach the Lampwick-calibrated ionization threshold (SAME, ISS air: {k.ambientO2}% O₂, {k.ambientAtm} atm).
+          Add an ionization detector and <span className="font-mono text-fg">{k.ionCaught} of {k.ionRuns}</span> Kapton runs
+          would trip an alarm{" "}
+          <span className="text-fg-3">
+            (threshold set from cotton Lampwick smoke; SAME, ISS air: {k.ambientO2}% O₂, {k.ambientAtm} atm)
+          </span>
+          .
         </>
       ),
       href: "/findings",
@@ -321,7 +367,10 @@ export function PillarsSection() {
                 <span className="font-mono text-xl text-fg-2">of {k.runs}</span>
               </p>
               <p className="type-title max-w-[28ch] text-fg">
-                <>Kapton smoke runs stayed below HALO&apos;s {k.scatterV} V scatter alarm proxy for an ISS-style photoelectric detector.</>
+                Kapton smoke runs would likely be missed by an ISS-style smoke detector.
+              </p>
+              <p className="type-body-s max-w-[44ch] text-fg-2">
+                Precisely: below HALO&apos;s {k.scatterV} V forward-scatter alarm proxy for a photoelectric detector.
               </p>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-fg-2">
                 <ProvenanceBadge provenance="measured" />
@@ -398,7 +447,8 @@ const PROVENANCE: { p: Provenance; text: string }[] = [
   { p: "inferred", text: "Derived from test documentation, not a logged channel." },
   { p: "assumed", text: "Not recorded; a stated assumption, such as cabin air." },
   { p: "literature", text: "Taken from a published paper." },
-  { p: "model", text: "Computed by HALO from cited inputs, such as evidence distance." },
+  { p: "computed", text: "Arithmetic on the data, such as counts and how far the nearest test sits." },
+  { p: "model", text: "From a model fitted to the data: the FLEX droplet extinction model." },
 ];
 
 export function DataSection() {
@@ -428,7 +478,7 @@ export function DataSection() {
           <Stat size="lg" label="PSI investigations" value={dataset.investigations} />
           <Stat size="lg" label="Test rows ingested" value={fmt.format(dataset.totalRows)} />
           <Stat size="lg" label="Rows eligible for coverage" value={fmt.format(dataset.eligibleRows)} />
-          <Stat size="lg" label="Publications with DOI" value={fmt.format(dataset.publications)} />
+          <Stat size="lg" label="Unique publication DOIs" value={fmt.format(dataset.publications)} />
         </StatGroup>
         <p className="type-caption mt-3 font-mono text-fg-3">Dataset build {dataset.builtAt}</p>
       </Reveal>

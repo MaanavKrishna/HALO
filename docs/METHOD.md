@@ -78,3 +78,21 @@ Each ranked entry carries short, deterministic "why" strings for the parts that 
 
 **Diversity rule.** After the best candidate, each further pick must differ from every earlier pick by at least 3 O2 points or at least 1.5 psia, or be a different fuel class, so the runners-up are not near-duplicates of the first pick. Four picks are returned by default.
 
+
+## Sources for presets, standards and limits
+
+- **Artemis Base preset (34% O2, 8.2 psia).** The exploration atmosphere NASA recommended for EVA-intensive mission phases after its 2012 re-evaluation of the earlier 8.0 psia / 32% O2 proposal: Norcross, Conkin and Wessel, *Evidence Report: Risk of Hypobaric Hypoxia from the Exploration Atmosphere* ([NTRS 20150021491](https://ntrs.nasa.gov/citations/20150021491)).
+- **Moon Envelope and Pressurized Rover presets (30% O2, 10.2 psia).** The edge of the range the [challenge statement](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/) gives for the Moon base and rovers: 30% O2 or more at 10.2 psi or less.
+- **Material screening standard.** Spacecraft materials are screened with Test 1 (upward flame spread, in normal gravity) of [NASA-STD-6001B](https://standards.nasa.gov/standard/NASA/NASA-STD-6001). BASS results indicate that Test 1 "is not conservative, and materials can burn at lower oxygen levels in microgravity than on Earth" ([A Researcher's Guide to Combustion Science, 2015](https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/)). HALO grades say where microgravity tests exist; they do not replace Test 1.
+- **Crew exposure limits.** Per [NTRS 20260001992](https://ntrs.nasa.gov/citations/20260001992), in the Saffire VI PMMA burns CO exceeded the 24-hour Spacecraft Maximum Allowable Concentration (JSC 20584, 100 ppm; current revision [NTRS 20240007713](https://ntrs.nasa.gov/citations/20240007713)) and approached, but did not exceed, the 1-hour SMAC (425 ppm); CO2 exceeded the NASA-STD-3001 Volume 2 1-hour limit (3 mmHg). HALO quotes the report's comparison and does not recompute it.
+
+## Data HALO cannot use yet
+
+PSI holds no partial-gravity combustion data. These investigations could help close the gaps and are named on `/method#limits`; none has data in PSI, so HALO grades on none of them. LUCI and FM2 study partial gravity; SoFIE and FLARE study microgravity flammability.
+
+| Investigation | What it is | Source |
+|---|---|---|
+| LUCI, Lunar Combustion Investigation | Cotton-fiberglass fabric and acrylic burned in simulated lunar gravity on a spinning sounding rocket | [NTRS 20250010653](https://ntrs.nasa.gov/citations/20250010653) |
+| FM2, Flammability of Materials on the Moon | The first combustion experiment planned on another planetary body, at 1/6 g | [NASA Glenn](https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/flammability-of-materials-on-the-moon-fm2/) |
+| SoFIE, Solid Fuel Ignition and Extinction | ISS studies of solid-material ignition, spread and extinction | [NASA Glenn](https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/solid-fuel-ignition-and-extinction-sofie/) |
+| FLARE, Flammability Limits at Reduced-g (JAXA-led, with NASA, ESA and universities) | A method to estimate microgravity flammability limits from ground tests | [NASA Glenn](https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/flammability-limits-at-reduced-g-experiment-flare/) |

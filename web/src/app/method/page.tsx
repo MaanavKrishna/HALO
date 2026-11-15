@@ -9,7 +9,9 @@ import { nextTests, PRESET_PRIORITY } from "@/lib/engine/nextTest";
 import { PRESETS } from "@/lib/engine/presets";
 import { DEFAULT_WEIGHTS } from "@/lib/engine/rank";
 import type { FuelClass, Grade } from "@/lib/engine/types";
-import { pageMetadata } from "@/lib/site";
+import { REFS } from "@/components/landing/references";
+import { BASS_FACT } from "@/lib/engine/facts";
+import { CHALLENGE_URL, pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Method",
@@ -50,6 +52,15 @@ const GRADE_ROWS: Array<{ grade: Grade; rule: string }> = [
 
 function H2({ id, children }: { id: string; children: ReactNode }) {
   return <h2 id={id}>{children}</h2>;
+}
+
+function ExtLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {children}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  );
 }
 
 export default function MethodPage() {
@@ -132,7 +143,9 @@ export default function MethodPage() {
         <p>
           <strong>Measured</strong> means the test logged that value in its data table. Values taken from a documented setup are{" "}
           <ProvenanceBadge provenance="assumed" />, values derived from text are <ProvenanceBadge provenance="inferred" />, and
-          only a test with both values measured can earn an A.
+          only a test with both values measured can earn an A. Distances, counts and rankings are{" "}
+          <ProvenanceBadge provenance="computed" />: arithmetic on the data. Only the fitted extinction model below is marked{" "}
+          <ProvenanceBadge provenance="model" />.
         </p>
 
         <H2 id="overall">Overall grade</H2>
@@ -169,6 +182,13 @@ export default function MethodPage() {
             ))}
           </TBody>
         </TableFrame>
+        <p>
+          Where the presets come from: {PRESETS.artemis.name} ({PRESETS.artemis.o2Pct}% O2, {PRESETS.artemis.pressurePsia} psia)
+          is the exploration atmosphere NASA recommended for EVA-intensive missions after its 2012 re-evaluation (
+          <ExtLink href={REFS.explorationAtmosphere.url}>NTRS 20150021491</ExtLink>). The {PRESETS.moon.name} ({PRESETS.moon.o2Pct}% O2,{" "}
+          {PRESETS.moon.pressurePsia} psia) is the edge of the Moon-base range the{" "}
+          <ExtLink href={CHALLENGE_URL}>challenge statement</ExtLink> gives: 30% O2 or more at 10.2 psi or less.
+        </p>
 
         <H2 id="ranking">Ranking</H2>
         <p>
@@ -336,6 +356,43 @@ export default function MethodPage() {
           <li>
             <strong>No partial gravity.</strong> None of the {data.investigations.length} investigations ran at lunar or Martian
             gravity.
+          </li>
+          <li>
+            <strong>Data HALO cannot use yet.</strong> These investigations could help close the gaps above, but none has data in
+            PSI, so HALO names them and grades on none of them. LUCI and FM2 study partial gravity; SoFIE and FLARE study
+            microgravity flammability:
+            <ul>
+              <li>
+                <ExtLink href={REFS.luci.url}>LUCI</ExtLink>, the Lunar Combustion Investigation: cotton-fiberglass fabric and
+                acrylic burned in simulated lunar gravity on a spinning sounding rocket.
+              </li>
+              <li>
+                <ExtLink href={REFS.fm2.url}>FM2</ExtLink>, Flammability of Materials on the Moon: the first combustion experiment
+                planned on another planetary body, at 1/6 g.
+              </li>
+              <li>
+                <ExtLink href={REFS.sofie.url}>SoFIE</ExtLink>, Solid Fuel Ignition and Extinction: ISS studies of how solid
+                materials ignite, spread and go out.
+              </li>
+              <li>
+                <ExtLink href={REFS.flare.url}>FLARE</ExtLink>, Flammability Limits at Reduced-g, JAXA-led: a method to
+                predict microgravity flammability limits from ground tests.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>The standard screening test may not be conservative.</strong> Spacecraft materials are screened with{" "}
+            <ExtLink href={REFS.std6001.url}>NASA-STD-6001B</ExtLink> Test 1, an upward flame-spread test run in normal gravity.
+            BASS results indicate that “{BASS_FACT.value}” (
+            <ExtLink href={REFS.researchersGuide.url}>A Researcher’s Guide to Combustion Science, 2015</ExtLink>). HALO’s grades
+            say where microgravity tests exist near a habitat; they do not replace Test 1 or settle that question.
+          </li>
+          <li>
+            <strong>Crew exposure limits come from the report.</strong> Per the{" "}
+            <ExtLink href={REFS.saffireLimits.url}>Saffire VI heat and smoke report</ExtLink>, CO exceeded the 24-hour{" "}
+            <ExtLink href={REFS.smac.url}>Spacecraft Maximum Allowable Concentration</ExtLink> (100 ppm) and approached, but did
+            not exceed, the 1-hour SMAC (425 ppm); CO2 exceeded the NASA-STD-3001 Volume 2 1-hour limit (3 mmHg). HALO quotes
+            the report&apos;s comparison; it does not recompute it.
           </li>
           <li>
             <strong>Smoke data only at ISS air.</strong> SAME ran at {det.ambient.o2Pct}% O2 and {samePAtm} atm.

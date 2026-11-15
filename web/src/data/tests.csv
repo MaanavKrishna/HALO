@@ -1,0 +1,1226 @@
+id,psiId,acronym,fuelClass,fuel,geometry,o2Pct,o2Src,pressurePsia,pSrc,flowCmS,flowSrc,outcome,diluent,datasetDoi
+PSI-69:1,PSI-69,FLEX,droplet,Methanol,droplet d0 1.69 mm,21.0,measured,14.652,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:2,PSI-69,FLEX,droplet,Methanol,droplet d0 1.86 mm,21.0,measured,14.735,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:3,PSI-69,FLEX,droplet,Methanol,droplet d0 1.61 mm,21.0,measured,14.777,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:4,PSI-69,FLEX,droplet,Methanol,droplet d0 2.06 mm,21.0,measured,14.696,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:5,PSI-69,FLEX,droplet,Methanol,droplet d0 1.92 mm,21.0,measured,14.696,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:6,PSI-69,FLEX,droplet,Methanol,droplet d0 2.54 mm,21.0,measured,14.696,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:7,PSI-69,FLEX,droplet,Heptane,droplet d0 1.87 mm,21.0,measured,14.721,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:8,PSI-69,FLEX,droplet,Heptane,droplet d0 2.95 mm,21.0,measured,14.742,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:9,PSI-69,FLEX,droplet,Heptane,,21.0,measured,14.696,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:10,PSI-69,FLEX,droplet,Methanol,droplet d0 3.86 mm,21.0,measured,44.856,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:11,PSI-69,FLEX,droplet,Methanol,droplet d0 3.03 mm,21.0,measured,44.838,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:12,PSI-69,FLEX,droplet,Heptane,droplet d0 2.74 mm,21.0,measured,44.86,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:13,PSI-69,FLEX,droplet,Methanol,droplet d0 2.59 mm,21.0,measured,40.108,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:14,PSI-69,FLEX,droplet,Methanol,droplet d0 3.7 mm,21.0,measured,39.749,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:15,PSI-69,FLEX,droplet,Methanol,droplet d0 4.42 mm,21.0,measured,39.962,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:16,PSI-69,FLEX,droplet,Methanol,droplet d0 1.66 mm,21.0,measured,40.068,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:17,PSI-69,FLEX,droplet,Methanol,droplet d0 2.67 mm,21.0,measured,29.889,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:18,PSI-69,FLEX,droplet,Heptane,droplet d0 2.74 mm,21.0,measured,30.046,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:19,PSI-69,FLEX,droplet,Heptane,droplet d0 3.39 mm,34.0,measured,10.424,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:20,PSI-69,FLEX,droplet,Methanol,droplet d0 3.4 mm,34.0,measured,10.432,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:21,PSI-69,FLEX,droplet,Methanol,droplet d0 3.49 mm,34.0,measured,10.453,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:22,PSI-69,FLEX,droplet,Methanol,droplet d0 3.5 mm,34.0,measured,10.452,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:23,PSI-69,FLEX,droplet,Heptane,droplet d0 3.01 mm,34.0,measured,10.477,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:24,PSI-69,FLEX,droplet,Heptane,,34.0,measured,10.496,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:25,PSI-69,FLEX,droplet,Methanol,droplet d0 2.6 mm,30.0,measured,10.39,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:26,PSI-69,FLEX,droplet,Methanol,droplet d0 3.63 mm,30.0,measured,10.411,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:27,PSI-69,FLEX,droplet,Heptane,droplet d0 3.87 mm,30.0,measured,10.455,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:28,PSI-69,FLEX,droplet,Heptane,droplet d0 3.36 mm,30.0,measured,10.436,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:29,PSI-69,FLEX,droplet,Methanol,droplet d0 2.57 mm,30.0,measured,14.829,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:30,PSI-69,FLEX,droplet,Methanol,droplet d0 3.26 mm,30.0,measured,14.874,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:31,PSI-69,FLEX,droplet,Heptane,droplet d0 3.39 mm,30.0,measured,14.899,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:32,PSI-69,FLEX,droplet,Heptane,droplet d0 3.07 mm,30.0,measured,14.909,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:33,PSI-69,FLEX,droplet,Methanol,droplet d0 2.62 mm,21.0,measured,14.783,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:34,PSI-69,FLEX,droplet,Methanol,droplet d0 3.89 mm,21.0,measured,14.845,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:35,PSI-69,FLEX,droplet,Heptane,droplet d0 3.85 mm,21.0,measured,14.853,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:36,PSI-69,FLEX,droplet,Methanol,droplet d0 2.4 mm,20.0,measured,10.423,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:37,PSI-69,FLEX,droplet,Methanol,droplet d0 3.31 mm,34.0,measured,10.332,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:38,PSI-69,FLEX,droplet,Methanol,droplet d0 3.59 mm,34.0,measured,10.334,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:39,PSI-69,FLEX,droplet,Heptane,droplet d0 2.91 mm,34.0,measured,10.343,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:40,PSI-69,FLEX,droplet,Methanol,droplet d0 3.77 mm,30.0,measured,10.347,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:41,PSI-69,FLEX,droplet,Methanol,droplet d0 3.35 mm,30.0,measured,10.332,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:42,PSI-69,FLEX,droplet,Heptane,droplet d0 2.92 mm,30.0,measured,10.345,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:43,PSI-69,FLEX,droplet,Heptane,droplet d0 2.97 mm,30.0,measured,10.343,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:44,PSI-69,FLEX,droplet,Methanol,droplet d0 3.49 mm,30.0,measured,14.827,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:45,PSI-69,FLEX,droplet,Methanol,droplet d0 2.42 mm,30.0,measured,14.856,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:46,PSI-69,FLEX,droplet,Methanol,droplet d0 2.78 mm,21.0,measured,14.88,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:47,PSI-69,FLEX,droplet,Heptane,droplet d0 3.36 mm,21.0,measured,14.891,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:48,PSI-69,FLEX,droplet,Methanol,droplet d0 3.66 mm,21.0,measured,14.864,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:49,PSI-69,FLEX,droplet,Heptane,droplet d0 3.46 mm,21.0,measured,14.791,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:50,PSI-69,FLEX,droplet,Heptane,droplet d0 3.57 mm,21.0,measured,14.891,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:51,PSI-69,FLEX,droplet,Heptane,droplet d0 2.41 mm,21.0,measured,14.916,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:52,PSI-69,FLEX,droplet,Heptane,droplet d0 3.53 mm,30.0,measured,14.911,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:53,PSI-69,FLEX,droplet,Heptane,,21.0,measured,14.893,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:54,PSI-69,FLEX,droplet,Methanol,droplet d0 3.56 mm,20.0,measured,10.469,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:55,PSI-69,FLEX,droplet,Methanol,droplet d0 3.37 mm,20.0,measured,10.492,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:56,PSI-69,FLEX,droplet,Heptane,droplet d0 3.56 mm,20.0,measured,10.521,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:57,PSI-69,FLEX,droplet,Heptane,droplet d0 3.1 mm,20.0,measured,10.527,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:58,PSI-69,FLEX,droplet,Methanol,droplet d0 3.69 mm,18.0,measured,14.953,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:59,PSI-69,FLEX,droplet,Methanol,droplet d0 2.93 mm,18.0,measured,14.874,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:60,PSI-69,FLEX,droplet,Methanol,droplet d0 3.43 mm,18.0,measured,14.961,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:61,PSI-69,FLEX,droplet,Methanol,droplet d0 3.68 mm,18.0,measured,14.969,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:62,PSI-69,FLEX,droplet,Heptane,droplet d0 3.43 mm,18.0,measured,14.731,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:63,PSI-69,FLEX,droplet,Heptane,droplet d0 2.15 mm,18.0,measured,14.843,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:64,PSI-69,FLEX,droplet,Heptane,droplet d0 2.69 mm,18.0,measured,14.785,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:65,PSI-69,FLEX,droplet,Methanol,droplet d0 3.37 mm,15.0,measured,14.81,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:66,PSI-69,FLEX,droplet,Methanol,droplet d0 2.52 mm,15.0,measured,14.827,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:67,PSI-69,FLEX,droplet,Methanol,droplet d0 3.97 mm,15.0,measured,14.845,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:68,PSI-69,FLEX,droplet,Methanol,droplet d0 2.38 mm,15.0,measured,14.866,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:69,PSI-69,FLEX,droplet,Heptane,droplet d0 1.1 mm,14.0,measured,14.833,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:70,PSI-69,FLEX,droplet,Heptane,droplet d0 4.67 mm,15.0,measured,14.715,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:71,PSI-69,FLEX,droplet,Methanol,droplet d0 2.25 mm,15.0,measured,14.856,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:72,PSI-69,FLEX,droplet,Heptane,droplet d0 1.13 mm,15.0,measured,14.797,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:73,PSI-69,FLEX,droplet,Heptane,droplet d0 4.64 mm,15.0,measured,14.715,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:74,PSI-69,FLEX,droplet,Heptane,droplet d0 1.33 mm,15.0,measured,14.81,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:75,PSI-69,FLEX,droplet,Methanol,droplet d0 2.54 mm,13.0,measured,14.905,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:76,PSI-69,FLEX,droplet,Methanol,droplet d0 3.21 mm,13.0,measured,14.88,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:77,PSI-69,FLEX,droplet,Methanol,droplet d0 3.33 mm,14.0,measured,14.858,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:78,PSI-69,FLEX,droplet,Methanol,droplet d0 2.66 mm,14.0,measured,14.812,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:79,PSI-69,FLEX,droplet,Heptane,droplet d0 2.92 mm,13.0,measured,14.853,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:80,PSI-69,FLEX,droplet,Heptane,,13.0,measured,14.889,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:81,PSI-69,FLEX,droplet,Heptane,,13.0,measured,14.893,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:82,PSI-69,FLEX,droplet,Methanol,droplet d0 2.84 mm,13.0,measured,14.785,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:83,PSI-69,FLEX,droplet,Methanol,,12.0,measured,14.928,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:84,PSI-69,FLEX,droplet,Methanol,droplet d0 2.35 mm,12.0,measured,14.835,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:85,PSI-69,FLEX,droplet,Methanol,droplet d0 2.4 mm,12.0,measured,14.913,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:86,PSI-69,FLEX,droplet,Methanol,droplet d0 3.07 mm,12.0,measured,14.889,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:87,PSI-69,FLEX,droplet,Methanol,droplet d0 2.64 mm,12.0,measured,14.913,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:88,PSI-69,FLEX,droplet,Methanol,droplet d0 3.01 mm,25.0,measured,10.394,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:89,PSI-69,FLEX,droplet,Methanol,droplet d0 3.7 mm,25.0,measured,10.392,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:90,PSI-69,FLEX,droplet,Methanol,droplet d0 3.62 mm,25.0,measured,10.426,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:91,PSI-69,FLEX,droplet,Methanol,droplet d0 3.51 mm,25.0,measured,10.409,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:92,PSI-69,FLEX,droplet,Heptane,droplet d0 3.41 mm,25.0,measured,10.37,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:93,PSI-69,FLEX,droplet,Heptane,droplet d0 2.48 mm,25.0,measured,10.39,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:94,PSI-69,FLEX,droplet,Heptane,droplet d0 3.53 mm,24.0,measured,10.318,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:95,PSI-69,FLEX,droplet,Heptane,droplet d0 3.6 mm,24.0,measured,10.334,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:96,PSI-69,FLEX,droplet,Heptane,,24.0,measured,10.334,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:97,PSI-69,FLEX,droplet,Methanol,droplet d0 4.25 mm,23.0,measured,10.33,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:98,PSI-69,FLEX,droplet,Methanol,droplet d0 3.64 mm,23.0,measured,10.386,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:99,PSI-69,FLEX,droplet,Methanol,droplet d0 4.28 mm,23.0,measured,10.345,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:100,PSI-69,FLEX,droplet,Heptane,droplet d0 4.14 mm,23.0,measured,10.378,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:101,PSI-69,FLEX,droplet,Heptane,droplet d0 3.88 mm,23.0,measured,10.417,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:102,PSI-69,FLEX,droplet,Heptane,droplet d0 3.57 mm,21.0,measured,10.33,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:103,PSI-69,FLEX,droplet,Heptane,droplet d0 4 mm,21.0,measured,10.332,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:104,PSI-69,FLEX,droplet,Methanol,droplet d0 3.6 mm,23.0,measured,10.328,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:105,PSI-69,FLEX,droplet,Methanol,droplet d0 4.17 mm,23.0,measured,10.337,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:106,PSI-69,FLEX,droplet,Methanol,droplet d0 3.08 mm,23.0,measured,10.409,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:107,PSI-69,FLEX,droplet,Methanol,droplet d0 3.18 mm,23.0,measured,10.345,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:108,PSI-69,FLEX,droplet,Methanol,droplet d0 3.75 mm,23.0,measured,10.409,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:109,PSI-69,FLEX,droplet,Methanol,droplet d0 3.56 mm,21.0,measured,10.374,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:110,PSI-69,FLEX,droplet,Methanol,droplet d0 2.83 mm,21.0,measured,10.384,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:111,PSI-69,FLEX,droplet,Methanol,droplet d0 3.37 mm,21.0,measured,10.382,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:112,PSI-69,FLEX,droplet,Methanol,droplet d0 3.99 mm,21.0,measured,10.262,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:113,PSI-69,FLEX,droplet,Methanol,droplet d0 4.2 mm,20.0,measured,10.337,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:115,PSI-69,FLEX,droplet,Methanol,droplet d0 3.97 mm,20.0,measured,10.361,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:116,PSI-69,FLEX,droplet,Methanol,droplet d0 3.16 mm,20.0,measured,10.37,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:117,PSI-69,FLEX,droplet,Heptane,droplet d0 3.84 mm,20.0,measured,10.27,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:118,PSI-69,FLEX,droplet,Heptane,droplet d0 3.03 mm,20.0,measured,10.303,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:119,PSI-69,FLEX,droplet,Heptane,droplet d0 2.6 mm,18.0,measured,10.299,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:120,PSI-69,FLEX,droplet,Heptane,droplet d0 2.45 mm,18.0,measured,10.297,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:121,PSI-69,FLEX,droplet,Methanol,droplet d0 4.25 mm,18.0,measured,10.177,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:122,PSI-69,FLEX,droplet,Methanol,droplet d0 3.46 mm,18.0,measured,10.272,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:123,PSI-69,FLEX,droplet,Methanol,droplet d0 4.13 mm,18.0,measured,10.287,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:124,PSI-69,FLEX,droplet,Methanol,droplet d0 2.87 mm,18.0,measured,10.295,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:125,PSI-69,FLEX,droplet,Methanol,droplet d0 3.63 mm,17.0,measured,10.388,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:126,PSI-69,FLEX,droplet,Methanol,droplet d0 2.8 mm,17.0,measured,10.366,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:127,PSI-69,FLEX,droplet,Methanol,droplet d0 3.22 mm,17.0,measured,10.378,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:128,PSI-69,FLEX,droplet,Methanol,droplet d0 2.91 mm,17.0,measured,10.39,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:129,PSI-69,FLEX,droplet,Heptane,droplet d0 3.33 mm,17.0,measured,10.368,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:130,PSI-69,FLEX,droplet,Heptane,droplet d0 2.91 mm,17.0,measured,10.388,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:131,PSI-69,FLEX,droplet,Heptane,droplet d0 1.72 mm,24.0,measured,14.771,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:132,PSI-69,FLEX,droplet,Heptane,droplet d0 2.63 mm,24.0,measured,14.797,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:133,PSI-69,FLEX,droplet,Heptane,droplet d0 3.25 mm,24.0,measured,14.826,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:134,PSI-69,FLEX,droplet,Heptane,droplet d0 3.66 mm,24.0,measured,14.835,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:135,PSI-69,FLEX,droplet,Heptane,droplet d0 2.78 mm,24.0,measured,14.855,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:136,PSI-69,FLEX,droplet,Heptane,droplet d0 3.08 mm,24.0,measured,14.853,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:137,PSI-69,FLEX,droplet,Heptane,droplet d0 3.13 mm,24.0,measured,14.855,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:138,PSI-69,FLEX,droplet,Heptane,,24.0,measured,14.862,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:139,PSI-69,FLEX,droplet,Heptane,droplet d0 1.75 mm,24.0,measured,14.851,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:140,PSI-69,FLEX,droplet,Methanol,droplet d0 3.98 mm,15.0,measured,10.316,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:141,PSI-69,FLEX,droplet,Methanol,droplet d0 2.86 mm,15.0,measured,10.328,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:142,PSI-69,FLEX,droplet,Methanol,droplet d0 1.86 mm,15.0,measured,10.336,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:143,PSI-69,FLEX,droplet,Methanol,droplet d0 2.25 mm,15.0,measured,10.339,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:144,PSI-69,FLEX,droplet,Methanol,droplet d0 3.53 mm,20.0,measured,14.733,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:145,PSI-69,FLEX,droplet,Methanol,droplet d0 3.33 mm,20.0,measured,14.764,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:146,PSI-69,FLEX,droplet,Methanol,droplet d0 4.35 mm,20.0,measured,14.802,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:147,PSI-69,FLEX,droplet,Methanol,droplet d0 3.02 mm,17.0,measured,10.359,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:148,PSI-69,FLEX,droplet,Heptane,droplet d0 2.58 mm,20.0,measured,14.781,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:149,PSI-69,FLEX,droplet,Heptane,droplet d0 2.21 mm,20.0,measured,14.816,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:150,PSI-69,FLEX,droplet,Heptane,droplet d0 3.18 mm,20.0,measured,14.843,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:151,PSI-69,FLEX,droplet,Methanol,droplet d0 3.86 mm,18.0,measured,14.744,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:152,PSI-69,FLEX,droplet,Methanol,droplet d0 3.33 mm,18.0,measured,14.793,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:153,PSI-69,FLEX,droplet,Methanol,droplet d0 2.78 mm,18.0,measured,14.804,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:154,PSI-69,FLEX,droplet,Heptane,droplet d0 3.7 mm,18.0,measured,14.74,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:155,PSI-69,FLEX,droplet,Heptane,droplet d0 2.73 mm,18.0,measured,14.791,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:156,PSI-69,FLEX,droplet,Heptane,droplet d0 1.34 mm,18.0,measured,14.806,measured,0.0,assumed,burned-out,CO2,10.60555/mbq8-0451
+PSI-69:157,PSI-69,FLEX,droplet,Methanol,droplet d0 4.24 mm,16.0,measured,14.737,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:158,PSI-69,FLEX,droplet,Methanol,droplet d0 3.7 mm,16.0,measured,14.781,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:159,PSI-69,FLEX,droplet,Methanol,droplet d0 2.71 mm,16.0,measured,14.802,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:160,PSI-69,FLEX,droplet,Methanol,droplet d0 2.77 mm,16.0,measured,14.843,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:161,PSI-69,FLEX,droplet,Methanol,droplet d0 3.72 mm,15.0,measured,14.76,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:162,PSI-69,FLEX,droplet,Methanol,droplet d0 3.05 mm,15.0,measured,14.781,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:163,PSI-69,FLEX,droplet,Methanol,droplet d0 2.59 mm,15.0,measured,14.81,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:164,PSI-69,FLEX,droplet,Methanol,droplet d0 2.59 mm,15.0,measured,14.814,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:165,PSI-69,FLEX,droplet,Heptane,droplet d0 1.96 mm,18.0,measured,14.8,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:166,PSI-69,FLEX,droplet,Methanol,droplet d0 3.22 mm,14.0,measured,14.711,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:167,PSI-69,FLEX,droplet,Methanol,droplet d0 2.32 mm,14.0,measured,14.727,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:168,PSI-69,FLEX,droplet,Methanol,droplet d0 3.03 mm,21.0,measured,14.762,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:169,PSI-69,FLEX,droplet,Methanol,droplet d0 3.05 mm,21.0,measured,14.814,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:170,PSI-69,FLEX,droplet,Methanol,droplet d0 3.53 mm,21.0,measured,14.826,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:171,PSI-69,FLEX,droplet,Heptane,droplet d0 3.74 mm,18.0,measured,14.694,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:172,PSI-69,FLEX,droplet,Heptane,droplet d0 2.4 mm,18.0,measured,14.735,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:173,PSI-69,FLEX,droplet,Heptane,droplet d0 1.35 mm,18.0,measured,14.737,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:174,PSI-69,FLEX,droplet,Heptane,droplet d0 2.5 mm,24.0,measured,10.281,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:175,PSI-69,FLEX,droplet,Heptane,droplet d0 2.88 mm,24.0,measured,10.289,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:176,PSI-69,FLEX,droplet,Methanol,droplet d0 4.53 mm,24.0,measured,10.382,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:177,PSI-69,FLEX,droplet,Methanol,droplet d0 3.02 mm,24.0,measured,10.384,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:178,PSI-69,FLEX,droplet,Heptane,droplet d0 3.32 mm,23.0,measured,10.318,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:179,PSI-69,FLEX,droplet,Heptane,droplet d0 2.07 mm,23.0,measured,10.334,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:180,PSI-69,FLEX,droplet,Heptane,droplet d0 3.4 mm,19.0,measured,14.665,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:181,PSI-69,FLEX,droplet,Heptane,droplet d0 2.48 mm,19.0,measured,14.679,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:182,PSI-69,FLEX,droplet,Heptane,droplet d0 1.64 mm,19.0,measured,14.677,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:183,PSI-69,FLEX,droplet,Methanol,droplet d0 3.72 mm,23.0,measured,10.334,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:184,PSI-69,FLEX,droplet,Methanol,droplet d0 3.42 mm,23.0,measured,10.347,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:185,PSI-69,FLEX,droplet,Methanol,droplet d0 2.8 mm,23.0,measured,10.349,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:186,PSI-69,FLEX,droplet,Methanol,droplet d0 2.47 mm,23.0,measured,10.368,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:187,PSI-69,FLEX,droplet,Methanol,droplet d0 3.38 mm,19.0,measured,14.657,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:188,PSI-69,FLEX,droplet,Methanol,droplet d0 2.47 mm,19.0,measured,14.659,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:189,PSI-69,FLEX,droplet,Methanol,droplet d0 3.77 mm,18.0,measured,14.719,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:190,PSI-69,FLEX,droplet,Methanol,droplet d0 2.74 mm,18.0,measured,14.785,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:191,PSI-69,FLEX,droplet,Methanol,droplet d0 1.76 mm,18.0,measured,14.798,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:192,PSI-69,FLEX,droplet,Methanol,droplet d0 3.46 mm,17.0,measured,14.686,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:193,PSI-69,FLEX,droplet,Methanol,droplet d0 2.77 mm,17.0,measured,14.679,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:194,PSI-69,FLEX,droplet,Heptane,droplet d0 3.76 mm,17.0,measured,14.541,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:195,PSI-69,FLEX,droplet,Heptane,droplet d0 2.9 mm,17.0,measured,14.551,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:196,PSI-69,FLEX,droplet,Heptane,droplet d0 3.06 mm,20.0,measured,14.665,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:197,PSI-69,FLEX,droplet,Heptane,droplet d0 3.04 mm,20.0,measured,14.692,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:198,PSI-69,FLEX,droplet,Heptane,droplet d0 2.12 mm,20.0,measured,14.698,measured,0.0,assumed,disrupted,CO2,10.60555/mbq8-0451
+PSI-69:199,PSI-69,FLEX,droplet,Methanol,droplet d0 3.37 mm,20.0,measured,14.58,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:200,PSI-69,FLEX,droplet,Methanol,droplet d0 2.57 mm,20.0,measured,14.621,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:201,PSI-69,FLEX,droplet,Methanol,droplet d0 2.4 mm,20.0,measured,14.636,measured,0.0,assumed,extinguished,CO2,10.60555/mbq8-0451
+PSI-69:202,PSI-69,FLEX,droplet,Methanol,droplet d0 3.3 mm,21.0,measured,14.7,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:203,PSI-69,FLEX,droplet,Methanol,droplet d0 2.75 mm,21.0,measured,14.727,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:204,PSI-69,FLEX,droplet,Heptane,droplet d0 3.56 mm,21.0,measured,14.628,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:205,PSI-69,FLEX,droplet,Heptane,droplet d0 3.58 mm,21.0,measured,14.644,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:206,PSI-69,FLEX,droplet,Heptane,droplet d0 2.96 mm,21.0,measured,14.7,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:207,PSI-69,FLEX,droplet,Heptane,droplet d0 2.72 mm,21.0,measured,14.748,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:208,PSI-69,FLEX,droplet,Heptane,droplet d0 2.92 mm,21.0,measured,14.752,measured,0.0,assumed,burned-out,N2,10.60555/mbq8-0451
+PSI-69:209,PSI-69,FLEX,droplet,Heptane,droplet d0 3.34 mm,16.0,measured,14.692,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:210,PSI-69,FLEX,droplet,Heptane,,16.0,measured,14.692,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:211,PSI-69,FLEX,droplet,Heptane,droplet d0 2.52 mm,16.0,measured,14.694,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:212,PSI-69,FLEX,droplet,Heptane,droplet d0 2.55 mm,15.0,measured,14.773,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:213,PSI-69,FLEX,droplet,Heptane,droplet d0 4.16 mm,14.0,measured,14.692,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:214,PSI-69,FLEX,droplet,Heptane,droplet d0 1.83 mm,14.0,measured,14.694,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:215,PSI-69,FLEX,droplet,Methanol,droplet d0 3.5 mm,14.0,measured,14.65,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:216,PSI-69,FLEX,droplet,Methanol,droplet d0 2.67 mm,14.0,measured,14.663,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:217,PSI-69,FLEX,droplet,Methanol,droplet d0 3.46 mm,13.0,measured,14.684,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:218,PSI-69,FLEX,droplet,Methanol,droplet d0 2.75 mm,13.0,measured,14.708,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:219,PSI-69,FLEX,droplet,Methanol,droplet d0 2.6 mm,12.0,measured,14.727,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:220,PSI-69,FLEX,droplet,Methanol,droplet d0 1.94 mm,12.0,measured,14.733,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:221,PSI-69,FLEX,droplet,Methanol,droplet d0 1.84 mm,12.0,measured,14.768,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:222,PSI-69,FLEX,droplet,Methanol,droplet d0 2.91 mm,20.0,measured,14.681,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:223,PSI-69,FLEX,droplet,Methanol,,20.0,measured,14.688,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:224,PSI-69,FLEX,droplet,Heptane,droplet d0 2.25 mm,20.0,measured,14.605,measured,0.0,assumed,burned-out,He,10.60555/mbq8-0451
+PSI-69:225,PSI-69,FLEX,droplet,Methanol,droplet d0 2.78 mm,19.0,measured,14.568,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:226,PSI-69,FLEX,droplet,Methanol,droplet d0 2.79 mm,18.0,measured,14.681,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:227,PSI-69,FLEX,droplet,Methanol,droplet d0 2.95 mm,18.0,measured,14.702,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:228,PSI-69,FLEX,droplet,Heptane,droplet d0 3.32 mm,21.0,measured,14.839,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:229,PSI-69,FLEX,droplet,Heptane,droplet d0 2.39 mm,21.0,measured,14.853,measured,0.0,assumed,disrupted,N2,10.60555/mbq8-0451
+PSI-69:230,PSI-69,FLEX,droplet,Heptane,droplet d0 3.65 mm,21.0,measured,14.874,measured,0.0,assumed,extinguished,N2,10.60555/mbq8-0451
+PSI-69:231,PSI-69,FLEX,droplet,Heptane,droplet d0 2.59 mm,19.0,measured,14.673,measured,0.0,assumed,disrupted,He,10.60555/mbq8-0451
+PSI-69:232,PSI-69,FLEX,droplet,Heptane,droplet d0 3.52 mm,18.0,measured,14.768,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:233,PSI-69,FLEX,droplet,Heptane,droplet d0 2.3 mm,18.0,measured,14.81,measured,0.0,assumed,burned-out,He,10.60555/mbq8-0451
+PSI-69:234,PSI-69,FLEX,droplet,Heptane,droplet d0 2.27 mm,18.0,measured,14.822,measured,0.0,assumed,burned-out,He,10.60555/mbq8-0451
+PSI-69:235,PSI-69,FLEX,droplet,Heptane,droplet d0 2.85 mm,17.0,measured,14.682,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:236,PSI-69,FLEX,droplet,Heptane,droplet d0 2.12 mm,17.0,measured,14.682,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:237,PSI-69,FLEX,droplet,Heptane,,17.0,measured,14.688,measured,0.0,assumed,disrupted,He,10.60555/mbq8-0451
+PSI-69:238,PSI-69,FLEX,droplet,Heptane,droplet d0 1.61 mm,17.0,measured,14.692,measured,0.0,assumed,burned-out,He,10.60555/mbq8-0451
+PSI-69:239,PSI-69,FLEX,droplet,Methanol,droplet d0 2.99 mm,17.0,measured,14.584,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:240,PSI-69,FLEX,droplet,Methanol,droplet d0 2.9 mm,17.0,measured,14.638,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:241,PSI-69,FLEX,droplet,Methanol,droplet d0 3.4 mm,16.0,measured,14.694,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:242,PSI-69,FLEX,droplet,Methanol,,16.0,measured,14.715,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:243,PSI-69,FLEX,droplet,Heptane,droplet d0 1.49 mm,16.0,measured,14.655,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:244,PSI-69,FLEX,droplet,Methanol,droplet d0 3.67 mm,15.0,measured,14.611,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:245,PSI-69,FLEX,droplet,Methanol,droplet d0 2.52 mm,15.0,measured,14.632,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:246,PSI-69,FLEX,droplet,Methanol,droplet d0 2.44 mm,14.0,measured,14.681,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:247,PSI-69,FLEX,droplet,Methanol,droplet d0 1.88 mm,14.0,measured,14.692,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:248,PSI-69,FLEX,droplet,Methanol,droplet d0 3.56 mm,13.0,measured,14.764,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:249,PSI-69,FLEX,droplet,Heptane,droplet d0 3.78 mm,24.0,measured,10.326,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:250,PSI-69,FLEX,droplet,Heptane,droplet d0 2.8 mm,23.0,measured,10.291,measured,0.0,assumed,burned-out,He,10.60555/mbq8-0451
+PSI-69:251,PSI-69,FLEX,droplet,Methanol,droplet d0 2.82 mm,24.0,measured,10.332,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:252,PSI-69,FLEX,droplet,Methanol,droplet d0 2.79 mm,24.0,measured,10.337,measured,0.0,assumed,disrupted,He,10.60555/mbq8-0451
+PSI-69:253,PSI-69,FLEX,droplet,Methanol,droplet d0 2.45 mm,23.0,measured,10.281,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:254,PSI-69,FLEX,droplet,Methanol,droplet d0 2.61 mm,23.0,measured,10.283,measured,0.0,assumed,disrupted,He,10.60555/mbq8-0451
+PSI-69:255,PSI-69,FLEX,droplet,Methanol,droplet d0 3.22 mm,21.0,measured,10.285,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:256,PSI-69,FLEX,droplet,Methanol,droplet d0 3.25 mm,21.0,measured,10.272,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:257,PSI-69,FLEX,droplet,Methanol,droplet d0 2.67 mm,21.0,measured,10.272,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:258,PSI-69,FLEX,droplet,Heptane,droplet d0 3.23 mm,21.0,measured,10.241,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:259,PSI-69,FLEX,droplet,Heptane,droplet d0 2.86 mm,21.0,measured,10.229,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:260,PSI-69,FLEX,droplet,Heptane,droplet d0 3.69 mm,20.0,measured,10.297,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:261,PSI-69,FLEX,droplet,Heptane,droplet d0 3.08 mm,20.0,measured,10.287,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:262,PSI-69,FLEX,droplet,Methanol,droplet d0 3.87 mm,20.0,measured,10.202,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:263,PSI-69,FLEX,droplet,Methanol,droplet d0 2.95 mm,20.0,measured,10.208,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:264,PSI-69,FLEX,droplet,Methanol,droplet d0 3.5 mm,18.0,measured,10.295,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:265,PSI-69,FLEX,droplet,Methanol,droplet d0 2.7 mm,18.0,measured,10.305,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:266,PSI-69,FLEX,droplet,Methanol,droplet d0 1.84 mm,18.0,measured,10.31,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:267,PSI-69,FLEX,droplet,Heptane,droplet d0 2.27 mm,18.0,measured,10.21,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:268,PSI-69,FLEX,droplet,Heptane,droplet d0 1.86 mm,18.0,measured,10.254,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:269,PSI-69,FLEX,droplet,Heptane,droplet d0 2.22 mm,17.0,measured,10.291,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:270,PSI-69,FLEX,droplet,Heptane,droplet d0 1.61 mm,17.0,measured,10.297,measured,0.0,assumed,burned-out,He,10.60555/mbq8-0451
+PSI-69:271,PSI-69,FLEX,droplet,Methanol,droplet d0 2.79 mm,17.0,measured,10.256,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:272,PSI-69,FLEX,droplet,Methanol,droplet d0 2.68 mm,17.0,measured,10.278,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:273,PSI-69,FLEX,droplet,Heptane,droplet d0 3.54 mm,21.0,measured,14.787,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-69:274,PSI-69,FLEX,droplet,Heptane,droplet d0 2.82 mm,21.0,measured,14.816,measured,0.0,assumed,extinguished,He,10.60555/mbq8-0451
+PSI-39:1206,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1207,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1208,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1209,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1210,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1211,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1213,PSI-39,CFI,droplet,C12H26,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1215,PSI-39,CFI,droplet,C12H26,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1216,PSI-39,CFI,droplet,C12H26,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1217,PSI-39,CFI,droplet,C12H26,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1218,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1219,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1220,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1221,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1222,PSI-39,CFI,droplet,C12H26,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1223,PSI-39,CFI,droplet,C12H26,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1224,PSI-39,CFI,droplet,C12H26,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1225,PSI-39,CFI,droplet,C12H26,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1226,PSI-39,CFI,droplet,C12H26,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1227,PSI-39,CFI,droplet,C12H26,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1228,PSI-39,CFI,droplet,C12H26,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1229,PSI-39,CFI,droplet,C12H26,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1285,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1286,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1287,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1288,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1289,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1295,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1296,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1297,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1290,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1291,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1292,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1293,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1294,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1300,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1301,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1310,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1311,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1312,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1313,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1314,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,18.37,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1320,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1321,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1322,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1323,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,29.392,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1328,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1329,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1330,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1331,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1332,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,17.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1335,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1336,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1337,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1338,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1340,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,73.48,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1341,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,73.48,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1342,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,73.48,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1346,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,11.022,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1347,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,11.022,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1348,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,11.022,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1349,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,11.022,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1356,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,7.348,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1357,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,7.348,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1358,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,7.348,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1362,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1363,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1364,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1365,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1366,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1367,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1368,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1369,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1373,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1374,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,44.088,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1383,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1384,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1386,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1387,PSI-39,CFI,droplet,[.60]/[.40] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1285#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1286#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1287#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1288#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1289#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,17.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1295#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1296#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-39:1297#2,PSI-39,CFI,droplet,[.75]/[.25] C12H26/iso-dodecane,,21.0,measured,14.696,measured,0.0,assumed,unknown,,10.60555/m6pj-a914
+PSI-159:21088A1,PSI-159,ACME CFI-G,gas,ethane,,39.39,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 B1,PSI-159,ACME CFI-G,gas,ethane,,38.982,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 C1,PSI-159,ACME CFI-G,gas,ethane,,38.632,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 D1,PSI-159,ACME CFI-G,gas,ethane,,38.291,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21088 F1,PSI-159,ACME CFI-G,gas,ethane,,38.043,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21088 G1,PSI-159,ACME CFI-G,gas,ethane,,37.986,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 H1,PSI-159,ACME CFI-G,gas,ethane,,37.614,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21088 J1,PSI-159,ACME CFI-G,gas,ethane,,37.339,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 K1,PSI-159,ACME CFI-G,gas,ethane,,36.958,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21088 H2,PSI-159,ACME CFI-G,gas,ethane,,36.455,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21088 M4,PSI-159,ACME CFI-G,gas,ethane,,21.01,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 L1,PSI-159,ACME CFI-G,gas,ethane,,20.964,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 N1,PSI-159,ACME CFI-G,gas,ethane,,18.02,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21088 P1,PSI-159,ACME CFI-G,gas,ethane,,17.969,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102A1,PSI-159,ACME CFI-G,gas,50% butane,,39.57,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102 C1,PSI-159,ACME CFI-G,gas,50% butane,,39.303,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102 B1,PSI-159,ACME CFI-G,gas,50% butane,,39.055,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102 C2,PSI-159,ACME CFI-G,gas,50% butane,,38.813,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21102 C3,PSI-159,ACME CFI-G,gas,50% butane,,38.622,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102 C4,PSI-159,ACME CFI-G,gas,50% butane,,38.251,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21102 C5,PSI-159,ACME CFI-G,gas,50% butane,,38.251,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21102 C6,PSI-159,ACME CFI-G,gas,50% butane,,38.121,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21102 C7,PSI-159,ACME CFI-G,gas,50% butane,,38.121,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21102 C8,PSI-159,ACME CFI-G,gas,50% butane,,38.067,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21102 M1,PSI-159,ACME CFI-G,gas,50% butane,,23.41,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102 M2,PSI-159,ACME CFI-G,gas,50% butane,,23.365,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21102 M3,PSI-159,ACME CFI-G,gas,50% butane,,23.325,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21102 M4,PSI-159,ACME CFI-G,gas,50% butane,,23.325,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21102 M5,PSI-159,ACME CFI-G,gas,50% butane,,23.325,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21102 M6,PSI-159,ACME CFI-G,gas,50% butane,,23.325,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21106A4,PSI-159,ACME CFI-G,gas,50% butane,,39.26,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 B1,PSI-159,ACME CFI-G,gas,50% butane,,38.464,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 C1,PSI-159,ACME CFI-G,gas,50% butane,,37.717,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 D1,PSI-159,ACME CFI-G,gas,50% butane,,36.928,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 F1,PSI-159,ACME CFI-G,gas,50% butane,,35.853,measured,7.348,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21106 F2,PSI-159,ACME CFI-G,gas,50% butane,,35.424,measured,7.348,measured,,,cool-flame,,10.60555/cyt1-kh64
+PSI-159:21106 F3,PSI-159,ACME CFI-G,gas,50% butane,,35.424,measured,7.348,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21106 F4,PSI-159,ACME CFI-G,gas,50% butane,,35.376,measured,7.348,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21106 F5,PSI-159,ACME CFI-G,gas,50% butane,,35.294,measured,7.348,measured,,,cool-flame,,10.60555/cyt1-kh64
+PSI-159:21106 G6,PSI-159,ACME CFI-G,gas,50% butane,,20.97,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 G7,PSI-159,ACME CFI-G,gas,50% butane,,20.859,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 G9,PSI-159,ACME CFI-G,gas,50% butane,,20.747,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21106 H1,PSI-159,ACME CFI-G,gas,50% butane,,20.669,measured,7.348,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21106 H2,PSI-159,ACME CFI-G,gas,50% butane,,20.669,measured,7.348,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112A1,PSI-159,ACME CFI-G,gas,propane,,39.54,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21112 A2,PSI-159,ACME CFI-G,gas,propane,,39.404,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 A3,PSI-159,ACME CFI-G,gas,propane,,39.127,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 A4,PSI-159,ACME CFI-G,gas,propane,,38.679,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21112 A5,PSI-159,ACME CFI-G,gas,propane,,37.954,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 C1,PSI-159,ACME CFI-G,gas,propane,,37.766,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21112 C2,PSI-159,ACME CFI-G,gas,propane,,37.71,measured,13.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21112 A6,PSI-159,ACME CFI-G,gas,propane,,37.653,measured,13.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 C3,PSI-159,ACME CFI-G,gas,propane,,36.642,measured,13.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112 C4,PSI-159,ACME CFI-G,gas,propane,,36.642,measured,13.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112 C5,PSI-159,ACME CFI-G,gas,propane,,36.642,measured,13.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112 C6,PSI-159,ACME CFI-G,gas,propane,,36.642,measured,13.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112 F1,PSI-159,ACME CFI-G,gas,propane,,21.25,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112 F2,PSI-159,ACME CFI-G,gas,propane,,21.25,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 F3,PSI-159,ACME CFI-G,gas,propane,,21.222,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 F4,PSI-159,ACME CFI-G,gas,propane,,21.2,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 F5,PSI-159,ACME CFI-G,gas,propane,,21.18,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21112 H1,PSI-159,ACME CFI-G,gas,propane,,21.18,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 H2,PSI-159,ACME CFI-G,gas,propane,,21.159,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21112 H3,PSI-159,ACME CFI-G,gas,propane,,21.14,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125A1,PSI-159,ACME CFI-G,gas,30% butane,,39.45,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A2,PSI-159,ACME CFI-G,gas,30% butane,,39.45,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21125 A3,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A4,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A5,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A6,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A7,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A8,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 A9,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 H1,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 H2,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 H3,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 H4,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 J1,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 H5,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 K1,PSI-159,ACME CFI-G,gas,30% butane,,39.412,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21125 K2,PSI-159,ACME CFI-G,gas,30% butane,,38.916,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21125 K3,PSI-159,ACME CFI-G,gas,30% butane,,38.438,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21125 D1,PSI-159,ACME CFI-G,gas,30% butane,,21.11,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21125 D2,PSI-159,ACME CFI-G,gas,30% butane,,21.107,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21125 D3,PSI-159,ACME CFI-G,gas,30% butane,,21.104,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 D4,PSI-159,ACME CFI-G,gas,30% butane,,21.104,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 D5,PSI-159,ACME CFI-G,gas,30% butane,,21.104,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21125 D6,PSI-159,ACME CFI-G,gas,30% butane,,21.104,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130A1,PSI-159,ACME CFI-G,gas,30% propane,,21.07,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 A2,PSI-159,ACME CFI-G,gas,30% propane,,21.068,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 A3,PSI-159,ACME CFI-G,gas,30% propane,,21.065,measured,29.393,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 A4,PSI-159,ACME CFI-G,gas,30% propane,,21.065,measured,29.393,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 A5,PSI-159,ACME CFI-G,gas,30% propane,,21.065,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 A6,PSI-159,ACME CFI-G,gas,30% propane,,21.062,measured,29.393,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 A7,PSI-159,ACME CFI-G,gas,30% propane,,21.062,measured,29.393,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 A8,PSI-159,ACME CFI-G,gas,30% propane,,21.062,measured,29.393,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 A9,PSI-159,ACME CFI-G,gas,30% propane,,21.062,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 M1,PSI-159,ACME CFI-G,gas,30% propane,,21.062,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 M2,PSI-159,ACME CFI-G,gas,30% propane,,21.05,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 M3,PSI-159,ACME CFI-G,gas,30% propane,,21.024,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 G1,PSI-159,ACME CFI-G,gas,30% propane,,21.67,measured,44.09,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 G2,PSI-159,ACME CFI-G,gas,30% propane,,21.67,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 G3,PSI-159,ACME CFI-G,gas,30% propane,,21.669,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 G4,PSI-159,ACME CFI-G,gas,30% propane,,21.667,measured,44.09,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 G5,PSI-159,ACME CFI-G,gas,30% propane,,21.667,measured,44.09,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21130 G6,PSI-159,ACME CFI-G,gas,30% propane,,21.667,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 G7,PSI-159,ACME CFI-G,gas,30% propane,,21.666,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 N1,PSI-159,ACME CFI-G,gas,30% propane,,21.666,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 N2,PSI-159,ACME CFI-G,gas,30% propane,,21.659,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 N3,PSI-159,ACME CFI-G,gas,30% propane,,21.644,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 N4,PSI-159,ACME CFI-G,gas,30% propane,,21.64,measured,44.09,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21130 N5,PSI-159,ACME CFI-G,gas,30% propane,,21.637,measured,44.09,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21137A1,PSI-159,ACME CFI-G,gas,30% propane,,39.96,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 A2,PSI-159,ACME CFI-G,gas,30% propane,,39.726,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 A3,PSI-159,ACME CFI-G,gas,30% propane,,39.477,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 B1,PSI-159,ACME CFI-G,gas,30% propane,,38.951,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21137 B2,PSI-159,ACME CFI-G,gas,30% propane,,37.124,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21137 A4,PSI-159,ACME CFI-G,gas,30% propane,,35.75,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 A5,PSI-159,ACME CFI-G,gas,30% propane,,35.568,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 A6,PSI-159,ACME CFI-G,gas,30% propane,,35.368,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 A7,PSI-159,ACME CFI-G,gas,30% propane,,35.24,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 D1,PSI-159,ACME CFI-G,gas,30% propane,,21.0,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 D2,PSI-159,ACME CFI-G,gas,30% propane,,20.913,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21137 C1,PSI-159,ACME CFI-G,gas,30% propane,,20.893,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153A1,PSI-159,ACME CFI-G,gas,30% ethane,,38.87,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 A2,PSI-159,ACME CFI-G,gas,30% ethane,,37.59,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 A3,PSI-159,ACME CFI-G,gas,30% ethane,,36.388,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 F1,PSI-159,ACME CFI-G,gas,30% ethane,,34.081,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 A4,PSI-159,ACME CFI-G,gas,30% ethane,,33.493,measured,7.348,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21153 A5,PSI-159,ACME CFI-G,gas,30% ethane,,33.245,measured,7.348,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21153 C1,PSI-159,ACME CFI-G,gas,30% ethane,,39.85,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 C2,PSI-159,ACME CFI-G,gas,30% ethane,,39.663,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 C3,PSI-159,ACME CFI-G,gas,30% ethane,,39.484,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 G1,PSI-159,ACME CFI-G,gas,30% ethane,,39.198,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 C4,PSI-159,ACME CFI-G,gas,30% ethane,,38.894,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21153 C5,PSI-159,ACME CFI-G,gas,30% ethane,,38.415,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21153 C6,PSI-159,ACME CFI-G,gas,30% ethane,,38.359,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21153 C7,PSI-159,ACME CFI-G,gas,30% ethane,,38.206,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21162A1,PSI-159,ACME CFI-G,gas,30% ethane,,39.97,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 A2,PSI-159,ACME CFI-G,gas,30% ethane,,39.497,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 A3,PSI-159,ACME CFI-G,gas,30% ethane,,39.002,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 B1,PSI-159,ACME CFI-G,gas,30% ethane,,37.933,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 A4,PSI-159,ACME CFI-G,gas,30% ethane,,37.209,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 C1,PSI-159,ACME CFI-G,gas,30% ethane,,21.0,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 C2,PSI-159,ACME CFI-G,gas,30% ethane,,20.962,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 C3,PSI-159,ACME CFI-G,gas,30% ethane,,20.929,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 C4,PSI-159,ACME CFI-G,gas,30% ethane,,20.893,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 C5,PSI-159,ACME CFI-G,gas,30% ethane,,20.839,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 D1,PSI-159,ACME CFI-G,gas,30% ethane,,20.754,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21162 F1,PSI-159,ACME CFI-G,gas,30% ethane,,20.722,measured,14.697,measured,,,no-hot-ignition,,10.60555/cyt1-kh64
+PSI-159:21162 F2,PSI-159,ACME CFI-G,gas,30% ethane,,20.722,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 A1,PSI-159,ACME CFI-G,gas,30% butane,,38.86,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 A2,PSI-159,ACME CFI-G,gas,30% butane,,38.317,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 A3,PSI-159,ACME CFI-G,gas,30% butane,,37.852,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 A4,PSI-159,ACME CFI-G,gas,30% butane,,37.205,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 B1,PSI-159,ACME CFI-G,gas,30% butane,,35.544,measured,7.348,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 C1,PSI-159,ACME CFI-G,gas,30% butane,,39.85,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 C2,PSI-159,ACME CFI-G,gas,30% butane,,39.655,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 C3,PSI-159,ACME CFI-G,gas,30% butane,,39.537,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 C4,PSI-159,ACME CFI-G,gas,30% butane,,39.431,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 D1,PSI-159,ACME CFI-G,gas,30% butane,,39.249,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 F1,PSI-159,ACME CFI-G,gas,30% butane,,39.082,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 C5,PSI-159,ACME CFI-G,gas,30% butane,,38.961,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21174 C6,PSI-159,ACME CFI-G,gas,30% butane,,38.926,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21174 F2,PSI-159,ACME CFI-G,gas,30% butane,,38.547,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21174 F3,PSI-159,ACME CFI-G,gas,30% butane,,38.475,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21174 F4,PSI-159,ACME CFI-G,gas,30% butane,,38.406,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21291 A1,PSI-159,ACME CFI-G,gas,30% butane,,39.93,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21291 C1,PSI-159,ACME CFI-G,gas,30% butane,,39.423,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21291 C2,PSI-159,ACME CFI-G,gas,30% butane,,38.927,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 B1,PSI-159,ACME CFI-G,gas,30% butane,,38.832,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 H1,PSI-159,ACME CFI-G,gas,30% butane,,38.719,measured,29.393,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 H2,PSI-159,ACME CFI-G,gas,30% butane,,38.617,measured,29.393,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21291 D1,PSI-159,ACME CFI-G,gas,30% butane,,39.78,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 G1,PSI-159,ACME CFI-G,gas,30% butane,,39.495,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 G2,PSI-159,ACME CFI-G,gas,30% butane,,38.846,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 J1,PSI-159,ACME CFI-G,gas,30% butane,,38.544,measured,14.697,measured,,,flow-stopped,,10.60555/cyt1-kh64
+PSI-159:21291 J2,PSI-159,ACME CFI-G,gas,30% butane,,38.266,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-159:21291 J3,PSI-159,ACME CFI-G,gas,30% butane,,38.078,measured,14.697,measured,,,extinguished,,10.60555/cyt1-kh64
+PSI-20:2019-Feb-8,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-Feb-20,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-Feb-20#2,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-Feb-25,PSI-20,ACME BRE,solid_surrogate,50% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-Feb-25#2,PSI-20,ACME BRE,solid_surrogate,50% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-March-4,PSI-20,ACME BRE,solid_surrogate,50% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-March-7,PSI-20,ACME BRE,solid_surrogate,50% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-March-11,PSI-20,ACME BRE,solid_surrogate,50% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-March-11#2,PSI-20,ACME BRE,solid_surrogate,50% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-March-28,PSI-20,ACME BRE,solid_surrogate,100%C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-March-28#2,PSI-20,ACME BRE,solid_surrogate,100%C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-April-4,PSI-20,ACME BRE,solid_surrogate,100%C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2019-April-4#2,PSI-20,ACME BRE,solid_surrogate,100%C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2020-Sept-3,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 50 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2020-Oct-17,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2020-Oct-17#2,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2020-Dec-5,PSI-20,ACME BRE,solid_surrogate,100% CH4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2020-Dec-17,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2020-Dec-23,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2021-Jan-20,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,26.5,measured,10.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2021-Jan-20#2,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 25 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-20:2021-Jan-28,PSI-20,ACME BRE,solid_surrogate,100% C2H4,porous burner 50 mm dia,34.0,measured,8.2,inferred,0.0,assumed,unknown,,10.60555/vb93-3y72
+PSI-23:19254,PSI-23,ACME s-Flame,gas,50% C2H4 with N2,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:19256,PSI-23,ACME s-Flame,gas,50% C2H4 with N3,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:19304,PSI-23,ACME s-Flame,gas,45% CH4 with N2,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:19308,PSI-23,ACME s-Flame,gas,45% CH4 with N3,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:19352,PSI-23,ACME s-Flame,gas,100% H2,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20006,PSI-23,ACME s-Flame,gas,44.4% H2 with CH4,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20013,PSI-23,ACME s-Flame,gas,66.7% H2 with CH4,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20024,PSI-23,ACME s-Flame,gas,100% H2,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20029,PSI-23,ACME s-Flame,gas,50% C2H4 with N2,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20132,PSI-23,ACME s-Flame,gas,"25% H2, 20% CH4, with He",,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20136,PSI-23,ACME s-Flame,gas,"20% H2, 25% CH4, with He",,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20142,PSI-23,ACME s-Flame,gas,"30% H2, 15% CH4, with He",,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20155,PSI-23,ACME s-Flame,gas,45% H2 with He,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20155#2,PSI-23,ACME s-Flame,gas,45% H2 with He,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20160,PSI-23,ACME s-Flame,gas,45% CH4 with He,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20160#2,PSI-23,ACME s-Flame,gas,45% CH4 with He,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20164,PSI-23,ACME s-Flame,gas,20% C2H4 with He,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20170,PSI-23,ACME s-Flame,gas,25% C2H4 with He,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20170#2,PSI-23,ACME s-Flame,gas,25% C2H4 with He,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20176,PSI-23,ACME s-Flame,gas,30% C2H4 with He,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20176#2,PSI-23,ACME s-Flame,gas,30% C2H4 with He,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20190,PSI-23,ACME s-Flame,gas,35% H2 with He,,30.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-23:20190#2,PSI-23,ACME s-Flame,gas,35% H2 with He,,21.0,measured,14.696,measured,,,unknown,,10.60555/k57n-p030
+PSI-21:17319,PSI-21,ACME CLD Flame,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:17324,PSI-21,ACME CLD Flame,gas,40% CH5,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:17342,PSI-21,ACME CLD Flame,gas,40% CH6,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:17356,PSI-21,ACME CLD Flame,gas,40% CH7,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18003,PSI-21,ACME CLD Flame,gas,40% CH8,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18005,PSI-21,ACME CLD Flame,gas,40% CH9,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18008,PSI-21,ACME CLD Flame,gas,40% CH10,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18011,PSI-21,ACME CLD Flame,gas,40% CH11,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18022,PSI-21,ACME CLD Flame,gas,40% CH12,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18026,PSI-21,ACME CLD Flame,gas,40% CH13,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18032,PSI-21,ACME CLD Flame,gas,40% CH14,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18039,PSI-21,ACME CLD Flame,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18043,PSI-21,ACME CLD Flame,gas,100% CH5,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18053,PSI-21,ACME CLD Flame,gas,100% CH6,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18145,PSI-21,ACME CLD Flame,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18151,PSI-21,ACME CLD Flame,gas,100% C2H5,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18177,PSI-21,ACME CLD Flame,gas,100% C2H6,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18186,PSI-21,ACME CLD Flame,gas,100% C2H7,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18192,PSI-21,ACME CLD Flame,gas,100% C2H8,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18199,PSI-21,ACME CLD Flame,gas,100% C2H9,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18214,PSI-21,ACME CLD Flame,gas,100% C2H10,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18218,PSI-21,ACME CLD Flame,gas,100% C2H11,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18235,PSI-21,ACME CLD Flame,gas,50% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18239,PSI-21,ACME CLD Flame,gas,50% C2H5,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18241,PSI-21,ACME CLD Flame,gas,50% C2H6,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18249,PSI-21,ACME CLD Flame,gas,50% C2H7,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18253,PSI-21,ACME CLD Flame,gas,50% C2H8,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:18257,PSI-21,ACME CLD Flame,gas,50% C2H9,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:21041,PSI-21,ACME CLD Flame,gas,30% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:21046,PSI-21,ACME CLD Flame,gas,30% C2H5,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:21050,PSI-21,ACME CLD Flame,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-21:21062,PSI-21,ACME CLD Flame,gas,40% CH5,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/23e1-9950
+PSI-22:18073,PSI-22,ACME E-FIELD,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18078,PSI-22,ACME E-FIELD,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18080,PSI-22,ACME E-FIELD,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18087,PSI-22,ACME E-FIELD,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18092,PSI-22,ACME E-FIELD,gas,30% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18095,PSI-22,ACME E-FIELD,gas,30% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18102,PSI-22,ACME E-FIELD,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18106,PSI-22,ACME E-FIELD,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18113,PSI-22,ACME E-FIELD,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18130,PSI-22,ACME E-FIELD,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18137,PSI-22,ACME E-FIELD,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18269,PSI-22,ACME E-FIELD,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18274,PSI-22,ACME E-FIELD,gas,30% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18282,PSI-22,ACME E-FIELD,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18285,PSI-22,ACME E-FIELD,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18290,PSI-22,ACME E-FIELD,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18298,PSI-22,ACME E-FIELD,gas,40% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18302,PSI-22,ACME E-FIELD,gas,30% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18312,PSI-22,ACME E-FIELD,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-22:18319,PSI-22,ACME E-FIELD,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/se5a-8c73
+PSI-107:45 14:37:08,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,36.39,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 14:50:07,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 14:50:07#2,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 15:35:44,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 15:35:44#2,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 15:42:22,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,58.02,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 15:48:39,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 15:50:59,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:11:46,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:11:46#2,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:15:05,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:15:05#2,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:20:46,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,58.02,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:20:47,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,58.96,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:23:03,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:23:03#2,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:27:48,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:27:48#2,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,18.53,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:29:49,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:45 17:29:48,PSI-107,SPICE,gas,Ethylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:32:05,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:33:57,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.34.57,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:43:57,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,58.02,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.43.58,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:48:19,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:48:19#2,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:48:19#3,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:48:19#4,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14:48:19#5,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19#2,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19#3,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19#4,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19#5,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19#6,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 14.48.19#7,PSI-107,SPICE,gas,Ethylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 16:53:44,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,42.97,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 16.53.45,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:48 17:01:35,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,46.73,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17:01:35#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,45.79,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17.01.36,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,46.73,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17.01.36#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:48 17:11:21,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17:11:21#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17.11.21,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,36.39,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17.11.21#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:48 1744,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 1746,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17.44.38,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:48 17.44.38#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:52 11:38:51,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11:38:51#2,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11.38.51,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11.38.51#2,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:52 11:42:49,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11:42:49#2,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,21.35,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11.42.50,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11.42.50#2,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:52 11:49:35,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11:49:35#2,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11.49.35,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 11.49.35#2,PSI-107,SPICE,gas,Propane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.01.47,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.01.47#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12:21:19,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12:21:19#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.21.19,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.21.19#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12:26:14,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12:26:14#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.26.44,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.26.44#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.28.52,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.28.52#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12:42:47,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12:42:47#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.42.47,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 12.42.47#2,PSI-107,SPICE,gas,Propane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13:02:02,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13:02:02#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13.02.02,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13.02.02#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:52 13:04:25,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13:04:25#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13.04.25,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 13.04.25#2,PSI-107,SPICE,gas,Propane,nozzle 1.6 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 16:09:00,PSI-107,SPICE,gas,75% Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 no ku,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 no ku#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 16.14.05,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,64.6,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 16.14.05#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,65.54,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 16.22.17,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,29.81,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 16.22.17#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,28.87,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 16.22.17#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,29.81,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 Ku              LOS,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:52 Ku              LOS#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:10:12,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:10:12#2,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:10:12#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:10:12#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:25:47,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,61.78,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:25:47#2,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:25:47#3,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,59.9,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.25.49,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,61.78,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.25.49#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.25.49#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,59.9,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:30:17,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:30:17#2,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:30:17#3,PSI-107,SPICE,gas,75% Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.30.18,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.30.18#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.30.18#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:47:11,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:47:11#2,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.47.12,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.47.12#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:50:49,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:50:49#2,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.50.49,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.50.49#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.50.49#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:58:09,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:58:09#2,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17:58:09#3,PSI-107,SPICE,gas,75% Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.58.10,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,67.42,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.58.10#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.58.10#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.58.10#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,85.28,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.58.10#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:52 17.58.10#6,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 8:56:16,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 8:56:16#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 8:56:16#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 8:56:16#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 8:56:16#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:00:26,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:00:26#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:00:26#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:00:26#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:00:26#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:36:14,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:36:14#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:36:14#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,25.11,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:36:14#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,25.11,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:39:14,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:39:14#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:39:14#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:39:14#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:39:14#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:49:56,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:49:56#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:49:56#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:49:56#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:53:36,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:53:36#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:53:36#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:53:36#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:53:36#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 9:53:36#6,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:01:00,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,42.03,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:01:00#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,42.03,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:15:39,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:15:39#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,25.11,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:15:39#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:15:39#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:25:40,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:25:40#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:25:40#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,45.79,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#6,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#7,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#8,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#9,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#10,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#11,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,45.79,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:34:07#12,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:52:20,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:52:20#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 10:52:20#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 11:12:41,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 11:12:41#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 11:12:41#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 11:12:41#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 11:12:41#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:55 11:12:41#6,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:37:52,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,9.13,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:37:52#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,9.13,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:37:52#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,9.13,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:44:17,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,21.35,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:44:17#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:44:17#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:44:17#4,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:47:05,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:47:05#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:47:05#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:47:05#4,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,33.57,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:47:05#5,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:55:18,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:55:18#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 9:55:18#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 Ku LOS,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:13:22,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,7.24,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:13:22#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,6.3,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:13:22#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,6.3,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:18:27,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:36:19,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,27.93,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:36:19#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,27.93,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:36:19#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:41:14,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:41:14#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 10:41:14#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:23:08,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,4.42,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:23:08#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,4.42,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:25:49,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:25:49#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:25:49#3,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:32:00,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:32:00#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:34:18,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 n/a,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:42:53,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:42:53#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:55:33,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 11:55:33#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 12:00:46,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 Ku LOS#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:58 12:15:41,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 12:42:59,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 12:42:59#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:58 12:45:46,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:28:17,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:28:17#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:28:17#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:28:17#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:38:34,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:38:34#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:38:34#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:119 10:38:34#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,25.11,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:52:00,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,24.17,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:52:00#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:52:00#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:57:26,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,17.59,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:57:26#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:57:26#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:57:26#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 15:57:26#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:33:58,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:33:58#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:33:58#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:33:58#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:33:58#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,15.71,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:39:21,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:39:21#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,21.35,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:39:21#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:39:21#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:39:21#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,21.35,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:52:19,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:54:20,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,0.66,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:56:22,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:56:22#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:56:22#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:136 16:56:22#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:136 17:21:33,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 17:21:33#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,14.77,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 17:21:33#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:136 17:21:33#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:20:12,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:20:12#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:20:12#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:31:17,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:31:17#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:31:17#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,26.05,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:39:28,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,41.09,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:39:28#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:39:28#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:44:52,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,48.61,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:44:52#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,47.67,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:44:52#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,47.67,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#6,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#7,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 9:59:46#8,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,40.15,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 10:06:06,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 10:12:03,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,66.48,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 10:12:03#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,25.11,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59#4,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,18.53,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59#5,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,22.29,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59#6,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,24.17,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 11:04:59#7,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,16.65,measured,unknown,,10.60555/9kbh-e962
+PSI-107:167 LOS,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:167 LOS#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:167 LOS#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:168 8:50:41,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 8:50:41#2,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 8:50:41#3,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 9:03:26,PSI-107,SPICE,gas,50 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,37.33,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 9:49:13,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,36.39,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 9:49:13#2,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,36.39,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 9:49:13#3,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 9:52:25,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 9:56:09,PSI-107,SPICE,gas,Ethylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,55.2,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 10:42:48,PSI-107,SPICE,gas,Methane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,27.93,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 11:16:48,PSI-107,SPICE,gas,Methane,nozzle 0.41 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 11:30:21,PSI-107,SPICE,gas,Methane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:168 11:41:18,PSI-107,SPICE,gas,Methane,nozzle 0.76 mm,21.0,assumed,14.696,assumed,55.2,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:37:43,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,61.78,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:37:43#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,58.96,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,51.43,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#6,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#7,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#8,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,,,unknown,,10.60555/9kbh-e962
+PSI-107:173 10:41:34#9,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:08:12,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,58.96,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:08:12#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,55.2,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:08:12#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,47.67,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:08:12#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,42.03,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:08:12#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,36.39,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,54.26,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38#6,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,58.02,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:21:38#7,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,56.14,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:48:23,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:48:23#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:48:23#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:48:23#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 11:48:23#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:00:14,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,28.87,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:00:14#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,27.93,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:00:14#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,27.93,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:00:14#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,27.93,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:00:14#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,26.99,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46#6,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:11:46#7,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:23:30,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:23:30#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:23:30#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:23:30#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:23:30#5,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,59.9,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:23:30#6,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,60.84,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:39:29,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:39:29#2,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,39.21,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:39:29#3,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:173 12:39:29#4,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,38.27,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:02:10,PSI-107,SPICE,gas,75 % Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,28.87,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:33:23,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:33:23#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:45:25,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:45:25#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:45:25#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,20.41,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:48:31,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 10:48:31#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:04:43,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,29.81,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:04:43#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,29.81,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:04:43#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,29.81,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:13:17,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,58.02,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:13:17#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,56.14,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:13:17#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,56.14,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:20:47,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,47.67,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:20:47#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,47.67,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:20:47#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,47.67,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:20:47#4,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,46.73,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:20:47#5,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,46.73,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:20:47#6,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,46.73,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:24:30,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,57.08,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:24:30#2,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,53.32,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:24:30#3,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,45.79,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:24:30#4,PSI-107,SPICE,gas,Propylene,nozzle 1.6 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:34:16,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,24.17,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:34:16#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:34:16#3,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:34:16#4,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:34:16#5,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,23.23,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:38:05,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:38:05#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:38:05#3,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:38:05#4,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.95,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06#3,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06#4,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,11.01,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06#5,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06#6,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:46:06#7,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,10.07,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#2,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#3,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#4,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#5,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#6,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#7,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#8,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,35.45,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#9,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#10,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 11:50:17#11,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,34.51,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:06:43,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,46.73,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:11:20,PSI-107,SPICE,gas,Propylene,nozzle 0.41 mm,21.0,assumed,14.696,assumed,56.14,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:34:00,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,24.17,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:34:00#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,24.17,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:34:00#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,24.17,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:36:12,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,13.83,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:36:12#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:36:12#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,12.89,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:43:03,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,51.43,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:43:03#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,51.43,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:43:03#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,50.49,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:46:17,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:46:17#2,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:46:17#3,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:46:17#4,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,32.63,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:46:17#5,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,31.69,measured,unknown,,10.60555/9kbh-e962
+PSI-107:174 12:46:17#6,PSI-107,SPICE,gas,Propylene,nozzle 0.76 mm,21.0,assumed,14.696,assumed,31.69,measured,unknown,,10.60555/9kbh-e962
+PSI-106:2012-FEB-09,PSI-106,SLICE,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-FEB-13 SLICE testing with,PSI-106,SLICE,gas,40% CH4 (balance N2) including 2 pyrometry calibration tests,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-FEB-17,PSI-106,SLICE,gas,70% CH4 (balance N2) including 1 pyrometry calibration test,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-FEB-20,PSI-106,SLICE,gas,20% C2H4 (balance N2),,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-FEB-27,PSI-106,SLICE,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-01,PSI-106,SLICE,gas,40% CH4 (balance N2),,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-05 SLICE testing with,PSI-106,SLICE,gas,70% CH4 (balance N2) where the fuel bottle was not emptied (,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-09,PSI-106,SLICE,gas,100% C2H6,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-12,PSI-106,SLICE,gas,100% CH4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-15,PSI-106,SLICE,gas,20% C2H4 (balance N2),,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-19 SLICE testing with,PSI-106,SLICE,gas,70% CH4 (balance N2) including 1 pyrometry calibration test,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-106:2012-MAR-23 Last day of testing: SPICE testing with 100% C3H8 and then 100%,PSI-106,SLICE,gas,100% C2H4,,21.0,assumed,14.696,assumed,,,unknown,,10.60555/pm12-rg61
+PSI-25:B1,PSI-25,BASS-II,solid,100 micron PMMA film 2 cm wide,,22.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B2,PSI-25,BASS-II,solid,200 micron PMMA film 2 cm wide,,22.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B3,PSI-25,BASS-II,solid,100 micron film 2 cm wide,,22.2,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B4,PSI-25,BASS-II,solid,300 micron PMMA film 2 cm wide,,22.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B5,PSI-25,BASS-II,solid,200 micron 2 cm wide,,22.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B6,PSI-25,BASS-II,solid,2 cm 0.1 mm PMMA film,,21.0,measured,14.696,assumed,3.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B7,PSI-25,BASS-II,solid,400 micron film 2 cm wide,,22.2,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B8,PSI-25,BASS-II,solid,2 cm 0.2 mm PMMA film,,21.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B9,PSI-25,BASS-II,solid,2 cm 0.1 mm PMMA film,,21.0,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B10,PSI-25,BASS-II,solid,1 cm 0.2 mm PMMA film,,21.0,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B11,PSI-25,BASS-II,solid,2 cm 0.2 mm PMMA film,,21.0,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B12,PSI-25,BASS-II,solid,300 micron film 2 cm wide,,22.2,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B13,PSI-25,BASS-II,solid,2 cm 0.4 mm thick film,,21.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B14,PSI-25,BASS-II,solid,1 cm wide 200 micron thick PMMA,,15.0,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:B15,PSI-25,BASS-II,solid,2 cm 0.1 mm PMMA film,,21.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B16,PSI-25,BASS-II,solid,2 cm 100 micron thick PMMA,,17.3,measured,14.696,assumed,3.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B17,PSI-25,BASS-II,solid,1 cm wide 200 micron thick PMMA,,17.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B18,PSI-25,BASS-II,solid,1 cm wide 200 micron thick PMMA,,17.4,measured,14.696,assumed,10.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:B19,PSI-25,BASS-II,solid,2 cm 100 micron thick PMMA,,17.3,measured,14.696,assumed,10.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:B20,PSI-25,BASS-II,solid,2 cm 100 micron thick PMMA,,17.4,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:B21,PSI-25,BASS-II,solid,1 cm wide 200 micron thick PMMA,,20.8,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:B22,PSI-25,BASS-II,solid,1 cm wide 200 micron thick PMMA,,20.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:F1,PSI-25,BASS-II,solid,Nomex natural (nomex III),,22.2,measured,14.696,assumed,9.5,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:F2,PSI-25,BASS-II,solid,Nomex natural (nomex III),,21.0,measured,14.696,assumed,15.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:F3,PSI-25,BASS-II,solid,Nomex natural (nomex III),,21.7,measured,14.696,assumed,8.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:F4,PSI-25,BASS-II,solid,Japan Wax candle,,17.4,measured,14.696,assumed,3.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M1,PSI-25,BASS-II,solid,1 mm thick PMMA 1 sided 2 cm,,22.2,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M2,PSI-25,BASS-II,solid,3 mm thick PMMA 1 sided 2 cm wide,,22.2,measured,14.696,assumed,20.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M3,PSI-25,BASS-II,solid,2 cm wide 5 mm thick 1 sided PMMA,,20.8,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M4,PSI-25,BASS-II,solid,5 mm thick PMMA 2 cm wide,,21.8,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M5,PSI-25,BASS-II,solid,3 mm thick PMMA 2 sided 2 cm thick,,22.2,measured,14.696,assumed,20.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M6,PSI-25,BASS-II,solid,1 mm thick PMMA 2 cm wide,,21.8,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M7,PSI-25,BASS-II,solid,1 cm wide PMMA 1 mm thick,,18.9,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M8,PSI-25,BASS-II,solid,1 cm wide PMMA 2 mm thick,,19.1,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M9,PSI-25,BASS-II,solid,1 cm wide PMMA 3 mm thick,,18.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M10,PSI-25,BASS-II,solid,4 mm thick 1 cm wide PMMA slab,,20.1,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M11,PSI-25,BASS-II,solid,1 cm wide PMMA 5 mm thick,,20.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M12,PSI-25,BASS-II,solid,2 mm thick PMMA 2 cm wide,,21.7,measured,14.696,assumed,,,unknown,,10.60555/4qc4-de67
+PSI-25:M13,PSI-25,BASS-II,solid,4 mm thick PMMA 2 cm wide,,20.8,measured,14.696,assumed,6.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M14,PSI-25,BASS-II,solid,2mm thick PMMA 1 sided 2 cm wide,,22.2,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M15,PSI-25,BASS-II,solid,2 cm 4 mm 1 sided PMMA slab,,21.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M16,PSI-25,BASS-II,solid,1 mm thick PMMA 2 cm wide,,19.2,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M17,PSI-25,BASS-II,solid,2 cm wide PMMA 2 mm thick,,18.8,measured,14.696,assumed,10.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:M18,PSI-25,BASS-II,solid,2 cm wide PMMA 3 mm thick,,17.9,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M19,PSI-25,BASS-II,solid,4 mm thick 2 cm 2ide PMMA slab,,19.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:M20,PSI-25,BASS-II,solid,5 mm thick PMMA 2 cm wide,,18.0,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O1,PSI-25,BASS-II,solid,"1/4"" clear rod",,22.2,measured,14.696,assumed,20.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O2,PSI-25,BASS-II,solid,"1/4"" clear rod",,22.2,measured,14.696,assumed,0.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O3a,PSI-25,BASS-II,solid,"1/4"" clear rod",,18.0,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O3b,PSI-25,BASS-II,solid,"1/4"" clear rod",,18.0,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O4,PSI-25,BASS-II,solid,"3/8""clear rod",,14.8,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:O5a,PSI-25,BASS-II,solid,"1/2"" clear PMMA rod",,15.1,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O5b,PSI-25,BASS-II,solid,"1/2"" clear PMMA rod",,14.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O6,PSI-25,BASS-II,solid,"1/4"" clear rod",,16.7,measured,14.696,assumed,,,extinguished,,10.60555/4qc4-de67
+PSI-25:O7,PSI-25,BASS-II,solid,"1/4"" clear rod",,16.0,measured,14.696,assumed,,,extinguished,,10.60555/4qc4-de67
+PSI-25:O8a,PSI-25,BASS-II,solid,"1/4"" clear rod",,15.7,measured,14.696,assumed,,,extinguished,,10.60555/4qc4-de67
+PSI-25:O8b,PSI-25,BASS-II,solid,"1/4"" clear rod",,15.5,measured,14.696,assumed,,,extinguished,,10.60555/4qc4-de67
+PSI-25:O9,PSI-25,BASS-II,solid,"1/4"" clear rod",,15.0,measured,14.696,assumed,,,extinguished,,10.60555/4qc4-de67
+PSI-25:O10,PSI-25,BASS-II,solid,"1/4"" clear rod",,16.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O11,PSI-25,BASS-II,solid,"1/4"" black rod",,15.4,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:O12,PSI-25,BASS-II,solid,"3/8"" clear rod",,13.6,measured,14.696,assumed,,,no-ignition,,10.60555/4qc4-de67
+PSI-25:O13a,PSI-25,BASS-II,solid,"1/2"" clear PMMA rod",,15.9,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O13b,PSI-25,BASS-II,solid,"1/2"" clear PMMA rod",,14.6,measured,14.696,assumed,7.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O14,PSI-25,BASS-II,solid,"1/4"" black rod",,16.3,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:O15a,PSI-25,BASS-II,solid,"3/8"" clear rod",,17.1,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O15b,PSI-25,BASS-II,solid,"3/8"" clear rod",,16.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O16,PSI-25,BASS-II,solid,"3/8""clear rod",,14.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O17,PSI-25,BASS-II,solid,"1/4"" clear rod",,15.1,measured,14.696,assumed,3.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O18,PSI-25,BASS-II,solid,"1/4"" clear rod",,15.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O19,PSI-25,BASS-II,solid,"1/4"" clear rod",,15.3,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:O20,PSI-25,BASS-II,solid,"1/4"" clear rod",,16.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:O21,PSI-25,BASS-II,solid,"3/8"" clear rod",,15.9,measured,14.696,assumed,,,unknown,,10.60555/4qc4-de67
+PSI-25:O22,PSI-25,BASS-II,solid,"1/2"" clear rod",,15.4,measured,14.696,assumed,4.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P1,PSI-25,BASS-II,solid,"1/4"" black rod",,17.7,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P2,PSI-25,BASS-II,solid,"1/4"" black rod",,17.4,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P3a,PSI-25,BASS-II,solid,"1/4"" clear rod",,17.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P3b,PSI-25,BASS-II,solid,1/4 clear rod,,17.4,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P4,PSI-25,BASS-II,solid,"3/8"" black rod",,18.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P5,PSI-25,BASS-II,solid,"0.5"" black rod",,19.3,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P6,PSI-25,BASS-II,solid,"1/4"" black rod",,18.9,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P8,PSI-25,BASS-II,solid,"3/8"" black rod",,16.4,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P9,PSI-25,BASS-II,solid,"0.5"" black rod",,17.6,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P10,PSI-25,BASS-II,solid,"1/4"" black rod",,17.0,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P12,PSI-25,BASS-II,solid,"3/8"" black rod",,17.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P13a,PSI-25,BASS-II,solid,"0.5"" black rod",,20.7,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P13b,PSI-25,BASS-II,solid,"0.5"" black rod",,20.6,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P14,PSI-25,BASS-II,solid,1/4 blac rod,,18.4,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P15,PSI-25,BASS-II,solid,1/4 black rod,,18.0,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P16,PSI-25,BASS-II,solid,"1/4"" black rod",,18.2,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P17,PSI-25,BASS-II,solid,"1/4"" black rod",,16.8,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P18,PSI-25,BASS-II,solid,"1/4"" black rod",,20.0,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P19,PSI-25,BASS-II,solid,"1/4"" black rod",,17.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P20,PSI-25,BASS-II,solid,"1/4"" black rod",,19.0,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P21a,PSI-25,BASS-II,solid,1/4 black rod,,16.3,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P21b,PSI-25,BASS-II,solid,"1/4"" black rod",,16.3,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P22a,PSI-25,BASS-II,solid,"3/8"" black rod",,20.8,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P22b,PSI-25,BASS-II,solid,"3/8"" black rod",,20.0,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:P23,PSI-25,BASS-II,solid,"3/8"" black rod",,18.2,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P24,PSI-25,BASS-II,solid,"3/8"" black rod",,19.0,measured,14.696,assumed,2.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:P25,PSI-25,BASS-II,solid,"3/8"" clear rod",,20.9,measured,14.696,assumed,5.0,inferred,extinguished,,10.60555/4qc4-de67
+PSI-25:T1,PSI-25,BASS-II,solid,2 cm SIBAL,,18.5,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T2,PSI-25,BASS-II,solid,2 cm SIBAL,,18.5,measured,14.696,assumed,9.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T3,PSI-25,BASS-II,solid,4 cm spherical section,,17.2,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T4,PSI-25,BASS-II,solid,2 cm SIBAL,,18.7,measured,14.696,assumed,9.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T5,PSI-25,BASS-II,solid,2 cm SIBAL,,18.8,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T6,PSI-25,BASS-II,solid,2 cm SIBAL,,18.8,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T7,PSI-25,BASS-II,solid,4 cm spherical section,,17.3,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T9,PSI-25,BASS-II,solid,2 cm SIBAL,,16.4,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T10,PSI-25,BASS-II,solid,2 cm SIBAL,,16.4,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T11,PSI-25,BASS-II,solid,2 cm SIBAL,,17.1,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T12,PSI-25,BASS-II,solid,2 cm SIBAL,,16.8,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T13,PSI-25,BASS-II,solid,2 cm SIBAL,,17.5,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T14,PSI-25,BASS-II,solid,2 cm SIBAL,,16.9,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T15,PSI-25,BASS-II,solid,2 cm SIBAL,,18.7,measured,14.696,assumed,9.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T16,PSI-25,BASS-II,solid,2 cm SIBAL,,17.6,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T17,PSI-25,BASS-II,solid,2 cm SIBAL,,16.9,measured,14.696,assumed,6.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T18,PSI-25,BASS-II,solid,2 cm SIBAL,,17.4,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T19,PSI-25,BASS-II,solid,1 cm SIBAL,,17.2,measured,14.696,assumed,11.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T20,PSI-25,BASS-II,solid,1 cm SIBAL,,17.2,measured,14.696,assumed,11.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T21,PSI-25,BASS-II,solid,1 cm SIBAL,,17.2,measured,14.696,assumed,11.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T22,PSI-25,BASS-II,solid,1 cm SIBAL,,17.1,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T23,PSI-25,BASS-II,solid,2 cm Sibal moved igniter,,17.2,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T24,PSI-25,BASS-II,solid,1 cm SIBAL top side ign,,18.2,measured,14.696,assumed,10.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T25,PSI-25,BASS-II,solid,2 cm SIBAL,,20.8,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T26,PSI-25,BASS-II,solid,2 cm SIBAL,,20.8,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T27,PSI-25,BASS-II,solid,1 cm SIBAL,,20.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T28a,PSI-25,BASS-II,solid,1 cm SIBAL,,20.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T28b,PSI-25,BASS-II,solid,1 cm SIBAL,,20.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-25:T29,PSI-25,BASS-II,solid,1 cm SIBAL,,20.7,measured,14.696,assumed,5.0,inferred,unknown,,10.60555/4qc4-de67
+PSI-98:S1,PSI-98,Saffire-I,solid,SIBAL Fabric,thickness 0.37 cm (as logged),21.6,measured,14.696,assumed,20.0,measured,unknown,,10.60555/0t15-1z43
+PSI-98:S2,PSI-98,Saffire-I,solid,SIBAL Fabric,thickness 0.37 cm (as logged),21.5,measured,14.696,assumed,20.0,measured,unknown,,10.60555/0t15-1z43
+PSI-99:2-1,PSI-99,Saffire-II,solid,Silicone,thickness 0.27 mm (as logged),21.5,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-99:2-2,PSI-99,Saffire-II,solid,Silicone,thickness 0.61 mm (as logged),22.1,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-99:2-3,PSI-99,Saffire-II,solid,Silicone,thickness 1.03 mm (as logged),22.1,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-99:2-4,PSI-99,Saffire-II,solid,Silicone,thickness 037 mm (as logged; likely 0.37 mm),22.1,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-99:2-5,PSI-99,Saffire-II,solid,Cotton-Fiberglass (SIBAL),thickness 037 mm (as logged; likely 0.37 mm),22.1,measured,14.696,assumed,20.0,measured,spread,,10.60555/2chp-m469
+PSI-99:2-6,PSI-99,Saffire-II,solid,(see previous row),thickness 037 mm (as logged; likely 0.37 mm),22.1,measured,14.696,assumed,20.0,measured,spread,,10.60555/2chp-m469
+PSI-99:2-7,PSI-99,Saffire-II,solid,PMMA & Nomex,thickness 0.85 and 0.37 mm (as logged),22.1,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-99:2-8,PSI-99,Saffire-II,solid,PMMA,thickness See Fig. 5 (as logged),22.05,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-99:2-9,PSI-99,Saffire-II,solid,(see previous row),thickness 1 cm (as logged),21.95,measured,14.696,assumed,20.0,measured,unknown,,10.60555/2chp-m469
+PSI-100:S1,PSI-100,Saffire-III,solid,SIBAL Fabric,thickness .33 cm (as logged),21.0,assumed,14.696,assumed,30.0,measured,unknown,,10.60555/040q-4h36
+PSI-100:S2,PSI-100,Saffire-III,solid,SIBAL Fabric,thickness .33 cm (as logged),21.0,assumed,14.696,assumed,30.0,measured,unknown,,10.60555/040q-4h36

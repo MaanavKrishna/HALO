@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from halo_pipeline.export import CONTRACT_FILES, export_all
+from halo_pipeline.export import CONTRACT_FILES, EXPORT_FILES, export_all
 
 
 @pytest.fixture(scope="module")
@@ -28,7 +28,7 @@ def test_summaries_untouched(out):
 def test_manifest(out):
     m = json.loads((out / "manifest.json").read_text())
     assert m["totalRows"] == 1967 and m["eligibleRows"] == 1225
-    assert set(m["files"]) == set(CONTRACT_FILES)
+    assert set(m["files"]) == set(CONTRACT_FILES) | set(EXPORT_FILES)
     for name, sha in m["files"].items():
         assert hashlib.sha256((out / name).read_bytes()).hexdigest() == sha
     assert len(m["psiDatasetDois"]) == 24
@@ -38,3 +38,36 @@ def test_manifest(out):
 def test_tests_json(out):
     tests = json.loads((out / "tests.json").read_text())
     assert len(tests) == 1225
+
+
+def test_tests_csv(out):
+    import csv
+
+    rows = list(csv.DictReader((out / "tests.csv").read_text().splitlines()))
+    assert len(rows) == 1225
+    assert list(rows[0]) == ["id", "psiId", "acronym", "fuelClass", "fuel", "geometry", "o2Pct", "o2Src", "pressurePsia",
+                             "pSrc", "flowCmS", "flowSrc", "outcome", "diluent", "datasetDoi"]
+    tests = json.loads((out / "tests.json").read_text())
+    assert [r["id"] for r in rows] == [t["id"] for t in tests]
+    assert all(r["id"].startswith(r["psiId"] + ":") for r in rows)
+    assert all(r["datasetDoi"].startswith("10.60555/") for r in rows)
+    flex = next(r for r in rows if r["acronym"] == "FLEX")
+    assert flex["geometry"].startswith("droplet d0 ") and flex["flowSrc"] == "assumed"
+
+
+def test_investigation_fields(out):
+    invs = json.loads((out / "investigations.json").read_text())
+    halo = sorted(i["psiId"] for i in invs if i["acronymSource"] == "halo")
+    assert halo == ["PSI-115", "PSI-117", "PSI-142", "PSI-60", "PSI-62"]
+    assert all(i["geometry"].strip() for i in invs)
+    flex = next(i for i in invs if i["psiId"] == "PSI-69")
+    assert flex["geometry"] == "Free droplets, 1.1 to 4.67 mm initial diameter"
+    assert "suppression" in flex["hazards"]
+
+
+def test_saffire_thickness_as_logged(out):
+    import csv
+
+    rows = {r["id"]: r for r in csv.DictReader((out / "tests.csv").read_text().splitlines())}
+    assert rows["PSI-99:2-4"]["geometry"] == "thickness 037 mm (as logged; likely 0.37 mm)"
+    assert rows["PSI-98:S1"]["geometry"] == "thickness 0.37 cm (as logged)"

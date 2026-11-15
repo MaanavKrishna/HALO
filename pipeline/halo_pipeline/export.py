@@ -8,13 +8,15 @@ from pathlib import Path
 
 from . import paths
 from .catalog import build_investigations, dataset_dois, load_det
-from .coverage import eligible_tests
+from .coverage import eligible_tests, tests_csv
 from .detector import build_detector
 from .extinction import fit_extinction
 from .ingest import load_unified
 from .literature import build_literature
 
 CONTRACT_FILES = ("tests.json", "investigations.json", "detector.json", "extinction.json", "literature.json")
+# Plain-text exports written alongside the JSON contract (served from /data/files, listed in the manifest).
+EXPORT_FILES = ("tests.csv",)
 # summaries.json is owned by the SI build step; this module must never write it.
 FORBIDDEN = {"summaries.json"}
 
@@ -32,6 +34,7 @@ def build_all() -> dict[str, object]:
         "detector.json": build_detector(),
         "extinction.json": fit_extinction(U, n_boot=200, seed=7),
         "literature.json": build_literature(),
+        "tests.csv": tests_csv(U, dataset_dois(det)),
         "_meta": {"totalRows": int(len(U)), "psiDatasetDois": dataset_dois(det)},
     }
 
@@ -42,9 +45,9 @@ def export_all(out_dir: Path | None = None) -> dict[str, int]:
     built = build_all()
     meta = built.pop("_meta")
     sizes, shas = {}, {}
-    for name in CONTRACT_FILES:
+    for name in CONTRACT_FILES + EXPORT_FILES:
         assert name not in FORBIDDEN
-        data = _dump(built[name])
+        data = built[name].encode("utf-8") if name in EXPORT_FILES else _dump(built[name])
         (out_dir / name).write_bytes(data)
         sizes[name] = len(data)
         shas[name] = hashlib.sha256(data).hexdigest()

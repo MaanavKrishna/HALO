@@ -68,9 +68,15 @@ describe('next test against the literature', () => {
   const data: HaloData = { ...loadFixtureData(), literature: [lit('VI-3', 30.3, 7.92), lit('VI-1', 31.9, null)] };
 
   it('literaturePoints keeps only runs with O2 and pressure, as solids', () => {
-    const pts = literaturePoints(data.literature);
+    const pts = literaturePoints(data.literature, data.tests);
     expect(pts).toHaveLength(1);
     expect(pts[0]).toMatchObject({ fuelClass: 'solid', o2Pct: 30.3, pressurePsia: 7.92 });
+  });
+  it('literaturePoints leaves out missions already in PSI (Saffire I–III are PSI-98/99/100)', () => {
+    const saf1: LiteratureRow = { ...lit('I-1', 21, 14.5), mission: 'Saffire-I' };
+    const psiRow = { ...data.tests[0], acronym: 'Saffire-I' };
+    expect(literaturePoints([saf1, ...data.literature], [...data.tests, psiRow]).map((p) => p.acronym)).toEqual(['Saffire-VI']);
+    expect(literaturePoints([saf1], data.tests.filter((t) => t.acronym !== 'Saffire-I'))).toHaveLength(1);
   });
   it('nearestLiterature measures a solid candidate to the nearest run, and skips other classes', () => {
     const [c] = nextTests(data.tests);

@@ -1,10 +1,10 @@
 import { briefContext } from "@/lib/brief/context";
 import { safeUrl } from "@/lib/brief/citations";
-import { CLASS_LABEL, NEXT_LITERATURE_DISTANCE, archiveId, gainId, nextId, presetName } from "@/lib/brief/pageFacts";
+import { CLASS_LABEL, NEXT_LITERATURE_DISTANCE, archiveId, archiveMissionLabel, gainId, nextId, presetName } from "@/lib/brief/pageFacts";
 import { HALO_DATA } from "@/lib/data/load";
 import { GRADE_RINGS } from "@/lib/engine/grade";
 import { scaledDistance } from "@/lib/engine/distance";
-import { shortMaterial } from "@/lib/engine/literatureWindow";
+import { missionInPsi, shortMaterial } from "@/lib/engine/literatureWindow";
 import type { Brief } from "@/lib/engine/types";
 import { Panel } from "@/components/ui/Panel";
 import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
@@ -50,7 +50,7 @@ function GainBars({ rows, label }: { rows: GainRow[]; label: string }) {
 /**
  * The computed test that would close the evidence gap most across the
  * reference habitats, read against the Saffire flights that already burned
- * real solids nearby (NASA reports, not PSI), and the partial-gravity
+ * real solids nearby (NASA reports), and the partial-gravity
  * investigations (LUCI, FM2) that are the vehicles for what PSI lacks.
  */
 export function NextTestCard({ brief }: { brief: Brief }) {
@@ -81,6 +81,8 @@ export function NextTestCard({ brief }: { brief: Brief }) {
         )
       : [];
   const missions = uniq(nearLit.map((r) => r.mission.replace(/-/g, " ")));
+  const nearLitOutsidePsi = nearLit.every((r) => !missionInPsi(r.mission, HALO_DATA.tests));
+  const archMissions = archiveMissionLabel(HALO_DATA);
   const materials = uniq(nearLit.map((r) => (/pmma/i.test(r.material) ? "PMMA" : /cotton/i.test(r.material) && !/sibal/i.test(r.material) ? "cotton" : shortMaterial(r.material))));
   const archivedSame =
     ctx.fact("next-archived-oxygen")?.value === best.o2Pct && ctx.fact("next-archived-pressure")?.value === best.pressurePsia;
@@ -103,7 +105,7 @@ export function NextTestCard({ brief }: { brief: Brief }) {
             <p>
               <span className="font-medium text-fg">This is not a first burn.</span> {list(missions)} already burned {list(materials)} near here (the
               nearest run sits at evidence distance <Num brief={brief} id={NEXT_LITERATURE_DISTANCE} />) <ProvenanceBadge provenance="literature" className="align-middle" />.
-              Those flights are NASA reports, not PSI test rows.
+              {nearLitOutsidePsi ? "Those flights are NASA reports, not PSI test rows." : "Their spread data come from NASA reports."}
             </p>
             <p>
               <span className="font-medium text-fg">The gap is the archive:</span> no PSI dataset holds measured flame spread and extinction for real
@@ -137,11 +139,11 @@ export function NextTestCard({ brief }: { brief: Brief }) {
 
         {archive.length > 0 && (
           <div className="mt-8 border-t border-line pt-6" data-next-archive>
-            <h3 className="type-label text-fg-3">If the Saffire runs were archived in PSI</h3>
+            <h3 className="type-label text-fg-3">If the {archMissions} runs were archived in PSI</h3>
             <p className="mt-2 max-w-[64ch] text-sm text-pretty text-fg-2">
-              Counting the Saffire flights as real-solid coverage shows what archiving them would already buy, before any new flight:
+              Counting the {archMissions} runs not yet in PSI as real-solid coverage shows what archiving them would already buy, before any new flight:
             </p>
-            <GainBars rows={archive} label="Real-solid evidence distance today and with the Saffire runs archived" />
+            <GainBars rows={archive} label={`Real-solid evidence distance today and with the ${archMissions} runs archived`} />
             {ctx.fact("next-archived-oxygen") && (
               <p className="mt-4 max-w-[64ch] text-sm text-pretty text-fg-2">
                 The best new real-solid test would then {archivedSame ? "still be" : "move to"}{" "}

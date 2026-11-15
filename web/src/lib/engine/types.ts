@@ -225,6 +225,8 @@ export interface FlowCoverage {
   habitatFlow: number;
   /** Tested flow range across the class: per-row flows when recorded, else the investigations' flow ranges. */
   range: [number, number] | null;
+  /** Provenance of the low and high ends: the weakest flowSrc among the rows at that end; 'inferred' for investigation ranges. */
+  rangeSrc: [ConditionSource, ConditionSource] | null;
   basis: 'rows' | 'investigations' | null;
   /** Habitat flow within the tested range (null when no flow is recorded). */
   inside: boolean | null;
@@ -232,7 +234,7 @@ export interface FlowCoverage {
   nearestFlow: number | null;
   nearestFlowSrc: ConditionSource | null;
   /** Flows of the tests tied at the nearest condition (per-row data only). */
-  nearestPoint: { n: number; range: [number, number] } | null;
+  nearestPoint: { n: number; range: [number, number]; src: [ConditionSource, ConditionSource] } | null;
 }
 
 export interface Brief {
@@ -247,7 +249,7 @@ export interface Brief {
   aftermath: Fact[];
   coolFlame: Fact | null;
   nextTests: NextTestCandidate[];
-  /** The same search with the Saffire literature runs counted as coverage (as if archived in PSI). */
+  /** The same search with the literature runs not yet in PSI (Saffire IV–VI) counted as coverage, as if archived there. */
   nextTestsIfArchived: NextTestCandidate[];
   /** Real-solid evidence distance per preset, PSI only versus with the literature runs archived. */
   archiveGains: NextTestCandidate['gains'];

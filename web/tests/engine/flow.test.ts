@@ -42,7 +42,7 @@ describe('flowCoverage', () => {
     expect(cov.range).toEqual([0, 49]);
     expect(cov.inside).toBe(true);
     expect(cov.nearestFlow).toBe(5);
-    expect(cov.nearestPoint).toEqual({ n: 3, range: [0, 10] });
+    expect(cov.nearestPoint).toEqual({ n: 3, range: [0, 10], src: ['measured', 'measured'] });
   });
   it('flags a habitat flow outside every tested flow', () => {
     const h = hab(60);
@@ -84,6 +84,60 @@ describe('flowFacts', () => {
     expect(v(nearFlowId('solid', 'flow-high'))).toBe(10);
     for (const f of facts) expect(f.id).toMatch(/^[a-z-]+$/);
     expect(facts.find((f) => f.id === nearFlowId('solid', 'flow-count'))?.provenance).toBe('computed');
+  });
+});
+
+describe('flow provenance follows the row that sets each end (tests.json flowSrc)', () => {
+  // The w3-data row shape: flowCmS with flowSrc measured | inferred | assumed.
+  const row = (id: string, psiId: string, acronym: string, fuelClass: TestPoint['fuelClass'], o2Pct: number, pressurePsia: number, flowCmS: number, flowSrc: 'measured' | 'inferred' | 'assumed'): TestPoint => ({
+    id, psiId, acronym, fuelClass, fuel: `fuel ${id}`, o2Pct, pressurePsia, o2Src: 'measured', pSrc: 'measured', flowCmS, flowSrc,
+  });
+  const solids = [
+    row('bass-0', 'PSI-25', 'BASS-II', 'solid', 22.2, 14.7, 0, 'inferred'),
+    row('bass-20', 'PSI-25', 'BASS-II', 'solid', 22.2, 14.7, 20, 'inferred'),
+    row('saf-1', 'PSI-98', 'Saffire-I', 'solid', 21, 14.5, 20, 'measured'),
+    row('saf-3', 'PSI-100', 'Saffire-III', 'solid', 21, 14.5, 30, 'measured'),
+  ];
+  const droplets = [row('flex', 'PSI-69', 'FLEX', 'droplet', 21, 14.7, 0, 'assumed'), row('cfi', 'PSI-39', 'CFI', 'droplet', 30, 14.7, 0, 'assumed')];
+  const all = [...solids, ...droplets];
+  const facts = (tests: TestPoint[], h = hab(10)) => {
+    const by = nearestByClass(h, tests);
+    return flowFacts(flowCoverage(h, tests, base.investigations, by), by, withTests(tests));
+  };
+  const prov = (fs: ReturnType<typeof facts>, id: string) => fs.find((f) => f.id === id)?.provenance;
+
+  it('BASS-II inferred 0 cm/s sets the solid minimum: inferred; Saffire-III measured 30 sets the maximum: measured', () => {
+    const fs = facts(all);
+    expect(fs.find((f) => f.id === flowId('solid', 'min'))?.value).toBe(0);
+    expect(prov(fs, flowId('solid', 'min'))).toBe('inferred');
+    expect(fs.find((f) => f.id === flowId('solid', 'max'))?.value).toBe(30);
+    expect(prov(fs, flowId('solid', 'max'))).toBe('measured');
+  });
+  it('FLEX and CFI still-air droplets: both ends assumed', () => {
+    const fs = facts(all);
+    expect(prov(fs, flowId('droplet', 'min'))).toBe('assumed');
+    expect(prov(fs, flowId('droplet', 'max'))).toBe('assumed');
+  });
+  it('on a tie at the max, the weakest source wins (assumed < inferred < measured)', () => {
+    const tied = [...solids, row('x', 'PSI-0', 'X', 'solid', 25, 10, 30, 'assumed')];
+    expect(prov(facts(tied), flowId('solid', 'max'))).toBe('assumed');
+    const tied2 = [...solids, row('y', 'PSI-0', 'Y', 'solid', 25, 10, 30, 'inferred')];
+    expect(prov(facts(tied2), flowId('solid', 'max'))).toBe('inferred');
+  });
+  it('the tied set at the nearest condition takes its ends\' provenance too', () => {
+    const fs = facts(solids, hab(10, 22.2, 14.7));
+    expect(fs.find((f) => f.id === nearFlowId('solid', 'flow-low'))?.value).toBe(0);
+    expect(prov(fs, nearFlowId('solid', 'flow-low'))).toBe('inferred');
+    expect(prov(fs, nearFlowId('solid', 'flow-high'))).toBe('inferred');
+  });
+  it('a range from the investigations’ flowRangeCmS is inferred, not measured', () => {
+    const plain = [tp('x', 22.2, 14.7)];
+    const invs = base.investigations.map((i) => (i.psiId === 'PSI-25' ? { ...i, flowRangeCmS: [1, 12] as [number, number] } : i));
+    const h = hab(5);
+    const by = nearestByClass(h, plain);
+    const fs = flowFacts(flowCoverage(h, plain, invs, by), by, withTests(plain));
+    expect(prov(fs, flowId('solid', 'min'))).toBe('inferred');
+    expect(prov(fs, flowId('solid', 'max'))).toBe('inferred');
   });
 });
 
@@ -129,6 +183,19 @@ describe('literatureFlowPair', () => {
     expect(p.high.sampleId).toBe('II-6');
     expect(p.facts.map((f) => f.value)).toEqual([20, 2.1, 25, 2.6]);
     expect(p.facts.every((f) => f.provenance === 'literature')).toBe(true);
+    // Fixture tests carry no Saffire-II rows, so the pair is outside PSI here.
+    expect(p.inPsi).toBe(base.tests.some((t) => t.acronym.toLowerCase() === 'saffire-ii'));
+  });
+  it('calls a PSI mission (Saffire-II is PSI-99) a PSI mission: spread rates from the NASA report, no "not in PSI"', () => {
+    const lit = (sampleId: string, flowCmS: number, spreadRateMmS: number) => ({ mission: 'Saffire-II', sampleId, material: 'SIBAL fabric', o2Pct: 21, pressurePsia: 14.5, flowCmS, spreadRateMmS, outcome: '', sourceUrl: 'https://ntrs.nasa.gov/citations/1', confidence: 'high' });
+    const saf2: TestPoint = { id: 's2', psiId: 'PSI-99', acronym: 'Saffire-II', fuelClass: 'solid', fuel: 'SIBAL', o2Pct: 21, pressurePsia: 14.5, o2Src: 'measured', pSrc: 'measured' };
+    const literature = [lit('II-5', 20, 2.1), lit('II-6', 25, 2.6)];
+    const inPsi = literatureFlowPair({ ...base, tests: [...base.tests, saf2], literature })!;
+    expect(inPsi.inPsi).toBe(true);
+    expect(inPsi.facts[0].source.note).toMatch(/spread rates from the NASA report$/);
+    const outside = literatureFlowPair({ ...base, tests: base.tests.filter((t) => t.acronym !== 'Saffire-II'), literature })!;
+    expect(outside.inPsi).toBe(false);
+    expect(outside.facts[0].source.note).toMatch(/mission not in PSI/);
   });
   it('returns null when no pair exists', () => {
     expect(literatureFlowPair({ ...base, literature: [] })).toBeNull();

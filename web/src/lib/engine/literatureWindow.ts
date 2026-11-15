@@ -1,5 +1,5 @@
 import { PRESETS } from './presets';
-import { factText, type Fact, type HaloData, type LiteratureRow } from './types';
+import { factText, type Fact, type HaloData, type LiteratureRow, type TestPoint } from './types';
 
 /**
  * Real solids burned in the Moon window outside PSI. The challenge's Moon
@@ -24,6 +24,36 @@ export interface LiteratureWindow {
 }
 
 const r1 = (x: number) => Number(x.toFixed(1));
+
+const missionKey = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+/** Whether a literature mission ("Saffire-II") is also a PSI investigation among the test rows (acronym match, case and punctuation ignored). */
+export function missionInPsi(mission: string, tests: Pick<TestPoint, 'acronym'>[]): boolean {
+  const k = missionKey(mission);
+  return tests.some((t) => missionKey(t.acronym) === k);
+}
+
+/**
+ * Missions named as a span, in data order: ["Saffire-IV", "Saffire-V", "Saffire-VI"] → "Saffire IV–VI";
+ * two → "Saffire IV and V"; mixed prefixes are listed in full.
+ */
+export function missionSpan(missions: string[]): string {
+  const ms = uniq(missions.map((m) => m.replace(/-/g, ' ')));
+  if (ms.length <= 1) return ms.join('');
+  const parts = ms.map((m) => {
+    const i = m.lastIndexOf(' ');
+    return i < 0 ? { head: '', tail: m } : { head: m.slice(0, i), tail: m.slice(i + 1) };
+  });
+  const head = parts[0].head;
+  if (!head || parts.some((p) => p.head !== head)) return list(ms);
+  const tails = parts.map((p) => p.tail);
+  return tails.length === 2 ? `${head} ${tails[0]} and ${tails[1]}` : `${head} ${tails[0]}–${tails[tails.length - 1]}`;
+}
+
+/** Literature rows whose mission has no PSI test rows (e.g. Saffire IV–VI; Saffire I–III are PSI-98/99/100). */
+export function literatureOutsidePsi(literature: LiteratureRow[], tests: Pick<TestPoint, 'acronym'>[]): LiteratureRow[] {
+  return literature.filter((r) => !missionInPsi(r.mission, tests));
+}
 const uniq = <T,>(xs: T[]) => [...new Set(xs)];
 
 /** "SIBAL fabric 41x50 cm" → "SIBAL"; "Cast PMMA slab" → "PMMA"; falls back to the first word. */

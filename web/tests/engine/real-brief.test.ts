@@ -74,7 +74,7 @@ describe.skipIf(!isReal)('real data: detector facts cite SAME', () => {
   });
 });
 
-import { allFacts, archiveId, NEXT_LITERATURE_DISTANCE } from '@/lib/brief/pageFacts';
+import { allFacts, archiveId, archiveMissionLabel, NEXT_LITERATURE_DISTANCE } from '@/lib/brief/pageFacts';
 
 describe.skipIf(!isReal)('real data: grade, flow and next-test facts', () => {
   const art = buildBrief(PRESETS.artemis, HALO_DATA);
@@ -93,7 +93,15 @@ describe.skipIf(!isReal)('real data: grade, flow and next-test facts', () => {
 
   it('reports the tested solid flow range and the Researcher’s Guide flow facts', () => {
     expect(v(art, 'flow-solid-min')).toBe(0);
-    expect(v(art, 'flow-solid-max')).toBe(49);
+    // BASS-II rows (inferred 0 cm/s) set the minimum; Saffire-III (measured 30 cm/s) sets the maximum.
+    expect(v(art, 'flow-solid-max')).toBe(30);
+    expect(art.flow.solid.basis).toBe('rows');
+    const pv = (id: string) => art.facts.find((f) => f.id === id)?.provenance;
+    expect(pv('flow-solid-min')).toBe('inferred');
+    expect(pv('flow-solid-max')).toBe('measured');
+    // FLEX and CFI droplet flows are assumed (still air), so both ends of the droplet range are assumed.
+    expect(pv('flow-droplet-min')).toBe('assumed');
+    expect(pv('flow-droplet-max')).toBe('assumed');
     expect(v(art, 'flow-guide-minimum')).toBe(10);
     expect(art.flow.solid.inside).toBe(true);
     // FLEX and CFI droplets burned in still air, so a ventilated cabin is outside the droplet flow range.
@@ -115,10 +123,28 @@ describe.skipIf(!isReal)('real data: grade, flow and next-test facts', () => {
     expect(art.nextTests[0]).toMatchObject({ fuelClass: 'solid', o2Pct: 30, pressurePsia: 10 });
     expect(v(art, NEXT_LITERATURE_DISTANCE)).toBe(0.39);
     const f = allFacts(art, HALO_DATA).find((x) => x.id === NEXT_LITERATURE_DISTANCE);
-    expect(f?.label).toMatch(/Saffire V /);
+    expect(f?.label).toMatch(/Saffire V, NASA report, mission not in PSI/);
+    expect(f?.source.note).toMatch(/Saffire V sample V-2/);
   });
 
-  it('archiving the Saffire runs in PSI would close most of the real-solid gap', () => {
+  it('the Saffire-II flow pair is a PSI mission (PSI-99): spread rates from the NASA report, never "not PSI"', () => {
+    const lo = art.facts.find((x) => x.id === 'lit-flow-low');
+    expect(lo?.label).toMatch(/^Saffire II /);
+    expect(lo?.source.note).toMatch(/spread rates from the NASA report$/);
+    expect(lo?.source.note).not.toMatch(/not (in )?PSI/);
+  });
+
+  it('archiving counts only Saffire IV–VI (Saffire I–III are already PSI-98/99/100) and cites the run it used', () => {
+    expect(archiveMissionLabel(HALO_DATA)).toBe('Saffire IV–VI');
+    const all = allFacts(art, HALO_DATA);
+    const f = (id: string) => all.find((x) => x.id === id)!;
+    expect(f(archiveId('artemis', 'after')).label).toMatch(/Saffire IV–VI runs not yet in PSI/);
+    for (const id of [archiveId('artemis', 'after'), archiveId('moon', 'after'), 'next-archived-oxygen']) {
+      expect(['https://ntrs.nasa.gov/citations/20210011521', 'https://ntrs.nasa.gov/citations/20240002981']).toContain(f(id).source.url);
+    }
+  });
+
+  it('archiving the Saffire IV–VI runs in PSI would close most of the real-solid gap', () => {
     expect(v(art, archiveId('artemis', 'before'))).toBe(2.47);
     expect(v(art, archiveId('artemis', 'after'))).toBe(0.32);
     expect(v(art, archiveId('moon', 'before'))).toBe(1.69);

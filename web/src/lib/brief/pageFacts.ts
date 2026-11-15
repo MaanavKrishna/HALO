@@ -2,8 +2,8 @@ import { sensorWhatIf } from '@/lib/engine/detection';
 import { detectorSource, scatterThresholdFact } from '@/lib/engine/flags';
 import { HABITAT_SOURCE, habitatFacts } from '@/lib/engine/brief';
 import { classGrade } from '@/lib/engine/grade';
-import { literatureInWindow } from '@/lib/engine/literatureWindow';
-import { nearestLiterature } from '@/lib/engine/nextTest';
+import { literatureInWindow, missionInPsi, missionSpan } from '@/lib/engine/literatureWindow';
+import { archivableLiterature, nearestArchivable, nearestLiterature } from '@/lib/engine/nextTest';
 import { MATERIALS } from '@/lib/engine/materials';
 import { PRESETS } from '@/lib/engine/presets';
 import type { Brief, Fact, FuelClass, Grade, HaloData, MaterialId, Source, TestPoint } from '@/lib/engine/types';
@@ -122,7 +122,7 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
     }
   });
 
-  // The top suggestion against the Saffire runs (NASA reports, not PSI): its distance to the nearest one,
+  // The top suggestion against the Saffire runs (NASA reports): its distance to the nearest one,
   // and what archiving those runs in PSI would do for real-solid coverage.
   const best = b.nextTests[0];
   const lit = literatureInWindow(data);
@@ -130,28 +130,42 @@ export function pageFacts(b: Brief, data: HaloData): Fact[] {
   const near = best ? nearestLiterature(best, data.literature) : null;
   if (best && near) {
     const mission = near.row.mission.replace(/-/g, ' ');
+    const scope = missionInPsi(near.row.mission, data.tests) ? 'NASA report' : 'NASA report, mission not in PSI';
     out.push({
       id: NEXT_LITERATURE_DISTANCE,
-      label: `Evidence distance from suggested test 1 to the nearest Saffire run (${mission} ${near.row.sampleId}, literature, not PSI)`,
-      value: r2(near.d), provenance: 'computed', source: { url: near.row.sourceUrl, note: `${mission} ${near.row.sampleId}: ${near.row.material}` },
+      label: `Evidence distance from suggested test 1 to the nearest Saffire run (${mission}, ${scope})`,
+      value: r2(near.d), provenance: 'computed', source: { url: near.row.sourceUrl, note: `${mission} sample ${near.row.sampleId}: ${near.row.material}` },
     });
   }
-  const archSrc: Source = { note: 'Saffire runs from NASA reports (literature.json) counted as if archived in PSI; real-solid evidence distance per reference habitat (computed)' , url: data.literature.find((r) => r.o2Pct !== null && r.pressurePsia !== null)?.sourceUrl };
+  // "If archived": only literature missions not already in PSI count (Saffire I–III are PSI rows already).
+  const archMissions = archiveMissionLabel(data);
+  const archNote = `${archMissions} runs from NASA reports (literature.json), not yet in PSI, counted as if archived there; real-solid evidence distance per reference habitat (computed)`;
+  const archSrc = (p: { o2Pct: number; pressurePsia: number }): Source => {
+    const row = nearestArchivable(p, data);
+    return { note: row ? `${archNote}; nearest run ${row.mission.replace(/-/g, ' ')} sample ${row.sampleId}` : archNote, ...(row ? { url: row.sourceUrl } : {}) };
+  };
   for (const g of b.archiveGains) {
+    const src = archSrc(PRESETS[g.preset as keyof typeof PRESETS]);
     out.push(
-      { id: archiveId(g.preset, 'before'), label: `${presetName(g.preset)}: real-solid evidence distance, PSI rows only`, value: r2(g.before), provenance: 'computed', source: archSrc },
-      { id: archiveId(g.preset, 'after'), label: `${presetName(g.preset)}: real-solid evidence distance if the Saffire runs were archived in PSI`, value: r2(g.after), provenance: 'computed', source: archSrc },
+      { id: archiveId(g.preset, 'before'), label: `${presetName(g.preset)}: real-solid evidence distance, PSI rows only`, value: r2(g.before), provenance: 'computed', source: src },
+      { id: archiveId(g.preset, 'after'), label: `${presetName(g.preset)}: real-solid evidence distance if the ${archMissions} runs not yet in PSI were archived there`, value: r2(g.after), provenance: 'computed', source: src },
     );
   }
   const archivedSolid = b.nextTestsIfArchived.find((t) => t.fuelClass === 'solid');
   if (archivedSolid) {
+    const src = archSrc(archivedSolid);
     out.push(
-      { id: 'next-archived-oxygen', label: 'Best real-solid test once the Saffire runs count as coverage: O2', value: archivedSolid.o2Pct, unit: '%', provenance: 'computed', source: archSrc },
-      { id: 'next-archived-pressure', label: 'Best real-solid test once the Saffire runs count as coverage: pressure', value: archivedSolid.pressurePsia, unit: 'psia', provenance: 'computed', source: archSrc },
+      { id: 'next-archived-oxygen', label: `Best real-solid test once the ${archMissions} runs count as coverage: O2`, value: archivedSolid.o2Pct, unit: '%', provenance: 'computed', source: src },
+      { id: 'next-archived-pressure', label: `Best real-solid test once the ${archMissions} runs count as coverage: pressure`, value: archivedSolid.pressurePsia, unit: 'psia', provenance: 'computed', source: src },
     );
   }
 
   return out;
+}
+
+/** The literature missions that "if archived" counts, as a span from the data ("Saffire IV–VI"). */
+export function archiveMissionLabel(data: Pick<HaloData, 'literature' | 'tests'>): string {
+  return missionSpan(archivableLiterature(data.literature, data.tests).map((r) => r.mission));
 }
 
 export const NEXT_LITERATURE_DISTANCE = 'next-first-literature-distance';

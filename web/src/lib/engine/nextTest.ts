@@ -1,4 +1,5 @@
 import { scaledDistance } from './distance';
+import { literatureOutsidePsi } from './literatureWindow';
 import { PRESETS } from './presets';
 import type { FuelClass, HaloData, LiteratureRow, NextTestCandidate, TestPoint } from './types';
 
@@ -68,10 +69,18 @@ export function nextTests(tests: TestPoint[], k = 4): NextTestCandidate[] {
   return picked;
 }
 
-/** Literature runs with a recorded O2 and pressure, as solid-fuel coverage points (Saffire burned real solids). */
-export function literaturePoints(literature: LiteratureRow[]): TestPoint[] {
-  return literature
-    .filter((r) => r.o2Pct !== null && r.pressurePsia !== null)
+/** Literature runs that could count as new coverage: a recorded O2 and pressure, from a mission with no PSI test rows. */
+export function archivableLiterature(literature: LiteratureRow[], tests: Pick<TestPoint, 'acronym'>[]): LiteratureRow[] {
+  return literatureOutsidePsi(literature, tests).filter((r) => r.o2Pct !== null && r.pressurePsia !== null);
+}
+
+/**
+ * Literature runs as solid-fuel coverage points (Saffire burned real solids).
+ * Missions already in PSI (Saffire I–III are PSI-98/99/100) are left out: their
+ * conditions are already PSI rows, so archiving them would add nothing.
+ */
+export function literaturePoints(literature: LiteratureRow[], tests: Pick<TestPoint, 'acronym'>[]): TestPoint[] {
+  return archivableLiterature(literature, tests)
     .map((r) => ({
       id: `lit:${r.mission}:${r.sampleId}`,
       psiId: 'PSI-0',
@@ -87,11 +96,21 @@ export function literaturePoints(literature: LiteratureRow[]): TestPoint[] {
 }
 
 /**
- * The same search, counting the Saffire literature runs as if their data were
- * archived in PSI. Where the pick moves shows what those flights already cover.
+ * The same search, counting the literature runs not yet in PSI as if their data
+ * were archived there. Where the pick moves shows what those flights already cover.
  */
 export function nextTestsIfArchived(data: HaloData, k = 4): NextTestCandidate[] {
-  return nextTests([...data.tests, ...literaturePoints(data.literature)], k);
+  return nextTests([...data.tests, ...literaturePoints(data.literature, data.tests)], k);
+}
+
+/** The archivable literature run nearest a point (the one that sets its "if archived" distance), or null. */
+export function nearestArchivable(p: { o2Pct: number; pressurePsia: number }, data: HaloData): LiteratureRow | null {
+  let best: { d: number; row: LiteratureRow } | null = null;
+  for (const r of archivableLiterature(data.literature, data.tests)) {
+    const d = scaledDistance(p.o2Pct, p.pressurePsia, r.o2Pct as number, r.pressurePsia as number);
+    if (best === null || d < best.d) best = { d, row: r };
+  }
+  return best?.row ?? null;
 }
 
 /** Nearest literature run to a candidate (same fuel class only), or null. */
@@ -108,11 +127,11 @@ export function nearestLiterature(c: NextTestCandidate, literature: LiteratureRo
 
 /**
  * Real-solid evidence distance per preset from PSI rows alone, and with the
- * literature runs counted as if archived in PSI (both capped like the search).
+ * literature runs not yet in PSI counted as if archived there (both capped like the search).
  */
 export function archiveGains(data: HaloData): NextTestCandidate['gains'] {
   const psi = data.tests.filter((t) => t.fuelClass === 'solid');
-  const lit = literaturePoints(data.literature);
+  const lit = literaturePoints(data.literature, data.tests);
   const near = (h: { o2Pct: number; pressurePsia: number }, pts: TestPoint[]) =>
     Math.min(DIST_CAP, ...pts.map((t) => scaledDistance(h.o2Pct, h.pressurePsia, t.o2Pct, t.pressurePsia)));
   return PRESET_KEYS.map((key) => {

@@ -4,7 +4,7 @@ import { ProvenanceBadge } from "@/components/ui/ProvenanceBadge";
 import { TBody, THead, TableFrame, Td, Th, Tr } from "@/components/ui/Table";
 import { briefContext } from "@/lib/brief/context";
 import { CLASS_LABEL, CLASS_ORDER, gradeOf, nearId } from "@/lib/brief/pageFacts";
-import { flowId, nearFlowId } from "@/lib/engine/flow";
+import { flowId, literatureFlowPair, nearFlowId } from "@/lib/engine/flow";
 import { HALO_DATA } from "@/lib/data/load";
 import type { Brief, FuelClass } from "@/lib/engine/types";
 import { GRADE_RINGS } from "@/lib/engine/grade";
@@ -197,6 +197,7 @@ function FlowCallout({ brief }: { brief: Brief }) {
   const min = ctx.fact("flow-guide-minimum");
   const up = ctx.fact("flow-guide-upstream");
   const pair = ctx.fact("lit-flow-low") && ctx.fact("lit-flow-high-spread");
+  const pairInPsi = literatureFlowPair(HALO_DATA)?.inPsi ?? false;
   const nearPoint = ctx.fact(nearFlowId("solid", "flow-count"));
   if (!min) return null;
   // Label is "<Mission> <MATERIAL> sample <id>: air flow".
@@ -221,7 +222,7 @@ function FlowCallout({ brief }: { brief: Brief }) {
         <span className="mt-2 block">
           In {pairMission}, the same {pairMaterial} material spread at <Num brief={brief} id="lit-flow-low-spread" cite={false} /> in{" "}
           <Num brief={brief} id="lit-flow-low" cite={false} /> of flow and at <Num brief={brief} id="lit-flow-high-spread" cite={false} /> in{" "}
-          <Num brief={brief} id="lit-flow-high" /> (NASA report, not PSI).
+          <Num brief={brief} id="lit-flow-high" /> (two samples; spread rates from the NASA report{pairInPsi ? "" : ", mission not in PSI"}).
         </span>
       )}
       {nearPoint && (

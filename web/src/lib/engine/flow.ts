@@ -1,6 +1,6 @@
 import { scaledDistance, TIE_EPS } from './distance';
 import { BASS_GUIDE_URL } from './facts';
-import { shortMaterial } from './literatureWindow';
+import { missionInPsi, shortMaterial } from './literatureWindow';
 import type { ConditionSource, Fact, FlowCoverage, FuelClass, Habitat, HaloData, Investigation, LiteratureRow, Nearest, Source, TestPoint } from './types';
 
 /**
@@ -23,6 +23,19 @@ function span(xs: number[]): [number, number] | null {
   return xs.length ? [Math.min(...xs), Math.max(...xs)] : null;
 }
 
+/** Weakest first: a tie at the min or max takes the least direct source. */
+const SRC_RANK: Record<ConditionSource, number> = { assumed: 0, inferred: 1, measured: 2 };
+const weakest = (xs: ConditionSource[]): ConditionSource => xs.reduce((a, b) => (SRC_RANK[b] < SRC_RANK[a] ? b : a));
+const srcOf = (t: TestPoint): ConditionSource => t.flowSrc ?? 'measured';
+
+/** Flow range of rows with recorded flow, with the provenance of the row(s) setting each end. */
+function spanWithSrc(rows: (TestPoint & { flowCmS: number })[]): { range: [number, number]; src: [ConditionSource, ConditionSource] } | null {
+  const r = span(rows.map((t) => t.flowCmS));
+  if (!r) return null;
+  const at = (v: number) => weakest(rows.filter((t) => t.flowCmS === v).map(srcOf));
+  return { range: r, src: [at(r[0]), at(r[1])] };
+}
+
 export function flowCoverage(
   h: Habitat,
   tests: TestPoint[],
@@ -34,15 +47,20 @@ export function flowCoverage(
     const subset = tests.filter((t) => t.fuelClass === fc);
     const rows = subset.filter(hasFlow);
     let range: [number, number] | null = null;
+    let rangeSrc: FlowCoverage['rangeSrc'] = null;
     let basis: FlowCoverage['basis'] = null;
     if (rows.length) {
-      range = span(rows.map((t) => t.flowCmS));
+      const sp = spanWithSrc(rows)!;
+      range = sp.range;
+      rangeSrc = sp.src;
       basis = 'rows';
     } else {
       const ids = new Set(subset.map((t) => t.psiId));
       const ranges = investigations.filter((i) => ids.has(i.psiId) && i.flowRangeCmS).map((i) => i.flowRangeCmS as [number, number]);
       if (ranges.length) {
         range = [Math.min(...ranges.map((r) => r[0])), Math.max(...ranges.map((r) => r[1]))];
+        // An investigation's stated flow range is not a per-test record: the class's tests are inferred to span it.
+        rangeSrc = ['inferred', 'inferred'];
         basis = 'investigations';
       }
     }
@@ -55,14 +73,15 @@ export function flowCoverage(
       const tied = rows.filter(
         (t) => Math.abs(scaledDistance(h.o2Pct, h.pressurePsia, t.o2Pct, t.pressurePsia) - near.d!) <= TIE_EPS,
       );
-      const r = span(tied.map((t) => t.flowCmS));
-      if (r) nearestPoint = { n: tied.length, range: r };
+      const r = spanWithSrc(tied);
+      if (r) nearestPoint = { n: tied.length, range: r.range, src: r.src };
     }
 
     out[fc] = {
       fuelClass: fc,
       habitatFlow: h.flowCmS,
       range,
+      rangeSrc,
       basis,
       inside: range ? h.flowCmS >= range[0] && h.flowCmS <= range[1] : null,
       nearestFlow,
@@ -123,10 +142,11 @@ export function flowFacts(cov: Record<FuelClass, FlowCoverage>, byClass: Record<
         ...(t0 ? (doi0 ? { psiId: t0.psiId, doi: doi0 } : { psiId: t0.psiId }) : {}),
         note: `${invNote(data.tests, c)}; ${f.basis === 'rows' ? 'per-test air flow' : 'investigation flow ranges (per-test flow not yet in tests.json)'}`,
       };
-      // A min or max of recorded flows is a recorded flow.
+      // A min or max carries the provenance of the row that sets it (weakest on ties).
+      const [srcLo, srcHi] = f.rangeSrc ?? ['inferred', 'inferred'];
       out.push(
-        { id: flowId(c, 'min'), label: `Lowest air flow in the ${CLASS_WORD[c]} tests`, value: f.range[0], unit: 'cm/s', provenance: 'measured', source },
-        { id: flowId(c, 'max'), label: `Highest air flow in the ${CLASS_WORD[c]} tests`, value: f.range[1], unit: 'cm/s', provenance: 'measured', source },
+        { id: flowId(c, 'min'), label: `Lowest air flow in the ${CLASS_WORD[c]} tests`, value: f.range[0], unit: 'cm/s', provenance: srcLo, source },
+        { id: flowId(c, 'max'), label: `Highest air flow in the ${CLASS_WORD[c]} tests`, value: f.range[1], unit: 'cm/s', provenance: srcHi, source },
       );
     }
     const t = byClass[c].test;
@@ -137,8 +157,8 @@ export function flowFacts(cov: Record<FuelClass, FlowCoverage>, byClass: Record<
       if (f.nearestPoint && f.nearestPoint.n > 1) {
         out.push(
           { id: nearFlowId(c, 'flow-count'), label: `${CLASS_WORD[c]} tests at the nearest tested condition`, value: f.nearestPoint.n, provenance: 'computed', source: src },
-          { id: nearFlowId(c, 'flow-low'), label: `Lowest air flow among the tests at the nearest ${CLASS_WORD[c]} condition`, value: f.nearestPoint.range[0], unit: 'cm/s', provenance: 'measured', source: src },
-          { id: nearFlowId(c, 'flow-high'), label: `Highest air flow among the tests at the nearest ${CLASS_WORD[c]} condition`, value: f.nearestPoint.range[1], unit: 'cm/s', provenance: 'measured', source: src },
+          { id: nearFlowId(c, 'flow-low'), label: `Lowest air flow among the tests at the nearest ${CLASS_WORD[c]} condition`, value: f.nearestPoint.range[0], unit: 'cm/s', provenance: f.nearestPoint.src[0], source: src },
+          { id: nearFlowId(c, 'flow-high'), label: `Highest air flow among the tests at the nearest ${CLASS_WORD[c]} condition`, value: f.nearestPoint.range[1], unit: 'cm/s', provenance: f.nearestPoint.src[1], source: src },
         );
       }
     }
@@ -146,7 +166,13 @@ export function flowFacts(cov: Record<FuelClass, FlowCoverage>, byClass: Record<
   return out;
 }
 
-export interface LiteratureFlowPair { low: LiteratureRow; high: LiteratureRow; facts: Fact[] }
+export interface LiteratureFlowPair {
+  low: LiteratureRow;
+  high: LiteratureRow;
+  /** The mission is also a PSI investigation (Saffire-II is PSI-99); the spread rates still come from the NASA report. */
+  inPsi: boolean;
+  facts: Fact[];
+}
 
 /**
  * Two literature runs of the same mission and material at different air
@@ -167,12 +193,16 @@ export function literatureFlowPair(data: HaloData): LiteratureFlowPair | null {
   const { low, high } = best;
   const mat = shortMaterial(low.material);
   const mission = low.mission.replace(/-/g, ' ');
-  const source: Source = { url: low.sourceUrl, note: `${mission} ${low.sampleId} and ${high.sampleId} (${low.material}); NASA report, not PSI` };
+  const inPsi = missionInPsi(low.mission, data.tests);
+  const source: Source = {
+    url: low.sourceUrl,
+    note: `${mission} samples ${low.sampleId} and ${high.sampleId} (${low.material}); spread rates from the NASA report${inPsi ? '' : ', mission not in PSI'}`,
+  };
   const facts: Fact[] = [
     { id: 'lit-flow-low', label: `${mission} ${mat} sample ${low.sampleId}: air flow`, value: low.flowCmS as number, unit: 'cm/s', provenance: 'literature', source },
     { id: 'lit-flow-low-spread', label: `${mission} ${mat} sample ${low.sampleId}: flame spread rate`, value: low.spreadRateMmS as number, unit: 'mm/s', provenance: 'literature', source },
     { id: 'lit-flow-high', label: `${mission} ${mat} sample ${high.sampleId}: air flow`, value: high.flowCmS as number, unit: 'cm/s', provenance: 'literature', source },
     { id: 'lit-flow-high-spread', label: `${mission} ${mat} sample ${high.sampleId}: flame spread rate`, value: high.spreadRateMmS as number, unit: 'mm/s', provenance: 'literature', source },
   ];
-  return { low, high, facts };
+  return { low, high, inPsi, facts };
 }

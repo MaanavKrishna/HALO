@@ -107,7 +107,7 @@ function Breakdown({ v }: { v: Extract<Viz, { kind: "breakdown" }> }) {
 const OUTCOME_TONE: Record<string, { fill: string; swatch: string }> = {
   extinguished: { fill: "bg-accent", swatch: "bg-accent" },
   "flow-stopped": { fill: "bg-fg-3", swatch: "bg-fg-3" },
-  "no-ignition": { fill: "border border-dashed border-line-strong bg-transparent", swatch: "border border-dashed border-line-strong" },
+  "no-hot-ignition": { fill: "border border-dashed border-line-strong bg-transparent", swatch: "border border-dashed border-line-strong" },
 };
 
 /** One stacked strip of recorded burn outcomes (count-proportional segments), with a legend that carries the counts. */
@@ -160,6 +160,11 @@ function Diluent({ v, W, compact }: { v: Extract<Viz, { kind: "diluent" }>; W: n
           <span className="inline-flex items-center gap-1.5">
             <span aria-hidden="true" className="inline-block h-3 w-0.5 bg-fg-2" /> all eligible runs
           </span>
+          {v.byFuel?.map((f) => (
+            <span key={f.fuel} className="block w-full font-mono text-[0.75rem]">
+              {f.fuel}: {f.cells.map((c) => `${c.label} ${c.n ? Math.round((100 * c.ext) / c.n) : 0}% (${c.ext}/${c.n})`).join(" · ")}
+            </span>
+          ))}
         </span>
       }
     >

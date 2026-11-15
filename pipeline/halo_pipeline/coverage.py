@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import re
 
 import pandas as pd
 
@@ -40,12 +41,14 @@ def source_class(src: str) -> str | None:
 
 
 # Closed outcome vocabulary for tests.json (see docs/DATA-CONTRACT.md).
-OUTCOMES = ("extinguished", "burned-out", "flow-stopped", "no-ignition", "disrupted", "spread", "unknown")
+OUTCOMES = ("extinguished", "burned-out", "flow-stopped", "no-ignition", "no-hot-ignition", "cool-flame", "disrupted",
+            "spread", "unknown")
 
 # FLEX "Test end": Extinction = the flame went out before the droplet was consumed.
 _FLEX_END = {"extinction": "extinguished", "completion": "burned-out", "disruption": "disrupted"}
-# CFI-G "Self-ext or flow term": SE self-extinguished, FT the run ended by stopping the fuel flow, "-" no hot ignition.
-_CFIG_END = {"se": "extinguished", "ft": "flow-stopped", "-": "no-ignition"}
+# CFI-G "Self-ext or flow term": SE the hot flame self-extinguished, FT the run ended by stopping the fuel flow,
+# "-" no hot ignition. "-" is not "no ignition": some of those rows burned as cool flames (see _cfig_outcome).
+_CFIG_END = {"se": "extinguished", "ft": "flow-stopped", "-": "no-hot-ignition"}
 
 
 def _isnan(x) -> bool:
@@ -63,8 +66,16 @@ def outcome_class(r) -> str:
     if acr == "FLEX":
         return _FLEX_END.get(raw.lower(), "unknown")
     if acr == "ACME CFI-G":
-        return _CFIG_END.get(raw.lower(), "unknown")
+        out = _CFIG_END.get(raw.lower(), "unknown")
+        # Comments "direct cool - no hot ignition" (21106 F2, F5): a cool flame burned, no hot flame formed.
+        if out == "no-hot-ignition" and "direct cool" in str(r.get("comments", "")).lower():
+            return "cool-flame"
+        # The SE/FT column wins over "Hot ignition": 21106 F4 logs "Hot ignition: no" yet FT and a 22 s burn
+        # time, so it is kept as flow-stopped (the run ended when the fuel flow was stopped).
+        return out
     if acr == "BASS-II":
+        if r.get("no_ignition_text") == 1:
+            return "no-ignition"  # "no ign at any flow" (O12)
         # The free-text fan/air notes mark the flow at which the flame went out ("ext", "blowoff", ...).
         return "extinguished" if r.get("ext_flag_text") == 1 else "unknown"
     if acr.startswith("Saffire"):
@@ -103,7 +114,13 @@ def row_geometry(r) -> str:
             return f"porous burner {_fmt_mm(g)} mm dia"
     t = r.get("thickness")
     if isinstance(t, str) and t.strip():
-        return f"thickness {t.strip()}"
+        raw = t.strip()
+        unit = r.get("thickness_unit") or ""
+        shown = f"{raw} {unit}" if unit and not re.search(r"[a-z]", raw, re.I) else raw
+        note = ""
+        if re.match(r"^0\d", raw):  # Saffire-II logs "037 mm"; the same SIBAL fabric is 0.37 mm elsewhere
+            note = f"; likely 0.{raw[1:]}"
+        return f"thickness {shown} (as logged{note})"
     return ""
 
 

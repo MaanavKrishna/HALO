@@ -40,7 +40,7 @@ test("suppression finding card with its figure, sources and brief link", async (
   await expect(card.getByRole("link", { name: /Flame Extinguishment Experiment/ })).toBeVisible();
   await expect(card).toContainText("not tests of an extinguisher or a suppression system");
   const moon = page.locator("#moon-window");
-  await expect(moon.getByRole("group", { name: /burn outcomes: 13 self-extinguished, 5 flow stopped, 2 no ignition/ })).toBeVisible();
+  await expect(moon.getByRole("group", { name: /burn outcomes: 13 hot flame went out, 5 flow stopped, 2 no hot flame/ })).toBeVisible();
   await card.getByRole("link", { name: /See it in the .* brief/ }).click();
   await expect(page).toHaveURL(/\/brief\?.*l=1/);
   expect(problems).toEqual([]);

@@ -16,6 +16,7 @@ describe('wave-3 optional fields', () => {
   });
   it('new fields are validated', () => {
     expect(() => TestPointZ.parse({ ...f.tests[0], outcome: 'exploded' })).toThrow();
+    for (const o of ['no-hot-ignition', 'cool-flame', 'no-ignition']) expect(() => TestPointZ.parse({ ...f.tests[0], outcome: o })).not.toThrow();
     expect(() => TestPointZ.parse({ ...f.tests[0], flowSrc: 'guessed' })).toThrow();
     expect(() => TestPointZ.parse({ ...f.tests[0], flowCmS: -1 })).toThrow();
     expect(() => TestPointZ.parse({ ...f.tests[0], diluent: 'Ar' })).toThrow();
@@ -55,6 +56,8 @@ describe.skipIf(!real)('findings from the real data', () => {
     expect(f.stat.value).toBe('90');
     expect(f.body).toMatch(/not tests of an extinguisher or a suppression system/);
     expect(f.sources.map((s) => s.href)).toContain('https://doi.org/10.60555/mbq8-0451');
+    expect(f.body).toMatch(/The order holds for each fuel .*most of the nitrogen gap comes from the heptane runs/);
+    expect(f.viz.byFuel?.map((x) => x.fuel)).toEqual(['Methanol', 'Heptane']);
     expect(f.brief.href).toMatch(/[?&]l=1(&|$)/);
   });
 
@@ -62,8 +65,9 @@ describe.skipIf(!real)('findings from the real data', () => {
     const f = by('moon-window');
     if (f.viz.kind !== 'breakdown') throw new Error('kind');
     expect(f.viz.outcomes?.total).toBe(20);
-    expect(Object.fromEntries(f.viz.outcomes!.parts.map((p) => [p.outcome, p.count]))).toEqual({ extinguished: 13, 'flow-stopped': 5, 'no-ignition': 2 });
-    expect(f.body).toMatch(/13 went out on their own, 5 burned until the fuel flow was stopped and 2 did not ignite/);
+    expect(Object.fromEntries(f.viz.outcomes!.parts.map((p) => [p.outcome, p.count]))).toEqual({ extinguished: 13, 'flow-stopped': 5, 'no-hot-ignition': 2 });
+    expect(f.body).toMatch(/in 13 the hot flame went out on its own, 5 burned until the fuel flow was stopped and 2 did not reach a hot flame \(both logged as direct cool flames\)/);
+    expect(f.provenance).toContain('computed');
   });
 
   it('cites FM2, SoFIE, FLARE and ASE', () => {

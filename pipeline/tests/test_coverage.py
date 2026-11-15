@@ -51,7 +51,8 @@ def test_fuel_whitespace_collapsed(tests):
     assert all(t["fuel"] == " ".join(t["fuel"].split()) for t in tests)
 
 
-OUTCOMES = {"extinguished", "burned-out", "flow-stopped", "no-ignition", "disrupted", "spread", "unknown"}
+OUTCOMES = {"extinguished", "burned-out", "flow-stopped", "no-ignition", "no-hot-ignition", "cool-flame", "disrupted",
+            "spread", "unknown"}
 
 
 def test_new_fields(tests):
@@ -88,4 +89,22 @@ def test_cfig_moon_window_outcomes(tests):
     """B4: the 20 CFI-G rows inside the Moon window, by recorded test end."""
     win = [t for t in tests if t["acronym"] == "ACME CFI-G" and t["o2Pct"] >= 30 and t["pressurePsia"] <= 10.2]
     from collections import Counter
-    assert Counter(t["outcome"] for t in win) == {"extinguished": 13, "flow-stopped": 5, "no-ignition": 2}
+    assert Counter(t["outcome"] for t in win) == {"extinguished": 13, "flow-stopped": 5, "cool-flame": 2}
+    by = {t["id"]: t["outcome"] for t in win}
+    # "-" with "direct cool - no hot ignition" is a cool flame, not a failed ignition.
+    assert by["PSI-159:21106 F2"] == by["PSI-159:21106 F5"] == "cool-flame"
+    # "Hot ignition: no" but the SE/FT column says FT: kept as flow-stopped.
+    assert by["PSI-159:21106 F4"] == "flow-stopped"
+    cfig = [t for t in tests if t["acronym"] == "ACME CFI-G"]
+    assert "no-ignition" not in {t["outcome"] for t in cfig}
+    assert sum(t["outcome"] == "no-hot-ignition" for t in cfig) == 44
+
+
+def test_bass2_flow_and_no_ignition(tests):
+    b = {t["id"].split(":", 1)[1]: t for t in tests if t["acronym"] == "BASS-II"}
+    assert b["O5b"]["flowCmS"] == 5          # "49   5 cm/s": the cm/s value, not the fan count
+    assert b["O13a"]["flowCmS"] == 5         # fan counts first, initial air speed in parentheses
+    assert b["O21"]["flowCmS"] is None       # "incr to 28": no initial value
+    assert b["O22"]["flowCmS"] == 4          # "4 incr to 26.5": initial value
+    assert b["O12"]["outcome"] == "no-ignition" and b["O12"]["flowCmS"] is None
+    assert max(t["flowCmS"] for t in b.values() if t["flowCmS"] is not None) < 40
